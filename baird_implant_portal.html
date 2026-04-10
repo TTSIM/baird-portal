@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAIRD Learning Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --bg2: #0d1117;
+    --surface: rgba(19, 25, 34, 0.9);
+    --surface2: rgba(26, 35, 50, 0.92);
+    --surface3: rgba(34, 46, 61, 0.95);
+    --panel: rgba(19, 25, 34, 0.82);
+    --panel-strong: #131922;
+    --line: rgba(30, 42, 58, 0.95);
+    --line-strong: rgba(79, 156, 247, 0.38);
+    --text: #e8edf5;
+    --muted: #9ba8be;
+    --accent: #4f9cf7;
+    --accent2: #36d6b5;
+    --accent3: #a78bfa;
+    --gold: #f7a94f;
+    --shadow: 0 24px 54px rgba(0, 0, 0, 0.28);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Source Sans 3", sans-serif;
+    min-height: 100vh;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(79, 156, 247, 0.12), transparent 24%),
+      radial-gradient(circle at right 18%, rgba(54, 214, 181, 0.09), transparent 20%),
+      radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.1), transparent 22%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+  }
+
+  button,
+  a,
+  iframe {
+    font: inherit;
+  }
+
+  .app {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 22px 18px 42px;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 14px;
+    z-index: 20;
+    margin-bottom: 18px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(7, 9, 15, 0.84);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand-kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .brand-title {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    line-height: 0.95;
+    margin-top: 6px;
+  }
+
+  .brand-subtitle {
+    color: var(--muted);
+    margin-top: 6px;
+    font-size: 0.93rem;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .tab-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .tab-btn:hover,
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    color: #fff;
+    border-color: rgba(167, 139, 250, 0.7);
+    transform: translateY(-1px);
+  }
+
+  .hero {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .card,
+  .hero-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+  }
+
+  .hero-card,
+  .card {
+    border-radius: var(--radius-xl);
+  }
+
+  .hero-card {
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card::after {
+    content: "";
+    position: absolute;
+    right: -70px;
+    top: -90px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79, 156, 247, 0.22), transparent 70%);
+    pointer-events: none;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .hero-title,
+  h2,
+  h3,
+  .side-title {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+  }
+
+  .hero-title {
+    font-size: clamp(2.9rem, 5vw, 4.8rem);
+    line-height: 0.94;
+    margin-top: 10px;
+    max-width: 700px;
+  }
+
+  .hero-subtitle {
+    margin-top: 14px;
+    color: var(--muted);
+    max-width: 680px;
+  }
+
+  .hero-meta {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(54, 214, 181, 0.28);
+    background: rgba(54, 214, 181, 0.08);
+    color: var(--accent2);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-stats {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--surface2);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.55rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 15%, var(--accent) 60%, var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .resource-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface2);
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .resource-link:hover {
+    transform: translateY(-1px);
+    background: rgba(79, 156, 247, 0.08);
+    border-color: var(--line-strong);
+  }
+
+  .resource-type {
+    color: var(--accent2);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+    animation: fadeIn 0.22s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.84fr);
+    gap: 18px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .section-note {
+    color: var(--muted);
+    font-size: 0.92rem;
+    max-width: 520px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-top: 8px;
+  }
+
+  h3 {
+    font-size: 1.18rem;
+  }
+
+  .meta-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .meta-item,
+  .faculty-list li,
+  .module-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface2);
+  }
+
+  .meta-item {
+    padding: 15px 16px;
+  }
+
+  .meta-item strong {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--accent);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .overview-copy,
+  .faculty-list,
+  .module-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .faculty-list {
+    list-style: none;
+  }
+
+  .faculty-list li {
+    padding: 15px 16px;
+  }
+
+  .module-card {
+    padding: 18px 18px 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent3), var(--accent), var(--accent2));
+  }
+
+  .module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 16px;
+  }
+
+  .module-index {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .module-date {
+    color: var(--gold);
+    font-weight: 700;
+    white-space: normal;
+    text-align: right;
+  }
+
+  .module-topics {
+    margin-top: 10px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 980px) {
+    .topbar,
+    .hero,
+    .overview-grid {
+      grid-template-columns: 1fr;
+      flex-direction: column;
+      align-items: start;
+    }
+
+    .tabs {
+      justify-content: flex-start;
+    }
+
+    .hero-stats,
+    .meta-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 700px) {
+    .app {
+      padding: 14px 10px 30px;
+    }
+
+    .topbar,
+    .hero-card,
+    .side-card,
+    .card {
+      padding: 16px;
+    }
+
+    .hero-stats,
+    .meta-list {
+      grid-template-columns: 1fr;
+    }
+
+    .module-header,
+    .section-header {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-kicker">BAIRD Learning Portal</div>
+        <div class="brand-title" id="course-title">Loading...</div>
+        <div class="brand-subtitle" id="course-subtitle"></div>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Portal sections">
+        <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-button-overview" data-tab="overview">Overview</button>
+        <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
+        <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <section class="hero-card">
+        <p class="eyebrow">Year Long Programme</p>
+        <div class="hero-title">Implant dentistry study dashboard</div>
+        <p class="hero-subtitle">Use the tabs to move between the course overview, module roadmap, and faculty list, then open any lecture or quiz as its own full page in the same tab.</p>
+        <div class="hero-meta" id="hero-meta"></div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-modules">0</span>
+            <span class="stat-label">Modules</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-faculty">0</span>
+            <span class="stat-label">Faculty</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-materials">0</span>
+            <span class="stat-label">Live Materials</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-running">0</span>
+            <span class="stat-label">Years Running</span>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <main>
+      <section class="tab-panel active" id="tab-overview" role="tabpanel" aria-labelledby="tab-button-overview">
+        <div class="overview-grid">
+          <section class="card">
+            <div class="section-header">
+              <div>
+                <p class="section-kicker">Course Overview</p>
+                <h2>Key details</h2>
+              </div>
+              <p class="section-note">A clean snapshot of the course structure before we keep layering in lecture material and quizzes.</p>
+            </div>
+            <div class="meta-list" id="course-meta"></div>
+            <div class="overview-copy" id="course-description" style="margin-top: 16px;"></div>
+          </section>
+
+          <section class="card">
+            <div class="section-header">
+              <div>
+                <p class="section-kicker">Study Flow</p>
+                <h2>How to use this</h2>
+              </div>
+            </div>
+            <div class="overview-copy">
+              <p>Start in the Modules tab if you want to work sequentially through the course dates and topics.</p>
+              <p>Open lectures and quizzes directly from the relevant module cards in the Modules tab.</p>
+              <p>Each lecture or quiz opens as a full standalone page, with a clear back link to return to the portal.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-modules" role="tabpanel" aria-labelledby="tab-button-modules">
+        <section class="card">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Learning Roadmap</p>
+              <h2>Modules</h2>
+            </div>
+            <p class="section-note">Each module carries the key dates, topic focus, and any linked lecture or quiz material.</p>
+          </div>
+          <div class="module-list" id="module-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="tab-faculty" role="tabpanel" aria-labelledby="tab-button-faculty">
+        <section class="card">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Teaching Team</p>
+              <h2>Faculty</h2>
+            </div>
+            <p class="section-note">Reference list of the main faculty involved in the programme.</p>
+          </div>
+          <ul class="faculty-list" id="faculty-list"></ul>
+        </section>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  const COURSE = {
+    intake: "March 2026",
+    title: "Year Long Evidence Based & Clinical Course in Implant Dentistry",
+    subtitle: "Evidence Based & Clinical Implant Dentistry",
+    yearsRunning: 18,
+    details: [
+      ["Length", "9 modules from March 2026 to January 2027"],
+      ["Running", "18th year"],
+      ["Focus", "Evidence-based teaching plus practical clinical training"],
+      ["Clinical Training", "Training on patients provided by the course under direct mentoring at no extra cost"]
+    ],
+    description: [
+      "The BAIRD Evidence Based & Clinical Course in Implant Dentistry is one of the most successful private courses in implant dentistry in the United Kingdom.",
+      "It is designed to give participants sound grounding knowledge in implant dentistry as well as practical training on patients provided by the course.",
+      "Past graduates are already placing and restoring implants with confidence in their own dental practices."
+    ],
+    faculty: [
+      "Dr Hassan Maghaireh — Chairman of BAIRD Academy; ITI Fellow and Speaker.",
+      "Prof Marco Esposito — Professor of Evidence-Based Medicine and Dentistry at Vita-Salute San Raffaele University, Milan; editor and author with Cochrane Collaboration.",
+      "Prof StJohn Crean — Consultant in Oral and Maxillofacial Surgery and Vice-Chancellor of The University of Central Lancashire.",
+      "Prof Crawford Bain — Specialist Certificates in Periodontics and Fixed Prosthodontics; former Senior Lecturer and MSc Coordinator in Dental Primary Care at The University of Glasgow.",
+      "Prof Ziad Al-Ani — Senior Lecturer at the School of Medicine, Dentistry and Nursing, University of Glasgow.",
+      "Dr Kasim Butt — Consultant and Specialist in Restorative Dentistry at University Hospitals Coventry and Warwickshire NHS Trust; Head of the Scientific Committee at BAIRD Academy.",
+      "Prof Domniki Chatzopoulou — Professor of Periodontology, Specialist Periodontist, Reader, and Postgraduate Course Director for the DClinDent in Periodontology at Queen Mary University of London.",
+      "Dr Victoria Ivancheva — Young ITI Ambassador; member of the Scientific Committee and Head of the Mentoring Committee at BAIRD Academy.",
+      "Dr Sarra Jawad — Restorative Consultant at Guy's and St Thomas' NHS Foundation Trust.",
+      "Dr Lee Feinberg — Specialist in Dental and Maxillofacial Radiology; Consultant Dental and Maxillofacial Radiologist at King's College Hospital and Eastman Dental Hospital, part of University College London Hospitals NHS Foundation Trust.",
+      "Dr Aziz Ghanem Aziz — Clinical Lecturer in Implant Dentistry at Eastman; examiner at The RCS Edinburgh Implant Membership exam; implant dentist in Cardiff.",
+      "Dr Koray Keran — Clinical Director and Principal Dental Surgeon at The London Centre for Implant & Aesthetic Dentistry.",
+      "Dr Chia Yeoh — Implant and Cosmetic Dentist at Perfect 32."
+    ],
+    modules: [
+      {
+        title: "Module 1",
+        date: "13-15 March 2026",
+        topics: "Introduction into Implant Dentistry, Success Criteria, Pink aesthetics and Treatment Planning.",
+        materials: [
+          {
+            type: "Lecture",
+            label: "Lecture 1: Foundations, History and Bone Biology",
+            file: "materials/lectures/lecture_1_foundations_history_bone_biology.html"
+          },
+          {
+            type: "Quiz",
+            label: "Quiz 1: Foundations, History and Bone Biology",
+            file: "materials/quizzes/quiz_1_foundations_history_bone_biology.html"
+          }
+        ]
+      },
+      {
+        title: "Module 2",
+        date: "10-12 April 2026",
+        topics: "Cone Beam CT Scan Training, Surgical Planning for Implant Cases and Surgical Principles in Implant Dentistry.",
+        materials: [
+          {
+            type: "Lecture",
+            label: "Lecture 2: Surgical Principles and Biomechanics",
+            file: "materials/lectures/lecture_2_surgical_principles_and_biomechanics.html"
+          },
+          {
+            type: "Quiz",
+            label: "Quiz 2: Surgical Principles and Biomechanics",
+            file: "materials/quizzes/quiz_2_surgical_principles_biomechanics.html"
+          }
+        ]
+      },
+      {
+        title: "Module 3",
+        date: "15-17 May 2026",
+        topics: "Risk Analysis, Periodontal Management, Bone Grafting Principles, Socket Grafting and Patient Selection in Implant Dentistry.",
+        materials: [
+          {
+            type: "Lecture",
+            label: "Lecture 3: Restoration, Complications and Clinical Excellence",
+            file: "materials/lectures/lecture_3_restoration_complications_and_clinical_excellence.html"
+          },
+          {
+            type: "Quiz",
+            label: "Quiz 3: Restoration, Complications and Clinical Excellence",
+            file: "materials/quizzes/quiz_3_restoration_complications_excellence.html"
+          }
+        ]
+      },
+      {
+        title: "Module 4",
+        date: "12-14 June 2026",
+        topics: "Bone and Soft Tissue Healing Principles in Implant Dentistry, Medical Problems in Dentistry and Dental Implant Photography."
+      },
+      {
+        title: "Module 5",
+        date: "10-12 July 2026 and 17-19 July 2026",
+        topics: "Live Implant Surgery, Case Planning and Clinical Training on Course Patients."
+      },
+      {
+        title: "Module 6",
+        date: "11-13 September 2026",
+        topics: "Medico-legal Considerations, Prosthetic Principles in Implant Dentistry, Impressions and Temporisation in Implant Dentistry."
+      },
+      {
+        title: "Module 7",
+        date: "23-25 October 2026",
+        topics: "Advanced Prosthetic Principles and Impressions in Implant Dentistry, and Occlusion in Implant Dentistry."
+      },
+      {
+        title: "Module 8",
+        date: "4-6 December 2026",
+        topics: "Digital Workflow in Implant Dentistry, Soft Tissue Grafting (FGG, CTG) and Fitting Final Restorations for Course Implant Patients."
+      },
+      {
+        title: "Module 9",
+        date: "8-10 January 2027",
+        topics: "Course Revision and Exam Module."
+      }
+    ]
+  };
+
+  const allResources = COURSE.modules.flatMap((module) => module.materials || []);
+
+  function setActiveTab(tabName) {
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      const isActive = button.dataset.tab === tabName;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
+
+    document.querySelectorAll(".tab-panel").forEach((panel) => {
+      const isActive = panel.id === `tab-${tabName}`;
+      panel.classList.toggle("active", isActive);
+      panel.hidden = !isActive;
+    });
+  }
+
+  document.getElementById("course-title").textContent = COURSE.title;
+  document.getElementById("course-subtitle").textContent = `${COURSE.intake} intake | ${COURSE.subtitle}`;
+  document.getElementById("hero-meta").innerHTML = [
+    COURSE.intake,
+    COURSE.details[0][1],
+    COURSE.details[2][1]
+  ].map((item) => `<span class="pill">${item}</span>`).join("");
+
+  document.getElementById("stat-modules").textContent = COURSE.modules.length;
+  document.getElementById("stat-faculty").textContent = COURSE.faculty.length;
+  document.getElementById("stat-materials").textContent = allResources.length;
+  document.getElementById("stat-running").textContent = COURSE.yearsRunning;
+
+  document.getElementById("course-meta").innerHTML = COURSE.details
+    .map(([label, value]) => `<div class="meta-item"><strong>${label}</strong><span>${value}</span></div>`)
+    .join("");
+
+  document.getElementById("course-description").innerHTML = COURSE.description
+    .map((paragraph) => `<p>${paragraph}</p>`)
+    .join("");
+
+  document.getElementById("faculty-list").innerHTML = COURSE.faculty
+    .map((person) => `<li>${person}</li>`)
+    .join("");
+
+  document.getElementById("module-list").innerHTML = COURSE.modules
+    .map((module, index) => `
+      <article class="module-card">
+        <div class="module-header">
+          <div>
+            <div class="module-index">Module ${String(index + 1).padStart(2, "0")}</div>
+            <h3>${module.title}</h3>
+          </div>
+          <div class="module-date">${module.date}</div>
+        </div>
+        <p class="module-topics">${module.topics}</p>
+        ${module.materials && module.materials.length ? `
+          <div class="resource-list">
+            ${module.materials.map((resource) => `
+              <a class="resource-link" href="${resource.file}">
+                <span class="resource-type">${resource.type}</span>
+                <span>${resource.label}</span>
+              </a>
+            `).join("")}
+          </div>
+        ` : ""}
+      </article>
+    `)
+    .join("");
+
+  document.querySelectorAll(".tab-btn").forEach((button) => {
+    button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+  });
+</script>
+</body>
+</html>

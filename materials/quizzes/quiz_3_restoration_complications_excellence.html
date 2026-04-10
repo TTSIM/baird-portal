@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3: Restoration, Complications & Clinical Excellence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--accent:#10b981;--accent2:#06b6d4;--green:#10b981;--red:#ef4444;--gold:#f59e0b;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#1e293b}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.portal-back{display:inline-flex;align-items:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:rgba(17,24,39,.92);padding:.45rem .8rem;border-radius:999px}
+.portal-back:hover{color:var(--accent2);border-color:var(--accent2)}
+.container{max-width:52rem;margin:0 auto;padding:2rem}
+.header{text-align:center;margin-bottom:2.5rem}.header .tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);background:rgba(16,185,129,.1);padding:.3rem 1rem;border-radius:20px;letter-spacing:.08em;display:inline-block;margin-bottom:.8rem}
+.header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}.header p{color:var(--text3);font-size:1rem}
+.progress-wrap{background:var(--surface2);border-radius:12px;padding:1rem 1.4rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.2rem;border:1px solid var(--border);position:sticky;top:1rem;z-index:50;backdrop-filter:blur(12px)}
+.progress-bar-bg{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;width:0}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text3);min-width:5rem;text-align:right}.score-display{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);min-width:4rem}
+.question-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;transition:all .3s}.question-card.answered{opacity:.85}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.5rem}.q-text{font-size:1.1rem;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:1.2rem}
+.q-options{display:flex;flex-direction:column;gap:.5rem}
+.q-option{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:.95rem;color:var(--text2);line-height:1.45}
+.q-option:hover:not(.disabled){border-color:var(--accent);color:var(--text);background:rgba(16,185,129,.04)}.q-option .letter{width:1.6rem;height:1.6rem;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.q-option:hover:not(.disabled) .letter{border-color:var(--accent);color:var(--accent)}
+.q-option.correct{border-color:var(--green);background:rgba(16,185,129,.06)}.q-option.correct .letter{background:var(--green);border-color:var(--green);color:#fff}
+.q-option.wrong{border-color:var(--red);background:rgba(239,68,68,.04)}.q-option.wrong .letter{background:var(--red);border-color:var(--red);color:#fff}
+.q-option.disabled{pointer-events:none;opacity:.7}.q-option.reveal-correct{border-color:var(--green);background:rgba(16,185,129,.04)}.q-option.reveal-correct .letter{border-color:var(--green);color:var(--green)}
+.feedback{margin-top:1rem;padding:1rem;border-radius:10px;font-size:.92rem;line-height:1.55;display:none;animation:fadeIn .3s ease}.feedback.show{display:block}.feedback.correct-fb{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7}.feedback.wrong-fb{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);color:#fca5a5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.results-panel{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;display:none;margin-top:2rem}.results-panel.show{display:block;animation:fadeIn .5s ease}
+.results-panel .big-score{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;margin:.5rem 0}.results-panel .grade{font-size:1.2rem;font-weight:600;margin-bottom:1rem}
+.results-panel .breakdown{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0}.breakdown .num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700}.breakdown .lbl{font-size:.8rem;color:var(--text3)}
+.restart-btn{margin-top:1.5rem;padding:.7rem 2rem;background:var(--accent);border:none;border-radius:10px;color:#fff;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s}.restart-btn:hover{background:#059669;transform:translateY(-1px)}
+@media(max-width:700px){.container{padding:1rem}.question-card{padding:1.2rem}h1{font-size:1.8rem!important}}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="header">
+  <div class="tag">QUIZ 03 OF 03</div>
+  <h1>Restoration, Complications & Clinical Excellence</h1>
+  <p>30 questions · Covers Lecture 3 topics · Click an option to answer</p>
+</div>
+<div class="progress-wrap">
+  <div class="score-display" id="scoreDisp">0/0</div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar"></div></div>
+  <div class="progress-text" id="progText">0 / 30</div>
+</div>
+<div id="quizArea"></div>
+<div class="results-panel" id="results">
+  <p style="color:var(--text3);font-size:.9rem">YOUR RESULT</p>
+  <div class="big-score" id="finalScore" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</div>
+  <div class="grade" id="gradeText"></div>
+  <div class="breakdown">
+    <div class="item"><div class="num" id="correctCount" style="color:var(--green)">0</div><div class="lbl">Correct</div></div>
+    <div class="item"><div class="num" id="wrongCount" style="color:var(--red)">0</div><div class="lbl">Incorrect</div></div>
+    <div class="item"><div class="num" id="pctNum" style="color:var(--accent2)">0%</div><div class="lbl">Score</div></div>
+  </div>
+  <button class="restart-btn" onclick="restart()">Retake Quiz</button>
+</div>
+</div>
+<script>
+const questions=[
+{q:"The primary advantage of screw-retained over cemented crowns is:",opts:["Better aesthetics in the smile zone","Stronger bond to the implant","Full retrievability — can remove, repair, and modify without destruction","Lower lab costs"],ans:2,fb:"Retrievability is the key advantage. 'Unbreakable doesn't exist — unrepairable is what we must avoid.' Screw-retained allows non-destructive access for repairs and maintenance."},
+{q:"Why is excess cement particularly dangerous around implants?",opts:["It dissolves titanium over time","No PDL barrier — cement tracks to bone level and acts as a foreign body","It causes allergic reactions","It weakens the crown bond"],ans:1,fb:"Without a periodontal ligament, cement freely tracks subgingivally to bone level. The body treats it as a foreign body → chronic inflammation → bacterial colonisation → peri-implantitis."},
+{q:"What percentage of cases with excess cement develop peri-implantitis?",opts:["25%","50%","86%","100%"],ans:2,fb:"About 86% of cases with excess cement will convert into peri-implantitis. This led to the term 'peri-cementitis' and a shift toward screw-retained restorations."},
+{q:"Excess cement around implants is:",opts:["Easily visible on standard x-rays","Radiolucent — cannot be seen on x-ray","Only dangerous if the patient doesn't clean","Self-resolving within 6 months"],ans:1,fb:"Composite resin cements are radiolucent. You cannot detect excess cement on periapical or OPG films. Even radiopaque cement only shows mesial-distal, not buccal-lingual."},
+{q:"When is a cemented restoration acceptable?",opts:["Always — cement is always preferred for aesthetics","When the implant angulation puts the screw hole through the labial surface","Whenever the patient requests it","Only for posterior molars"],ans:1,fb:"Severe angulation that would place the screw access hole labially may require cement. Use a custom abutment with shallow margin and radiopaque cement."},
+{q:"The maximum acceptable emergence profile angle is:",opts:["15 degrees","30 degrees","45 degrees","60 degrees"],ans:1,fb:"Above 30° the emergence creates a 'cliff' that traps plaque and prevents brush bristles from reaching the sulcus. Significantly increases peri-implantitis risk."},
+{q:"A steep emergence profile (>30°) causes problems because:",opts:["It weakens the porcelain crown","It traps plaque and prevents cleaning — brush bristles bounce off","It puts too much force on the implant","It causes the screw to loosen"],ans:1,fb:"A steep emergence is like a house with no guttering — plaque accumulates in the inaccessible 'cliff.' Chronic food trapping leads to peri-implantitis."},
+{q:"Where should the screw access hole emerge on an anterior crown?",opts:["Through the labial surface","Through the incisal edge","Through the cingulum (palatal surface)","Anywhere — position doesn't matter"],ans:2,fb:"'If the screw hole doesn't come through the cingulum, the implant is in the wrong position. Full stop.' This is a hard rule for anterior screw-retained restorations."},
+{q:"The subgingival emergence contour should always be:",opts:["Convex — to push tissue outward","Concave — to prevent mid-labial recession","Flat — for easy cleaning","S-shaped — for natural appearance"],ans:1,fb:"Everything subgingival needs to be concave. A convex contour pushes the mid-labial tissue up when the crown is seated, causing recession."},
+{q:"Provisional restorations are used in the anterior zone to:",opts:["Save money while waiting for the final crown","Gradually sculpt the soft tissue into an ideal emergence profile","Protect the implant from loading forces","Test the patient's bite before the final crown"],ans:1,fb:"Provisional crowns gradually shape soft tissue over weeks. Standard cylindrical healing abutments create round openings — teeth aren't round. Provisionals sculpt tissue into tooth-like shapes."},
+{q:"What probing force should be used around implants?",opts:["0.5 N — same as for natural teeth","0.25 N — half the standard force","1.0 N — firmer to detect true pockets","No specific force — just be gentle"],ans:1,fb:"Implants have a weaker hemidesmosomal seal (no connective tissue attachment). Standard 0.5N for teeth is too aggressive. Use 0.25N (25 grams) to avoid probing through the seal."},
+{q:"Pocket depth around an implant without bleeding means:",opts:["Peri-implantitis is developing","Nothing significant — may be a pseudo-pocket from deep placement","Urgent referral needed","The implant has lost integration"],ans:1,fb:"Pocket depth alone is meaningless around implants. A deeply placed implant naturally has a deeper sulcus (pseudo-pocket). Only bleeding/pus with increased depth is concerning."},
+{q:"Peri-implant mucositis is:",opts:["Irreversible bone loss around an implant","Reversible inflammation without bone loss — the gingivitis equivalent","A normal finding around all implants","Caused only by excess cement"],ans:1,fb:"Mucositis is reversible. It's inflammation of the soft tissue without bone loss — the implant equivalent of gingivitis. Catching it early prevents progression to irreversible peri-implantitis."},
+{q:"Peri-implantitis differs from mucositis in that it involves:",opts:["Only soft tissue inflammation","Irreversible progressive bone loss","Reversible bone loss","Temporary swelling that resolves spontaneously"],ans:1,fb:"Peri-implantitis = irreversible progressive bone loss. Once bone is lost around an implant, it doesn't regenerate. Prevention through maintenance is paramount."},
+{q:"The success rate of surgical peri-implantitis treatment is approximately:",opts:["90–95%","75–80%","50–60%","30–40%"],ans:2,fb:"Only ~50–60% resolution. The micro-rough SLA surface has caves and tunnels where bacteria hide beyond the reach of any cleaning instrument. Prevention ≫ treatment."},
+{q:"Why is peri-implantitis so difficult to treat surgically?",opts:["Titanium corrodes during surgery","Bacteria hide in the micro-rough surface caves where no instrument can reach","The bone is too dense to regenerate","Antibiotics cannot penetrate the peri-implant space"],ans:1,fb:"The same SLA surface that's excellent for osteointegration (mountains, caves, tunnels) becomes a bacterial fortress once exposed. Cleaning can never reach the tunnel depths."},
+{q:"Patients with a history of periodontitis have what increased risk of peri-implantitis?",opts:["50% higher","100% higher","200% higher","300% higher"],ans:3,fb:"300% higher risk. These patients need more intensive maintenance: four hygienist visits per year and two annual check-ups."},
+{q:"For patients who lost teeth due to periodontal disease, Dr Hassan recommends:",opts:["Fixed full-arch prostheses for maximum stability","Implant-supported overdentures — easier to clean underneath","No implants at all — dentures only","Single implant crowns only"],ans:1,fb:"'Think of a sofa on wheels versus solid legs — which is easier to clean underneath?' Overdentures can be removed for cleaning, reducing peri-implantitis risk."},
+{q:"Implant patients need 8–10× more force to sense contact compared to natural teeth because:",opts:["Implant crowns are thicker","No periodontal ligament = no proprioception","The bite is set incorrectly","Titanium conducts sensation poorly"],ans:1,fb:"Natural teeth have PDL fibres providing proprioception (sensory feedback). Implants have direct bone contact with no sensory mechanism. Patients bite harder without realising."},
+{q:"The occlusal table on an implant crown should be:",opts:["Wider than normal — distribute forces","Narrower than normal — catch less force","Same width as the natural tooth it replaces","As wide as possible for function"],ans:1,fb:"'Making the occlusal table wider catches more force, like holding a bigger bucket in the rain. Narrow the bucket — catch less force.' Central fossa contacts only."},
+{q:"The 10-year complication rate for fixed full-arch prostheses is:",opts:["40%","60%","75%","90%"],ans:3,fb:"90% complication rate. This is manageable IF you consent patients, factor maintenance into pricing, and design for retrievability. It's not a reason to avoid treatment."},
+{q:"When a patient asks 'How long will my implant last?', the appropriate answer is:",opts:["'I guarantee it for 10 years'","'Titanium lasts forever, so your implant will too'","'I cannot guarantee long-term because I cannot predict your future bone health'","'Most implants last 5 years'"],ans:2,fb:"You cannot guarantee the quality of a patient's bone in the future. Health changes (diabetes, osteoporosis, medication) can affect bone remodelling and lead to late failure."},
+{q:"Itemising treatment costs for patients results in:",opts:["Patients requesting discounts on individual items","Fewer patients accepting treatment","Patients understanding the value — they rarely ask for discounts","More complaints about pricing"],ans:2,fb:"When you explain each step and its purpose (digital planning, surgical guide, bone graft, etc.), patients understand the value. They almost never ask for discounts."},
+{q:"'Unconscious incompetence' means:",opts:["You know what you don't know","You don't know what you don't know — most dangerous level","You're competent but don't realise it","You're incompetent and accept it"],ans:1,fb:"Level 1: 'You don't know what you don't know.' This is the most dangerous level because you can't assess your own risk. A weekend course doesn't make you competent."},
+{q:"After completing this course, most delegates move to:",opts:["Unconscious competence — ready to practice independently","Conscious competence — skilled but needs to think through each step","Conscious incompetence — knows what they don't know","No change in competence level"],ans:2,fb:"Moving from Level 1 to Level 2 (conscious incompetence) is the most valuable transition. You now know the right questions, when to refer, and how to learn safely."},
+{q:"The three H's for business success are:",opts:["Health, Happiness, Humility","Head, Heart, Hands","Honesty, Hard work, Hustle","Hope, Help, Healing"],ans:1,fb:"Head (marketing, business, strategy), Heart (relating to patients, empathy), and Hands (clinical skills). Good hands alone aren't enough for success."},
+{q:"When a speaker cites a reference, you should:",opts:["Trust it automatically — they're the expert","Read the reference yourself to verify it supports their claim","Only check if you disagree","Ignore references — clinical experience matters more"],ans:1,fb:"Dr Hassan faked a study (his son 'Professor Owen' at 'QJ' — Queen Elizabeth Junior School) to prove the point. Always read references yourself and verify claims."},
+{q:"Evidence-based dentistry integrates:",opts:["Only the latest research papers","Best available research + clinical skills + patient values","Company recommendations and sales data","Expert opinion and tradition"],ans:1,fb:"Three components: best available research, your clinical skills, AND patient values. Treating a 75-year-old is completely different from treating a 25-year-old soldier."},
+{q:"The 'chosen outcome' in implant dentistry refers to:",opts:["The patient's desired aesthetic result","Predictable complications caused by clinical decisions","The treatment plan signed by the patient","The implant's expected lifespan"],ans:1,fb:"Most complications are predictable consequences of decisions. Placing a wide implant on cortical bone? You've chosen resorption. Cement-retained when screw was possible? You've chosen risk."},
+{q:"For implants with >50% bone loss from peri-implantitis, the recommended approach is:",opts:["Aggressive surgical debridement and bone grafting","Long-term antibiotic therapy","Removal — success rate of saving is very low","Implantoplasty with high-speed bur"],ans:2,fb:"At >50% bone loss, the success rate of saving and cleaning is very low. Best to remove the implant and consider replacement after healing."}
+];
+let answered=0,correct=0;
+function init(){const a=document.getElementById('quizArea');a.innerHTML='';answered=0;correct=0;updateUI();
+questions.forEach((q,i)=>{const d=document.createElement('div');d.className='question-card';d.id='q'+i;
+let opts='';q.opts.forEach((o,j)=>{opts+=`<div class="q-option" data-q="${i}" data-o="${j}" onclick="answer(${i},${j})"><span class="letter">${'ABCD'[j]}</span><span>${o}</span></div>`;});
+d.innerHTML=`<div class="q-number">QUESTION ${i+1} OF 30</div><div class="q-text">${q.q}</div><div class="q-options">${opts}</div><div class="feedback correct-fb" id="fb${i}c"></div><div class="feedback wrong-fb" id="fb${i}w"></div>`;
+a.appendChild(d);});}
+function answer(qi,oi){const card=document.getElementById('q'+qi);if(card.classList.contains('answered'))return;card.classList.add('answered');answered++;
+const isCorrect=oi===questions[qi].ans;if(isCorrect)correct++;
+const opts=card.querySelectorAll('.q-option');opts.forEach((o,j)=>{o.classList.add('disabled');if(j===oi)o.classList.add(isCorrect?'correct':'wrong');if(!isCorrect&&j===questions[qi].ans)o.classList.add('reveal-correct');});
+const fbId=isCorrect?`fb${qi}c`:`fb${qi}w`;document.getElementById(fbId).textContent=(isCorrect?'✓ Correct! ':'✗ Incorrect. ')+questions[qi].fb;document.getElementById(fbId).classList.add('show');
+updateUI();if(answered===30)showResults();}
+function updateUI(){document.getElementById('progBar').style.width=(answered/30*100)+'%';document.getElementById('progText').textContent=answered+' / 30';document.getElementById('scoreDisp').textContent=correct+'/'+answered;}
+function showResults(){const pct=Math.round(correct/30*100);const r=document.getElementById('results');r.classList.add('show');document.getElementById('finalScore').textContent=pct+'%';document.getElementById('correctCount').textContent=correct;document.getElementById('wrongCount').textContent=30-correct;document.getElementById('pctNum').textContent=pct+'%';
+let g='',c='';if(pct>=90){g='Outstanding! 🏆';c='var(--green)'}else if(pct>=70){g='Great work! 💪';c='var(--accent2)'}else if(pct>=50){g='Good effort — review the weaker areas';c='var(--gold)'}else{g='Keep studying — revisit Lecture 3';c='var(--red)'}
+document.getElementById('gradeText').textContent=g;document.getElementById('gradeText').style.color=c;r.scrollIntoView({behavior:'smooth'});}
+function restart(){document.getElementById('results').classList.remove('show');init();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>

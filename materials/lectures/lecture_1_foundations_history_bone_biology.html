@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1: Foundations, History and Bone Biology</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --bg2: #0d1117;
+  --surface: #131922;
+  --surface2: #1a2332;
+  --surface3: #222e3d;
+  --accent: #4f9cf7;
+  --accent2: #36d6b5;
+  --accent3: #a78bfa;
+  --warm: #f7a94f;
+  --pink: #f472b6;
+  --red: #f87171;
+  --green: #34d399;
+  --text: #e8edf5;
+  --text2: #9ba8be;
+  --text3: #5c6b82;
+  --border: #1e2a3a;
+  --glow: rgba(79,156,247,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+
+/* ── NAVIGATION ── */
+.topbar { position:fixed; top:0; left:0; right:0; z-index:200; background:rgba(7,9,15,.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:.6rem 1.5rem; display:flex; align-items:center; gap:1rem; }
+.topbar .portal-back { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--text2); text-decoration:none; border:1px solid var(--border); padding:.35rem .7rem; border-radius:999px; white-space:nowrap; }
+.topbar .portal-back:hover { color:var(--accent2); border-color:var(--accent2); }
+.topbar .logo { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; color:var(--accent); white-space:nowrap; }
+.topbar .progress-outer { flex:1; height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+.topbar .progress-inner { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3)); border-radius:2px; transition:width .3s; width:0; }
+.topbar .score-badge { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--accent2); background:rgba(54,214,181,.08); padding:.25rem .6rem; border-radius:6px; white-space:nowrap; }
+
+/* ── HERO ── */
+.hero { padding:7rem 2rem 3rem; text-align:center; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle,rgba(79,156,247,.06) 0%,transparent 70%); pointer-events:none; }
+.hero .pill { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.12em; color:var(--accent2); background:rgba(54,214,181,.08); border:1px solid rgba(54,214,181,.15); padding:.3rem 1rem; border-radius:20px; margin-bottom:1rem; text-transform:uppercase; }
+.hero h1 { font-family:'Fraunces',serif; font-size:clamp(2rem,5vw,3.4rem); font-weight:900; line-height:1.1; margin-bottom:.8rem; }
+.hero h1 .gr1 { background:linear-gradient(135deg,#fff 20%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.hero h1 .gr2 { background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.hero p { color:var(--text2); font-size:1.05rem; max-width:38rem; margin:0 auto; }
+
+/* ── CHAPTER NAV ── */
+.chapter-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:.5rem; padding:1rem 2rem 2rem; max-width:64rem; margin:0 auto; }
+.chapter-nav button { font-family:'Outfit',sans-serif; font-size:.8rem; font-weight:500; padding:.45rem 1rem; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text2); cursor:pointer; transition:all .2s; }
+.chapter-nav button:hover, .chapter-nav button.active { border-color:var(--accent); color:var(--accent); background:rgba(79,156,247,.06); }
+.chapter-nav button .check { color:var(--green); margin-left:.3rem; display:none; }
+.chapter-nav button.done .check { display:inline; }
+
+/* ── MAIN CONTENT ── */
+.main { max-width:52rem; margin:0 auto; padding:0 1.5rem 4rem; }
+
+/* ── CHAPTER ── */
+.chapter { margin-bottom:3rem; display:none; }
+.chapter.visible { display:block; animation:fadeUp .4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.chapter-header { margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+.chapter-header .ch-num { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:.4rem; }
+.chapter-header h2 { font-family:'Fraunces',serif; font-size:1.9rem; font-weight:700; line-height:1.2; }
+
+/* ── KEY POINT CARDS ── */
+.kp { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:1.2rem; overflow:hidden; transition:border-color .2s; }
+.kp:hover { border-color:rgba(79,156,247,.25); }
+.kp-header { padding:1.2rem 1.4rem; cursor:pointer; display:flex; align-items:flex-start; gap:1rem; }
+.kp-icon { width:2.2rem; height:2.2rem; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; margin-top:.1rem; }
+.kp-icon.blue { background:rgba(79,156,247,.1); color:var(--accent); }
+.kp-icon.green { background:rgba(52,211,153,.1); color:var(--accent2); }
+.kp-icon.purple { background:rgba(167,139,250,.1); color:var(--accent3); }
+.kp-icon.warm { background:rgba(247,169,79,.1); color:var(--warm); }
+.kp-icon.pink { background:rgba(244,114,182,.1); color:var(--pink); }
+.kp-icon.red { background:rgba(248,113,113,.1); color:var(--red); }
+.kp-title-area { flex:1; }
+.kp-title { font-size:1.05rem; font-weight:600; color:var(--text); line-height:1.35; }
+.kp-subtitle { font-size:.85rem; color:var(--text3); margin-top:.15rem; }
+.kp-toggle { font-size:1.2rem; color:var(--text3); transition:transform .3s; flex-shrink:0; margin-top:.2rem; }
+.kp.open .kp-toggle { transform:rotate(180deg); }
+.kp-body { display:none; padding:0 1.4rem 1.4rem; }
+.kp.open .kp-body { display:block; animation:fadeUp .25s ease; }
+.kp-body p { font-size:.95rem; color:var(--text2); margin-bottom:.7rem; }
+.kp-body p strong { color:var(--text); font-weight:600; }
+
+/* ── HIGHLIGHT BOXES ── */
+.hl { padding:.9rem 1.1rem; border-radius:10px; margin:.8rem 0; font-size:.9rem; line-height:1.55; }
+.hl.rule { background:rgba(79,156,247,.06); border-left:3px solid var(--accent); color:var(--text); }
+.hl.warn { background:rgba(248,113,113,.06); border-left:3px solid var(--red); color:#fca5a5; }
+.hl.tip { background:rgba(54,214,181,.06); border-left:3px solid var(--accent2); color:#6ee7b7; }
+.hl.note { background:rgba(167,139,250,.06); border-left:3px solid var(--accent3); color:#c4b5fd; }
+
+/* ── MINI DIAGRAM ── */
+.diagram { display:flex; justify-content:center; margin:1rem 0; }
+.diagram svg { max-width:100%; }
+
+/* ── COMPARISON GRID ── */
+.vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin:.8rem 0; }
+.vs-card { background:var(--surface2); border-radius:10px; padding:1rem; border:1px solid var(--border); }
+.vs-card h5 { font-size:.85rem; font-weight:600; margin-bottom:.4rem; }
+.vs-card p { font-size:.82rem; color:var(--text2); line-height:1.5; }
+.vs-card.good { border-top:2px solid var(--green); }
+.vs-card.good h5 { color:var(--green); }
+.vs-card.bad { border-top:2px solid var(--red); }
+.vs-card.bad h5 { color:var(--red); }
+
+/* ── STEP LIST ── */
+.steps { margin:.8rem 0; }
+.step-item { display:flex; gap:.7rem; align-items:flex-start; margin:.4rem 0; }
+.step-num { width:1.5rem; height:1.5rem; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; flex-shrink:0; margin-top:.15rem; }
+.step-text { font-size:.9rem; color:var(--text2); }
+.step-text strong { color:var(--text); }
+
+/* ── CHECKPOINT QUIZ ── */
+.checkpoint { background:linear-gradient(135deg,var(--surface),var(--surface2)); border:1px solid var(--border); border-radius:14px; padding:1.5rem; margin:2rem 0; }
+.checkpoint .cp-label { font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.1em; color:var(--warm); text-transform:uppercase; margin-bottom:.6rem; }
+.checkpoint .cp-q { font-size:1.05rem; font-weight:600; margin-bottom:1rem; line-height:1.4; }
+.cp-opts { display:flex; flex-direction:column; gap:.4rem; }
+.cp-opt { padding:.7rem 1rem; background:var(--bg2); border:1.5px solid var(--border); border-radius:9px; cursor:pointer; font-size:.9rem; color:var(--text2); transition:all .2s; display:flex; align-items:center; gap:.7rem; }
+.cp-opt:hover:not(.locked) { border-color:var(--accent); color:var(--text); }
+.cp-opt .dot { width:1.2rem; height:1.2rem; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.65rem; transition:all .2s; }
+.cp-opt.correct { border-color:var(--green); background:rgba(52,211,153,.05); }
+.cp-opt.correct .dot { background:var(--green); border-color:var(--green); color:#fff; }
+.cp-opt.wrong { border-color:var(--red); background:rgba(248,113,113,.04); }
+.cp-opt.wrong .dot { background:var(--red); border-color:var(--red); color:#fff; }
+.cp-opt.show-correct { border-color:var(--green); }
+.cp-opt.show-correct .dot { border-color:var(--green); color:var(--green); }
+.cp-opt.locked { pointer-events:none; opacity:.75; }
+.cp-fb { margin-top:.8rem; padding:.8rem; border-radius:8px; font-size:.85rem; line-height:1.5; display:none; }
+.cp-fb.show { display:block; animation:fadeUp .2s ease; }
+.cp-fb.ok { background:rgba(52,211,153,.08); color:#6ee7b7; }
+.cp-fb.no { background:rgba(248,113,113,.06); color:#fca5a5; }
+
+/* ── NEXT CHAPTER BUTTON ── */
+.next-ch-btn { display:block; width:100%; padding:.9rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:10px; color:#fff; font-family:'Outfit',sans-serif; font-size:1rem; font-weight:600; cursor:pointer; transition:all .2s; margin-top:1.5rem; }
+.next-ch-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(79,156,247,.18); }
+
+/* ── FINAL RESULTS ── */
+.final-results { text-align:center; padding:3rem 2rem; display:none; }
+.final-results.show { display:block; animation:fadeUp .5s ease; }
+.final-results .big { font-family:'Fraunces',serif; font-size:4.5rem; font-weight:900; }
+.final-results .msg { font-size:1.2rem; margin:.5rem 0 1.5rem; }
+.final-results .stats { display:flex; justify-content:center; gap:2.5rem; margin:1.5rem 0; }
+.final-results .stat-item { text-align:center; }
+.final-results .stat-item .n { font-family:'JetBrains Mono',monospace; font-size:2rem; font-weight:700; }
+.final-results .stat-item .l { font-size:.8rem; color:var(--text3); }
+.restart-btn { padding:.7rem 2.5rem; background:var(--accent); border:none; border-radius:10px; color:#fff; font-family:'Outfit',sans-serif; font-size:1rem; font-weight:600; cursor:pointer; margin-top:1rem; }
+
+@media(max-width:640px) {
+  .vs-grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:1.8rem; }
+  .main { padding:0 1rem 3rem; }
+  .topbar { padding:.5rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+  <div class="logo">Implant Learning</div>
+  <div class="progress-outer"><div class="progress-inner" id="globalProg"></div></div>
+  <div class="score-badge" id="globalScore">0 / 0</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="pill">Interactive Learning Tool</div>
+  <h1><span class="gr1">Evidence-Based</span><br><span class="gr2">Implant Dentistry</span></h1>
+  <p>Key learning points with interactive quizzes. Work through each chapter, expand the deep-dives, and test yourself at each checkpoint.</p>
+</div>
+
+<!-- CHAPTER NAV -->
+<div class="chapter-nav" id="chNav"></div>
+
+<!-- MAIN -->
+<div class="main" id="mainArea"></div>
+
+<!-- FINAL RESULTS -->
+<div class="final-results" id="finalResults">
+  <div class="pill" style="margin-bottom:1rem">Course Complete</div>
+  <div class="big" id="finalPct" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</div>
+  <div class="msg" id="finalMsg"></div>
+  <div class="stats">
+    <div class="stat-item"><div class="n" id="fCorrect" style="color:var(--green)">0</div><div class="l">Correct</div></div>
+    <div class="stat-item"><div class="n" id="fWrong" style="color:var(--red)">0</div><div class="l">Incorrect</div></div>
+    <div class="stat-item"><div class="n" id="fChaps" style="color:var(--accent2)">0</div><div class="l">Chapters</div></div>
+  </div>
+  <button class="restart-btn" onclick="location.reload()">Start Over</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA — 10 chapters, each with key points + checkpoint questions
+// ═══════════════════════════════════════════════════════════════
+const chapters = [
+{
+  id:'branemark', num:'01', title:'The Brånemark Story & Surface Evolution',
+  points:[
+    {icon:'blue',emoji:'🔬',title:'The Accidental Discovery',sub:'1960s — rabbit bone studies',
+     body:`<p><strong>Per-Ingvar Brånemark</strong> was a Swedish anatomist (not a dentist) studying blood flow in rabbit fractures. He placed <strong>optical titanium chambers</strong> in rabbit legs.</p><p>After <strong>24 weeks</strong>, the devices couldn't be removed — bone had fused directly to the titanium. He coined the term <strong>"osteointegration"</strong>.</p><div class="hl rule">Brånemark's initial success rate was only <strong>50–60%</strong>. Every 10 implants placed, roughly half would fail. Surface technology and patient selection have since pushed this above 95%.</div>`},
+    {icon:'purple',emoji:'🏭',title:'From Lab to Market — Nobel Biocare',sub:'Commercialisation of implant dentistry',
+     body:`<p>Brånemark was never a commercial man. His <strong>students</strong> left and founded <strong>Nobel Biocare</strong> — the first implant company.</p><p>Market demands drove three key innovations: <strong>single tooth replacement</strong> (not just full-arch), <strong>shorter implants</strong> (patients lacked bone for long ones), and <strong>faster healing</strong> (24 weeks was too long).</p>`},
+    {icon:'warm',emoji:'⛰️',title:'Surface Evolution: Machined → HA → SLA',sub:'Three generations of implant surfaces',
+     body:`<p><strong>Gen 1 — Machined/polished:</strong> Brånemark's original. Smooth titanium. 24-week healing. Low predictability.</p><p><strong>Gen 2 — Hydroxyapatite coated:</strong> Bone bonded to the HA layer more strongly than HA bonded to titanium. The coating delaminated → implants failed.</p><p><strong>Gen 3 — SLA (Sandblasted + Acid-Etched):</strong> Modern standard. Creates micro-rough "mountain and cave" surface. 8–12 week healing. High predictability.</p><div class="hl warn">The <strong>same micro-roughness</strong> that accelerates integration becomes a bacterial stronghold if exposed. Caves and tunnels harbour bacteria beyond the reach of any cleaning instrument — this is why peri-implantitis is so difficult to treat.</div>`},
+  ],
+  quiz:[
+    {q:'Why did hydroxyapatite-coated implants fail?',opts:['HA dissolved in saliva','Bone bonded more strongly to HA than HA bonded to titanium','HA was toxic to osteoblasts','HA blocked blood flow'],ans:1,fb:'The bone–HA bond was stronger than the HA–titanium bond. The coating delaminated, taking integrated bone with it.'},
+    {q:'Brånemark\'s initial success rate was approximately:',opts:['90–95%','75–80%','50–60%','30–40%'],ans:2,fb:'Only 50–60%. Surface technology and patient selection have since raised this above 95%.'},
+  ]
+},
+{
+  id:'bone', num:'02', title:'Bone Composition & the Four Stages of Healing',
+  points:[
+    {icon:'blue',emoji:'🦴',title:'Bone Composition — The 67/33 Split',sub:'Inorganic vs Organic components',
+     body:`<p>Bone is <strong>67% inorganic</strong> (calcium phosphate minerals — hydroxyapatite crystals) and <strong>33% organic</strong> (28% collagen + 5% growth factors).</p><div class="vs-grid"><div class="vs-card"><h5 style="color:var(--accent)">Inorganic — 67%</h5><p>Provides hardness and structural strength. Affected by: osteoporosis, hypoparathyroidism, Paget's disease, osteomalacia.</p></div><div class="vs-card"><h5 style="color:var(--accent2)">Organic — 33%</h5><p>Provides flexibility and healing capacity (collagen scaffold + growth factors). Affected by: vitamin C deficiency, diabetes, bisphosphonates.</p></div></div><div class="hl rule"><strong>Clinical reasoning:</strong> When a patient has a medical condition, ask — does it affect the organic (healing, collagen) or inorganic (mineral density) component? This determines the risk to osteointegration.</div>`},
+    {icon:'green',emoji:'🔄',title:'Four Stages of Healing',sub:'Haemostasis → Inflammation → Proliferation → Maturation',
+     body:`<div class="steps"><div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Haemostasis</strong> — Platelet aggregation, blood clot forms, bleeding stops (minutes)</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Inflammation</strong> — Macrophages and leukocytes clean damaged tissue — non-selective "collateral damage" (days 1–5)</div></div><div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Proliferation</strong> — Stem cells → osteoblasts → woven bone deposited (weeks 1–6)</div></div><div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Maturation</strong> — Woven bone remodels → lamellar bone (weeks 6–24+)</div></div></div><div class="hl warn"><strong>Diabetes disruption:</strong> Prolonged inflammation → delayed proliferation → stem cells become <strong>fibroblasts</strong> instead of osteoblasts → granulation tissue instead of bone. Management: control HbA1c, extend healing to 24–36 weeks.</div>`},
+    {icon:'red',emoji:'⚕️',title:'Medical Conditions & Osteointegration',sub:'Organic vs Inorganic risk classification',
+     body:`<p><strong>Inorganic conditions:</strong> Osteoporosis (24-week healing), Paget's disease ("drilling in wood" — dense but no blood supply), hypoparathyroidism, osteomalacia (vitamin D deficiency).</p><p><strong>Organic conditions:</strong> Diabetes (prolonged inflammation), vitamin C deficiency (scurvy — no collagen synthesis), bisphosphonate-related osteonecrosis.</p><div class="hl tip"><strong>Paget's disease paradox:</strong> Very dense bone sounds good but is BAD for implants. No cancellous structure, no blood supply → only mechanical integration, never biological. "Like drilling in wood."</div>`},
+  ],
+  quiz:[
+    {q:'What percentage of bone is organic material?',opts:['67%','50%','33%','28%'],ans:2,fb:'33% organic (of which 28% collagen and 5% growth factors), 67% inorganic.'},
+    {q:'Vitamin C deficiency primarily affects:',opts:['Inorganic — calcium minerals','Organic — collagen synthesis','Both equally','Blood supply only'],ans:1,fb:'Vitamin C is essential for collagen synthesis — the organic component.'},
+  ]
+},
+{
+  id:'cortical', num:'03', title:'Cortical vs Cancellous Bone',
+  points:[
+    {icon:'green',emoji:'💚',title:'Cancellous Bone — Your Friend',sub:'Elastic, growth-factor rich, blood supply',
+     body:`<p>Cancellous bone is elastic, rich in growth factors and blood supply. Pressure on cancellous bone <strong>stimulates osteointegration</strong> via the press-fit mechanism.</p><div class="hl rule"><strong>Primary stability must come from the apical third</strong> (cancellous bone), NOT the coronal third (cortical bone). Place narrower implants palatally, away from the labial cortical plate.</div>`},
+    {icon:'red',emoji:'⚠️',title:'Cortical Bone — Handle With Care',sub:'"Touch the cortical bone, you lose the cortical bone"',
+     body:`<p>Cortical bone is hard, brittle, with minimal blood supply. Pressure causes <strong>micro-cracks → necrosis → resorption</strong>. The cortical plate will disappear, exposing threads and causing recession.</p><div class="hl warn"><strong>Old school error:</strong> "Put a wide implant in the socket for good grip." This presses on the thin cortical plate → resorption in 6 months → metal showing → recession.</div><div class="hl tip"><strong>Modern approach:</strong> Place a narrower implant palatally. Get stability from apical cancellous bone. Fill the labial gap with bone graft to preserve the cortical plate.</div>`},
+  ],
+  quiz:[
+    {q:'Where should primary stability come from?',opts:['Coronal third — cortical bone','Apical third — cancellous bone','Equally along the implant','Only from threads'],ans:1,fb:'Cancellous bone at the apical third provides mechanical stability AND the biological environment for osteointegration.'},
+  ]
+},
+{
+  id:'bundle', num:'04', title:'Bundle Bone, Phenotype & Socket Grafting',
+  points:[
+    {icon:'pink',emoji:'🔬',title:'Bundle Bone — The Inevitable Loss',sub:'87% of anterior labial plates are <1mm',
+     body:`<p>The labial plate's first layer is <strong>bundle bone</strong> — it gets blood supply from <strong>periodontal ligament bundles</strong>. When you extract a tooth, these bundles are severed.</p><p><strong>Result:</strong> Bundle bone resorbs within 4–5 weeks <strong>regardless of what you do</strong> — immediate implant, immediate loading, flapless surgery. The beagle dog studies proved this.</p><div class="hl warn"><strong>Two phases of bone loss:</strong><br>• <strong>Phase 1 (inevitable):</strong> Bundle bone resorption from inside — cannot be prevented<br>• <strong>Phase 2 (preventable):</strong> External resorption from lack of stimulation — can be minimised with grafting/timely placement</div>`},
+    {icon:'warm',emoji:'📏',title:'Phenotype Assessment — Thin vs Thick',sub:'Measure before every extraction',
+     body:`<div class="vs-grid"><div class="vs-card bad"><h5>Thin Phenotype — HIGH RISK</h5><p>Labial plate ≤1mm. Almost entirely bundle bone. Extract + do nothing = <strong>>50% bone loss</strong>. With socket graft = 5–20% loss.</p></div><div class="vs-card good"><h5>Thick Phenotype — LOWER RISK</h5><p>Labial plate >1mm. Residual bone survives. Extract + do nothing = 5–20% loss. With socket graft = 0–5% loss.</p></div></div><div class="hl tip"><strong>Socket grafting converts high risk → low risk.</strong> Bone graft powder fills the socket on extraction day, occupying space that fibroblasts would otherwise invade. By default, this means delayed placement.</div>`},
+  ],
+  quiz:[
+    {q:'What percentage of anterior labial plates are <1mm thick?',opts:['50%','67%','87%','95%'],ans:2,fb:'Buser et al. found 87% of anterior labial plates are <1mm — almost entirely bundle bone.'},
+    {q:'Thin phenotype + no socket graft results in:',opts:['0–5% bone loss','5–20% bone loss','>50% bone loss','No bone loss'],ans:2,fb:'Thin phenotype with no intervention = >50% bone loss. Socket grafting converts this to 5–20%.'},
+  ]
+},
+{
+  id:'pressfit', num:'05', title:'Press-Fit & the Cell Cascade',
+  points:[
+    {icon:'purple',emoji:'🔩',title:'Press-Fit — The Trigger for Osteointegration',sub:'Controlled compression on cancellous bone',
+     body:`<p>Press-fit is the <strong>controlled compression</strong> when an implant slightly wider than the osteotomy is placed. For a <strong>4.0mm implant</strong>, drill a <strong>3.5mm osteotomy</strong> (0.25mm compression per side).</p><div class="hl rule"><strong>No press-fit = no osteointegration.</strong> Without controlled pressure on cancellous bone, the body defaults to fibrous healing. The implant becomes encapsulated in scar tissue.</div><p><strong>Posterior maxilla exception:</strong> In very soft bone (type IV), drill only <strong>3.0mm</strong> for a 4.0mm implant. More compression needed because cancellous bone is less dense.</p>`},
+    {icon:'blue',emoji:'🧬',title:'The Cell Cascade',sub:'Osteocytes → Osteoclasts → Osteoblasts',
+     body:`<div class="steps"><div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Osteocytes</strong> (radar) detect abnormal pressure from press-fit</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>RANKL</strong> released → activates osteoclasts</div></div><div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Osteoclasts</strong> (cleaners) remove compressed bone → create gap</div></div><div class="step-item"><div class="step-num">4</div><div class="step-text">Osteoclasts signal stem cells to differentiate</div></div><div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Healthy patient:</strong> Stem cells → <strong>osteoblasts</strong> → woven bone → lamellar bone ✓</div></div><div class="step-item"><div class="step-num" style="background:var(--red)">!</div><div class="step-text"><strong>Unhealthy patient:</strong> Stem cells → <strong>fibroblasts</strong> → granulation tissue → failure ✗</div></div></div>`},
+  ],
+  quiz:[
+    {q:'For a 4.0mm implant, the correct osteotomy diameter is:',opts:['4.5mm','4.0mm','3.5mm','3.0mm'],ans:2,fb:'3.5mm creates optimal press-fit (0.25mm compression per side on cancellous bone).'},
+    {q:'In an unhealthy patient, stem cells differentiate into:',opts:['Osteoblasts → bone','Osteocytes → sensors','Fibroblasts → scar tissue','Chondrocytes → cartilage'],ans:2,fb:'Disease/infection diverts stem cells to fibroblasts → granulation tissue instead of bone = implant failure.'},
+  ]
+},
+{
+  id:'stability', num:'06', title:'Torque, ISQ & the Stability Curve',
+  points:[
+    {icon:'warm',emoji:'🔧',title:'Torque — Rotational Stability',sub:'Minimum 20 Ncm (current evidence)',
+     body:`<p>Torque measures <strong>resistance to rotation</strong> in Newton centimetres (Ncm). Measured by motor sensors or manual torque wrench.</p><div class="hl rule"><strong>Minimum threshold: 20 Ncm</strong> (current evidence-based threshold). Below this, implants show decreased survival rates. The desirable range is <strong>20–40 Ncm</strong>.</div><div class="hl note"><strong>High torque note:</strong> The old theory of "pressure necrosis" above 50 Ncm is <em>partially</em> outdated. Location matters more than magnitude — but recent evidence (2025 scoping review) shows IT >50 Ncm <em>is</em> associated with greater marginal bone loss in dense bone. It's not as simple as "no maximum."</div>`},
+    {icon:'blue',emoji:'📊',title:'ISQ — Lateral Stability',sub:'Resonance frequency analysis over time',
+     body:`<p><strong>ISQ</strong> (Implant Stability Quotient) measures lateral movement using magnetic resonance. Scale 1–100.</p><p><strong>Protocol:</strong> Measure at insertion (baseline) AND at 12 weeks. If ISQ improved → integrated. If decreased → failing.</p><div class="hl tip"><strong>ISQ dip at weeks 2–4 is normal!</strong> Mechanical stability is declining as osteoclasts do their job. Biological stability hasn't compensated yet. This is NOT failure — it's the process working.</div><p>Torque and ISQ are <strong>independent, incomparable methods</strong>. Ideally measure both; if only one, most clinicians prefer torque as a practical first-line measure.</p>`},
+    {icon:'red',emoji:'📉',title:'The Stability Curve & Danger Zone',sub:'Weeks 1–5: never load during this period',
+     body:`<p><strong>Mechanical stability</strong> (from press-fit) declines as osteoclasts remove compressed bone. <strong>Biological stability</strong> (new bone) gradually increases. The <strong>danger zone (weeks 1–5)</strong> is where both are at their lowest.</p><div class="hl warn"><strong>Above 150 μm micro-motion = guaranteed fibroblast activity.</strong> Loading during weeks 1–5 is like "loading a post in wet concrete" — it will move and never set properly.</div><p><strong>Healing times:</strong> Healthy mandible ~8 wks, healthy maxilla ~12 wks, osteoporotic ~24 wks, diabetic ~24–36 wks. These are approximate — always assess individual patient factors.</p>`},
+  ],
+  quiz:[
+    {q:'The evidence-based minimum torque threshold is:',opts:['10 Ncm','15 Ncm','20 Ncm','30 Ncm'],ans:2,fb:'Current evidence supports 20 Ncm as the minimum. Below this, survival rates decrease. The 20–40 Ncm range is desirable.'},
+    {q:'Why does ISQ dip at weeks 2–4?',opts:['Implant is failing','Normal: osteoclasts removing compressed bone','Patient needs antibiotics','Cortical resorption'],ans:1,fb:'The dip is expected. Osteoclasts are removing press-fit bone (reducing mechanical stability) while new bone hasn\'t formed yet.'},
+  ]
+},
+{
+  id:'screwtorque', num:'07', title:'Screw Torque, Plan B & Implant Systems',
+  points:[
+    {icon:'purple',emoji:'🔩',title:'Screw Torque ≠ Implant Torque',sub:'Two completely different measurements',
+     body:`<div class="vs-grid"><div class="vs-card"><h5 style="color:var(--accent3)">Implant Torque (Variable)</h5><p>Measured when placing implant into bone. Depends on bone density, implant design, osteotomy size. Minimum ~20 Ncm.</p></div><div class="vs-card"><h5 style="color:var(--warm)">Screw Torque (Fixed per System)</h5><p>Used to tighten abutment screw. Prescribed by manufacturer (e.g. Megagen = 35 Ncm). Must follow exactly.</p></div></div><div class="hl warn"><strong>Under-torque:</strong> Screw rocks → bacterial gap → fatigue fracture → nightmare removal.<br><strong>Over-torque:</strong> Screw fracture or stripped hex head. Removal torque is always higher than insertion torque.</div><p><strong>Finger tightening</strong> achieves only ~15 Ncm regardless of hand strength. Always use the torque wrench.</p>`},
+    {icon:'green',emoji:'📋',title:'Plan B Philosophy',sub:'"Unrepairable is what we must always avoid"',
+     body:`<p>Every case needs <strong>Plan A and Plan B</strong>. Most common scenario: implant doesn't achieve sufficient torque.</p><div class="steps"><div class="step-item"><div class="step-num">1</div><div class="step-text">Never use your <strong>widest implant</strong> as Plan A</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text">Keep a wider implant as the emergency option</div></div><div class="step-item"><div class="step-num">3</div><div class="step-text">If Plan A rocks (<20 Ncm), remove → place Plan B without further drilling</div></div></div><div class="hl rule"><strong>Complication rates are real:</strong> ~40% at 5 years, ~50% at 10 years for single implants (mostly minor: porcelain chips, screw loosening). True implant loss is only 2–5%. <strong>Factor maintenance into pricing and consent patients properly.</strong></div>`},
+  ],
+  quiz:[
+    {q:'Megagen recommends 35 Ncm screw torque. Finger-tightening achieves:',opts:['5 Ncm','~15 Ncm','25 Ncm','35 Ncm'],ans:1,fb:'Human finger strength achieves approximately 15 Ncm regardless of fitness. The torque wrench is essential.'},
+  ]
+},
+{
+  id:'restoration', num:'08', title:'Cement vs Screw-Retained & Emergence Profile',
+  points:[
+    {icon:'red',emoji:'🧪',title:'The Cement Problem',sub:'No PDL barrier — cement tracks to bone level',
+     body:`<p>Unlike natural teeth, implants have <strong>no periodontal ligament barrier</strong>. Excess cement freely tracks subgingivally to bone level, acting as a <strong>foreign body</strong>.</p><p>Cement is often <strong>radiolucent</strong> — invisible on x-ray. It can sit undetected for years, causing chronic inflammation → bacterial colonisation → peri-implantitis.</p><div class="hl rule"><strong>Default choice: screw-retained.</strong> "Unbreakable doesn't exist — unrepairable is what we must avoid." Screw-retained crowns can be unscrewed, repaired, modified, or replaced without destruction.</div><p><strong>Cement is acceptable when:</strong> Severe angulation makes screw access labial. Use a custom abutment with shallow margin, radiopaque cement, and verify with post-cementation radiograph.</p>`},
+    {icon:'warm',emoji:'📐',title:'Emergence Profile — Maximum 30°',sub:'Steeper = more plaque trapping = more peri-implantitis',
+     body:`<p>The emergence profile is the <strong>transition from narrow implant platform to wider crown contour</strong>. Above ~30°, the "cliff" traps plaque and brush bristles can't reach the sulcus.</p><div class="vs-grid"><div class="vs-card good"><h5>Gradual (<30°)</h5><p>Soft tissue adapts, easy to clean, low peri-implantitis risk.</p></div><div class="vs-card bad"><h5>Steep (>30°)</h5><p>Creates a plaque trap, impossible to clean, high peri-implantitis risk.</p></div></div><div class="hl tip"><strong>Screw access hole must emerge through the cingulum.</strong> If it doesn't, the implant is in the wrong position. Full stop. Subgingival emergence should always be <strong>concave</strong> — convex pushes mid-labial tissue and causes recession.</div>`},
+  ],
+  quiz:[
+    {q:'The primary advantage of screw-retained over cemented is:',opts:['Better aesthetics','Stronger bond','Full retrievability','Lower cost'],ans:2,fb:'Retrievability is the key advantage. Can remove, repair, modify without destruction.'},
+    {q:'Where should the screw access hole emerge on an anterior crown?',opts:['Labial surface','Incisal edge','Cingulum (palatal)','Anywhere'],ans:2,fb:'If it doesn\'t come through the cingulum, the implant is in the wrong position.'},
+  ]
+},
+{
+  id:'periimplantitis', num:'09', title:'Peri-Implantitis — Prevention & Treatment',
+  points:[
+    {icon:'green',emoji:'✅',title:'Mucositis vs Peri-Implantitis',sub:'Reversible vs irreversible — catch it early',
+     body:`<div class="vs-grid"><div class="vs-card good"><h5>Peri-Implant Mucositis</h5><p><strong>Reversible</strong> inflammation without bone loss — the gingivitis equivalent. BOP present but no radiographic bone loss. Intensify hygiene + chlorhexidine.</p></div><div class="vs-card bad"><h5>Peri-Implantitis</h5><p><strong>Irreversible</strong> progressive bone loss. BOP/suppuration + radiographic bone loss. Surgical treatment success only ~50–60%.</p></div></div><div class="hl rule"><strong>Probing is essential</strong> at every maintenance visit. Use light force (~0.2N — about half the standard force for teeth). Record baseline depths at crown delivery. It's the <strong>change over time</strong> that matters, not the absolute number.</div>`},
+    {icon:'red',emoji:'🦠',title:'The Surface Paradox',sub:'What integrates well also harbours bacteria',
+     body:`<p>The SLA surface's mountains, caves, and tunnels give osteoblasts excellent grip for integration. But once exposed to the oral environment, <strong>bacteria colonise those same caves and tunnels</strong> where no cleaning instrument can reach.</p><div class="hl warn"><strong>Surgical treatment success: only ~50–60%.</strong> This is why prevention is 10× more effective than treatment. Design for cleanability. Screw-retained. Gentle emergence. Structured maintenance.</div>`},
+    {icon:'warm',emoji:'🛡️',title:'Prevention Checklist',sub:'The six pillars of peri-implant health',
+     body:`<div class="steps"><div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Patient selection</strong> — Screen for uncontrolled diabetes, active perio, heavy smoking</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Surgical technique</strong> — Palatal position, apical stability, preserve cortical plate</div></div><div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Prosthetic design</strong> — Screw-retained, emergence <30°, cleanable contours</div></div><div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Occlusion</strong> — Narrow table, central fossa contacts, night guard for bruxers</div></div><div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Maintenance</strong> — 3-monthly year 1, then risk-based. Probe + radiograph at every visit</div></div><div class="step-item"><div class="step-num">6</div><div class="step-text"><strong>Patient education</strong> — Interdental brushes, implants need MORE care than teeth</div></div></div>`},
+  ],
+  quiz:[
+    {q:'Peri-implant mucositis is:',opts:['Irreversible bone loss','Reversible inflammation — the gingivitis equivalent','Normal around all implants','Only caused by cement'],ans:1,fb:'Mucositis is reversible. Catching it early through regular probing prevents progression to irreversible peri-implantitis.'},
+    {q:'Why is peri-implantitis so difficult to treat?',opts:['Titanium corrodes','Bacteria hide in micro-rough surface caves beyond instrument reach','Bone is too dense','Antibiotics can\'t penetrate'],ans:1,fb:'The SLA surface caves and tunnels that aid integration become bacterial strongholds once exposed.'},
+  ]
+},
+{
+  id:'excellence', num:'10', title:'Clinical Excellence & Evidence-Based Practice',
+  points:[
+    {icon:'purple',emoji:'🎯',title:'The "Chosen Outcome" Philosophy',sub:'Most failures are predictable consequences of decisions',
+     body:`<p>The <strong>"chosen outcome"</strong> is the number one complication in implant dentistry. Most failures aren't bad luck — they're predictable results of planning decisions.</p><p><strong>Examples:</strong> Wide implant on cortical bone = chosen resorption. Cement-retained when screw was possible = chosen risk. No graft on thin phenotype = chosen bone loss.</p><div class="hl rule"><strong>Every decision has a consequence.</strong> Position determines emergence. Restoration determines maintenance. Patient selection determines risk. See the outcome before it happens.</div>`},
+    {icon:'warm',emoji:'📊',title:'Evidence-Based Decision Making',sub:'Best research + clinical skills + patient values',
+     body:`<p>Evidence-based dentistry integrates <strong>three components</strong>: best available research, your clinical skills, AND patient values.</p><div class="hl warn"><strong>Red flags in claims:</strong> "In my experience" (anecdote), "Everyone uses it" (popularity ≠ validity), "The rep told me" (sales pitch), "My last 5 cases" (case series = lowest evidence).<br><br>Always read the referenced paper yourself. Verify it supports what was claimed.</div>`},
+    {icon:'green',emoji:'📈',title:'The Four Levels of Competence',sub:'Know where you are — stay safe',
+     body:`<div class="steps"><div class="step-item"><div class="step-num" style="background:var(--red)">1</div><div class="step-text"><strong>Unconscious Incompetence</strong> — You don't know what you don't know. Most dangerous level.</div></div><div class="step-item"><div class="step-num" style="background:var(--warm)">2</div><div class="step-text"><strong>Conscious Incompetence</strong> — You know what you don't know. Safest transition. You know when to refer.</div></div><div class="step-item"><div class="step-num" style="background:var(--accent)">3</div><div class="step-text"><strong>Conscious Competence</strong> — You can do it but think through every step. Checklists. Meticulous planning.</div></div><div class="step-item"><div class="step-num" style="background:var(--green)">4</div><div class="step-text"><strong>Unconscious Competence</strong> — Second nature. Anticipate problems. Teach others. Takes years.</div></div></div><div class="hl tip"><strong>After this course:</strong> Most move from Level 1 → Level 2. This is the most valuable transition. You now know the right questions, when to refer, and how to learn safely.</div>`},
+  ],
+  quiz:[
+    {q:'The "chosen outcome" refers to:',opts:['The patient\'s desired result','Predictable complications from clinical decisions','The treatment plan signed by the patient','Expected implant lifespan'],ans:1,fb:'Most complications are predictable consequences of decisions. Choosing a wide implant pressing cortical bone = choosing resorption.'},
+    {q:'After completing a foundation course, most delegates reach:',opts:['Unconscious competence','Conscious competence','Conscious incompetence — knows what they don\'t know','No change'],ans:2,fb:'Moving from Level 1 to Level 2 is the most valuable transition — you now know when to refer and how to learn safely.'},
+  ]
+}
+];
+
+// ═══════════════════════════════════════════════════════════════
+// ENGINE
+// ═══════════════════════════════════════════════════════════════
+let currentCh = 0;
+let totalQ = 0, correctQ = 0, answeredQ = 0;
+let chCompleted = new Set();
+
+// Count total questions
+chapters.forEach(ch => totalQ += ch.quiz.length);
+
+function buildNav() {
+  const nav = document.getElementById('chNav');
+  nav.innerHTML = '';
+  chapters.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.id = 'nav-' + i;
+    btn.innerHTML = `${ch.num} ${ch.title.split('—')[0].split('&')[0].trim()}<span class="check"> ✓</span>`;
+    btn.onclick = () => showChapter(i);
+    if (i === 0) btn.classList.add('active');
+    if (chCompleted.has(i)) btn.classList.add('done');
+    nav.appendChild(btn);
+  });
+}
+
+function showChapter(idx) {
+  currentCh = idx;
+  // Update nav
+  document.querySelectorAll('.chapter-nav button').forEach((b,i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  // Show chapter
+  document.querySelectorAll('.chapter').forEach(c => c.classList.remove('visible'));
+  const el = document.getElementById('ch-' + idx);
+  if (el) el.classList.add('visible');
+  el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function buildChapters() {
+  const main = document.getElementById('mainArea');
+  main.innerHTML = '';
+  
+  chapters.forEach((ch, ci) => {
+    let html = `<div class="chapter ${ci===0?'visible':''}" id="ch-${ci}">`;
+    html += `<div class="chapter-header"><div class="ch-num">Chapter ${ch.num}</div><h2>${ch.title}</h2></div>`;
+    
+    // Key points
+    ch.points.forEach((kp, ki) => {
+      html += `<div class="kp" id="kp-${ci}-${ki}"><div class="kp-header" onclick="toggleKP(${ci},${ki})"><div class="kp-icon ${kp.icon}">${kp.emoji}</div><div class="kp-title-area"><div class="kp-title">${kp.title}</div><div class="kp-subtitle">${kp.sub}</div></div><div class="kp-toggle">▼</div></div><div class="kp-body">${kp.body}</div></div>`;
+    });
+    
+    // Checkpoint quiz
+    html += `<div class="checkpoint" id="cp-${ci}"><div class="cp-label">✦ Checkpoint — Chapter ${ch.num}</div>`;
+    ch.quiz.forEach((q, qi) => {
+      html += `<div class="cp-qblock" id="cpq-${ci}-${qi}" style="${qi>0?'margin-top:1.5rem':''}"><div class="cp-q">${q.q}</div><div class="cp-opts">`;
+      q.opts.forEach((o, oi) => {
+        html += `<div class="cp-opt" data-ch="${ci}" data-qi="${qi}" data-oi="${oi}" onclick="answerCP(${ci},${qi},${oi})"><span class="dot"></span><span>${o}</span></div>`;
+      });
+      html += `</div><div class="cp-fb ok" id="cpfb-${ci}-${qi}-ok"></div><div class="cp-fb no" id="cpfb-${ci}-${qi}-no"></div></div>`;
+    });
+    html += `</div>`;
+    
+    // Next button
+    if (ci < chapters.length - 1) {
+      html += `<button class="next-ch-btn" onclick="completeAndNext(${ci})">Continue to Chapter ${chapters[ci+1].num}: ${chapters[ci+1].title.split('—')[0].split('&')[0].trim()} →</button>`;
+    } else {
+      html += `<button class="next-ch-btn" onclick="showFinal()">View Final Results →</button>`;
+    }
+    
+    html += `</div>`;
+    main.innerHTML += html;
+  });
+}
+
+function toggleKP(ci, ki) {
+  const el = document.getElementById('kp-' + ci + '-' + ki);
+  el.classList.toggle('open');
+}
+
+function answerCP(ci, qi, oi) {
+  const q = chapters[ci].quiz[qi];
+  const block = document.getElementById('cpq-' + ci + '-' + qi);
+  if (block.dataset.done) return;
+  block.dataset.done = '1';
+  answeredQ++;
+  
+  const isCorrect = oi === q.ans;
+  if (isCorrect) correctQ++;
+  
+  const opts = block.querySelectorAll('.cp-opt');
+  opts.forEach((o, j) => {
+    o.classList.add('locked');
+    if (j === oi) o.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect && j === q.ans) o.classList.add('show-correct');
+  });
+  
+  if (isCorrect) {
+    opts[oi].querySelector('.dot').textContent = '✓';
+  } else {
+    opts[oi].querySelector('.dot').textContent = '✗';
+    opts[q.ans].querySelector('.dot').textContent = '✓';
+  }
+  
+  const fbId = isCorrect ? `cpfb-${ci}-${qi}-ok` : `cpfb-${ci}-${qi}-no`;
+  const fb = document.getElementById(fbId);
+  fb.textContent = (isCorrect ? '✓ Correct! ' : '✗ Incorrect. ') + q.fb;
+  fb.classList.add('show');
+  
+  updateGlobal();
+}
+
+function completeAndNext(ci) {
+  chCompleted.add(ci);
+  const btn = document.getElementById('nav-' + ci);
+  if (btn) btn.classList.add('done');
+  
+  // Open all KPs in next chapter
+  const nextCi = ci + 1;
+  showChapter(nextCi);
+  updateGlobal();
+}
+
+function updateGlobal() {
+  const pct = totalQ > 0 ? Math.round((answeredQ / totalQ) * 100) : 0;
+  document.getElementById('globalProg').style.width = pct + '%';
+  document.getElementById('globalScore').textContent = correctQ + ' / ' + answeredQ;
+}
+
+function showFinal() {
+  chCompleted.add(chapters.length - 1);
+  const btn = document.getElementById('nav-' + (chapters.length - 1));
+  if (btn) btn.classList.add('done');
+  
+  document.querySelectorAll('.chapter').forEach(c => c.classList.remove('visible'));
+  
+  const pct = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+  document.getElementById('finalPct').textContent = pct + '%';
+  document.getElementById('fCorrect').textContent = correctQ;
+  document.getElementById('fWrong').textContent = answeredQ - correctQ;
+  document.getElementById('fChaps').textContent = chCompleted.size;
+  
+  let msg = '';
+  if (pct >= 90) msg = 'Outstanding — you\'ve mastered the fundamentals!';
+  else if (pct >= 70) msg = 'Great work — solid foundation with some areas to revisit.';
+  else if (pct >= 50) msg = 'Good effort — revisit the chapters where you missed questions.';
+  else msg = 'Keep studying — go through the key points again before retaking.';
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('finalMsg').style.color = pct >= 70 ? 'var(--accent2)' : 'var(--warm)';
+  
+  const fr = document.getElementById('finalResults');
+  fr.classList.add('show');
+  fr.scrollIntoView({ behavior:'smooth' });
+  updateGlobal();
+}
+
+// Init
+buildNav();
+buildChapters();
+
+// Auto-open first KP in first chapter
+setTimeout(() => {
+  const first = document.getElementById('kp-0-0');
+  if (first) first.classList.add('open');
+}, 300);
+</script>
+</body>
+</html>

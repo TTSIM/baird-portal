@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2: Surgical Principles & Biomechanics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--accent:#8b5cf6;--accent2:#ec4899;--green:#10b981;--red:#ef4444;--gold:#f59e0b;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#1e293b}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.portal-back{display:inline-flex;align-items:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:rgba(17,24,39,.92);padding:.45rem .8rem;border-radius:999px}
+.portal-back:hover{color:var(--accent2);border-color:var(--accent2)}
+.container{max-width:52rem;margin:0 auto;padding:2rem}
+.header{text-align:center;margin-bottom:2.5rem}.header .tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);background:rgba(139,92,246,.1);padding:.3rem 1rem;border-radius:20px;letter-spacing:.08em;display:inline-block;margin-bottom:.8rem}
+.header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}.header p{color:var(--text3);font-size:1rem}
+.progress-wrap{background:var(--surface2);border-radius:12px;padding:1rem 1.4rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.2rem;border:1px solid var(--border);position:sticky;top:1rem;z-index:50;backdrop-filter:blur(12px)}
+.progress-bar-bg{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;width:0}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text3);min-width:5rem;text-align:right}.score-display{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);min-width:4rem}
+.question-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;transition:all .3s}.question-card.answered{opacity:.85}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.5rem}.q-text{font-size:1.1rem;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:1.2rem}
+.q-options{display:flex;flex-direction:column;gap:.5rem}
+.q-option{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:.95rem;color:var(--text2);line-height:1.45}
+.q-option:hover:not(.disabled){border-color:var(--accent);color:var(--text);background:rgba(139,92,246,.04)}.q-option .letter{width:1.6rem;height:1.6rem;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.q-option:hover:not(.disabled) .letter{border-color:var(--accent);color:var(--accent)}
+.q-option.correct{border-color:var(--green);background:rgba(16,185,129,.06)}.q-option.correct .letter{background:var(--green);border-color:var(--green);color:#fff}
+.q-option.wrong{border-color:var(--red);background:rgba(239,68,68,.04)}.q-option.wrong .letter{background:var(--red);border-color:var(--red);color:#fff}
+.q-option.disabled{pointer-events:none;opacity:.7}.q-option.reveal-correct{border-color:var(--green);background:rgba(16,185,129,.04)}.q-option.reveal-correct .letter{border-color:var(--green);color:var(--green)}
+.feedback{margin-top:1rem;padding:1rem;border-radius:10px;font-size:.92rem;line-height:1.55;display:none;animation:fadeIn .3s ease}.feedback.show{display:block}.feedback.correct-fb{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7}.feedback.wrong-fb{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);color:#fca5a5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.results-panel{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;display:none;margin-top:2rem}.results-panel.show{display:block;animation:fadeIn .5s ease}
+.results-panel .big-score{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;margin:.5rem 0}.results-panel .grade{font-size:1.2rem;font-weight:600;margin-bottom:1rem}
+.results-panel .breakdown{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0}.breakdown .num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700}.breakdown .lbl{font-size:.8rem;color:var(--text3)}
+.restart-btn{margin-top:1.5rem;padding:.7rem 2rem;background:var(--accent);border:none;border-radius:10px;color:#fff;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s}.restart-btn:hover{background:#7c3aed;transform:translateY(-1px)}
+@media(max-width:700px){.container{padding:1rem}.question-card{padding:1.2rem}h1{font-size:1.8rem!important}}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="header">
+  <div class="tag">QUIZ 02 OF 03</div>
+  <h1>Surgical Principles & Biomechanics</h1>
+  <p>30 questions · Covers Lecture 2 topics · Click an option to answer</p>
+</div>
+<div class="progress-wrap">
+  <div class="score-display" id="scoreDisp">0/0</div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar"></div></div>
+  <div class="progress-text" id="progText">0 / 30</div>
+</div>
+<div id="quizArea"></div>
+<div class="results-panel" id="results">
+  <p style="color:var(--text3);font-size:.9rem">YOUR RESULT</p>
+  <div class="big-score" id="finalScore" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</div>
+  <div class="grade" id="gradeText"></div>
+  <div class="breakdown">
+    <div class="item"><div class="num" id="correctCount" style="color:var(--green)">0</div><div class="lbl">Correct</div></div>
+    <div class="item"><div class="num" id="wrongCount" style="color:var(--red)">0</div><div class="lbl">Incorrect</div></div>
+    <div class="item"><div class="num" id="pctNum" style="color:var(--accent2)">0%</div><div class="lbl">Score</div></div>
+  </div>
+  <button class="restart-btn" onclick="restart()">Retake Quiz</button>
+</div>
+</div>
+<script>
+const questions=[
+{q:"Press-fit is defined as:",opts:["Pressing the implant below the bone crest","Controlled compression of cancellous bone by a slightly wider implant","Using hand pressure instead of motor to seat the implant","The clicking sound when an implant seats fully"],ans:1,fb:"Press-fit is the controlled compression when an implant wider than the osteotomy is placed. This micro-damage triggers the biological cascade for osteointegration."},
+{q:"For a 4.0mm implant, the correct osteotomy diameter is:",opts:["4.0mm","4.5mm","3.5mm","3.0mm"],ans:2,fb:"3.5mm creates 0.25mm compression on each side — optimal press-fit on cancellous bone. 4.0mm = no compression. 4.5mm = implant rocks."},
+{q:"In the posterior maxilla (soft bone), what osteotomy for a 4.0mm implant?",opts:["3.5mm standard","4.0mm to match","3.0mm — extra compression needed","2.5mm for maximum grip"],ans:2,fb:"Soft posterior maxillary bone needs extra compression: drill 3.0mm and skip the profile drill. Standard 3.5mm may not provide enough press-fit in type IV bone."},
+{q:"A 4.5mm osteotomy for a 4.0mm implant results in:",opts:["Excellent primary stability","The implant rocking — guaranteed fibrous healing","Slightly loose but acceptable fit","Better osteointegration due to blood space"],ans:1,fb:"The implant rocks in an oversized hole. Motion >150μm stimulates fibroblasts instead of osteoblasts → fibrous encapsulation → guaranteed failure."},
+{q:"What is the micro-motion threshold above which fibroblasts are stimulated?",opts:["50 micrometres","100 micrometres","150 micrometres","200 micrometres"],ans:2,fb:"Above 150μm of micro-motion, fibroblasts are stimulated instead of osteoblasts. This threshold is absolute — above it, fibrous healing is guaranteed."},
+{q:"The correct cell cascade sequence after press-fit is:",opts:["Osteoblasts → Osteoclasts → Osteocytes","Osteoclasts → Osteoblasts → Osteocytes","Osteocytes → Osteoclasts → Osteoblasts","Fibroblasts → Osteoblasts → Osteocytes"],ans:2,fb:"Osteocytes (radar) detect pressure → signal osteoclasts (cleaners) to remove compressed bone → osteoclasts signal stem cells to become osteoblasts (builders)."},
+{q:"Osteocytes are primarily found in:",opts:["Cortical bone","Cancellous bone","Periodontal ligament","Periosteum"],ans:1,fb:"Osteocytes are the sensor cells embedded primarily in cancellous bone. This is why press-fit on cancellous bone triggers the biological response."},
+{q:"RANKL is released during press-fit and activates:",opts:["Osteoblasts directly","Fibroblasts","Osteoclasts","Macrophages"],ans:2,fb:"RANKL (Receptor Activator of Nuclear factor Kappa-B Ligand) is released from compressed bone and activates osteoclasts to begin the remodelling cascade."},
+{q:"In an unhealthy patient, mesenchymal stem cells differentiate into:",opts:["Osteoblasts → woven bone","Osteocytes → mature bone","Fibroblasts → granulation tissue","Chondrocytes → cartilage"],ans:2,fb:"In unhealthy patients (diabetes, infection, etc.), stem cells become fibroblasts instead of osteoblasts → granulation tissue fills the gap → implant fails at 12 weeks."},
+{q:"Woven bone is:",opts:["The final, strongest bone type around implants","Random, weak bone that forms first and later remodels to lamellar","A pathological finding indicating failure","Only found in children"],ans:1,fb:"Woven bone is the first bone deposited — random collagen fibres, weak but fast-forming. Through remodelling, osteoclasts remove it and osteoblasts deposit organised lamellar bone."},
+{q:"Lamellar bone has collagen fibres oriented:",opts:["Randomly in all directions","Parallel to the implant surface","Perpendicular to the implant surface","In a spiral pattern"],ans:2,fb:"Lamellar bone has organised collagen fibres perpendicular to the implant surface, providing maximum strength and stability."},
+{q:"Torque measures:",opts:["Lateral movement of the implant","Resistance to rotation (spinning)","Vertical loading capacity","Bone density around the implant"],ans:1,fb:"Torque measures resistance to rotation as the implant is placed. It's measured in Newton centimetres (Ncm) using motor sensors or a manual torque wrench."},
+{q:"The minimum acceptable implant torque is:",opts:["5 Ncm","15 Ncm","25 Ncm","35 Ncm"],ans:1,fb:"Below 15 Ncm, the implant is rocking. Micro-motion will exceed 150μm, guaranteeing fibrous healing. Must use Plan B (wider implant)."},
+{q:"If your implant achieves only 12 Ncm, you should:",opts:["Leave it and hope it integrates","Add bone cement around it","Remove it and place a wider implant (Plan B)","Apply more downward pressure"],ans:2,fb:"Below 15 Ncm = rocking = guaranteed failure. Remove immediately and place a wider implant into the same osteotomy without further drilling."},
+{q:"'Pressure necrosis' above 50 Ncm is:",opts:["A serious concern requiring torque limits","An outdated theory — location matters more than magnitude","Only relevant in the anterior zone","Proven by recent RCTs"],ans:1,fb:"Pressure necrosis is outdated. 100 Ncm on cancellous bone = fine. 30 Ncm on cortical bone = resorption. It's about WHERE, not HOW MUCH."},
+{q:"ISQ measures:",opts:["Rotational resistance","Lateral movement using magnetic resonance","Bone mineral density","Blood flow to the implant"],ans:1,fb:"ISQ (Implant Stability Quotient) measures lateral movement using magnetic resonance technology. It complements torque, which measures rotational resistance."},
+{q:"The ideal ISQ measurement protocol is:",opts:["Only on the day of placement","Only at 12 weeks","Day of placement AND 12 weeks — compare the trend","Every week for 12 weeks"],ans:2,fb:"Measure ISQ at insertion (baseline) and at 12 weeks. If ISQ improved, the implant has integrated. If same or decreased, integration is failing."},
+{q:"If you can only choose one stability measurement, prefer:",opts:["ISQ — more comprehensive","Torque — if high, ISQ is usually high too","Neither — just check x-ray","Finger test — simplest method"],ans:1,fb:"If torque is high, ISQ is usually high as well. Torque is more universally available and gives a reliable single measurement."},
+{q:"The stability curve danger zone is:",opts:["Day 0 — before any healing starts","Weeks 1–5 — mechanical declining, biological not yet established","Weeks 8–12 — during remodelling","After 24 weeks — bone fatigue"],ans:1,fb:"Weeks 1–5: mechanical stability is declining (osteoclasts removing compressed bone) while biological stability hasn't compensated yet. Loading now = failure."},
+{q:"ISQ dropping at weeks 2–4 indicates:",opts:["The implant is failing — consider removal","Normal: osteoclasts are removing compressed bone as part of integration","The patient needs antibiotics","Cortical bone is resorbing"],ans:1,fb:"The dip is expected and normal. Osteoclasts are removing press-fit compressed bone (reducing mechanical stability) while new bone hasn't formed yet."},
+{q:"Loading an implant during weeks 1–5 is like:",opts:["Loading a post in set concrete — completely safe","Loading a post in wet concrete — it will move and never set properly","Applying gentle force to stimulate bone growth","Testing if the implant has integrated"],ans:1,fb:"Dr Hassan's analogy: like pushing a fence post while concrete is still setting. The implant moves, the bone never sets properly around it. Wait until 12+ weeks."},
+{q:"Screw torque (abutment screw) differs from implant torque because:",opts:["They use different units of measurement","Screw torque is fixed per manufacturer; implant torque varies with bone","Screw torque is always higher than implant torque","They measure the same thing"],ans:1,fb:"Implant torque varies with bone density and is measured during placement. Screw torque is prescribed by the manufacturer (e.g., Megagen = 35 Ncm) and must be followed exactly."},
+{q:"Finger-tightening a screw achieves approximately:",opts:["5 Ncm","15 Ncm","25 Ncm","35 Ncm"],ans:1,fb:"Human finger strength achieves approximately 15 Ncm regardless of hand strength. The torque wrench is essential to reach manufacturer-specified values."},
+{q:"Over-torquing an abutment screw can cause:",opts:["Stronger connection and better seal","Screw fracture or stripped hex head","Improved bone integration","No significant problems"],ans:1,fb:"Over-torque → screw may fracture, or hex head strips to a circle. Removal torque is always higher than insertion torque, compounding the problem."},
+{q:"Removal torque compared to insertion torque is:",opts:["Lower — friction decreases over time","The same","Higher — due to friction and settling","Unpredictable"],ans:2,fb:"The screw settles under load and friction increases. If you torque at 35 Ncm, you typically need ~40 Ncm to remove. Over-torquing makes this worse."},
+{q:"The Plan B philosophy means:",opts:["Always have a backup implant (wider) ready in case Plan A fails","Plan to place the implant in a second surgery","Have an alternative treatment plan (bridge instead of implant)","Plan B is for the second implant in the case"],ans:0,fb:"Always have a wider implant ready. If your 4.0mm achieves <15 Ncm, remove it and place 4.5mm without further drilling. Never use your widest implant as Plan A."},
+{q:"At 5 years, the complication rate for single implants is approximately:",opts:["10%","25%","40%","60%"],ans:2,fb:"~40% at 5 years, ~50% at 10 years. These are COMPLICATION rates (porcelain chips, screw loosening, etc.), not failure rates. True implant loss is only 2–5%."},
+{q:"'Unbreakable doesn't exist. Unrepairable is what you and I should always avoid' was said by:",opts:["Brånemark","Dr Hassan","Gallucci","Danny Buser"],ans:2,fb:"Gallucci, an American prosthodontist. This encapsulates the Plan B philosophy: design for retrievability and repairability."},
+{q:"Healing time for a healthy patient in the mandible is:",opts:["4 weeks","8 weeks","12 weeks","24 weeks"],ans:1,fb:"Mandible: 8 weeks (dense bone, good vascularity). Maxilla: 12 weeks (softer bone). Osteoporotic: 24 weeks. Diabetic: 24–36 weeks."},
+{q:"When choosing an implant system, the most important differentiator is:",opts:["Integration speed — all systems are similar now","Maintaining bone level long-term — connection design and coronal geometry","Price — cheaper systems work just as well","Brand recognition — patients trust known names"],ans:1,fb:"All modern premium systems will integrate. The differentiator is maintaining bone level long-term — which depends on connection design, surface treatment, and coronal geometry."}
+];
+let answered=0,correct=0;
+function init(){const a=document.getElementById('quizArea');a.innerHTML='';answered=0;correct=0;updateUI();
+questions.forEach((q,i)=>{const d=document.createElement('div');d.className='question-card';d.id='q'+i;
+let opts='';q.opts.forEach((o,j)=>{opts+=`<div class="q-option" data-q="${i}" data-o="${j}" onclick="answer(${i},${j})"><span class="letter">${'ABCD'[j]}</span><span>${o}</span></div>`;});
+d.innerHTML=`<div class="q-number">QUESTION ${i+1} OF 30</div><div class="q-text">${q.q}</div><div class="q-options">${opts}</div><div class="feedback correct-fb" id="fb${i}c"></div><div class="feedback wrong-fb" id="fb${i}w"></div>`;
+a.appendChild(d);});}
+function answer(qi,oi){const card=document.getElementById('q'+qi);if(card.classList.contains('answered'))return;card.classList.add('answered');answered++;
+const isCorrect=oi===questions[qi].ans;if(isCorrect)correct++;
+const opts=card.querySelectorAll('.q-option');opts.forEach((o,j)=>{o.classList.add('disabled');if(j===oi)o.classList.add(isCorrect?'correct':'wrong');if(!isCorrect&&j===questions[qi].ans)o.classList.add('reveal-correct');});
+const fbId=isCorrect?`fb${qi}c`:`fb${qi}w`;document.getElementById(fbId).textContent=(isCorrect?'✓ Correct! ':'✗ Incorrect. ')+questions[qi].fb;document.getElementById(fbId).classList.add('show');
+updateUI();if(answered===30)showResults();}
+function updateUI(){document.getElementById('progBar').style.width=(answered/30*100)+'%';document.getElementById('progText').textContent=answered+' / 30';document.getElementById('scoreDisp').textContent=correct+'/'+answered;}
+function showResults(){const pct=Math.round(correct/30*100);const r=document.getElementById('results');r.classList.add('show');document.getElementById('finalScore').textContent=pct+'%';document.getElementById('correctCount').textContent=correct;document.getElementById('wrongCount').textContent=30-correct;document.getElementById('pctNum').textContent=pct+'%';
+let g='',c='';if(pct>=90){g='Outstanding! 🏆';c='var(--green)'}else if(pct>=70){g='Great work! 💪';c='var(--accent2)'}else if(pct>=50){g='Good effort — review the weaker areas';c='var(--gold)'}else{g='Keep studying — revisit Lecture 2';c='var(--red)'}
+document.getElementById('gradeText').textContent=g;document.getElementById('gradeText').style.color=c;r.scrollIntoView({behavior:'smooth'});}
+function restart(){document.getElementById('results').classList.remove('show');init();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1: Foundations — History, Bone Biology & Osteointegration</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--accent:#3b82f6;--accent2:#06b6d4;--green:#10b981;--red:#ef4444;--gold:#f59e0b;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#1e293b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.portal-back{display:inline-flex;align-items:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:rgba(17,24,39,.92);padding:.45rem .8rem;border-radius:999px}
+.portal-back:hover{color:var(--accent2);border-color:var(--accent2)}
+.container{max-width:52rem;margin:0 auto;padding:2rem}
+.header{text-align:center;margin-bottom:2.5rem}
+.header .tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);background:rgba(59,130,246,.1);padding:.3rem 1rem;border-radius:20px;letter-spacing:.08em;display:inline-block;margin-bottom:.8rem}
+.header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
+.header p{color:var(--text3);font-size:1rem}
+.progress-wrap{background:var(--surface2);border-radius:12px;padding:1rem 1.4rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.2rem;border:1px solid var(--border);position:sticky;top:1rem;z-index:50;backdrop-filter:blur(12px)}
+.progress-bar-bg{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;width:0}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text3);min-width:5rem;text-align:right}
+.score-display{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);min-width:4rem}
+.question-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;transition:all .3s}
+.question-card.answered{opacity:.85}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.5rem}
+.q-text{font-size:1.1rem;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:1.2rem}
+.q-options{display:flex;flex-direction:column;gap:.5rem}
+.q-option{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:.95rem;color:var(--text2);line-height:1.45}
+.q-option:hover:not(.disabled){border-color:var(--accent);color:var(--text);background:rgba(59,130,246,.04)}
+.q-option .letter{width:1.6rem;height:1.6rem;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.q-option:hover:not(.disabled) .letter{border-color:var(--accent);color:var(--accent)}
+.q-option.correct{border-color:var(--green);background:rgba(16,185,129,.06)}.q-option.correct .letter{background:var(--green);border-color:var(--green);color:#fff}
+.q-option.wrong{border-color:var(--red);background:rgba(239,68,68,.04)}.q-option.wrong .letter{background:var(--red);border-color:var(--red);color:#fff}
+.q-option.disabled{pointer-events:none;opacity:.7}
+.q-option.reveal-correct{border-color:var(--green);background:rgba(16,185,129,.04)}.q-option.reveal-correct .letter{border-color:var(--green);color:var(--green)}
+.feedback{margin-top:1rem;padding:1rem;border-radius:10px;font-size:.92rem;line-height:1.55;display:none;animation:fadeIn .3s ease}
+.feedback.show{display:block}
+.feedback.correct-fb{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7}
+.feedback.wrong-fb{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);color:#fca5a5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.results-panel{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;display:none;margin-top:2rem}
+.results-panel.show{display:block;animation:fadeIn .5s ease}
+.results-panel .big-score{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;margin:.5rem 0}
+.results-panel .grade{font-size:1.2rem;font-weight:600;margin-bottom:1rem}
+.results-panel .breakdown{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0}
+.results-panel .breakdown .item{text-align:center}.breakdown .num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700}.breakdown .lbl{font-size:.8rem;color:var(--text3)}
+.restart-btn{margin-top:1.5rem;padding:.7rem 2rem;background:var(--accent);border:none;border-radius:10px;color:#fff;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s}
+.restart-btn:hover{background:#2563eb;transform:translateY(-1px)}
+@media(max-width:700px){.container{padding:1rem}.question-card{padding:1.2rem}h1{font-size:1.8rem!important}}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="header">
+  <div class="tag">QUIZ 01 OF 03</div>
+  <h1>Foundations — History, Bone Biology & Osteointegration</h1>
+  <p>30 questions · Covers Lectures 1 topics · Click an option to answer</p>
+</div>
+<div class="progress-wrap">
+  <div class="score-display" id="scoreDisp">0/0</div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar"></div></div>
+  <div class="progress-text" id="progText">0 / 30</div>
+</div>
+<div id="quizArea"></div>
+<div class="results-panel" id="results">
+  <p style="color:var(--text3);font-size:.9rem">YOUR RESULT</p>
+  <div class="big-score" id="finalScore" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</div>
+  <div class="grade" id="gradeText"></div>
+  <div class="breakdown">
+    <div class="item"><div class="num" id="correctCount" style="color:var(--green)">0</div><div class="lbl">Correct</div></div>
+    <div class="item"><div class="num" id="wrongCount" style="color:var(--red)">0</div><div class="lbl">Incorrect</div></div>
+    <div class="item"><div class="num" id="pctNum" style="color:var(--accent2)">0%</div><div class="lbl">Score</div></div>
+  </div>
+  <button class="restart-btn" onclick="restart()">Retake Quiz</button>
+</div>
+</div>
+<script>
+const questions=[
+{q:"Who discovered osteointegration?",opts:["Nobel Biocare researchers","Per-Ingvar Brånemark","Danny Buser","Marco Esposito"],ans:1,fb:"Brånemark was a Swedish anatomist who accidentally discovered that bone fuses to titanium while studying blood flow in rabbit bones using optical chambers."},
+{q:"Brånemark's original experiment involved:",opts:["Placing implants in dogs","Studying blood flow in rabbit bones with titanium chambers","Testing different implant surface textures","Comparing titanium to stainless steel"],ans:1,fb:"He placed optical chambers made of titanium in rabbit legs to study fracture healing blood flow. After 24 weeks, the devices couldn't be removed — bone had fused to the titanium."},
+{q:"Brånemark's initial implant success rate was approximately:",opts:["90–95%","75–80%","50–60%","30–40%"],ans:2,fb:"Only 50–60% — roughly half of all implants placed would integrate. Surface technology and patient selection have since raised this above 95%."},
+{q:"What were Brånemark's first implant cases called?",opts:["Single tooth replacements","Brånemark bridges — full-arch prostheses","Overdentures","Zygomatic implants"],ans:1,fb:"Brånemark bridges were 6–8 implants supporting a full-arch prosthesis with a hygiene gap underneath for patient cleaning."},
+{q:"Which company did Brånemark's students found?",opts:["Straumann","Megagen","Nobel Biocare","Dentsply"],ans:2,fb:"Brånemark was never a commercial man. His students left and founded Nobel Biocare — the first company to sell dental implants commercially."},
+{q:"Why did hydroxyapatite-coated implants fail?",opts:["HA dissolved in saliva","Bone bonded more strongly to HA than HA bonded to titanium","HA caused allergic reactions","HA prevented blood flow"],ans:1,fb:"The bone–HA bond was stronger than the HA–titanium bond. The coating delaminated, taking integrated bone with it."},
+{q:"Modern SLA implant surfaces look like (under electron microscope):",opts:["Perfectly smooth glass","A mountain landscape with caves and tunnels","Evenly spaced grid pattern","Honeycomb structure"],ans:1,fb:"The sandblasted acid-etched surface creates micro-roughness resembling mountains with caves and tunnels — giving bone cells massive surface area to attach."},
+{q:"The inorganic component of bone makes up what percentage?",opts:["33%","50%","67%","80%"],ans:2,fb:"67% inorganic (calcium and phosphate minerals), 33% organic. Remember: 67/33 split."},
+{q:"Collagen makes up what percentage of bone?",opts:["5%","15%","28%","33%"],ans:2,fb:"28% collagen (part of the 33% organic component). The remaining 5% of organic matter is growth factors."},
+{q:"Vitamin C deficiency primarily affects which bone component?",opts:["Inorganic — calcium minerals","Organic — collagen synthesis","Both equally","Neither — affects blood supply only"],ans:1,fb:"Vitamin C is essential for collagen synthesis. Deficiency (scurvy) impairs the organic bone scaffold needed for new bone formation."},
+{q:"The four stages of healing in correct order are:",opts:["Inflammation, Haemostasis, Maturation, Proliferation","Haemostasis, Proliferation, Inflammation, Maturation","Haemostasis, Inflammation, Proliferation, Maturation","Proliferation, Inflammation, Haemostasis, Maturation"],ans:2,fb:"Haemostasis (stop bleeding) → Inflammation (clean up) → Proliferation (new tissue) → Maturation (strengthen). Same for skin and bone."},
+{q:"In uncontrolled diabetes, the healing problem is:",opts:["Excessive haemostasis","Prolonged inflammation leading to fibroblast dominance","Too-fast maturation","Insufficient haemostasis"],ans:1,fb:"Diabetes extends the inflammation stage. Stem cells differentiate into fibroblasts instead of osteoblasts → granulation tissue instead of bone."},
+{q:"What healing time should you allow for an osteoporotic patient?",opts:["8 weeks (standard)","12 weeks","24 weeks (double time)","6 weeks (faster is better)"],ans:2,fb:"Double the standard healing time. Osteoporotic bone has weak trabecular structure with large spaces — both primary stability and biological integration take longer."},
+{q:"Why is very dense bone (Paget's disease) BAD for implants?",opts:["It's too hard to drill","No cancellous bone or blood supply — only mechanical integration","The bone dissolves titanium","Dense bone causes allergic reactions"],ans:1,fb:"Marble-dense bone has no cancellous structure and minimal blood supply. Integration stays mechanical and never becomes biological — 'like drilling in wood.'"},
+{q:"The minimum age for anterior implants is generally:",opts:["16 years","18 years","21 years, then assess facial growth","25 years for everyone"],ans:2,fb:"Rule: no permanent implants below 21. Then assess individual facial growth. Always include a facial growth consent paragraph for patients in their 20s."},
+{q:"Why can't young patients receive implants?",opts:["Their bone is too soft","Implants are ankylosed — they don't move with continuing facial growth","Their immune system rejects titanium","Paediatric jaws are too small"],ans:1,fb:"Implants are fused to bone and don't move. Neighbouring teeth continue erupting with facial growth → incisal edge discrepancy and apparent recession."},
+{q:"Cortical bone responds to pressure by:",opts:["Stimulating osteointegration","Developing micro-cracks leading to resorption","Becoming stronger over time","Producing growth factors"],ans:1,fb:"'Touch the cortical bone, you lose the cortical bone.' Cortical bone is not elastic. Pressure → micro-cracks → necrosis → resorption."},
+{q:"Primary stability should come from the:",opts:["Coronal third — cortical bone","Apical third — cancellous bone","Equally along the entire implant","Only the implant threads"],ans:1,fb:"Cancellous bone at the apical third provides mechanical stability AND the biological environment for osteointegration. Cortical pressure causes resorption."},
+{q:"'Touch the cortical bone, you lose the cortical bone' means:",opts:["Cortical bone is too thin to drill through","Pressure on cortical bone causes micro-cracks → resorption","Cortical bone has no role in implant dentistry","You should never drill through cortical bone"],ans:1,fb:"Cortical bone cannot withstand compressive forces from an implant. Pressure → micro-cracks → necrosis → resorption. The plate literally disappears."},
+{q:"What percentage of anterior labial plates are less than 1mm thick?",opts:["50%","67%","87%","95%"],ans:2,fb:"Buser et al. found 87% of labial plates in the anterior zone are <1mm. This means most are almost entirely bundle bone."},
+{q:"Bundle bone gets its blood supply from:",opts:["The periosteum","Periodontal ligament bundles","The implant surface","Endosteal arteries"],ans:1,fb:"Bundle bone relies on periodontal ligament bundles for blood supply. When you extract a tooth and sever these bundles, the blood supply is lost."},
+{q:"Phase 1 bone loss after extraction is:",opts:["Preventable with immediate implants","Preventable with immediate loading","Inevitable — bundle bone resorbs regardless","Only occurs in smokers"],ans:2,fb:"Phase 1 (bundle bone resorption) happens within 4–5 weeks after extraction regardless of what you do — immediate implant, loading, or flapless surgery."},
+{q:"The beagle dog studies showed that immediate implants:",opts:["Prevented all bone loss","Still resulted in bone loss — bundle bone resorption is inevitable","Only worked in the mandible","Required antibiotic prophylaxis"],ans:1,fb:"Researchers tried immediate implant, immediate loading, and flapless surgery in beagles. All showed bone loss. Bundle bone resorption is Phase 1 and is unavoidable."},
+{q:"Thin phenotype + no socket graft results in:",opts:["0–5% bone loss","5–20% bone loss",">50% bone loss","No significant bone loss"],ans:2,fb:"Thin phenotype with no intervention leads to >50% bone loss. Socket grafting converts this to 5–20% — equivalent to thick phenotype outcomes."},
+{q:"Socket grafting converts a thin phenotype patient from:",opts:["Low risk to high risk","High risk to low risk","No change in risk","Medium to low risk"],ans:1,fb:"Socket grafting converts high-risk thin phenotype (>50% bone loss) into low-risk (5–20% loss) — equivalent to thick phenotype."},
+{q:"Osteoblasts require what environment to function?",opts:["Motion and flexibility","Stability and press-fit on cancellous bone","High temperature from friction","Acidic pH conditions"],ans:1,fb:"Osteoblasts need stability. Fibroblasts thrive on motion. If micro-motion exceeds 150μm, fibroblasts win → fibrous healing instead of bone."},
+{q:"Growth factors make up what percentage of bone?",opts:["5%","10%","15%","28%"],ans:0,fb:"Growth factors are 5% of bone (part of the 33% organic component). They're the signal molecules that direct stem cell differentiation."},
+{q:"Osteomalacia affects which bone component?",opts:["Organic — collagen","Inorganic — hydroxyapatite formation","Both equally","Only cortical bone"],ans:1,fb:"Osteomalacia is severe vitamin D deficiency that impairs hydroxyapatite (mineral) formation — affecting the inorganic component."},
+{q:"Which statement about osteointegration is TRUE?",opts:["It can only be confirmed before loading","It is confirmed by no mobility, no radiolucent space, no fibrous tissue after loading","A dark line on x-ray around an implant is normal","Once achieved, it lasts forever guaranteed"],ans:1,fb:"Osteointegration is confirmed AFTER loading by three absences: no clinical mobility, no radiolucent space (no lamina dura), and no connective tissue interface."},
+{q:"Why can you not guarantee dental implants long-term?",opts:["Titanium degrades over time","You cannot guarantee the quality of the patient's bone in the future","Government regulations prevent guarantees","Implant companies prohibit guarantees"],ans:1,fb:"Bone is living tissue in constant remodelling. A patient who becomes diabetic, osteoporotic, or has occlusal problems can lose integration years later."}
+];
+let answered=0,correct=0;
+function init(){const a=document.getElementById('quizArea');a.innerHTML='';answered=0;correct=0;updateUI();
+questions.forEach((q,i)=>{const d=document.createElement('div');d.className='question-card';d.id='q'+i;
+let opts='';q.opts.forEach((o,j)=>{opts+=`<div class="q-option" data-q="${i}" data-o="${j}" onclick="answer(${i},${j})"><span class="letter">${'ABCD'[j]}</span><span>${o}</span></div>`;});
+d.innerHTML=`<div class="q-number">QUESTION ${i+1} OF 30</div><div class="q-text">${q.q}</div><div class="q-options">${opts}</div><div class="feedback correct-fb" id="fb${i}c"></div><div class="feedback wrong-fb" id="fb${i}w"></div>`;
+a.appendChild(d);});}
+function answer(qi,oi){const card=document.getElementById('q'+qi);if(card.classList.contains('answered'))return;card.classList.add('answered');answered++;
+const isCorrect=oi===questions[qi].ans;if(isCorrect)correct++;
+const opts=card.querySelectorAll('.q-option');opts.forEach((o,j)=>{o.classList.add('disabled');if(j===oi)o.classList.add(isCorrect?'correct':'wrong');if(!isCorrect&&j===questions[qi].ans)o.classList.add('reveal-correct');});
+const fbId=isCorrect?`fb${qi}c`:`fb${qi}w`;document.getElementById(fbId).textContent=(isCorrect?'✓ Correct! ':'✗ Incorrect. ')+questions[qi].fb;document.getElementById(fbId).classList.add('show');
+updateUI();if(answered===30)showResults();}
+function updateUI(){document.getElementById('progBar').style.width=(answered/30*100)+'%';document.getElementById('progText').textContent=answered+' / 30';document.getElementById('scoreDisp').textContent=correct+'/'+answered;}
+function showResults(){const pct=Math.round(correct/30*100);const r=document.getElementById('results');r.classList.add('show');document.getElementById('finalScore').textContent=pct+'%';document.getElementById('correctCount').textContent=correct;document.getElementById('wrongCount').textContent=30-correct;document.getElementById('pctNum').textContent=pct+'%';
+let g='',c='';if(pct>=90){g='Outstanding! 🏆';c='var(--green)'}else if(pct>=70){g='Great work! 💪';c='var(--accent2)'}else if(pct>=50){g='Good effort — review the weaker areas';c='var(--gold)'}else{g='Keep studying — revisit Lecture 1';c='var(--red)'}
+document.getElementById('gradeText').textContent=g;document.getElementById('gradeText').style.color=c;r.scrollIntoView({behavior:'smooth'});}
+function restart(){document.getElementById('results').classList.remove('show');init();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>

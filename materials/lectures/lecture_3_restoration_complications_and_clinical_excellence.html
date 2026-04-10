@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3: Restoration, Complications & Clinical Excellence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--accent:#3b82f6;--accent2:#06b6d4;--accent3:#8b5cf6;--gold:#f59e0b;--pink:#ec4899;--green:#10b981;--red:#ef4444;--orange:#f97316;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#1e293b}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+.portal-back{position:fixed;top:1rem;left:1rem;z-index:250;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:rgba(17,24,39,.92);padding:.45rem .8rem;border-radius:999px}
+.portal-back:hover{color:var(--accent2);border-color:var(--accent2)}
+.presentation{width:100vw;height:100vh;position:relative}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;padding:3rem 4rem;overflow-y:auto}.slide.active{display:flex;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.slide-number{position:fixed;bottom:1.5rem;right:2rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text3);z-index:100}.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--green),var(--accent2),var(--gold));z-index:200;transition:width .4s ease}
+h1.slide-title{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;line-height:1.15;margin-bottom:1.2rem;background:linear-gradient(135deg,#fff,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2.section-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--accent2);margin-bottom:.8rem}
+h3.sub-title{font-family:'Source Sans 3',sans-serif;font-size:1.2rem;font-weight:600;color:var(--gold);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em}
+p.body-text{font-size:1.05rem;line-height:1.7;color:var(--text2);margin-bottom:.8rem;max-width:52rem}p.body-text strong{color:var(--text);font-weight:600}
+.key-point{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.06));border-left:3px solid var(--green);padding:1rem 1.4rem;border-radius:0 8px 8px 0;margin:.8rem 0}.key-point p{color:var(--text);font-size:1rem;line-height:1.6;margin:0}
+.warning-box{background:rgba(239,68,68,.08);border-left:3px solid var(--red);padding:1rem 1.4rem;border-radius:0 8px 8px 0;margin:.8rem 0}.warning-box p{color:#fca5a5;font-size:1rem;margin:0}
+.gold-box{background:rgba(245,158,11,.08);border-left:3px solid var(--gold);padding:1rem 1.4rem;border-radius:0 8px 8px 0;margin:.8rem 0}.gold-box p{color:#fcd34d;font-size:1rem;margin:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1rem}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1rem}.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-top:1rem}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.4rem}.card h4{font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:.5rem}.card p{font-size:.92rem;color:var(--text2);line-height:1.55}
+.stat-card{text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1rem}.stat-card .num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--green),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.stat-card .label{font-size:.85rem;color:var(--text3);margin-top:.3rem}
+.process-step{display:flex;align-items:center;gap:.8rem;margin:.5rem 0}.step-num{width:2rem;height:2rem;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}.step-text{font-size:.95rem;color:var(--text2)}
+.quiz-container{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0}.quiz-container h4{font-size:1.1rem;color:var(--text);margin-bottom:1rem;font-weight:600}
+.quiz-option{display:block;width:100%;text-align:left;padding:.8rem 1.2rem;margin:.4rem 0;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.95rem;cursor:pointer;transition:all .2s;font-family:'Source Sans 3',sans-serif}
+.quiz-option:hover{border-color:var(--green);color:var(--text)}.quiz-option.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:var(--green)}.quiz-option.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:var(--red)}.quiz-option.disabled{pointer-events:none}
+.quiz-feedback{margin-top:.8rem;padding:.8rem;border-radius:8px;font-size:.9rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.correct-fb{background:rgba(16,185,129,.1);color:var(--green)}.quiz-feedback.wrong-fb{background:rgba(239,68,68,.08);color:#fca5a5}
+.svg-container{display:flex;justify-content:center;margin:1rem 0}
+.nav-controls{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.6rem;z-index:100}
+.nav-btn{padding:.5rem 1.2rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Source Sans 3',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}.nav-btn:hover{border-color:var(--green);color:var(--text)}.nav-btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.cover-slide{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:100vh}.cover-slide h1{font-size:3.5rem;margin-bottom:.5rem}.cover-slide .lecture-num{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--green);letter-spacing:.1em;margin-bottom:1rem;background:rgba(16,185,129,.1);padding:.3rem 1rem;border-radius:20px}
+.toc-item{display:flex;align-items:center;gap:1rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin:.4rem 0;cursor:pointer;transition:all .2s}.toc-item:hover{border-color:var(--green);transform:translateX(4px)}.toc-num{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--green);min-width:2rem}.toc-label{font-size:.95rem;color:var(--text2)}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;margin:1rem 0;font-size:.9rem}.compare-table th{background:var(--surface2);padding:.7rem 1rem;text-align:left;color:var(--accent2);font-weight:600;border-bottom:2px solid var(--border)}.compare-table td{padding:.6rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}.compare-table tr:hover td{background:rgba(16,185,129,.03)}
+.timeline{position:relative;margin:1.5rem 0;padding-left:2rem}.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--green),var(--accent2))}
+.timeline-item{position:relative;margin-bottom:1.2rem;padding-left:1.5rem}.timeline-item::before{content:'';position:absolute;left:-2rem;top:6px;width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}.timeline-item h4{font-size:.95rem;font-weight:700;color:var(--gold)}.timeline-item p{font-size:.9rem;color:var(--text2);line-height:1.5}
+.scenario-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin:.8rem 0;cursor:pointer;transition:all .3s}.scenario-box:hover{border-color:var(--accent2)}.scenario-box .scenario-answer{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border)}.scenario-box.open .scenario-answer{display:block}
+.flip-card{perspective:1000px;cursor:pointer;height:160px}.flip-inner{width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;position:relative}.flip-card.flipped .flip-inner{transform:rotateY(180deg)}.flip-front,.flip-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1rem;text-align:center}.flip-front{background:var(--surface2);border:1px solid var(--border)}.flip-back{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.08));border:1px solid var(--green);transform:rotateY(180deg)}.flip-front h4{color:var(--accent2);font-size:1rem}.flip-front p{color:var(--text3);font-size:.8rem;margin-top:.3rem}.flip-back p{color:var(--text);font-size:.9rem;line-height:1.4}
+.competence-level{padding:1.2rem;border-radius:12px;margin:.5rem 0;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.competence-level::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.competence-level.l1{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}.competence-level.l1::before{background:var(--red)}
+.competence-level.l2{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}.competence-level.l2::before{background:var(--gold)}
+.competence-level.l3{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2)}.competence-level.l3::before{background:var(--accent)}
+.competence-level.l4{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2)}.competence-level.l4::before{background:var(--green)}
+.competence-level h4{font-size:1rem;font-weight:700;margin-bottom:.3rem}.competence-level p{font-size:.9rem;color:var(--text2);line-height:1.5}
+@media(max-width:900px){.slide{padding:1.5rem 2rem}h1.slide-title{font-size:2rem}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.cover-slide h1{font-size:2.2rem}}
+.embedded body{overflow:visible;height:auto}
+.embedded .presentation{width:100%;height:auto;position:relative}
+.embedded .slide{position:relative;top:auto;left:auto;width:100%;height:auto;min-height:0;overflow:visible;padding:2rem 2rem 4rem}
+.embedded .cover-slide{min-height:0;padding:4rem 0 2rem}
+.embedded .progress-bar{position:sticky}
+.embedded .slide-number{position:sticky;top:1rem;right:auto;bottom:auto;display:block;text-align:right;margin:0 2rem 1rem auto;width:fit-content}
+.embedded .nav-controls{position:sticky;bottom:1rem;left:auto;transform:none;justify-content:flex-start;padding:0 2rem 2rem}
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="presentation" id="pres">
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Cover -->
+<div class="slide active" data-slide="1">
+<div class="cover-slide">
+  <div class="lecture-num">LECTURE 03 OF 03</div>
+  <h1 class="slide-title">Restoration, Complications<br>& Clinical Excellence</h1>
+  <p style="max-width:32rem;margin-top:.5rem;color:var(--text3);font-size:1.2rem">Cement vs Screw, Emergence Profile, Peri-Implantitis & Beyond</p>
+  <p style="margin-top:2rem;font-size:.85rem;color:var(--text3)">Bird Academy — Evidence-Based Course in Implant Dentistry</p>
+  <p style="margin-top:3rem;font-size:.8rem;color:var(--text3)">Use ← → arrow keys or buttons to navigate</p>
+</div>
+</div>
+
+<!-- SLIDE 2: Contents -->
+<div class="slide" data-slide="2">
+<h3 class="sub-title">Lecture Overview</h3>
+<h1 class="slide-title">What We'll Cover</h1>
+<div class="grid-2" style="margin-top:.5rem">
+<div>
+  <div class="toc-item" onclick="goSlide(3)"><span class="toc-num">01</span><span class="toc-label">Cement vs Screw-Retained Crowns</span></div>
+  <div class="toc-item" onclick="goSlide(7)"><span class="toc-num">02</span><span class="toc-label">Emergence Profile — The Science of Shape</span></div>
+  <div class="toc-item" onclick="goSlide(11)"><span class="toc-num">03</span><span class="toc-label">Probing Around Implants</span></div>
+  <div class="toc-item" onclick="goSlide(14)"><span class="toc-num">04</span><span class="toc-label">Peri-Implantitis — Prevention & Treatment</span></div>
+  <div class="toc-item" onclick="goSlide(19)"><span class="toc-num">05</span><span class="toc-label">Occlusion & Mechanical Complications</span></div>
+</div>
+<div>
+  <div class="toc-item" onclick="goSlide(22)"><span class="toc-num">06</span><span class="toc-label">Patient Education & Pricing</span></div>
+  <div class="toc-item" onclick="goSlide(24)"><span class="toc-num">07</span><span class="toc-label">The Four Levels of Competence</span></div>
+  <div class="toc-item" onclick="goSlide(26)"><span class="toc-num">08</span><span class="toc-label">Evidence-Based Decision Making</span></div>
+  <div class="toc-item" onclick="goSlide(28)"><span class="toc-num">09</span><span class="toc-label">Clinical Scenarios</span></div>
+  <div class="toc-item" onclick="goSlide(30)"><span class="toc-num">10</span><span class="toc-label">Course Summary & Key Principles</span></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 3: Cement vs Screw -->
+<div class="slide" data-slide="3">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">Cement vs Screw-Retained Crowns</h1>
+<p class="body-text">This is the single most debated topic in implant restorations. The answer isn't always the same — it depends on the clinical scenario.</p>
+<div class="grid-2" style="margin-top:1rem">
+<div class="card" style="border-top:3px solid var(--gold)">
+  <h4 style="color:var(--gold)">Cemented Crown</h4>
+  <p><strong>Concept:</strong> An abutment is screwed into the implant. Then a crown is cemented onto the abutment — just like cementing onto a natural tooth.</p>
+  <div style="margin-top:.8rem">
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">Easier to achieve passive fit</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">Better aesthetics (no screw hole)</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">Simpler lab workflow</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">Excess cement → peri-implantitis</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">NOT retrievable without destruction</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">Cannot remove for maintenance</div></div>
+  </div>
+</div>
+<div class="card" style="border-top:3px solid var(--green)">
+  <h4 style="color:var(--green)">Screw-Retained Crown</h4>
+  <p><strong>Concept:</strong> Crown is screwed directly through to the implant. No cement involved. Screw hole is sealed with composite.</p>
+  <div style="margin-top:.8rem">
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">Fully retrievable — unscrew and remove</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">No cement risk to soft tissue</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--green)">+</div><div class="step-text">Can maintain, repair, and modify</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">Screw access hole visible (aesthetic zone)</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">Requires precise implant angulation</div></div>
+    <div class="process-step"><div class="step-num" style="background:var(--red)">−</div><div class="step-text">More demanding lab fabrication</div></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 4: Cement Problem -->
+<div class="slide" data-slide="4">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">The Cement Problem</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Excess cement is one of the leading causes of <strong>peri-implantitis</strong>. Unlike natural teeth, implants have no natural barrier to prevent cement from tracking deep into the sulcus.</p>
+<div class="svg-container">
+  <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="340" height="260" rx="12" fill="#111827" stroke="#1e293b"/>
+    <text x="170" y="25" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="600" font-family="Source Sans 3">EXCESS CEMENT — THE DANGER</text>
+    <!-- Implant -->
+    <rect x="148" y="50" width="44" height="130" rx="4" fill="#8899aa" stroke="#6b7b8d"/>
+    <!-- Abutment -->
+    <rect x="142" y="30" width="56" height="40" rx="3" fill="#a8b4c0" stroke="#6b7b8d"/>
+    <!-- Crown -->
+    <path d="M120 30 Q170 5 220 30 L210 30 Q170 15 130 30 Z" fill="#f0e6d6" stroke="#d4c4a8"/>
+    <!-- Soft tissue -->
+    <path d="M80 85 Q140 75 148 72 L148 85" fill="rgba(236,72,153,.2)" stroke="#ec4899" stroke-width="1"/>
+    <path d="M260 85 Q200 75 192 72 L192 85" fill="rgba(236,72,153,.2)" stroke="#ec4899" stroke-width="1"/>
+    <!-- CEMENT BLOBS - danger -->
+    <circle cx="135" cy="78" r="5" fill="#ef4444" opacity=".7"/>
+    <circle cx="128" cy="90" r="4" fill="#ef4444" opacity=".6"/>
+    <circle cx="205" cy="82" r="4" fill="#ef4444" opacity=".7"/>
+    <circle cx="212" cy="95" r="3.5" fill="#ef4444" opacity=".6"/>
+    <text x="105" y="110" fill="#ef4444" font-size="8" font-weight="600" font-family="Source Sans 3">Cement tracks</text>
+    <text x="105" y="122" fill="#ef4444" font-size="8" font-family="Source Sans 3">deep into sulcus</text>
+    <!-- Bone level -->
+    <path d="M80 160 Q130 150 148 150 L148 160" fill="none" stroke="#d4a574" stroke-width="3"/>
+    <path d="M260 160 Q210 150 192 150 L192 160" fill="none" stroke="#d4a574" stroke-width="3"/>
+    <text x="170" y="200" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">Bone level</text>
+    <!-- Info -->
+    <rect x="30" y="215" width="280" height="32" rx="6" fill="rgba(239,68,68,.08)"/>
+    <text x="170" y="235" text-anchor="middle" fill="#fca5a5" font-size="9" font-family="Source Sans 3">Cement acts as a foreign body → bacterial biofilm → bone destruction</text>
+  </svg>
+</div>
+</div>
+<div>
+<div class="warning-box"><p><strong>Cement cannot be seen on X-ray.</strong> It's radiolucent. A patient can have cement lodged subgingivally for years without anyone knowing — until bone destruction is advanced.</p></div>
+<h2 class="section-title" style="margin-top:1rem">Why Cement Is So Dangerous</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>No Periodontal Ligament</h4><p>Natural teeth have a PDL that creates a seal. Implants have direct bone-to-titanium contact — cement tracks freely down to bone level.</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Foreign Body Response</h4><p>The body treats cement like a splinter. Chronic inflammation starts. Bacteria colonise the cement surface. Bone destruction follows.</p></div>
+<div class="card"><h4>Invisible on Radiographs</h4><p>Composite resin cements are radiolucent. You cannot detect excess cement on a standard periapical or OPG. It's a hidden time bomb.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 5: Screw-Retained Advantages -->
+<div class="slide" data-slide="5">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">Screw-Retained — The Default Choice</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Dr Hassan's philosophy: <strong>"Everything screw-retained unless there's a specific reason for cement."</strong></p>
+<div class="key-point"><p><strong>"Unbreakable doesn't exist. Unrepairable is what you and I should always avoid."</strong> — Screw-retained crowns can always be unscrewed, repaired, modified, or replaced without destroying the underlying implant or abutment.</p></div>
+<h2 class="section-title" style="margin-top:1rem">Retrievability Matters Because:</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text">Porcelain chips — you can unscrew and repair</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text">Soft tissue changes — you can modify the emergence</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text">Screw loosens — you can re-torque without damage</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text">Peri-implantitis — you can remove crown to clean</div></div>
+<div class="process-step"><div class="step-num">5</div><div class="step-text">Patient's bite changes — you can adjust occlusion</div></div>
+</div>
+<div>
+<h2 class="section-title">When Cement Might Be Acceptable</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>Severe Angulation Problem</h4><p>When the implant angulation puts the screw access hole through the labial surface of the crown. An angled abutment may help, but sometimes cement is the only option.</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Cement Level Protocol</h4><p>If you must cement, place the crown margin <strong>no deeper than 1mm subgingival</strong>. Use a radiopaque cement. Take a post-cementation radiograph. Explore with a probe.</p></div>
+<div class="gold-box"><p><strong>Best practice when cementing:</strong> Use a custom abutment with the cement margin at or just below the gingival margin. Apply cement to the crown (not the abutment). Seat firmly and remove ALL excess immediately. Verify with radiograph.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 6: Quiz -->
+<div class="slide" data-slide="6">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Cement vs Screw</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q1">
+  <h4>1. Why is excess cement particularly dangerous around implants?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,false)">It dissolves titanium over time</button>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,true)">No PDL barrier, cement tracks to bone level, acts as foreign body</button>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,false)">It causes allergic reactions in most patients</button>
+  <div class="quiz-feedback correct-fb" id="q1-correct">Correct! Without a periodontal ligament, cement freely tracks to bone level. The body treats it as a foreign body, triggering chronic inflammation and bacterial colonisation → peri-implantitis.</div>
+  <div class="quiz-feedback wrong-fb" id="q1-wrong">The key issue: implants lack a periodontal ligament, so cement tracks subgingivally to bone level. It acts as a foreign body, triggering chronic inflammation and eventually peri-implantitis.</div>
+</div>
+<div class="quiz-container" id="q2">
+  <h4>2. The main advantage of screw-retained over cemented is:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,false)">Stronger bond to the implant</button>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,false)">Better aesthetics in the smile zone</button>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,true)">Full retrievability — can remove, repair, and modify</button>
+  <div class="quiz-feedback correct-fb" id="q2-correct">Correct! Retrievability is the key advantage. You can unscrew, repair porcelain chips, adjust occlusion, clean around the implant, and replace components without destroying anything.</div>
+  <div class="quiz-feedback wrong-fb" id="q2-wrong">The primary advantage is retrievability. "Unbreakable doesn't exist — unrepairable is what we must always avoid." Screw-retained allows non-destructive access for repairs and maintenance.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 7: Emergence Profile -->
+<div class="slide" data-slide="7">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Emergence Profile — The Science of Shape</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">The emergence profile is the <strong>shape of the restoration as it emerges from the soft tissue</strong>. It dictates how the crown looks and how healthy the peri-implant tissue stays.</p>
+<p class="body-text">Think of it as the <strong>transition zone</strong> from the narrow implant platform to the wider crown contour.</p>
+<div class="svg-container">
+  <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="340" height="240" rx="12" fill="#111827" stroke="#1e293b"/>
+    <text x="170" y="25" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="600" font-family="Source Sans 3">EMERGENCE PROFILE ANGLES</text>
+    <!-- Correct -->
+    <text x="90" y="50" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" font-family="Source Sans 3">✓ CORRECT (&lt;30°)</text>
+    <rect x="65" y="120" width="50" height="80" rx="3" fill="#8899aa" opacity=".5"/>
+    <path d="M50 120 Q90 80 130 120" fill="#f0e6d6" stroke="#d4c4a8" stroke-width="1.5"/>
+    <line x1="90" y1="120" x2="90" y2="60" stroke="#10b981" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="90" y1="120" x2="125" y2="80" stroke="#10b981" stroke-width="2"/>
+    <text x="120" y="100" fill="#10b981" font-size="8" font-family="Source Sans 3">~25°</text>
+    <!-- Too steep -->
+    <text x="250" y="50" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Source Sans 3">✗ TOO STEEP (&gt;30°)</text>
+    <rect x="225" y="120" width="50" height="80" rx="3" fill="#8899aa" opacity=".5"/>
+    <path d="M200 120 Q250 55 300 120" fill="#f0e6d6" stroke="#d4c4a8" stroke-width="1.5"/>
+    <line x1="250" y1="120" x2="250" y2="60" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="250" y1="120" x2="290" y2="65" stroke="#ef4444" stroke-width="2"/>
+    <text x="285" y="85" fill="#ef4444" font-size="8" font-family="Source Sans 3">~50°</text>
+    <!-- Info -->
+    <rect x="30" y="210" width="280" height="22" rx="4" fill="rgba(245,158,11,.08)"/>
+    <text x="170" y="225" text-anchor="middle" fill="#fcd34d" font-size="9" font-family="Source Sans 3">&gt;30° emergence angle = peri-implantitis risk</text>
+  </svg>
+</div>
+</div>
+<div>
+<h2 class="section-title">Why Angle Matters</h2>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--green)"><h4 style="color:var(--green)">Gradual Emergence (&lt;30°)</h4><p>Soft tissue can adapt and seal around the restoration. Easy for the patient to clean. Brush bristles can reach the sulcus. Low peri-implantitis risk.</p></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--red)"><h4 style="color:var(--red)">Steep Emergence (&gt;30°)</h4><p>Creates a "cliff" that traps plaque. Brush bristles bounce off and can't reach the sulcus. Chronic food trapping. High peri-implantitis risk — like a house with no guttering.</p></div>
+<div class="key-point"><p><strong>The emergence angle is determined by two factors:</strong> (1) Implant depth — too shallow = steep emergence to reach crown width. (2) Implant position — too palatal = long labial overhang.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 8: Ideal Emergence -->
+<div class="slide" data-slide="8">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Designing the Ideal Emergence</h1>
+<p class="body-text">The modern approach starts with the <strong>virtual crown position</strong> and works backwards to determine implant position:</p>
+<div class="svg-container" style="margin-top:1rem">
+  <svg viewBox="0 0 750 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="750" height="200" rx="12" fill="#111827" stroke="#1e293b"/>
+    <rect x="20" y="25" width="140" height="55" rx="8" fill="rgba(139,92,246,.1)" stroke="rgba(139,92,246,.4)"/>
+    <text x="90" y="48" text-anchor="middle" fill="#8b5cf6" font-size="9" font-weight="600" font-family="Source Sans 3">VIRTUAL CROWN</text>
+    <text x="90" y="65" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Where should tooth be?</text>
+    <path d="M163 52 L180 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+    <rect x="185" y="25" width="140" height="55" rx="8" fill="rgba(245,158,11,.1)" stroke="rgba(245,158,11,.4)"/>
+    <text x="255" y="48" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="600" font-family="Source Sans 3">EMERGENCE PROFILE</text>
+    <text x="255" y="65" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Design &lt;30° angle</text>
+    <path d="M328 52 L345 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+    <rect x="350" y="25" width="140" height="55" rx="8" fill="rgba(6,182,212,.1)" stroke="rgba(6,182,212,.4)"/>
+    <text x="420" y="48" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="600" font-family="Source Sans 3">IMPLANT POSITION</text>
+    <text x="420" y="65" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Palatal, correct depth</text>
+    <path d="M493 52 L510 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+    <rect x="515" y="25" width="140" height="55" rx="8" fill="rgba(16,185,129,.1)" stroke="rgba(16,185,129,.4)"/>
+    <text x="585" y="48" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" font-family="Source Sans 3">BONE AUGMENTATION</text>
+    <text x="585" y="65" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">If needed for support</text>
+    <defs><marker id="a3" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#94a3b8"/></marker></defs>
+    <!-- Key insight -->
+    <rect x="20" y="110" width="710" height="70" rx="8" fill="rgba(16,185,129,.06)" stroke="rgba(16,185,129,.2)"/>
+    <text x="375" y="135" text-anchor="middle" fill="#10b981" font-size="12" font-weight="700" font-family="Source Sans 3">PROSTHETICALLY-DRIVEN IMPLANT PLACEMENT</text>
+    <text x="375" y="158" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Source Sans 3">The crown dictates the implant position — not the other way around.</text>
+    <text x="375" y="172" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Source Sans 3">If bone is insufficient, graft first. Never compromise position to avoid grafting.</text>
+  </svg>
+</div>
+<div class="gold-box" style="margin-top:1rem"><p><strong>Dr Hassan's rule:</strong> "If the screw access hole doesn't come out through the cingulum area of the crown, the implant is in the wrong position. Full stop."</p></div>
+</div>
+
+<!-- SLIDE 9: Provisional Restorations -->
+<div class="slide" data-slide="9">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Shaping Soft Tissue With Provisionals</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">The emergence profile isn't just designed on a computer — it's physically <strong>sculpted with provisional restorations</strong>.</p>
+<p class="body-text">In the anterior zone, a provisional screw-retained crown is used to <strong>gradually shape the soft tissue</strong> over weeks before the final crown.</p>
+<div class="timeline">
+  <div class="timeline-item"><h4>Week 1</h4><p>Implant uncovered. Provisional placed with slightly narrow contour.</p></div>
+  <div class="timeline-item"><h4>Weeks 2–4</h4><p>Provisional modified — slightly widened to push tissue into ideal position.</p></div>
+  <div class="timeline-item"><h4>Week 6</h4><p>Tissue has adapted. Provisional shape matches ideal emergence.</p></div>
+  <div class="timeline-item"><h4>Week 8+</h4><p>Final impression captures the shaped tissue profile. Final crown replicates exactly.</p></div>
+</div>
+</div>
+<div>
+<div class="key-point"><p><strong>Why not just use a healing abutment?</strong> A standard cylindrical healing abutment creates a round tissue opening. But teeth aren't round — they're often triangular or oval. The provisional sculpts the tissue into a tooth-like shape that the final crown replicates.</p></div>
+<div class="card" style="margin-top:1rem"><h4>The Copy Technique</h4><p>When the provisional has achieved the ideal soft tissue shape, take the final impression with the provisional in place. The lab creates the final crown with the <strong>exact same emergence profile</strong> as the shaped provisional.</p>
+<p style="margin-top:.5rem">This technique is especially important for <strong>single implants in the smile zone</strong> where tissue drape determines the aesthetic result.</p></div>
+<div class="gold-box" style="margin-top:.8rem"><p><strong>Time investment:</strong> Yes, provisionals add 6–8 weeks. But the aesthetic result is dramatically better than placing a final crown on a round healing abutment and hoping the tissue adapts.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 10: Quiz -->
+<div class="slide" data-slide="10">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Emergence Profile</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q3">
+  <h4>3. What is the maximum acceptable emergence angle?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,false)">45 degrees</button>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,true)">30 degrees</button>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,false)">15 degrees</button>
+  <div class="quiz-feedback correct-fb" id="q3-correct">Correct! Above 30° the emergence creates a "cliff" that traps plaque and prevents brush bristles from reaching the sulcus, significantly increasing peri-implantitis risk.</div>
+  <div class="quiz-feedback wrong-fb" id="q3-wrong">The maximum acceptable emergence angle is 30°. Beyond this, the steep contour traps plaque and makes home care nearly impossible.</div>
+</div>
+<div class="quiz-container" id="q4">
+  <h4>4. Where should the screw access hole emerge on an anterior crown?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,true)">Through the cingulum (palatal surface)</button>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,false)">Through the incisal edge</button>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,false)">Through the labial surface</button>
+  <div class="quiz-feedback correct-fb" id="q4-correct">Correct! If the screw hole doesn't come through the cingulum, the implant is in the wrong position. This is a hard rule for anterior screw-retained restorations.</div>
+  <div class="quiz-feedback wrong-fb" id="q4-wrong">The screw access must emerge through the cingulum (palatal surface). If it exits labially or incisally, the implant is malpositioned and the aesthetics will be compromised.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 11: Probing -->
+<div class="slide" data-slide="11">
+<h3 class="sub-title">Chapter 3</h3>
+<h1 class="slide-title">Probing Around Implants</h1>
+<p class="body-text">One of the most controversial topics in implant dentistry: <strong>should you probe around implants?</strong></p>
+<div class="grid-2" style="margin-top:1rem">
+<div class="card" style="border-top:3px solid var(--green)">
+  <h4 style="color:var(--green)">YES — You Should Probe</h4>
+  <p style="margin-bottom:.5rem"><strong>Modern consensus:</strong> Probing is essential for monitoring peri-implant health.</p>
+  <p><strong>Why:</strong></p>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">✓</div><div class="step-text">Detects bleeding on probing (BOP) — first sign of mucositis</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">✓</div><div class="step-text">Tracks pocket depth changes over time</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">✓</div><div class="step-text">Identifies suppuration (pus) before bone loss</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">✓</div><div class="step-text">Baseline at crown delivery → compare at maintenance visits</div></div>
+</div>
+<div class="card" style="border-top:3px solid var(--gold)">
+  <h4 style="color:var(--gold)">But — Probe Gently</h4>
+  <p style="margin-bottom:.5rem"><strong>Critical difference from teeth:</strong></p>
+  <p>Natural teeth have a <strong>connective tissue seal</strong> that resists probing. Implants have a weaker <strong>hemidesmosomes-only</strong> attachment.</p>
+  <div class="warning-box" style="margin-top:.5rem"><p><strong>Maximum probing force:</strong> 0.25 N (about 25 grams). Standard probing force for teeth is 0.5 N. With implants, use HALF the force or you'll probe straight through the weak attachment.</p></div>
+  <p style="margin-top:.5rem"><strong>Record baseline pocket depths</strong> on the day the crown is delivered. Then compare at every maintenance visit. It's the <strong>change</strong> that matters, not the absolute number.</p>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 12: Probing Details -->
+<div class="slide" data-slide="12">
+<h3 class="sub-title">Chapter 3</h3>
+<h1 class="slide-title">What Probing Tells You</h1>
+<div class="grid-2">
+<div>
+<table class="compare-table">
+<tr><th>Finding</th><th>Meaning</th><th>Action</th></tr>
+<tr><td>No BOP, stable depths</td><td style="color:var(--green)"><strong>Healthy</strong></td><td>Continue maintenance</td></tr>
+<tr><td>BOP present, no bone loss on X-ray</td><td style="color:var(--gold)"><strong>Peri-implant mucositis</strong></td><td>Intensify hygiene, chlorhexidine, review in 4–6 wks</td></tr>
+<tr><td>BOP + bone loss on X-ray</td><td style="color:var(--red)"><strong>Peri-implantitis</strong></td><td>Treatment protocol (see next slides)</td></tr>
+<tr><td>Suppuration (pus)</td><td style="color:var(--red)"><strong>Active infection</strong></td><td>Urgent intervention required</td></tr>
+<tr><td>Increasing depths, no BOP</td><td style="color:var(--gold)"><strong>Possible cement retention</strong></td><td>Investigate — remove crown if possible</td></tr>
+</table>
+</div>
+<div>
+<div class="key-point"><p><strong>Mucositis is REVERSIBLE.</strong> It's the gingivitis equivalent for implants. If you catch it here, you can prevent progression to peri-implantitis. This is why regular probing matters — it's your early warning system.</p></div>
+<div class="warning-box" style="margin-top:.8rem"><p><strong>Peri-implantitis is IRREVERSIBLE.</strong> Once bone is lost, it doesn't grow back (unlike natural teeth where some regeneration is possible with GTR). Prevention through maintenance is everything.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 13: Quiz -->
+<div class="slide" data-slide="13">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Probing</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q5">
+  <h4>5. Why use less probing force around implants than teeth?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,false)">Titanium is softer than tooth structure</button>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,true)">The soft tissue seal is weaker — hemidesmosomes only, no connective tissue attachment</button>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,false)">Probing can cause the implant to lose integration</button>
+  <div class="quiz-feedback correct-fb" id="q5-correct">Correct! Implant soft tissue attachment is weaker than around natural teeth. The peri-implant seal relies on hemidesmosomes rather than the stronger connective tissue fibres. Use 0.25N, not the standard 0.5N.</div>
+  <div class="quiz-feedback wrong-fb" id="q5-wrong">The peri-implant seal is composed of hemidesmosomes only, which is weaker than the connective tissue attachment around natural teeth. Excessive force will probe through the seal, giving a false deep reading.</div>
+</div>
+<div class="quiz-container" id="q6">
+  <h4>6. Peri-implant mucositis is:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,true)">Reversible — the gingivitis equivalent for implants</button>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,false)">Irreversible — bone has already been lost</button>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,false)">Normal — all implants have some mucositis</button>
+  <div class="quiz-feedback correct-fb" id="q6-correct">Correct! Mucositis is reversible inflammation without bone loss. It's the implant equivalent of gingivitis. Catching it early through regular probing prevents progression to irreversible peri-implantitis.</div>
+  <div class="quiz-feedback wrong-fb" id="q6-wrong">Mucositis IS reversible. It's inflammation without bone loss — the gingivitis equivalent. Only peri-implantitis (with bone loss) is irreversible. This is why probing and early detection matter.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 14: Peri-implantitis -->
+<div class="slide" data-slide="14">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Peri-Implantitis — The Biggest Threat</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Peri-implantitis is <strong>irreversible progressive bone loss</strong> around an integrated implant caused by bacterial infection of the peri-implant tissues.</p>
+<div class="stat-card" style="margin:1rem 0"><div class="num">22%</div><div class="label">of implants affected by peri-implantitis<br>(Derks & Tomasi, systematic review)</div></div>
+<h2 class="section-title">Why It's So Difficult to Treat</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>Remember Micro-Roughness?</h4><p>The SLA surface that gives implants their excellent integration has mountains, caves, and tunnels. When exposed to bacteria, these become <strong>impossible to decontaminate</strong>.</p></div>
+<div class="card"><h4>No Periodontal Ligament</h4><p>Teeth have PDL fibres that provide a barrier and some regenerative potential. Implants have direct bone contact — once lost, it's gone.</p></div>
+</div>
+<div>
+<h2 class="section-title">Causes of Peri-Implantitis</h2>
+<div class="process-step"><div class="step-num" style="background:var(--red)">1</div><div class="step-text"><strong>Excess cement</strong> — foreign body response, chronic inflammation</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">2</div><div class="step-text"><strong>Poor oral hygiene</strong> — bacterial biofilm accumulation</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">3</div><div class="step-text"><strong>Steep emergence profile</strong> — uncleanable contours trap plaque</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">4</div><div class="step-text"><strong>Smoking</strong> — impaired immune response, reduced vascularity</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">5</div><div class="step-text"><strong>History of periodontitis</strong> — same bacteria, same risk profile</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">6</div><div class="step-text"><strong>Occlusal overload</strong> — mechanical stress on bone</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">7</div><div class="step-text"><strong>Uncontrolled diabetes</strong> — impaired healing cascade</div></div>
+<div class="key-point" style="margin-top:.8rem"><p><strong>Prevention is 10× easier than treatment.</strong> Every factor above is either preventable or manageable through patient selection, surgical technique, and maintenance.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 15: Treatment Protocol -->
+<div class="slide" data-slide="15">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Peri-Implantitis Treatment Protocol</h1>
+<p class="body-text">Treatment follows a <strong>staged approach</strong> — escalating from non-surgical to surgical based on severity:</p>
+<div class="grid-2" style="margin-top:1rem">
+<div>
+<h2 class="section-title" style="color:var(--gold)">Stage 1: Non-Surgical</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text">Remove crown/abutment (if screw-retained)</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text">Mechanical debridement with titanium curettes</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text">Chemical decontamination (chlorhexidine, citric acid)</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text">Systemic antibiotics if active infection</div></div>
+<div class="process-step"><div class="step-num">5</div><div class="step-text">Intensive oral hygiene instruction</div></div>
+<div class="process-step"><div class="step-num">6</div><div class="step-text">Review in 4–6 weeks</div></div>
+<div class="gold-box" style="margin-top:.8rem"><p><strong>If improved:</strong> Continue maintenance. <strong>If not:</strong> Escalate to Stage 2.</p></div>
+</div>
+<div>
+<h2 class="section-title" style="color:var(--red)">Stage 2: Surgical</h2>
+<div class="process-step"><div class="step-num" style="background:var(--red)">1</div><div class="step-text">Raise a flap to access the defect</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">2</div><div class="step-text">Remove all granulation tissue</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">3</div><div class="step-text">Decontaminate implant surface (laser, air abrasion, chemical)</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">4</div><div class="step-text">Bone graft if containable defect</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">5</div><div class="step-text">Membrane if needed (GBR approach)</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">6</div><div class="step-text">Close and wait 6+ months</div></div>
+<div class="warning-box" style="margin-top:.8rem"><p><strong>Honest truth:</strong> Surgical treatment of peri-implantitis has a success rate of only ~50–60%. The micro-rough surface is extremely difficult to fully decontaminate. This is why prevention is paramount.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 16: Why Surface Is The Problem -->
+<div class="slide" data-slide="16">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">The Surface Paradox</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">The same micro-roughness that makes modern implants integrate so well is <strong>exactly what makes peri-implantitis so difficult to treat</strong>.</p>
+<div class="card" style="border-top:3px solid var(--green)"><h4 style="color:var(--green)">When Submerged in Bone</h4><p>The mountains, caves, and tunnels give osteoblasts massive surface area to attach. Integration is fast and strong. This is GOOD.</p></div>
+<div class="card" style="margin-top:.6rem;border-top:3px solid var(--red)"><h4 style="color:var(--red)">When Exposed to Oral Environment</h4><p>Bacteria colonise the same caves and tunnels. They burrow deep inside where no cleaning instrument, laser, or chemical can reach. This is BAD.</p></div>
+</div>
+<div>
+<div class="key-point"><p><strong>"You can clean the outside of the mountain, but you'll never reach the bacteria hiding in the caves."</strong> This is why even surgical debridement with the most aggressive protocols only achieves ~50–60% resolution.</p></div>
+<h2 class="section-title" style="margin-top:1rem">Implications</h2>
+<div class="process-step"><div class="step-num" style="background:var(--accent2)">1</div><div class="step-text">PREVENT exposure — maintain bone levels</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent2)">2</div><div class="step-text">DETECT early — regular probing and radiographs</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent2)">3</div><div class="step-text">ACT quickly — mucositis is reversible</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent2)">4</div><div class="step-text">DESIGN for cleanability — gentle emergence profiles</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent2)">5</div><div class="step-text">EDUCATE patients — they are the daily defence</div></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 17: Prevention -->
+<div class="slide" data-slide="17">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Prevention Protocol — Your Checklist</h1>
+<p class="body-text">Click each preventive measure to learn the details:</p>
+<div class="grid-3" style="margin-top:1rem">
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Patient Selection</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>Screen for:</strong> uncontrolled diabetes, active periodontal disease, heavy smoking, bisphosphonate use. Treat periodontal disease BEFORE implants. Optimise diabetes control.</p></div>
+    </div>
+  </div>
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Surgical Technique</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>Position palatally.</strong> Preserve labial bone. Get stability from cancellous bone. Don't touch cortical plate. Socket graft thin phenotypes. Extended healing for compromised patients.</p></div>
+    </div>
+  </div>
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Prosthetic Design</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>Screw-retained preferred.</strong> Emergence &lt;30°. Cleanable contours. If cemented, custom abutment with shallow margin. Verify no excess cement.</p></div>
+    </div>
+  </div>
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Occlusal Design</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>Narrow occlusal table.</strong> Central fossa contacts only. No cantilever contacts. Night guard for bruxers. Avoid lateral excursive contacts on implant crowns.</p></div>
+    </div>
+  </div>
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Maintenance Protocol</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>3-month recalls</strong> for year 1. Then risk-based: 3-monthly for high risk, 6-monthly for low risk. Probe gently. Radiograph annually. Record baseline depths at crown delivery.</p></div>
+    </div>
+  </div>
+  <div class="flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-inner">
+      <div class="flip-front"><h4>Patient Education</h4><p>Click to reveal →</p></div>
+      <div class="flip-back"><p><strong>Interdental brushes</strong> — show which size. Superfloss for bridges. No metal instruments at home. Explain that implants need MORE maintenance than teeth, not less.</p></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SLIDE 18: Quiz -->
+<div class="slide" data-slide="18">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Peri-Implantitis</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q7">
+  <h4>7. Why is peri-implantitis so difficult to treat surgically?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,false)">The titanium corrodes and can't be cleaned</button>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,true)">Bacteria hide in the micro-rough surface caves where no instrument can reach</button>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,false)">The bone is too dense to regenerate around implants</button>
+  <div class="quiz-feedback correct-fb" id="q7-correct">Correct! The SLA surface's mountains, caves, and tunnels — perfect for osteoblast attachment — become a bacterial stronghold once exposed. Even aggressive surgical debridement only achieves 50–60% resolution.</div>
+  <div class="quiz-feedback wrong-fb" id="q7-wrong">The micro-rough SLA surface that's excellent for osteointegration becomes the problem: bacteria colonise the caves and tunnels in the surface where cleaning instruments simply cannot reach.</div>
+</div>
+<div class="quiz-container" id="q8">
+  <h4>8. The best approach to peri-implantitis is:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,true)">Prevention — through correct positioning, prosthetic design, and maintenance</button>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,false)">Early surgical intervention as soon as any bone loss is detected</button>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,false)">Long-term antibiotics to control bacterial load</button>
+  <div class="quiz-feedback correct-fb" id="q8-correct">Correct! Prevention is 10× more effective than treatment. Correct implant positioning, cleanable emergence profiles, screw-retained crowns, and structured maintenance programmes are the foundation.</div>
+  <div class="quiz-feedback wrong-fb" id="q8-wrong">Prevention is the best approach. Treatment success is only 50–60%. Correct positioning, cleanable prosthetic design, patient selection, and structured maintenance are far more effective than treating established disease.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 19: Occlusion -->
+<div class="slide" data-slide="19">
+<h3 class="sub-title">Chapter 5</h3>
+<h1 class="slide-title">Occlusion — Mechanical Complications</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Natural teeth have a periodontal ligament that absorbs forces and provides <strong>proprioception</strong> (the ability to sense bite forces). Implants have neither.</p>
+<div class="stat-card" style="margin:1rem 0"><div class="num">8–10×</div><div class="label">More force needed for implant patients to sense contact<br>vs natural teeth (no proprioception)</div></div>
+<div class="warning-box"><p><strong>Patients with implants bite harder without realising it.</strong> They can't feel when they're overloading the implant the way they could with natural teeth. This is why occlusal design is critical.</p></div>
+</div>
+<div>
+<h2 class="section-title">Occlusal Design Rules</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text"><strong>Narrow the occlusal table</strong> — reduce the bucket size catching forces</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text"><strong>Central fossa contacts only</strong> — forces directed axially through the implant</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text"><strong>No cantilever contacts</strong> — forces should never lever off the implant</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text"><strong>Exclude from lateral excursions</strong> — canine guidance on natural teeth if possible</div></div>
+<div class="process-step"><div class="step-num">5</div><div class="step-text"><strong>Night guard for bruxers</strong> — protect the investment while sleeping</div></div>
+<div class="key-point" style="margin-top:.8rem"><p><strong>Dr Hassan's analogy:</strong> "Making the occlusal table wider catches more force, like holding a bigger bucket in the rain. Narrow the bucket — catch less force."</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 20: Complications Data -->
+<div class="slide" data-slide="20">
+<h3 class="sub-title">Chapter 5</h3>
+<h1 class="slide-title">Complication Rates — The Real Numbers</h1>
+<p class="body-text">Honest discussion of complication rates builds trust with patients and prepares you mentally:</p>
+<div class="grid-2" style="margin-top:1rem">
+<div>
+<table class="compare-table">
+<tr><th>Restoration Type</th><th>5-Year</th><th>10-Year</th></tr>
+<tr><td>Single implant crown</td><td>~40%</td><td>~50%</td></tr>
+<tr><td>Small bridge (2–4 units)</td><td>~40%</td><td>~50%</td></tr>
+<tr><td>Full-arch fixed</td><td>~65%</td><td>~90%</td></tr>
+</table>
+<p class="body-text" style="margin-top:1rem"><strong>These are complication rates, not failure rates.</strong> Most complications are manageable: porcelain chips, screw loosening, soft tissue issues. True implant loss is far lower (~2–5% at 10 years for single implants).</p>
+</div>
+<div>
+<h2 class="section-title">Most Common Complications</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>Porcelain Chipping</h4><p>Most common mechanical complication. Usually repairable intraorally with composite (if screw-retained and removable).</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Screw Loosening</h4><p>Second most common. Usually indicates occlusal overload or manufacturing tolerance issues. Re-torque to specification.</p></div>
+<div class="card"><h4>Soft Tissue Recession</h4><p>Particularly in the aesthetic zone. Often due to thin phenotype, labial implant position, or cortical bone resorption. Prevention is key.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 21: Quiz -->
+<div class="slide" data-slide="21">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Occlusion & Complications</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q9">
+  <h4>9. Why do implant patients bite harder without knowing?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q9',this,true)">No periodontal ligament = no proprioception (can't sense forces)</button>
+  <button class="quiz-option" onclick="checkQuiz('q9',this,false)">Implants are stronger than natural teeth</button>
+  <button class="quiz-option" onclick="checkQuiz('q9',this,false)">Crowns are thicker and distribute force better</button>
+  <div class="quiz-feedback correct-fb" id="q9-correct">Correct! Natural teeth have PDL fibres that sense pressure. Implants go directly into bone with no sensory feedback. Patients need 8–10× more force to sense contact on an implant vs a natural tooth.</div>
+  <div class="quiz-feedback wrong-fb" id="q9-wrong">Implants lack a periodontal ligament, so there's no proprioception. Patients can't sense when they're overloading. They need 8–10× more force to feel contact compared to natural teeth.</div>
+</div>
+<div class="quiz-container" id="q10">
+  <h4>10. A 50% complication rate at 10 years means:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q10',this,false)">Half of all implants will fail within 10 years</button>
+  <button class="quiz-option" onclick="checkQuiz('q10',this,true)">Half will need some maintenance — porcelain repair, screw retightening, etc.</button>
+  <button class="quiz-option" onclick="checkQuiz('q10',this,false)">Implants are not a reliable treatment option</button>
+  <div class="quiz-feedback correct-fb" id="q10-correct">Correct! Complications ≠ failures. Most are minor and manageable: porcelain chips, screw loosening, soft tissue issues. True implant loss is only 2–5% at 10 years. The key is designing for retrievability.</div>
+  <div class="quiz-feedback wrong-fb" id="q10-wrong">Complication ≠ failure. Half may need minor work (porcelain repair, screw retightening). True implant loss is only 2–5% at 10 years. Implants remain one of the most reliable treatments in dentistry.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 22: Patient Education & Pricing -->
+<div class="slide" data-slide="22">
+<h3 class="sub-title">Chapter 6</h3>
+<h1 class="slide-title">Patient Education & Pricing</h1>
+<div class="grid-2">
+<div>
+<h2 class="section-title">What Patients Must Understand</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>Implants Need MORE Maintenance, Not Less</h4><p>Patients often think implants are "fit and forget." The opposite is true. They require structured maintenance visits, specific cleaning tools, and regular monitoring.</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Complications Will Happen</h4><p>Educate about the 40% complication rate at 5 years. When patients understand this upfront, they come to YOU when something happens — not to a lawyer.</p></div>
+<div class="card"><h4>Lifestyle Changes</h4><p>Smoking cessation. Diabetes control. Oral hygiene commitment. Night guard compliance. These aren't optional — they're part of the treatment.</p></div>
+</div>
+<div>
+<h2 class="section-title">Pricing Philosophy</h2>
+<div class="key-point"><p><strong>"Never match your patient's financial urgency."</strong> If a patient pushes for the cheapest option or fastest result, don't compromise. The cost of failure is always higher than the cost of doing it right.</p></div>
+<div class="card" style="margin-top:1rem"><h4>What Should Be Included in the Fee</h4>
+<p>• Initial consultation and CBCT planning<br>
+• Surgical placement and materials<br>
+• Healing abutments and provisionals<br>
+• Final restoration (crown/bridge)<br>
+• First year of maintenance visits<br>
+• Complications budget (at least 10% margin)</p>
+<p style="margin-top:.5rem"><strong>If you're pricing without a complications margin</strong>, every repair comes out of your pocket and your goodwill. Factor it in from the start.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 23: Patient Scripts -->
+<div class="slide" data-slide="23">
+<h3 class="sub-title">Chapter 6</h3>
+<h1 class="slide-title">Explaining Implants to Patients</h1>
+<p class="body-text">Click each scenario to see how Dr Hassan explains it to patients:</p>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">"How long will my implant last?"</h4>
+  <div class="scenario-answer"><p class="body-text">"The implant itself is titanium and won't decay. But the bone around it is living tissue that changes with your health. If you maintain excellent hygiene, attend regular check-ups, and your health stays good, implants can last decades. But I can't guarantee a specific number of years because I can't predict your future health."</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">"Why is it so expensive?"</h4>
+  <div class="scenario-answer"><p class="body-text">"The implant component is actually a small part of the cost. What you're paying for is the planning (CBCT scans, digital design), the surgical expertise, the laboratory-made custom restoration, and the ongoing maintenance. Think of it like buying a car — the purchase price is one thing, but servicing and insurance are part of the deal."</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">"Will it hurt?"</h4>
+  <div class="scenario-answer"><p class="body-text">"The surgery is done under local anaesthetic — you won't feel pain during the procedure. Afterwards, there's typically some swelling and discomfort for 3–5 days, manageable with standard painkillers. Most patients say it was better than they expected. The bone healing period of 12 weeks is painless."</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">"Can't you just do it faster?"</h4>
+  <div class="scenario-answer"><p class="body-text">"Think of it like placing a fence post in concrete. If you push against it while the concrete is still setting, it'll always be wobbly. We need to let the bone 'set' around the implant — that takes about 12 weeks. Rushing this step is the most common reason implants fail."</p></div>
+</div>
+</div>
+
+<!-- SLIDE 24: Four Levels of Competence -->
+<div class="slide" data-slide="24">
+<h3 class="sub-title">Chapter 7</h3>
+<h1 class="slide-title">The Four Levels of Competence</h1>
+<p class="body-text">Every clinician goes through these stages. Knowing where you are helps you make better decisions:</p>
+<div style="margin-top:1.5rem;max-width:48rem">
+<div class="competence-level l1">
+  <h4 style="color:var(--red)">Level 1: Unconscious Incompetence</h4>
+  <p><strong>"You don't know what you don't know."</strong> You've never placed an implant. You don't understand the risks, the biology, or the complications. This is where everyone starts — and it's the most dangerous level because you can't assess your own risk.</p>
+</div>
+<div class="competence-level l2">
+  <h4 style="color:var(--gold)">Level 2: Conscious Incompetence</h4>
+  <p><strong>"You know what you don't know."</strong> You've taken a course. You understand the theory. You can see the complications and know you're not yet skilled enough to handle them all. This is uncomfortable but safe — because you know to ask for help.</p>
+</div>
+<div class="competence-level l3">
+  <h4 style="color:var(--accent)">Level 3: Conscious Competence</h4>
+  <p><strong>"You can do it, but you have to think about every step."</strong> You're placing implants successfully, but each case requires careful deliberation. You follow checklists. You plan meticulously. This is the productive phase where experience builds.</p>
+</div>
+<div class="competence-level l4">
+  <h4 style="color:var(--green)">Level 4: Unconscious Competence</h4>
+  <p><strong>"You do it naturally."</strong> The steps are second nature. You anticipate problems before they happen. You have Plan B ready without thinking. You teach others. This takes years of focused practice and continuous learning.</p>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 25: Applying Competence -->
+<div class="slide" data-slide="25">
+<h3 class="sub-title">Chapter 7</h3>
+<h1 class="slide-title">Where Are You Now?</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">After this course, most delegates move from <strong>Level 1 to Level 2</strong>. This is the single most valuable transition.</p>
+<div class="key-point"><p><strong>Level 2 is where safety lives.</strong> You now know enough to identify what you can and cannot handle. You know when to refer. You know what questions to ask. You won't accidentally harm a patient through ignorance.</p></div>
+<p class="body-text" style="margin-top:1rem">The journey from Level 2 → Level 3 requires:</p>
+<div class="process-step"><div class="step-num">1</div><div class="step-text"><strong>Mentorship</strong> — work alongside experienced implant clinicians</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text"><strong>Case selection</strong> — start simple, build complexity gradually</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text"><strong>Reflection</strong> — review every case, learn from every complication</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text"><strong>Continued education</strong> — stay current with evidence</div></div>
+</div>
+<div>
+<h2 class="section-title">Case Selection Guidance</h2>
+<table class="compare-table">
+<tr><th>Your Level</th><th>Appropriate Cases</th></tr>
+<tr><td style="color:var(--gold)"><strong>Early Level 3</strong></td><td>Single posterior implants, healthy patients, adequate bone, straightforward anatomy</td></tr>
+<tr><td style="color:var(--accent)"><strong>Mid Level 3</strong></td><td>Anterior single implants, simple bone grafting, diabetic patients with controlled disease</td></tr>
+<tr><td style="color:var(--green)"><strong>Late Level 3+</strong></td><td>Full-arch cases, sinus lifts, complex bone augmentation, compromised patients, immediate placement</td></tr>
+</table>
+<div class="warning-box" style="margin-top:1rem"><p><strong>The most dangerous clinician</strong> is one who doesn't know their level. If you're placing full-arch cases after a weekend course, you're at Level 1 pretending to be Level 4. Patients will pay the price.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 26: Evidence-Based -->
+<div class="slide" data-slide="26">
+<h3 class="sub-title">Chapter 8</h3>
+<h1 class="slide-title">Evidence-Based Decision Making</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Dr Hassan's approach: <strong>"If someone tells you something works, ask for the evidence. If there is none, it's an opinion — not a fact."</strong></p>
+<h2 class="section-title" style="margin-top:1rem">Hierarchy of Evidence</h2>
+<div class="svg-container">
+  <svg viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="320" height="250" rx="12" fill="#111827" stroke="#1e293b"/>
+    <!-- Pyramid -->
+    <polygon points="160,20 30,220 290,220" fill="none" stroke="#334155" stroke-width="1.5"/>
+    <!-- Levels -->
+    <line x1="80" y1="100" x2="240" y2="100" stroke="#334155" stroke-width="1"/>
+    <line x1="60" y1="140" x2="260" y2="140" stroke="#334155" stroke-width="1"/>
+    <line x1="42" y1="180" x2="278" y2="180" stroke="#334155" stroke-width="1"/>
+    <!-- Labels -->
+    <text x="160" y="70" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" font-family="Source Sans 3">Systematic Reviews</text>
+    <text x="160" y="85" text-anchor="middle" fill="#64748b" font-size="8" font-family="Source Sans 3">& Meta-Analyses</text>
+    <text x="160" y="125" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="600" font-family="Source Sans 3">Randomised Controlled Trials</text>
+    <text x="160" y="163" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="600" font-family="Source Sans 3">Cohort & Case-Control Studies</text>
+    <text x="160" y="200" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Source Sans 3">Case Reports & Expert Opinion</text>
+    <text x="160" y="240" text-anchor="middle" fill="#64748b" font-size="8" font-family="Source Sans 3">"My mate does it this way" ≠ evidence</text>
+  </svg>
+</div>
+</div>
+<div>
+<div class="card" style="margin-bottom:.6rem"><h4>Why This Matters</h4><p>Course presenters, company reps, and colleagues will all share techniques and products. Ask: <strong>"Show me the data."</strong> If they can't, it's an opinion — and opinions don't belong in someone's jawbone.</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Red Flags in Claims</h4><p>• "In my experience..." (anecdote, not evidence)<br>• "Everyone's using it" (popularity ≠ validity)<br>• "The rep told me..." (sales pitch, not science)<br>• "It worked for my last 5 patients" (case series, lowest evidence)</p></div>
+<div class="key-point"><p><strong>Problem-based education:</strong> When you encounter a clinical problem, search for evidence yourself. Read the paper, not the abstract. Look at the methodology. Check who funded the study. This is how you build genuine expertise.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 27: The Chosen Outcome -->
+<div class="slide" data-slide="27">
+<h3 class="sub-title">Chapter 8</h3>
+<h1 class="slide-title">The Chosen Outcome</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Dr Hassan's core philosophy: <strong>"The chosen outcome is the number one complication in implant dentistry."</strong></p>
+<p class="body-text">Most implant failures aren't caused by bad luck. They're caused by a <strong>predictable outcome that the clinician chose</strong> — either through planning decisions or through ignorance.</p>
+<div class="warning-box"><p><strong>Examples of chosen outcomes:</strong></p><p style="margin-top:.5rem">
+• Placing too wide an implant → cortical pressure → resorption<br>
+• Choosing cement-retained when screw was possible → peri-implantitis<br>
+• Not grafting a thin phenotype socket → massive bone loss<br>
+• Loading during weeks 1–5 → fibrous healing<br>
+• Using the cheapest implant system → component failure
+</p></div>
+</div>
+<div>
+<h2 class="section-title">Every Decision Has a Consequence</h2>
+<div class="card" style="margin-bottom:.6rem"><h4>Position Determines Outcome</h4><p>Where you place the implant determines the emergence profile, the force distribution, the aesthetic result, and the long-term prognosis. A millimetre matters.</p></div>
+<div class="card" style="margin-bottom:.6rem"><h4>Restoration Determines Maintenance</h4><p>Screw-retained = maintainable. Cement-retained = risky. Steep emergence = uncleanable. Every prosthetic choice has a maintenance consequence.</p></div>
+<div class="card"><h4>Patient Selection Determines Risk</h4><p>Uncontrolled diabetic + smoker + thin phenotype + poor hygiene = you haven't chosen a patient, you've chosen a complication.</p></div>
+<div class="key-point" style="margin-top:.8rem"><p><strong>The goal of this course:</strong> To help you see the outcome before it happens. Every slide, every principle, every rule is about changing your "chosen outcome" from complication to success.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 28: Clinical Scenarios -->
+<div class="slide" data-slide="28">
+<h3 class="sub-title">Chapter 9</h3>
+<h1 class="slide-title">Clinical Scenarios — Test Yourself</h1>
+<p class="body-text">Click each scenario to reveal the recommended approach:</p>
+<div class="grid-2" style="margin-top:1rem">
+<div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario A: 45-year-old, thin phenotype, upper central incisor extraction needed</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Socket graft on extraction day (convert high risk → low risk). Wait 4–5 months for graft integration. Place implant palatally with stability from apical cancellous bone. Gap graft labially. Heal 12 weeks. Provisional to sculpt tissue 6–8 weeks. Final screw-retained crown with &lt;30° emergence.</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario B: Diabetic patient, HbA1c 8.5%, needs lower molar implant</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Refer to GP first to optimise diabetes control. Aim for HbA1c &lt;7.5% before surgery. Once controlled: standard placement, extended healing (24–36 weeks minimum). Monitor ISQ at insertion and before loading. Screw-retained molar crown with narrow occlusal table.</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario C: Implant placed, torque reads only 12 Ncm</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Below 15 Ncm = rocking = guaranteed failure. Remove immediately. Place wider implant (Plan B) into the same osteotomy without further drilling. The existing hole becomes the undersized preparation. Check torque again. If still &lt;15 Ncm with Plan B, remove and allow healing.</p></div>
+</div>
+</div>
+<div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario D: Crown delivered 2 years ago, now BOP with 6mm probing depth</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Take radiograph — compare to baseline. If bone loss visible: peri-implantitis. If no bone loss: mucositis. For mucositis: intensive hygiene, chlorhexidine, review 4–6 weeks. If screw-retained: remove crown, clean implant surface, modify emergence if steep. If cemented: investigate for excess cement.</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario E: Patient aged 19 wants implant for missing upper lateral incisor</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Too young. Facial growth likely not complete. Explain that an implant is ankylosed and won't move with the rest of the teeth. Provide temporary bonded restoration (Maryland bridge or removable). Reassess at 21+ with facial growth evaluation. If placing at 21–25, consent explicitly for potential facial growth discrepancy.</p></div>
+</div>
+<div class="scenario-box" onclick="this.classList.toggle('open')">
+  <h4 style="color:var(--accent2)">Scenario F: 70-year-old with osteoporosis on alendronic acid</h4>
+  <div class="scenario-answer"><p style="font-size:.9rem;color:var(--text2);line-height:1.6"><strong>Approach:</strong> Risk assessment: how long on bisphosphonates? Oral bisphosphonates &lt;3 years = manageable risk. Liaise with GP/specialist. If proceeding: extended healing (24+ weeks), gentle surgery, minimise trauma. Antibiotic cover. Consent for MRONJ risk. Some clinicians request a drug holiday — discuss with prescriber.</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 29: Final Quiz -->
+<div class="slide" data-slide="29">
+<h3 class="sub-title">Final Assessment</h3>
+<h1 class="slide-title">Final Quiz — Bringing It All Together</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q11">
+  <h4>11. The "chosen outcome" in implant dentistry refers to:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q11',this,false)">The patient's desired result</button>
+  <button class="quiz-option" onclick="checkQuiz('q11',this,true)">Predictable complications caused by clinician decisions</button>
+  <button class="quiz-option" onclick="checkQuiz('q11',this,false)">The treatment plan agreed between clinician and patient</button>
+  <div class="quiz-feedback correct-fb" id="q11-correct">Correct! The "chosen outcome" means that most complications are predictable consequences of decisions made during planning, surgery, or restoration. If you choose to place a wide implant pressing on cortical bone, you've chosen resorption.</div>
+  <div class="quiz-feedback wrong-fb" id="q11-wrong">The "chosen outcome" refers to complications that are predictable consequences of clinical decisions. Every choice in implant dentistry leads to a predictable outcome — the goal is to choose wisely.</div>
+</div>
+<div class="quiz-container" id="q12">
+  <h4>12. After this course, the most important thing you've gained is:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q12',this,false)">The ability to place implants independently</button>
+  <button class="quiz-option" onclick="checkQuiz('q12',this,true)">Conscious incompetence — knowing what you don't know</button>
+  <button class="quiz-option" onclick="checkQuiz('q12',this,false)">A certificate that allows you to start placing implants</button>
+  <div class="quiz-feedback correct-fb" id="q12-correct">Correct! Moving from Level 1 (unconscious incompetence) to Level 2 (conscious incompetence) is the single most valuable transition. You now know the right questions to ask, when to refer, and how to continue learning safely.</div>
+  <div class="quiz-feedback wrong-fb" id="q12-wrong">The most valuable outcome is conscious incompetence — knowing what you don't know. This keeps you safe, guides your learning, and protects your patients while you build competence through mentorship and practice.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 30: Course Summary -->
+<div class="slide" data-slide="30">
+<h3 class="sub-title">Course Complete</h3>
+<h1 class="slide-title">Key Principles — The Complete Picture</h1>
+<div class="grid-3">
+<div>
+<h2 class="section-title" style="font-size:1.2rem">Lecture 1: Foundations</h2>
+<div class="card" style="margin-bottom:.5rem;font-size:.85rem"><p>• Brånemark's accidental discovery → osteointegration<br>• Surface evolution: machined → HA → SLA<br>• Bone: 67% inorganic, 33% organic<br>• Four healing stages<br>• Medical conditions: organic vs inorganic<br>• Cortical (handle with care) vs cancellous (your friend)<br>• Bundle bone resorbs regardless<br>• Phenotype assessment + socket grafting</p></div>
+</div>
+<div>
+<h2 class="section-title" style="font-size:1.2rem">Lecture 2: Biomechanics</h2>
+<div class="card" style="margin-bottom:.5rem;font-size:.85rem"><p>• Press-fit triggers osteocyte → osteoclast → osteoblast<br>• Osteotomy: 3.5mm for 4.0mm implant<br>• 150μm motion threshold: above = fibroblasts<br>• Torque minimum 15 Ncm<br>• ISQ tracks lateral stability over time<br>• Stability curve: danger zone weeks 1–5<br>• Screw torque ≠ implant torque<br>• Always have a Plan B implant ready</p></div>
+</div>
+<div>
+<h2 class="section-title" style="font-size:1.2rem">Lecture 3: Clinical</h2>
+<div class="card" style="margin-bottom:.5rem;font-size:.85rem"><p>• Screw-retained preferred (retrievable)<br>• Emergence profile &lt;30°<br>• Probe gently (0.25N) — baseline at delivery<br>• Peri-implantitis: prevent &gt;&gt; treat<br>• Narrow occlusal table, no cantilevers<br>• 40% complication rate — plan for it<br>• The "chosen outcome" philosophy<br>• Four levels of competence</p></div>
+</div>
+</div>
+<div class="key-point" style="margin-top:1.5rem"><p style="font-size:1.1rem;text-align:center"><strong>"Every implant failure teaches you something. But it's better to learn from other people's failures than from your own."</strong><br><span style="font-size:.9rem;color:var(--text3)">— Dr Hassan, Bird Academy</span></p></div>
+<p style="text-align:center;margin-top:1rem;color:var(--text3);font-size:.9rem">End of Course — Bird Academy Evidence-Based Implant Dentistry</p>
+</div>
+
+</div>
+<div class="slide-number" id="slideNum">1 / 30</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+  <button class="nav-btn primary" onclick="nextSlide()">Next →</button>
+</div>
+<script>
+if(window.self!==window.top){document.documentElement.classList.add('embedded')}
+let current=1;const total=30;
+function goSlide(n){document.querySelector('.slide.active')?.classList.remove('active');current=n;document.querySelector(`[data-slide="${n}"]`).classList.add('active');update()}
+function nextSlide(){if(current<total)goSlide(current+1)}function prevSlide(){if(current>1)goSlide(current-1)}
+function update(){document.getElementById('slideNum').textContent=current+' / '+total;document.getElementById('progressBar').style.width=(current/total*100)+'%'}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}});
+function checkQuiz(qId,btn,isCorrect){const c=document.getElementById(qId);c.querySelectorAll('.quiz-option').forEach(b=>{b.classList.add('disabled');if(b===btn)b.classList.add(isCorrect?'correct':'wrong')});document.getElementById(qId+'-'+(isCorrect?'correct':'wrong')).classList.add('show')}
+</script>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2: Surgical Principles & Biomechanics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--accent:#3b82f6;--accent2:#06b6d4;--accent3:#8b5cf6;--gold:#f59e0b;--pink:#ec4899;--green:#10b981;--red:#ef4444;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--border:#1e293b}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+.portal-back{position:fixed;top:1rem;left:1rem;z-index:250;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:rgba(17,24,39,.92);padding:.45rem .8rem;border-radius:999px}
+.portal-back:hover{color:var(--accent2);border-color:var(--accent2)}
+.presentation{width:100vw;height:100vh;position:relative}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;padding:3rem 4rem;overflow-y:auto}.slide.active{display:flex;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.slide-number{position:fixed;bottom:1.5rem;right:2rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text3);z-index:100}.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent3),var(--pink),var(--gold));z-index:200;transition:width .4s ease}
+h1.slide-title{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;line-height:1.15;margin-bottom:1.2rem;background:linear-gradient(135deg,#fff,var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2.section-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--accent2);margin-bottom:.8rem}
+h3.sub-title{font-family:'Source Sans 3',sans-serif;font-size:1.2rem;font-weight:600;color:var(--gold);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em}
+p.body-text{font-size:1.05rem;line-height:1.7;color:var(--text2);margin-bottom:.8rem;max-width:52rem}p.body-text strong{color:var(--text);font-weight:600}
+.key-point{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(236,72,153,.06));border-left:3px solid var(--accent3);padding:1rem 1.4rem;border-radius:0 8px 8px 0;margin:.8rem 0}.key-point p{color:var(--text);font-size:1rem;line-height:1.6;margin:0}
+.warning-box{background:rgba(239,68,68,.08);border-left:3px solid var(--red);padding:1rem 1.4rem;border-radius:0 8px 8px 0;margin:.8rem 0}.warning-box p{color:#fca5a5;font-size:1rem;margin:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1rem}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1rem}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.4rem}.card h4{font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:.5rem}.card p{font-size:.92rem;color:var(--text2);line-height:1.55}
+.stat-card{text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1rem}.stat-card .num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.stat-card .label{font-size:.85rem;color:var(--text3);margin-top:.3rem}
+.process-step{display:flex;align-items:center;gap:.8rem;margin:.5rem 0}.step-num{width:2rem;height:2rem;border-radius:50%;background:var(--accent3);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}.step-text{font-size:.95rem;color:var(--text2)}
+.quiz-container{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1rem 0}.quiz-container h4{font-size:1.1rem;color:var(--text);margin-bottom:1rem;font-weight:600}
+.quiz-option{display:block;width:100%;text-align:left;padding:.8rem 1.2rem;margin:.4rem 0;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:.95rem;cursor:pointer;transition:all .2s;font-family:'Source Sans 3',sans-serif}
+.quiz-option:hover{border-color:var(--accent3);color:var(--text)}.quiz-option.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:var(--green)}.quiz-option.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:var(--red)}.quiz-option.disabled{pointer-events:none}
+.quiz-feedback{margin-top:.8rem;padding:.8rem;border-radius:8px;font-size:.9rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.correct-fb{background:rgba(16,185,129,.1);color:var(--green)}.quiz-feedback.wrong-fb{background:rgba(239,68,68,.08);color:#fca5a5}
+.svg-container{display:flex;justify-content:center;margin:1rem 0}
+.nav-controls{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.6rem;z-index:100}
+.nav-btn{padding:.5rem 1.2rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'Source Sans 3',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}.nav-btn:hover{border-color:var(--accent3);color:var(--text)}.nav-btn.primary{background:var(--accent3);border-color:var(--accent3);color:#fff}
+.cover-slide{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:100vh}.cover-slide h1{font-size:3.5rem;margin-bottom:.5rem}.cover-slide .subtitle{font-size:1.2rem;color:var(--text3)}.cover-slide .lecture-num{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--accent3);letter-spacing:.1em;margin-bottom:1rem;background:rgba(139,92,246,.1);padding:.3rem 1rem;border-radius:20px}
+.toc-item{display:flex;align-items:center;gap:1rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin:.4rem 0;cursor:pointer;transition:all .2s}.toc-item:hover{border-color:var(--accent3);transform:translateX(4px)}.toc-num{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent3);min-width:2rem}.toc-label{font-size:.95rem;color:var(--text2)}
+.slider-container{margin:1rem 0}.slider-label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text3);margin-bottom:.3rem}
+input[type=range]{width:100%;-webkit-appearance:none;background:var(--surface);height:6px;border-radius:3px;outline:none}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent3);cursor:pointer}
+.slider-output{text-align:center;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:1.4rem;color:var(--accent3)}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;margin:1rem 0;font-size:.9rem}.compare-table th{background:var(--surface2);padding:.7rem 1rem;text-align:left;color:var(--accent2);font-weight:600;border-bottom:2px solid var(--border)}.compare-table td{padding:.6rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}.compare-table tr:hover td{background:rgba(139,92,246,.03)}
+@media(max-width:900px){.slide{padding:1.5rem 2rem}h1.slide-title{font-size:2rem}.grid-2,.grid-3{grid-template-columns:1fr}.cover-slide h1{font-size:2.2rem}}
+.embedded body{overflow:visible;height:auto}
+.embedded .presentation{width:100%;height:auto;position:relative}
+.embedded .slide{position:relative;top:auto;left:auto;width:100%;height:auto;min-height:0;overflow:visible;padding:2rem 2rem 4rem}
+.embedded .cover-slide{min-height:0;padding:4rem 0 2rem}
+.embedded .progress-bar{position:sticky}
+.embedded .slide-number{position:sticky;top:1rem;right:auto;bottom:auto;display:block;text-align:right;margin:0 2rem 1rem auto;width:fit-content}
+.embedded .nav-controls{position:sticky;bottom:1rem;left:auto;transform:none;justify-content:flex-start;padding:0 2rem 2rem}
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="presentation" id="pres">
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Cover -->
+<div class="slide active" data-slide="1">
+<div class="cover-slide">
+  <div class="lecture-num">LECTURE 02 OF 03</div>
+  <h1 class="slide-title">Surgical Principles<br>& Biomechanics</h1>
+  <p class="subtitle" style="max-width:32rem;margin-top:.5rem;color:var(--text3)">Press-Fit, Torque, ISQ & Implant Position</p>
+  <p style="margin-top:2rem;font-size:.85rem;color:var(--text3)">Bird Academy — Evidence-Based Course in Implant Dentistry</p>
+  <p style="margin-top:3rem;font-size:.8rem;color:var(--text3)">Use ← → arrow keys or buttons to navigate</p>
+</div>
+</div>
+
+<!-- SLIDE 2: Contents -->
+<div class="slide" data-slide="2">
+<h3 class="sub-title">Lecture Overview</h3>
+<h1 class="slide-title">What We'll Cover</h1>
+<div class="grid-2" style="margin-top:.5rem">
+<div>
+  <div class="toc-item" onclick="goSlide(3)"><span class="toc-num">01</span><span class="toc-label">The Press-Fit Effect</span></div>
+  <div class="toc-item" onclick="goSlide(6)"><span class="toc-num">02</span><span class="toc-label">Osteotomy Sizing — The 3.5 / 4.0 Principle</span></div>
+  <div class="toc-item" onclick="goSlide(9)"><span class="toc-num">03</span><span class="toc-label">The Cell Cascade: Osteocytes → Osteoclasts → Osteoblasts</span></div>
+  <div class="toc-item" onclick="goSlide(12)"><span class="toc-num">04</span><span class="toc-label">Torque — Measuring Rotational Stability</span></div>
+  <div class="toc-item" onclick="goSlide(16)"><span class="toc-num">05</span><span class="toc-label">ISQ — Measuring Lateral Stability</span></div>
+</div>
+<div>
+  <div class="toc-item" onclick="goSlide(18)"><span class="toc-num">06</span><span class="toc-label">Mechanical vs Biological Stability Curve</span></div>
+  <div class="toc-item" onclick="goSlide(21)"><span class="toc-num">07</span><span class="toc-label">The Danger Zone: Weeks 1–5</span></div>
+  <div class="toc-item" onclick="goSlide(23)"><span class="toc-num">08</span><span class="toc-label">Screw Torque vs Implant Torque</span></div>
+  <div class="toc-item" onclick="goSlide(26)"><span class="toc-num">09</span><span class="toc-label">Plan B Philosophy</span></div>
+  <div class="toc-item" onclick="goSlide(29)"><span class="toc-num">10</span><span class="toc-label">Golden Rules of Implant Position</span></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 3: Press-Fit Concept -->
+<div class="slide" data-slide="3">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">The Press-Fit Effect</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Press-fit is the <strong>controlled compression</strong> of cancellous bone when an implant slightly wider than the osteotomy is placed. This micro-damage is not a complication — it's the <strong>trigger for osteointegration</strong>.</p>
+<div class="key-point"><p><strong>No press-fit = no osteointegration.</strong> Without controlled pressure on cancellous bone, the body defaults to fibrous healing instead of bony healing. The implant becomes encapsulated in scar tissue.</p></div>
+<p class="body-text" style="margin-top:1rem"><strong>The critical distinction:</strong></p>
+<div class="process-step"><div class="step-num" style="background:var(--green)">✓</div><div class="step-text">Press-fit on <strong>cancellous bone</strong> → osteointegration</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">✗</div><div class="step-text">Press-fit on <strong>cortical bone</strong> → micro-cracks → resorption</div></div>
+</div>
+<div>
+  <div class="svg-container">
+    <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="360" height="320" rx="12" fill="#111827" stroke="#1e293b"/>
+      <text x="180" y="28" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="600" font-family="Source Sans 3">PRESS-FIT: IMPLANT > OSTEOTOMY</text>
+      <!-- Osteotomy -->
+      <rect x="145" y="45" width="70" height="180" rx="8" fill="rgba(16,185,129,.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="180" y="240" text-anchor="middle" fill="#10b981" font-size="9" font-family="Source Sans 3">3.5mm osteotomy</text>
+      <!-- Implant (wider) -->
+      <rect x="138" y="50" width="84" height="170" rx="6" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="180" y="135" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="600" font-family="Source Sans 3">4.0mm</text>
+      <text x="180" y="150" text-anchor="middle" fill="#8b5cf6" font-size="10" font-family="Source Sans 3">Implant</text>
+      <!-- Pressure arrows -->
+      <path d="M135 90 L148 90" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <path d="M225 90 L212 90" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <path d="M135 140 L148 140" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <path d="M225 140 L212 140" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <path d="M135 190 L148 190" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <path d="M225 190 L212 190" stroke="#ec4899" stroke-width="2" marker-end="url(#arrP)"/>
+      <defs><marker id="arrP" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#ec4899"/></marker></defs>
+      <text x="105" y="145" text-anchor="middle" fill="#ec4899" font-size="8" font-family="Source Sans 3">Pressure</text>
+      <text x="255" y="145" text-anchor="middle" fill="#ec4899" font-size="8" font-family="Source Sans 3">Pressure</text>
+      <!-- Result box -->
+      <rect x="40" y="260" width="280" height="46" rx="8" fill="rgba(139,92,246,.08)" stroke="rgba(139,92,246,.3)"/>
+      <text x="180" y="280" text-anchor="middle" fill="#c4b5fd" font-size="10" font-weight="600" font-family="Source Sans 3">0.5mm compression on each side</text>
+      <text x="180" y="296" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Source Sans 3">= Controlled micro-damage → biological cascade</text>
+    </svg>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 4: What Press-Fit Triggers -->
+<div class="slide" data-slide="4">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">The Biological Cascade of Press-Fit</h1>
+<p class="body-text">Press-fit creates controlled micro-damage that triggers a precise biological sequence:</p>
+<div class="svg-container" style="margin-top:1rem">
+  <svg viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="800" height="180" rx="12" fill="#111827" stroke="#1e293b"/>
+    <rect x="15" y="25" width="120" height="55" rx="8" fill="rgba(236,72,153,.1)" stroke="rgba(236,72,153,.4)"/>
+    <text x="75" y="48" text-anchor="middle" fill="#ec4899" font-size="9" font-weight="600" font-family="Source Sans 3">PRESS-FIT</text>
+    <text x="75" y="65" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Micro-damage to bone</text>
+    <path d="M138 52 L155 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a)"/>
+    <rect x="160" y="25" width="120" height="55" rx="8" fill="rgba(245,158,11,.1)" stroke="rgba(245,158,11,.4)"/>
+    <text x="220" y="45" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="600" font-family="Source Sans 3">RANKL RELEASE</text>
+    <text x="220" y="62" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Growth factors freed</text>
+    <path d="M283 52 L300 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a)"/>
+    <rect x="305" y="25" width="120" height="55" rx="8" fill="rgba(239,68,68,.1)" stroke="rgba(239,68,68,.4)"/>
+    <text x="365" y="45" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Source Sans 3">OSTEOCLASTS</text>
+    <text x="365" y="62" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Remove damaged bone</text>
+    <path d="M428 52 L445 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a)"/>
+    <rect x="450" y="25" width="120" height="55" rx="8" fill="rgba(59,130,246,.1)" stroke="rgba(59,130,246,.4)"/>
+    <text x="510" y="45" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="600" font-family="Source Sans 3">GAP CREATED</text>
+    <text x="510" y="62" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Space around implant</text>
+    <path d="M573 52 L590 52" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a)"/>
+    <rect x="595" y="25" width="120" height="55" rx="8" fill="rgba(16,185,129,.1)" stroke="rgba(16,185,129,.4)"/>
+    <text x="655" y="45" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" font-family="Source Sans 3">OSTEOBLASTS</text>
+    <text x="655" y="62" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Source Sans 3">Fill gap with new bone</text>
+    <defs><marker id="a" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#94a3b8"/></marker></defs>
+    <!-- Healthy vs Unhealthy -->
+    <rect x="595" y="100" width="185" height="65" rx="8" fill="rgba(16,185,129,.08)" stroke="rgba(16,185,129,.3)"/>
+    <text x="688" y="118" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" font-family="Source Sans 3">HEALTHY PATIENT</text>
+    <text x="688" y="134" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Source Sans 3">Stem cells → Osteoblasts</text>
+    <text x="688" y="150" text-anchor="middle" fill="#10b981" font-size="9" font-family="Source Sans 3">= WOVEN BONE → LAMELLAR BONE</text>
+    <rect x="15" y="100" width="185" height="65" rx="8" fill="rgba(239,68,68,.08)" stroke="rgba(239,68,68,.3)"/>
+    <text x="108" y="118" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Source Sans 3">UNHEALTHY PATIENT</text>
+    <text x="108" y="134" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Source Sans 3">Stem cells → Fibroblasts</text>
+    <text x="108" y="150" text-anchor="middle" fill="#ef4444" font-size="9" font-family="Source Sans 3">= GRANULATION TISSUE → FAILURE</text>
+  </svg>
+</div>
+<div class="key-point" style="margin-top:1rem"><p><strong>Two requirements for osteointegration:</strong> (1) A healthy patient so stem cells differentiate into osteoblasts, not fibroblasts. (2) Press-fit on cancellous bone so osteoclasts initiate the remodelling cascade via RANKL.</p></div>
+</div>
+
+<!-- SLIDE 5: Healthy vs Unhealthy -->
+<div class="slide" data-slide="5">
+<h3 class="sub-title">Chapter 1</h3>
+<h1 class="slide-title">Healthy vs Unhealthy — Two Paths</h1>
+<div class="grid-2">
+<div class="card" style="border-top:3px solid var(--green)">
+  <h4 style="color:var(--green)">Path A — Healthy Patient</h4>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">1</div><div class="step-text">Press-fit compresses cancellous bone</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">2</div><div class="step-text">Osteocytes detect abnormal pressure → signal brain</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">3</div><div class="step-text">Osteoclasts activated → remove compressed bone</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">4</div><div class="step-text">Gap created around implant</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">5</div><div class="step-text">Osteoclasts signal stem cells → <strong>osteoblasts</strong></div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">6</div><div class="step-text">Osteoblasts fill gap with woven bone</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--green)">7</div><div class="step-text">Remodelling: woven bone → <strong>lamellar bone</strong></div></div>
+  <p style="margin-top:.8rem;font-size:.9rem;color:var(--green);font-weight:600">Result: Osteointegration ✓</p>
+</div>
+<div class="card" style="border-top:3px solid var(--red)">
+  <h4 style="color:var(--red)">Path B — Unhealthy Patient</h4>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">1</div><div class="step-text">Press-fit compresses cancellous bone</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">2</div><div class="step-text">Osteocytes detect pressure → signal brain</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">3</div><div class="step-text">Osteoclasts activated → remove compressed bone</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">4</div><div class="step-text">Gap created around implant</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">5</div><div class="step-text">Impaired signals → stem cells become <strong>fibroblasts</strong></div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">6</div><div class="step-text">Fibroblasts fill gap with granulation tissue</div></div>
+  <div class="process-step"><div class="step-num" style="background:var(--red)">7</div><div class="step-text">12 weeks later: implant is <strong>wobbly</strong></div></div>
+  <p style="margin-top:.8rem;font-size:.9rem;color:var(--red);font-weight:600">Result: Fibrous encapsulation = Failure ✗</p>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 6: Osteotomy Sizing -->
+<div class="slide" data-slide="6">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Osteotomy Sizing — Why 3.5 for a 4.0 Implant?</h1>
+<p class="body-text">You're placing a <strong>4.0 mm diameter implant</strong>. What diameter osteotomy do you drill?</p>
+<div class="grid-3" style="margin-top:1.5rem">
+<div class="card" style="border-top:3px solid var(--red)">
+  <h4 style="color:var(--red)">4.5 mm — TOO WIDE ✗</h4>
+  <p>Implant rocks in the hole. No compression. No press-fit. Mobility stimulates <strong>fibroblasts</strong>.</p>
+  <p style="margin-top:.5rem"><strong>Result:</strong> Fibrous healing guaranteed. Like a broken jaw left untreated — motion = scar tissue.</p>
+</div>
+<div class="card" style="border-top:3px solid var(--gold)">
+  <h4 style="color:var(--gold)">4.0 mm — TOO PASSIVE ✗</h4>
+  <p>Implant sits passively with no compression on cancellous bone. Just a passive touch.</p>
+  <p style="margin-top:.5rem"><strong>Result:</strong> No osteocyte stimulation. No biological cascade. Weak or no osteointegration.</p>
+</div>
+<div class="card" style="border-top:3px solid var(--green)">
+  <h4 style="color:var(--green)">3.5 mm — CORRECT ✓</h4>
+  <p>0.5 mm compression on each side. Press-fit on cancellous bone. Osteocytes activated.</p>
+  <p style="margin-top:.5rem"><strong>Result:</strong> Biological cascade triggered. Osteoblast activity. Osteointegration.</p>
+</div>
+</div>
+<div class="key-point" style="margin-top:1.5rem"><p><strong>Posterior maxilla exception:</strong> In very soft bone (type IV), drill only 3.0 mm for a 4.0 mm implant. Do not use the profile drill. More compression needed because the cancellous bone is less dense.</p></div>
+</div>
+
+<!-- SLIDE 7: Interactive Osteotomy -->
+<div class="slide" data-slide="7">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Interactive: Osteotomy Size Simulator</h1>
+<p class="body-text">Adjust the osteotomy diameter to see how it affects the implant fit:</p>
+<div class="grid-2" style="margin-top:1rem">
+<div>
+  <div class="slider-container">
+    <div class="slider-label"><span>2.5 mm</span><span>5.0 mm</span></div>
+    <input type="range" id="osteoSlider" min="25" max="50" value="35" oninput="updateOsteo()">
+    <div class="slider-output" id="osteoVal">3.5 mm</div>
+  </div>
+  <div id="osteoResult" style="margin-top:1rem;padding:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:12px;">
+    <p style="font-size:1rem;color:var(--green);font-weight:600">✓ Optimal Press-Fit</p>
+    <p style="font-size:.9rem;color:var(--text2);margin-top:.5rem">0.25 mm compression per side on cancellous bone. Osteocytes will be stimulated. Biological cascade will initiate.</p>
+  </div>
+</div>
+<div>
+  <div class="svg-container">
+    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" id="osteoSvg">
+      <rect x="0" y="0" width="300" height="300" rx="12" fill="#111827" stroke="#1e293b"/>
+      <text x="150" y="25" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Source Sans 3">CROSS-SECTION VIEW</text>
+      <!-- Bone -->
+      <circle cx="150" cy="160" r="100" fill="#d4a574" opacity=".2" stroke="#d4a574" stroke-width="1"/>
+      <text x="150" y="275" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">Cancellous Bone</text>
+      <!-- Osteotomy -->
+      <circle id="osteoDrill" cx="150" cy="160" r="44" fill="rgba(16,185,129,.1)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="150" y="265" text-anchor="middle" fill="#10b981" font-size="9" font-family="Source Sans 3" id="osteoLabel">Osteotomy: 3.5mm</text>
+      <!-- Implant -->
+      <circle cx="150" cy="160" r="50" fill="rgba(139,92,246,.15)" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="150" y="163" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="600" font-family="Source Sans 3">4.0mm Implant</text>
+      <!-- Compression zone -->
+      <circle id="compZone" cx="150" cy="160" r="47" fill="none" stroke="#ec4899" stroke-width="6" opacity=".3" stroke-dasharray="2 4"/>
+    </svg>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 8: Why Bone Needs Stability -->
+<div class="slide" data-slide="8">
+<h3 class="sub-title">Chapter 2</h3>
+<h1 class="slide-title">Why Bone Healing Requires Stability</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">The fundamental principle: <strong>osteoblasts need stability, fibroblasts thrive on motion</strong>.</p>
+<div class="card" style="margin-bottom:.8rem"><h4>Fracture Analogy</h4><p>When someone breaks their arm → cast. Broken jaw → mini-plate. Why? Because bone healing requires <strong>immobilisation</strong>.</p></div>
+<div class="card" style="margin-bottom:.8rem"><h4>Untreated Fracture</h4><p>If a fractured jaw isn't stabilised within days, fibrous healing occurs. After 2 weeks untreated, the fracture site fills with <strong>scar tissue</strong> instead of bone — mobility stimulated fibroblasts.</p></div>
+<div class="warning-box"><p><strong>Same principle for implants:</strong> If micro-motion exceeds <strong>150 micrometres</strong>, fibroblasts are stimulated instead of osteoblasts. The threshold is absolute.</p></div>
+</div>
+<div>
+<div class="stat-card" style="margin-bottom:1rem"><div class="num">150 μm</div><div class="label">Maximum micro-motion threshold<br>Above this → fibrous healing guaranteed</div></div>
+<div class="stat-card" style="margin-bottom:1rem"><div class="num">50–150 μm</div><div class="label">Acceptable micro-motion range<br>Below this → osteointegration possible</div></div>
+<div class="key-point"><p><strong>This is why a 4.5 mm osteotomy for a 4.0 mm implant fails:</strong> The implant rocks, creating motion >150 μm, and fibroblasts take over. Conversely, a 3.5 mm osteotomy creates compression (not motion) — which stimulates osteocytes, not fibroblasts.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 9: Cell Cascade -->
+<div class="slide" data-slide="9">
+<h3 class="sub-title">Chapter 3</h3>
+<h1 class="slide-title">The Cell Cascade</h1>
+<p class="body-text">Click each cell type to learn its role in the osteointegration cascade:</p>
+<div class="grid-3" style="margin-top:1rem">
+<div class="card" id="cell1" style="cursor:pointer;transition:all .3s;border-top:3px solid var(--gold)" onclick="showCell(1)">
+  <h4 style="color:var(--gold)">🔍 Osteocytes</h4>
+  <p><strong>The Radar</strong></p>
+  <p id="cell1-detail" style="display:none;margin-top:.5rem">Embedded in mature bone. Detect mechanical forces (pressure from press-fit). Signal the brain to dispatch osteoclasts. Found primarily in cancellous bone — which is why press-fit on cancellous triggers the response.</p>
+  <p class="cell-hint" style="font-size:.8rem;color:var(--text3);margin-top:.3rem">Click to expand</p>
+</div>
+<div class="card" id="cell2" style="cursor:pointer;transition:all .3s;border-top:3px solid var(--red)" onclick="showCell(2)">
+  <h4 style="color:var(--red)">🧹 Osteoclasts</h4>
+  <p><strong>The Cleaners</strong></p>
+  <p id="cell2-detail" style="display:none;margin-top:.5rem">Remove any bone under abnormal circumstances: crushed, infected, or compressed. They are non-selective within their target zone. After cleaning, they signal stem cells to differentiate into osteoblasts (in healthy patients).</p>
+  <p class="cell-hint" style="font-size:.8rem;color:var(--text3);margin-top:.3rem">Click to expand</p>
+</div>
+<div class="card" id="cell3" style="cursor:pointer;transition:all .3s;border-top:3px solid var(--green)" onclick="showCell(3)">
+  <h4 style="color:var(--green)">🏗️ Osteoblasts</h4>
+  <p><strong>The Builders</strong></p>
+  <p id="cell3-detail" style="display:none;margin-top:.5rem">Derived from mesenchymal stem cells. Deposit osteoid matrix (collagen + growth factors), then mineralise it. First produce woven bone (random, weak), which is later remodelled into lamellar bone (organised, strong).</p>
+  <p class="cell-hint" style="font-size:.8rem;color:var(--text3);margin-top:.3rem">Click to expand</p>
+</div>
+</div>
+<div class="grid-2" style="margin-top:1rem">
+<div class="card" id="cell4" style="cursor:pointer;transition:all .3s;border-top:3px solid var(--red)" onclick="showCell(4)">
+  <h4 style="color:var(--red)">⚠️ Fibroblasts</h4>
+  <p><strong>The Unwanted Alternative</strong></p>
+  <p id="cell4-detail" style="display:none;margin-top:.5rem">When stem cells receive incorrect signals (from disease, infection, or excess motion), they become fibroblasts instead of osteoblasts. Fibroblasts produce granulation/scar tissue — not bone. This means implant failure.</p>
+  <p class="cell-hint" style="font-size:.8rem;color:var(--text3);margin-top:.3rem">Click to expand</p>
+</div>
+<div class="card" id="cell5" style="cursor:pointer;transition:all .3s;border-top:3px solid var(--accent3)" onclick="showCell(5)">
+  <h4 style="color:var(--accent3)">🧬 Mesenchymal Stem Cells</h4>
+  <p><strong>The Decision Point</strong></p>
+  <p id="cell5-detail" style="display:none;margin-top:.5rem">These are the pivotal cells. They can become either osteoblasts OR fibroblasts. What determines the path? Patient health, inflammatory status, and the mechanical environment. This is why both patient selection and surgical technique matter equally.</p>
+  <p class="cell-hint" style="font-size:.8rem;color:var(--text3);margin-top:.3rem">Click to expand</p>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 10-11: Quiz -->
+<div class="slide" data-slide="10">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Press-Fit & Osteotomy</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q1">
+  <h4>1. For a 4.0mm implant in the posterior maxilla (soft bone), what osteotomy?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,false)">3.5mm — standard undersizing</button>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,true)">3.0mm — extra compression for soft bone</button>
+  <button class="quiz-option" onclick="checkQuiz('q1',this,false)">4.0mm — match the implant diameter</button>
+  <div class="quiz-feedback correct-fb" id="q1-correct">Correct! In soft posterior maxillary bone, drill 3.0mm for a 4.0mm implant and skip the profile drill. More compression is needed because the cancellous bone is less dense.</div>
+  <div class="quiz-feedback wrong-fb" id="q1-wrong">In the posterior maxilla with soft bone, you need extra compression: drill 3.0mm for a 4.0mm implant. Standard 3.5mm undersizing may not provide enough press-fit in type IV bone.</div>
+</div>
+<div class="quiz-container" id="q2">
+  <h4>2. What happens when micro-motion exceeds 150 micrometres?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,false)">Faster osteointegration due to increased stimulation</button>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,true)">Fibroblast stimulation → fibrous encapsulation → failure</button>
+  <button class="quiz-option" onclick="checkQuiz('q2',this,false)">Osteoclast activation → controlled bone removal</button>
+  <div class="quiz-feedback correct-fb" id="q2-correct">Correct! Above 150μm, motion stimulates fibroblasts rather than osteoblasts. The implant becomes encapsulated in scar tissue instead of bone.</div>
+  <div class="quiz-feedback wrong-fb" id="q2-wrong">Micro-motion above 150μm triggers fibroblast activity, leading to fibrous encapsulation rather than bony integration. This is guaranteed failure.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDE 11: Woven to Lamellar -->
+<div class="slide" data-slide="11">
+<h3 class="sub-title">Chapter 3</h3>
+<h1 class="slide-title">From Woven Bone to Lamellar Bone</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">After the osteoblasts fill the gap with new bone, the process doesn't stop. The first bone deposited is <strong>woven bone</strong> — random, weak structure. Through <strong>remodelling</strong>, this converts to lamellar bone.</p>
+<div class="card" style="margin-top:1rem;border-left:3px solid var(--gold)"><h4 style="color:var(--gold)">Woven Bone</h4><p>Random collagen fibre orientation. Weak but forms quickly. Provides initial biological stability. Present from weeks 2–8 approximately.</p></div>
+<div class="card" style="margin-top:.6rem;border-left:3px solid var(--green)"><h4 style="color:var(--green)">Lamellar Bone</h4><p>Organised collagen fibres perpendicular to implant surface. Strong, mature bone. The fibres are aligned perpendicular to the implant — increasing stability. Full maturation at 12–24 weeks.</p></div>
+</div>
+<div>
+<h2 class="section-title">Remodelling Cycle</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text">Osteoblasts deposit <strong>osteoid matrix</strong> (collagen + growth factors)</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text">Calcium phosphate minerals deposited → <strong>woven bone</strong></div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text">Osteoblasts mature into <strong>osteocytes</strong></div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text">Osteoclasts reactivate → remove weak woven bone</div></div>
+<div class="process-step"><div class="step-num">5</div><div class="step-text">Osteoblasts deposit organised <strong>lamellar bone</strong></div></div>
+<div class="process-step"><div class="step-num">6</div><div class="step-text">Bone structure perpendicular to implant → <strong>maximum strength</strong></div></div>
+<div class="key-point" style="margin-top:1rem"><p><strong>This is why patience matters.</strong> At 4 weeks, you have weak woven bone. At 12+ weeks, you have strong lamellar bone. Loading too early interrupts this remodelling process.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDES 12-15: Torque -->
+<div class="slide" data-slide="12">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Torque — Measuring Rotational Stability</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Torque measures the <strong>resistance to rotation</strong> (spinning) as the implant is placed into bone. It's measured in <strong>Newton centimetres (Ncm)</strong>.</p>
+<h2 class="section-title" style="margin-top:1rem">Two Measurement Methods</h2>
+<div class="card" style="margin-bottom:.8rem"><h4>Motor Sensors (Easy)</h4><p>The implant handpiece has internal sensors that display real-time torque on the motor screen. <strong>Downside:</strong> Accuracy degrades without annual calibration — which most people don't do.</p></div>
+<div class="card"><h4>Manual Torque Wrench (Accurate)</h4><p>Physical wrench with numbered increments. Test at 30 — if implant doesn't move, torque is >30. Test at 35 — if it moves, torque is between 30–35. Gold standard for accuracy.</p></div>
+</div>
+<div>
+<div class="stat-card" style="margin-bottom:1rem"><div class="num">15 Ncm</div><div class="label">MINIMUM implant torque threshold<br>Below this → implant is rocking → must act</div></div>
+<div class="key-point"><p><strong>Below 15 Ncm:</strong> The implant is rocking and will fail. Options: (1) Remove and place a wider implant. (2) Remove and allow healing before trying again. This is why you always have a <strong>Plan B implant</strong> ready.</p></div>
+<div class="warning-box" style="margin-top:.8rem"><p><strong>Is there a maximum torque?</strong> The old theory of "pressure necrosis" above 50 Ncm is no longer accepted. What matters is <strong>where</strong> the pressure goes. 100 Ncm on cancellous bone = fine. 30 Ncm on cortical bone = resorption.</p></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="13">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Pressure Necrosis — Debunked</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Old teaching said that torque above 50 Ncm causes <strong>pressure necrosis</strong> — bone death from excessive compression. This theory is <strong>no longer accepted</strong>.</p>
+<div class="key-point"><p><strong>Modern understanding:</strong> It's not about HOW MUCH pressure, it's about WHERE the pressure is applied. The same force has completely different effects on cortical vs cancellous bone.</p></div>
+</div>
+<div>
+<table class="compare-table">
+<tr><th>Scenario</th><th>Torque</th><th>Result</th></tr>
+<tr><td>30 Ncm on <strong style="color:var(--red)">cortical bone</strong></td><td>30</td><td style="color:var(--red)">Micro-cracks → resorption</td></tr>
+<tr><td>50 Ncm on <strong style="color:var(--red)">cortical bone</strong></td><td>50</td><td style="color:var(--red)">More cracks → faster resorption</td></tr>
+<tr><td>50 Ncm on <strong style="color:var(--green)">cancellous bone</strong></td><td>50</td><td style="color:var(--green)">Press-fit → osteointegration</td></tr>
+<tr><td>100 Ncm on <strong style="color:var(--green)">cancellous bone</strong></td><td>100</td><td style="color:var(--green)">Strong press-fit → excellent integration</td></tr>
+</table>
+<p class="body-text" style="margin-top:1rem">Most implant systems recommend not exceeding <strong>70 Ncm</strong> — not because of bone necrosis, but because the implant or its components may break at higher forces.</p>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="14">
+<h3 class="sub-title">Chapter 4</h3>
+<h1 class="slide-title">Torque Thresholds — Quick Reference</h1>
+<div class="grid-3">
+<div class="stat-card" style="border-top:3px solid var(--red)"><div class="num">&lt;15</div><div class="label">Ncm — FAILURE ZONE<br>Implant is rocking<br>Must use Plan B (wider implant)</div></div>
+<div class="stat-card" style="border-top:3px solid var(--gold)"><div class="num">15–35</div><div class="label">Ncm — ACCEPTABLE<br>Implant is stable<br>Standard healing protocol</div></div>
+<div class="stat-card" style="border-top:3px solid var(--green)"><div class="num">35–70</div><div class="label">Ncm — EXCELLENT<br>Strong primary stability<br>May consider early loading</div></div>
+</div>
+<div class="key-point" style="margin-top:1.5rem"><p><strong>Remember:</strong> These values are meaningful only when the stability comes from cancellous bone. A high torque from cortical bone grip is misleading — that cortical bone will resorb, and your apparent stability will vanish.</p></div>
+</div>
+
+<div class="slide" data-slide="15">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Torque</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q3">
+  <h4>3. An implant achieves only 12 Ncm torque. What do you do?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,false)">Leave it — it may integrate with time</button>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,true)">Remove and place a wider implant (Plan B)</button>
+  <button class="quiz-option" onclick="checkQuiz('q3',this,false)">Add bone cement around it for stability</button>
+  <div class="quiz-feedback correct-fb" id="q3-correct">Correct! Below 15 Ncm the implant is rocking. This means micro-motion will exceed 150μm, guaranteeing fibrous healing. Remove and place a wider implant without further drilling.</div>
+  <div class="quiz-feedback wrong-fb" id="q3-wrong">Below 15 Ncm, the implant will rock, creating motion >150μm. This guarantees fibroblast activity and failure. You must remove and place a wider implant (Plan B).</div>
+</div>
+<div class="quiz-container" id="q4">
+  <h4>4. "Pressure necrosis" at high torque is:</h4>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,false)">A real concern above 50 Ncm in all bone types</button>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,true)">An outdated theory — location matters more than magnitude</button>
+  <button class="quiz-option" onclick="checkQuiz('q4',this,false)">Only relevant in the mandible</button>
+  <div class="quiz-feedback correct-fb" id="q4-correct">Correct! Pressure necrosis is outdated. 100 Ncm on cancellous bone is fine. 30 Ncm on cortical bone causes resorption. It's about WHERE, not HOW MUCH.</div>
+  <div class="quiz-feedback wrong-fb" id="q4-wrong">Pressure necrosis is an outdated theory. What matters is where the pressure is applied. Cancellous bone handles high compression well. Cortical bone micro-cracks at any pressure level.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDES 16-17: ISQ -->
+<div class="slide" data-slide="16">
+<h3 class="sub-title">Chapter 5</h3>
+<h1 class="slide-title">ISQ — Implant Stability Quotient</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Torque measures <strong>rotational</strong> resistance. ISQ measures <strong>lateral</strong> movement using magnetic resonance technology.</p>
+<p class="body-text">A proper assessment of mechanical stability needs <strong>both measurements</strong>.</p>
+<div class="card" style="margin-top:1rem"><h4>How ISQ Works</h4><p>A magnetic transducer is attached to the implant. The device sends a signal and measures the resonance frequency. Higher frequency = less lateral movement = higher ISQ value.</p></div>
+<div class="card" style="margin-top:.6rem"><h4>ISQ Scale</h4><p>Measured on a scale from 1 to 100. Values below ~60 suggest poor stability. Values above 65–70 indicate good integration. The key is the <strong>trend over time</strong>, not a single measurement.</p></div>
+</div>
+<div>
+<h2 class="section-title">The Ideal Protocol</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text">Measure ISQ <strong>day of insertion</strong> (baseline)</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text">Measure ISQ at <strong>12 weeks</strong> (review)</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text">If ISQ improved → implant integrated ✓</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text">If ISQ same or decreased → integration failing ✗</div></div>
+<div class="key-point" style="margin-top:1rem"><p><strong>If you can only choose one:</strong> Prefer torque. If torque is high, ISQ is usually high too. But ideally, check both. Many clinicians only check torque, which can miss lateral instability.</p></div>
+<div class="warning-box" style="margin-top:.8rem"><p><strong>Don't check mid-healing!</strong> ISQ at weeks 2–4 will show a dip (mechanical stability decreasing, biological not yet established). This is normal — not a sign of failure.</p></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="17">
+<h3 class="sub-title">Chapter 5</h3>
+<h1 class="slide-title">Torque vs ISQ — Complete Picture</h1>
+<table class="compare-table">
+<tr><th>Feature</th><th>Torque (Ncm)</th><th>ISQ (Resonance)</th></tr>
+<tr><td>Measures</td><td>Rotational resistance</td><td>Lateral movement</td></tr>
+<tr><td>Method</td><td>Motor sensors or manual wrench</td><td>Magnetic resonance device</td></tr>
+<tr><td>Minimum threshold</td><td>15 Ncm</td><td>~55–60 (varies)</td></tr>
+<tr><td>Best time to measure</td><td>Day of insertion</td><td>Day of insertion + 12 weeks</td></tr>
+<tr><td>Trend tracking</td><td>Single measurement</td><td>Compare over time</td></tr>
+<tr><td>Accuracy concern</td><td>Motor needs annual calibration</td><td>Generally reliable</td></tr>
+<tr><td>If only one available</td><td style="color:var(--green)"><strong>Preferred choice</strong></td><td>Secondary</td></tr>
+</table>
+<div class="key-point" style="margin-top:1rem"><p><strong>Third method — the finger test:</strong> Place a healing abutment and try lateral movement with your finger. If the implant moves, the gap exceeds 150μm → guaranteed fibrous healing. Simple but only detects gross failure.</p></div>
+</div>
+
+<!-- SLIDES 18-22: Stability Curve -->
+<div class="slide" data-slide="18">
+<h3 class="sub-title">Chapter 6</h3>
+<h1 class="slide-title">The Stability Curve</h1>
+<p class="body-text">The most important graph in implant dentistry — understanding when your implant is most vulnerable:</p>
+<div class="svg-container" style="margin-top:1rem">
+  <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="700" height="340" rx="12" fill="#111827" stroke="#1e293b"/>
+    <!-- Axes -->
+    <line x1="80" y1="280" x2="660" y2="280" stroke="#334155" stroke-width="1.5"/>
+    <line x1="80" y1="40" x2="80" y2="280" stroke="#334155" stroke-width="1.5"/>
+    <text x="370" y="315" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Source Sans 3">TIME (WEEKS)</text>
+    <text x="30" y="160" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Source Sans 3" transform="rotate(-90 30 160)">STABILITY</text>
+    <!-- Week labels -->
+    <text x="100" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">0</text>
+    <text x="200" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">2</text>
+    <text x="300" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">4</text>
+    <text x="400" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">6</text>
+    <text x="500" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">8</text>
+    <text x="600" y="298" text-anchor="middle" fill="#64748b" font-size="9" font-family="Source Sans 3">12</text>
+    <!-- Mechanical stability curve (declining) -->
+    <path d="M100 80 Q200 90 300 170 Q400 230 500 250 Q550 255 600 260" fill="none" stroke="#ec4899" stroke-width="3"/>
+    <text x="160" y="70" fill="#ec4899" font-size="10" font-weight="600" font-family="Source Sans 3">Mechanical (Primary)</text>
+    <!-- Biological stability curve (rising) -->
+    <path d="M100 270 Q200 265 300 230 Q400 160 500 100 Q550 80 600 70" fill="none" stroke="#10b981" stroke-width="3"/>
+    <text x="520" y="60" fill="#10b981" font-size="10" font-weight="600" font-family="Source Sans 3">Biological (Secondary)</text>
+    <!-- Total stability (U-shape) -->
+    <path d="M100 80 Q200 100 250 150 Q300 180 350 185 Q400 175 450 150 Q500 110 550 85 Q580 75 600 70" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="400" y="198" fill="#f59e0b" font-size="9" font-family="Source Sans 3">Total stability</text>
+    <!-- DANGER ZONE -->
+    <rect x="170" y="40" width="200" height="235" rx="0" fill="rgba(239,68,68,.06)" stroke="none"/>
+    <rect x="170" y="40" width="200" height="8" rx="0" fill="rgba(239,68,68,.3)"/>
+    <text x="270" y="32" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700" font-family="Source Sans 3">⚠ DANGER ZONE — Weeks 1–5</text>
+    <!-- Crossover point -->
+    <circle cx="310" cy="185" r="6" fill="none" stroke="#f59e0b" stroke-width="2"/>
+    <text x="340" y="215" fill="#f59e0b" font-size="8" font-family="Source Sans 3">Lowest total stability</text>
+  </svg>
+</div>
+</div>
+
+<div class="slide" data-slide="19">
+<h3 class="sub-title">Chapter 6</h3>
+<h1 class="slide-title">Understanding the Stability Dip</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">The stability curve reveals the most vulnerable period for any dental implant:</p>
+<div class="card" style="border-left:3px solid var(--pink);margin-bottom:.8rem"><h4 style="color:var(--pink)">Mechanical Stability (Declining)</h4><p>The initial grip from press-fit compression. Declines as osteoclasts remove the compressed bone — this is <strong>normal and necessary</strong>. It means the biological cascade is working.</p></div>
+<div class="card" style="border-left:3px solid var(--green);margin-bottom:.8rem"><h4 style="color:var(--green)">Biological Stability (Rising)</h4><p>New bone forming around the implant. Starts near zero, gradually increases as osteoblasts deposit woven bone, then lamellar bone. Takes 8–12+ weeks to reach full strength.</p></div>
+<div class="card" style="border-left:3px solid var(--gold)"><h4 style="color:var(--gold)">Total Stability (The U-Curve)</h4><p>The sum of both. Dips during weeks 1–5 when mechanical is declining and biological hasn't yet compensated. This is when loading is most dangerous.</p></div>
+</div>
+<div>
+<div class="warning-box"><p><strong>The Danger Zone (Weeks 1–5):</strong> Mechanical stability is declining rapidly. Biological stability is still minimal. Total stability is at its lowest. <strong>Do NOT load the implant during this period.</strong> It's like loading a post in soft concrete — it will move.</p></div>
+<div class="key-point" style="margin-top:1rem"><p><strong>ISQ during the dip:</strong> If you measure ISQ at weeks 2–3, it will be lower than day 1. This is expected and normal. It does NOT mean failure — it means the biological process is working. Only worry if ISQ hasn't recovered by week 12.</p></div>
+<div class="stat-card" style="margin-top:1rem"><div class="num">Wk 1–5</div><div class="label">Never load during this period<br>Micro-motion > 150μm = fibroblasts win</div></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="20">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — The Stability Curve</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q5">
+  <h4>5. Why does ISQ drop at weeks 2–4?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,false)">The implant is failing — consider removal</button>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,true)">Normal: osteoclasts are removing compressed bone as part of integration</button>
+  <button class="quiz-option" onclick="checkQuiz('q5',this,false)">The patient is not healing — extend antibiotics</button>
+  <div class="quiz-feedback correct-fb" id="q5-correct">Correct! The dip is expected. Osteoclasts are removing the press-fit compressed bone (reducing mechanical stability) while osteoblasts haven't yet deposited enough new bone (biological stability still low).</div>
+  <div class="quiz-feedback wrong-fb" id="q5-wrong">The ISQ dip at weeks 2–4 is normal. It reflects the transition from mechanical to biological stability. Osteoclasts are removing compressed bone — which is exactly what should happen.</div>
+</div>
+<div class="quiz-container" id="q6">
+  <h4>6. When is the implant most vulnerable to loading failure?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,true)">Weeks 1–5 — the stability dip</button>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,false)">Day 1 — before any healing</button>
+  <button class="quiz-option" onclick="checkQuiz('q6',this,false)">Weeks 8–12 — during woven bone formation</button>
+  <div class="quiz-feedback correct-fb" id="q6-correct">Correct! Weeks 1–5 is the danger zone. Mechanical stability is declining, biological stability is minimal. Loading during this period creates micro-motion that stimulates fibroblasts.</div>
+  <div class="quiz-feedback wrong-fb" id="q6-wrong">The danger zone is weeks 1–5. At day 1, mechanical stability is at its peak. By weeks 8–12, biological stability has largely compensated. But weeks 1–5 is where both are compromised.</div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="21">
+<h3 class="sub-title">Chapter 7</h3>
+<h1 class="slide-title">Clinical Analogy — Concrete Post</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Dr Hassan's analogy for patients and students:</p>
+<div class="card" style="border-top:3px solid var(--accent3)">
+  <h4 style="color:var(--accent3)">The Concrete Post</h4>
+  <p style="font-size:1rem;line-height:1.7">Imagine placing a fence post in wet concrete. At the moment of insertion, the post feels stable — the wet concrete provides some initial grip (mechanical stability).</p>
+  <p style="font-size:1rem;line-height:1.7;margin-top:.5rem">Now, if you push against the post while the concrete is still setting (weeks 1–5), it moves. The concrete never sets properly around it. The post will always be wobbly.</p>
+  <p style="font-size:1rem;line-height:1.7;margin-top:.5rem"><strong>But if you leave it alone</strong> until the concrete fully sets (12 weeks), it's rock solid. The concrete has cured and bonded to the post.</p>
+</div>
+</div>
+<div>
+<p class="body-text">This is exactly what happens with implants:</p>
+<div class="process-step"><div class="step-num">1</div><div class="step-text"><strong>Day 0:</strong> Implant placed with press-fit (wet concrete grip)</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text"><strong>Weeks 1–5:</strong> Bone remodelling (concrete setting — don't touch!)</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text"><strong>Weeks 6–12:</strong> New bone hardening around implant</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text"><strong>Week 12+:</strong> Lamellar bone — safe to load</div></div>
+<div class="key-point" style="margin-top:1.5rem"><p><strong>Patient explanation:</strong> "We need to wait for the bone to cure around your implant, just like concrete needs time to set. If we rush it, the implant won't bond properly and we'll have to start over."</p></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="22">
+<h3 class="sub-title">Chapter 7</h3>
+<h1 class="slide-title">Healing Times by Scenario</h1>
+<table class="compare-table">
+<tr><th>Patient / Scenario</th><th>Standard Healing</th><th>Notes</th></tr>
+<tr><td>Healthy patient, mandible</td><td style="color:var(--green)"><strong>8 weeks</strong></td><td>Dense bone, good vascularity</td></tr>
+<tr><td>Healthy patient, maxilla</td><td style="color:var(--green)"><strong>12 weeks</strong></td><td>Softer bone, more cancellous</td></tr>
+<tr><td>Osteoporotic patient</td><td style="color:var(--gold)"><strong>24 weeks</strong></td><td>Double time — weak bone formation</td></tr>
+<tr><td>Diabetic patient (controlled)</td><td style="color:var(--gold)"><strong>24–36 weeks</strong></td><td>Prolonged inflammation, impaired healing</td></tr>
+<tr><td>Post-infection extraction site</td><td style="color:var(--gold)"><strong>24 weeks</strong></td><td>Double time for body to clear infection first</td></tr>
+<tr><td>Immediate implant (selected cases)</td><td style="color:var(--accent3)"><strong>12–16 weeks</strong></td><td>Only with high primary stability + thick phenotype</td></tr>
+</table>
+<div class="key-point" style="margin-top:1rem"><p><strong>Always err on the side of caution.</strong> An extra few weeks of healing never ruined a case. Loading too early has ruined thousands.</p></div>
+</div>
+
+<!-- SLIDES 23-25: Screw Torque -->
+<div class="slide" data-slide="23">
+<h3 class="sub-title">Chapter 8</h3>
+<h1 class="slide-title">Implant Torque vs Screw Torque</h1>
+<div class="warning-box"><p><strong>Critical distinction:</strong> Do NOT confuse these two. They are completely different measurements for different purposes.</p></div>
+<div class="grid-2" style="margin-top:1rem">
+<div class="card" style="border-top:3px solid var(--accent3)">
+  <h4 style="color:var(--accent3)">Implant Torque (Variable)</h4>
+  <p>Force measured when <strong>placing the implant into bone</strong>.</p>
+  <p style="margin-top:.5rem"><strong>Depends on:</strong> Bone density, implant design, osteotomy size, bone type.</p>
+  <p style="margin-top:.5rem"><strong>Minimum:</strong> 15 Ncm. <strong>No maximum</strong> (as long as from cancellous bone).</p>
+  <p style="margin-top:.5rem"><strong>What it tells you:</strong> How much primary mechanical stability you've achieved.</p>
+</div>
+<div class="card" style="border-top:3px solid var(--gold)">
+  <h4 style="color:var(--gold)">Screw Torque (Fixed per System)</h4>
+  <p>Force used to <strong>tighten the abutment screw</strong> into the implant.</p>
+  <p style="margin-top:.5rem"><strong>Prescribed by manufacturer:</strong> e.g. Megagen = 35 Ncm, Astra = 20–25 Ncm, Nobel = 32 Ncm.</p>
+  <p style="margin-top:.5rem"><strong>Must follow exactly.</strong> Under-torque = loosening. Over-torque = screw fracture or stripped hex.</p>
+  <p style="margin-top:.5rem"><strong>Removal torque is always higher</strong> than insertion torque.</p>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="24">
+<h3 class="sub-title">Chapter 8</h3>
+<h1 class="slide-title">Screw Torque — Dangers of Getting It Wrong</h1>
+<div class="grid-2">
+<div>
+<h2 class="section-title" style="color:var(--red)">Under-Torque Problems</h2>
+<div class="process-step"><div class="step-num" style="background:var(--red)">!</div><div class="step-text">Screw rocks when patient bites</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">!</div><div class="step-text">Gap forms → bacteria leak into connection</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">!</div><div class="step-text">Mucosa traumatised by rocking</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">!</div><div class="step-text">Screw eventually fractures from fatigue</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--red)">!</div><div class="step-text">Broken screw = nightmare to remove</div></div>
+<p class="body-text" style="margin-top:.8rem"><strong>Finger tightening alone</strong> gives approximately 15 Ncm — not enough for any system. Always use the torque wrench.</p>
+</div>
+<div>
+<h2 class="section-title" style="color:var(--gold)">Over-Torque Problems</h2>
+<div class="process-step"><div class="step-num" style="background:var(--gold)">!</div><div class="step-text">Screw may fracture immediately</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--gold)">!</div><div class="step-text">Hex head may strip → becomes circular</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--gold)">!</div><div class="step-text">Screwdriver won't grip → can't remove</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--gold)">!</div><div class="step-text">Removal torque > insertion torque</div></div>
+<p class="body-text" style="margin-top:.8rem"><strong>Example:</strong> Megagen recommends 35 Ncm. If you over-torque to 45, you need ~50+ Ncm to remove it. The screw is designed to break around 50. You've created a ticking time bomb.</p>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="25">
+<h3 class="sub-title">Knowledge Check</h3>
+<h1 class="slide-title">Quick Quiz — Screw Torque</h1>
+<div class="grid-2">
+<div class="quiz-container" id="q7">
+  <h4>7. Megagen recommends 35 Ncm screw torque. Why not just finger-tighten?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,true)">Finger tightening only achieves ~15 Ncm — not enough for the connection</button>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,false)">Finger tightening is equally effective for experienced clinicians</button>
+  <button class="quiz-option" onclick="checkQuiz('q7',this,false)">The torque wrench is optional for single crowns</button>
+  <div class="quiz-feedback correct-fb" id="q7-correct">Correct! Human finger strength achieves approximately 15 Ncm regardless of fitness. The torque wrench is a force multiplier — it's the only way to reach the manufacturer's specified torque.</div>
+  <div class="quiz-feedback wrong-fb" id="q7-wrong">Finger tightening only achieves ~15 Ncm, regardless of hand strength. Megagen needs 35 Ncm. The torque wrench is essential, not optional.</div>
+</div>
+<div class="quiz-container" id="q8">
+  <h4>8. Why is removal torque higher than insertion torque?</h4>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,false)">The screw swells during function</button>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,true)">Friction and settling increase the force needed to break the connection</button>
+  <button class="quiz-option" onclick="checkQuiz('q8',this,false)">Bone grows around the screw head</button>
+  <div class="quiz-feedback correct-fb" id="q8-correct">Correct! The screw settles into the connection under load, and friction increases. If you torque at 35 Ncm, you typically need ~40 Ncm to remove. Over-torquing compounds this problem.</div>
+  <div class="quiz-feedback wrong-fb" id="q8-wrong">Friction and settling under load increase the removal force. Torque at 35 → need ~40 to remove. Over-torque to 45 → need ~50+ to remove → risk of fracture.</div>
+</div>
+</div>
+</div>
+
+<!-- SLIDES 26-28: Plan B -->
+<div class="slide" data-slide="26">
+<h3 class="sub-title">Chapter 9</h3>
+<h1 class="slide-title">Plan B Philosophy</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Every case should have a <strong>Plan A and a Plan B</strong>. This applies to implant size, position, and even the restorative approach.</p>
+<div class="key-point"><p><strong>"Unbreakable doesn't exist. Unrepairable is what you and I should always avoid."</strong><br>— Gallucci</p></div>
+<p class="body-text" style="margin-top:1rem">The most common Plan B scenario: your implant doesn't achieve sufficient torque.</p>
+<div class="card" style="margin-top:.8rem"><h4>Typical Plan B Example</h4>
+<p><strong>Plan A:</strong> 4.0 × 10 mm implant<br><strong>Plan B:</strong> 4.5 × 10 mm implant</p>
+<p style="margin-top:.5rem">If the 4.0 achieves <15 Ncm, remove it. Place the 4.5 without further drilling — the existing osteotomy becomes the undersized preparation for the wider implant.</p>
+</div>
+</div>
+<div>
+<h2 class="section-title">Why It Matters</h2>
+<div class="warning-box"><p><strong>Scenario without Plan B:</strong> You place your widest implant first. It rocks. You remove it. Now what? Tell the patient "sorry, can't do it today, come back in 4 months"? Extremely embarrassing and destroys patient confidence.</p></div>
+<h2 class="section-title" style="margin-top:1rem">Plan B Principles</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text">Never use your <strong>widest</strong> implant as Plan A</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text">Keep a wider implant as the <strong>emergency option</strong></div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text">Consider whether cemented could work if screw-retained fails</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text">Always have bone graft material available</div></div>
+<div class="process-step"><div class="step-num">5</div><div class="step-text">Think about retrievability at every stage</div></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="27">
+<h3 class="sub-title">Chapter 9</h3>
+<h1 class="slide-title">When Things Go Wrong — Don't Panic</h1>
+<div class="grid-2">
+<div>
+<div class="stat-card" style="margin-bottom:1rem"><div class="num">40%</div><div class="label">of patients have a complication within 5 years<br>(single implants / small bridges)</div></div>
+<div class="stat-card" style="margin-bottom:1rem"><div class="num">50%</div><div class="label">of patients have a complication within 10 years</div></div>
+<div class="stat-card"><div class="num">90%</div><div class="label">complication rate for fixed full-arch over 10 years</div></div>
+</div>
+<div>
+<p class="body-text">These numbers are not reasons to avoid implant dentistry. They are reasons to:</p>
+<div class="process-step"><div class="step-num" style="background:var(--accent3)">1</div><div class="step-text"><strong>Consent patients properly</strong> — educate about possible complications</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent3)">2</div><div class="step-text"><strong>Factor maintenance into pricing</strong> — repairs will be needed</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent3)">3</div><div class="step-text"><strong>Design for retrievability</strong> — screw-retained over cemented</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent3)">4</div><div class="step-text"><strong>Build in Plan B</strong> at every stage</div></div>
+<div class="process-step"><div class="step-num" style="background:var(--accent3)">5</div><div class="step-text"><strong>Don't be too harsh on yourself</strong> — complications happen to everyone</div></div>
+<div class="key-point" style="margin-top:1rem"><p>If you prepare your patients for complications, they come to you when something goes wrong — not to a lawyer.</p></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="28">
+<h3 class="sub-title">Chapter 9</h3>
+<h1 class="slide-title">Choosing an Implant System</h1>
+<p class="body-text">Dr Hassan's experience: free implants from a Turkish company → fractured after 2 years → costly to fix → paid double the trip from his own pocket.</p>
+<div class="grid-2" style="margin-top:1rem">
+<div>
+<div class="warning-box"><p><strong>The lesson:</strong> If you think you're saving £50 per implant on a cheaper system, you'll pay triple when things go wrong. We're investing in a patient's human body. You have one shot.</p></div>
+<h2 class="section-title" style="margin-top:1rem">What to Look For</h2>
+<div class="process-step"><div class="step-num">1</div><div class="step-text"><strong>Track record:</strong> At least 5+ years of published follow-up data</div></div>
+<div class="process-step"><div class="step-num">2</div><div class="step-text"><strong>Connection design:</strong> Tight seal that minimises bacterial leakage</div></div>
+<div class="process-step"><div class="step-num">3</div><div class="step-text"><strong>Coronal design:</strong> Minimal or no threads at the crestal zone</div></div>
+<div class="process-step"><div class="step-num">4</div><div class="step-text"><strong>Support:</strong> Responsive customer service, representative visits, proper training</div></div>
+</div>
+<div>
+<div class="key-point"><p><strong>All modern premium implant systems will integrate</strong> — that's no longer the differentiator. What separates good from bad is <strong>maintaining bone level long-term</strong> — and that comes down to connection design, surface treatment, and coronal geometry.</p></div>
+<div class="card" style="margin-top:1rem"><h4>Red Flags</h4><p>• "Free trips" in exchange for using their system<br>• No published long-term data<br>• Poor or non-existent customer support<br>• Sales team focused on price, not outcomes<br>• "They do break — don't worry, we'll send a new one"</p></div>
+</div>
+</div>
+</div>
+
+<!-- SLIDES 29-30: Golden Rules -->
+<div class="slide" data-slide="29">
+<h3 class="sub-title">Chapter 10</h3>
+<h1 class="slide-title">Golden Rules of Implant Position</h1>
+<div class="grid-2">
+<div>
+<p class="body-text">Every position error creates a specific clinical problem:</p>
+<table class="compare-table">
+<tr><th>Error</th><th>Consequence</th></tr>
+<tr><td style="color:var(--red)">Too <strong>labial</strong></td><td>Cortical plate pressure → mid-labial recession → metal showing</td></tr>
+<tr><td style="color:var(--red)">Too <strong>lingual</strong></td><td>Bulky cingulum → phonetic problems → food trapping</td></tr>
+<tr><td style="color:var(--red)">Too <strong>mesial/distal</strong></td><td>Disrupted emergence profile → porcelain chipping → papilla damage</td></tr>
+<tr><td style="color:var(--red)">Too <strong>shallow</strong></td><td>Steep emergence angle → peri-implantitis risk → poor aesthetics</td></tr>
+<tr><td style="color:var(--red)">Too <strong>deep</strong></td><td>Difficult restoration access → but rarely the biggest problem</td></tr>
+</table>
+</div>
+<div>
+<h2 class="section-title">The Evolution of Position Philosophy</h2>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--red)"><h4 style="color:var(--red)">Old School (1990s)</h4><p>"Follow the bone" — place the implant wherever there IS bone. Get stability, don't worry about restoration.</p></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--gold)"><h4 style="color:var(--gold)">Better (2000s–2010s)</h4><p>"Follow the prosthetic envelope" — position the implant where the crown should be. Build bone if needed.</p></div>
+<div class="card" style="border-left:3px solid var(--green)"><h4 style="color:var(--green)">Current Best Practice</h4><p>"Follow the ideal emergence profile" — start with the virtual crown, design the perfect emergence profile, THEN decide implant position. Build everything else around it.</p></div>
+</div>
+</div>
+</div>
+
+<div class="slide" data-slide="30">
+<h3 class="sub-title">Lecture Summary</h3>
+<h1 class="slide-title">Key Takeaways — Lecture 2</h1>
+<div class="grid-2">
+<div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--pink)"><h4>Press-Fit</h4><p>Controlled compression on cancellous bone triggers the osteocyte → osteoclast → osteoblast cascade. No press-fit = fibrous healing. Never press cortical bone.</p></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--accent3)"><h4>Osteotomy: Undersize It</h4><p>3.5mm drill for 4.0mm implant. Posterior maxilla: 3.0mm. Too wide = rocking. Too matched = no biological trigger.</p></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--gold)"><h4>Torque & ISQ</h4><p>Minimum torque: 15 Ncm. No real maximum on cancellous bone. ISQ tracks lateral stability over time. Use both when possible.</p></div>
+<div class="card" style="border-left:3px solid var(--red)"><h4>The Danger Zone</h4><p>Weeks 1–5: mechanical declining, biological not yet established. NEVER load during this period. >150μm micro-motion = guaranteed failure.</p></div>
+</div>
+<div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--accent)"><h4>Screw Torque ≠ Implant Torque</h4><p>Screw torque is fixed per system (e.g. 35 Ncm for Megagen). Under-torque = loosening. Over-torque = fracture/stripped hex. Removal torque always higher than insertion.</p></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid var(--green)"><h4>Plan B Philosophy</h4><p>Always have a wider implant ready. Never use widest as Plan A. 40% complication rate at 5 years — plan for it, don't fear it.</p></div>
+<div class="card" style="border-left:3px solid var(--accent2)"><h4>Implant Position</h4><p>Follow the ideal emergence profile (not just bone or prosthetic envelope). Every position error creates a specific, predictable clinical problem.</p></div>
+<p class="body-text" style="margin-top:1rem;text-align:center;font-size:1.1rem;color:var(--pink);font-weight:600">Continue to Lecture 3: Restoration, Complications & Clinical Excellence →</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide-number" id="slideNum">1 / 30</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+  <button class="nav-btn primary" onclick="nextSlide()">Next →</button>
+</div>
+<script>
+if(window.self!==window.top){document.documentElement.classList.add('embedded')}
+let current=1;const total=30;
+function goSlide(n){document.querySelector('.slide.active')?.classList.remove('active');current=n;document.querySelector(`[data-slide="${n}"]`).classList.add('active');update()}
+function nextSlide(){if(current<total)goSlide(current+1)}function prevSlide(){if(current>1)goSlide(current-1)}
+function update(){document.getElementById('slideNum').textContent=current+' / '+total;document.getElementById('progressBar').style.width=(current/total*100)+'%'}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}});
+function checkQuiz(qId,btn,isCorrect){const c=document.getElementById(qId);c.querySelectorAll('.quiz-option').forEach(b=>{b.classList.add('disabled');if(b===btn)b.classList.add(isCorrect?'correct':'wrong')});document.getElementById(qId+'-'+(isCorrect?'correct':'wrong')).classList.add('show')}
+function showCell(n){const d=document.getElementById('cell'+n+'-detail');const h=document.getElementById('cell'+n).querySelector('.cell-hint');if(d.style.display==='none'){d.style.display='block';h.textContent='Click to collapse'}else{d.style.display='none';h.textContent='Click to expand'}}
+function updateOsteo(){const v=document.getElementById('osteoSlider').value;const mm=(v/10).toFixed(1);document.getElementById('osteoVal').textContent=mm+' mm';const implant=4.0;const diff=implant-mm;const r=document.getElementById('osteoResult');const drill=document.getElementById('osteoDrill');const comp=document.getElementById('compZone');const lbl=document.getElementById('osteoLabel');drill.setAttribute('r',Math.max(10,v*1.25));lbl.textContent='Osteotomy: '+mm+'mm';
+if(mm>4.2){r.innerHTML='<p style="font-size:1rem;color:var(--red);font-weight:600">✗ Too Wide — Implant Will Rock</p><p style="font-size:.9rem;color:var(--text2);margin-top:.5rem">No compression. Gap around implant. Motion >150μm. Fibroblasts win → fibrous encapsulation → failure.</p>';comp.style.opacity='0'}
+else if(mm>=3.9&&mm<=4.2){r.innerHTML='<p style="font-size:1rem;color:var(--gold);font-weight:600">⚠ Too Passive — Insufficient Press-Fit</p><p style="font-size:.9rem;color:var(--text2);margin-top:.5rem">Minimal or no compression. Osteocytes not stimulated. Risk of weak or no biological integration.</p>';comp.style.opacity='.1'}
+else if(mm>=3.3&&mm<3.9){r.innerHTML='<p style="font-size:1rem;color:var(--green);font-weight:600">✓ Optimal Press-Fit</p><p style="font-size:.9rem;color:var(--text2);margin-top:.5rem">'+(diff>0?(diff/2).toFixed(2):0)+'mm compression per side on cancellous bone. Osteocytes stimulated. Biological cascade initiated.</p>';comp.style.opacity='.3'}
+else{r.innerHTML='<p style="font-size:1rem;color:var(--gold);font-weight:600">⚠ Very Tight — Dense Bone Only</p><p style="font-size:.9rem;color:var(--text2);margin-top:.5rem">Appropriate for soft posterior maxilla (type IV bone). Would cause excessive friction in dense bone — risk of over-heating.</p>';comp.style.opacity='.5'}}
+</script>
+</body>
+</html>
