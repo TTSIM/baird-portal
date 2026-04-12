@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+					body {
+						background-color: white; /* Ensure the iframe has a white background */
+					}
+				</style>
+				<script>
+					var Z_CDN_WHITELIST = [
+						'cdn.jsdelivr.net',
+						'cdnjs.cloudflare.com',
+						'cdn.tailwindcss.com',
+						'unpkg.com',
+						'fonts.googleapis.com',
+						'd3js.org',
+						'cdn.babylonjs.com',
+						'html2canvas.hertzen.com',
+						'code.jquery.com',
+						'cdn.datatables.net',
+						'kit.fontawesome.com',
+						'code.createjs.com',
+						'cdn.plot.ly',
+						'fonts.gstatic.com',
+						'www.rgraph.net',
+						'api.mapbox.com',
+						'polyfill.io',
+						'cdn.quilljs.com',
+						'picsum.photos',
+						'esm.sh'
+					];
+
+					function z_isUrlInWhitelist(url) {
+						if (!url || typeof url !== 'string') {
+							return false;
+						}
+						try {
+							const urlObj = new URL(url);
+							const hostname = urlObj.hostname;
+							return Z_CDN_WHITELIST.some(domain => hostname === domain);
+						} catch (e) {
+							return false;
+						}
+					}
+
+						function z_proxyCdnUrl(url) {
+						if (!url || !url.startsWith('http')) {
+							return url;
+						}
+							if (!z_isUrlInWhitelist(url)) {
+							return url;
+						}
+						if (!url.startsWith('https://artifacts-cdn.chatglm.site/')) {
+							return 'https://artifacts-cdn.chatglm.site/' + url;
+						}
+						return url;
+					}
+					
+					// 增强版外部链接拦截 - 适合放在模板字符串中
+					document.addEventListener('click', function (ev) {
+						try {
+							const anchor = ev.target?.closest?.('a[href]') || null;
+							if (!anchor) return;
+
+							let href = anchor.getAttribute('href')?.trim() || '';
+							if (!href) return;
+
+							if (href.startsWith('javascript:')) return;
+
+							// 新需求：href="#" 的链接完全阻止跳转和任何行为
+							if (href === '#') {
+								ev.preventDefault();
+								return;
+							}
+
+							// 处理其他内部锚点（如 #about、#contact 等）
+							if (href.startsWith('#')) {
+								const rawId = href.slice(1);
+								if (!rawId) return;
+
+								const id = decodeURIComponent(rawId);
+								const target = 
+									document.getElementById(id) ||
+									document.querySelector('a[name="' + id.replace(/"/g, '\"') + '"]') ||
+									document.querySelector('[name="' + id.replace(/"/g, '\"') + '"]');
+
+								if (target && target.scrollIntoView) {
+									ev.preventDefault();
+									try {
+										history.pushState(null, '', href);
+									} catch (e) {}
+									target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								}
+								return;
+							}
+
+							// 处理外部链接
+							let url;
+							try {
+								url = new URL(href, window.location.href);
+							} catch (e) {
+								return;
+							}
+
+							if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+							const isExternal = url.hostname !== window.location.hostname;
+
+							if (isExternal || anchor.getAttribute('target') === '_blank') {
+								ev.preventDefault();
+								window.open(url.toString(), '_blank', 'noopener,noreferrer');
+							}
+
+						} catch (e) {
+							// 出错时不阻止默认行为
+						}
+					}, true);
+
+					// 1. 暴力清除函数：从 DOM 层面抹除 onclick 属性
+					var Z_removeInlineOnclick = function () {
+						// 专门锁定 href="#" 且带有 onclick 的 a 标签
+						const targetedLinks = document.querySelectorAll('a[href="#"][onclick]');
+						for (let i = 0; i < targetedLinks.length; i++) {
+							targetedLinks[i].removeAttribute('onclick');
+							targetedLinks[i].onclick = null; // 确保 JS 层的赋值也被清理
+						}
+					};
+					// 3. 动态监测：防止页面通过异步加载重新生成带 onclick 的元素
+					var z_observer = new MutationObserver(function () {
+						Z_removeInlineOnclick();
+					});
+
+					z_observer.observe(document.documentElement, {
+						childList: true,
+						subtree: true,
+						attributes: true,
+						attributeFilter: ['onclick']
+					});
+
+					// 4. 初始化执行一次
+					Z_removeInlineOnclick();
+
+					const Z_rawCreateElement = document.createElement;
+
+					document.createElement = function (tagName, ...args) {
+						const el = Z_rawCreateElement.call(this, tagName, ...args);
+
+						if (tagName.toLowerCase() === 'script') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let srcValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'src' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									srcValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'src', {
+								get: function() {
+									return srcValue || rawGetAttribute.call(this, 'src') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										srcValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'src', srcValue);
+									} else {
+										srcValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						if (tagName.toLowerCase() === 'link') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let hrefValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'href' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									hrefValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'href', {
+								get: function() {
+									return hrefValue || rawGetAttribute.call(this, 'href') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										hrefValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'href', hrefValue);
+									} else {
+										hrefValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						return el;
+					};
+
+					const Z_OriginalXMLHttpRequest = window.XMLHttpRequest;
+					window.XMLHttpRequest = function (...args) {
+						const xhr = new Z_OriginalXMLHttpRequest(...args);
+						const rawOpen = xhr.open;
+
+						xhr.open = function (method, url, ...rest) {
+							if (typeof url === 'string') {
+								const methodUpper = (method || '').toUpperCase();
+								if (methodUpper === 'GET' && z_isUrlInWhitelist(url)) {
+									url = z_proxyCdnUrl(url);
+								}
+							}
+							return rawOpen.call(this, method, url, ...rest);
+						};
+
+						return xhr;
+					};
+
+					window.XMLHttpRequest.prototype = Z_OriginalXMLHttpRequest.prototype;
+					Object.setPrototypeOf(window.XMLHttpRequest, Z_OriginalXMLHttpRequest);
+
+					const z_originalFetch = window.fetch;
+					window.fetch = async function (...args) {
+						if (args.length > 0) {
+							let url = '';
+							let method = 'GET';
+							
+							if (typeof args[0] === 'string') {
+								url = args[0];
+								if (args[1] && args[1].method) {
+									method = args[1].method.toUpperCase();
+								}
+								if (method === 'GET' && z_isUrlInWhitelist(url)) {
+									args[0] = z_proxyCdnUrl(url);
+								}
+							} else if (args[0] instanceof Request) {
+								const originalUrl = args[0].url;
+								method = (args[0].method || 'GET').toUpperCase();
+								if (method === 'GET' && z_isUrlInWhitelist(originalUrl)) {
+									const proxiedUrl = z_proxyCdnUrl(originalUrl);
+									if (proxiedUrl !== originalUrl) {
+										args[0] = new Request(proxiedUrl, args[0]);
+									}
+								}
+							}
+						}
+						return z_originalFetch.apply(this, args);
+					};
+				</script>
+			</head>
+			<body>
+				
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Day 2 — Lecture 3: Coercion, Practical Consent and Refusing Treatment</title>
+<link href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=DM+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://artifacts-cdn.chatglm.site/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0D0F12;
+    --fg: #F1F0EB;
+    --fg-muted: #94A3B8;
+    --accent: #E8A838;
+    --accent-glow: rgba(232,168,56,0.15);
+    --accent2: #38BDF8;
+    --card: rgba(26,32,44,0.8);
+    --border: rgba(148,163,184,0.13);
+    --danger: #F87171;
+    --success: #34D399;
+    --teal: #2DD4BF;
+    --rose: #FB7185;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);height:100vh;overflow:hidden;}
+  .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .bg-layer::before{content:'';position:absolute;bottom:-20%;left:-15%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(251,113,133,0.05) 0%,transparent 70%);animation:fB 24s ease-in-out infinite;}
+  .bg-layer::after{content:'';position:absolute;top:-15%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(232,168,56,0.04) 0%,transparent 70%);animation:fB 30s ease-in-out infinite reverse;}
+  @keyframes fB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(25px,-20px) scale(1.06);}}
+  .top-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(13,15,18,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:50px;}
+  .top-bar .ml{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;}
+  .top-bar .lt{font-family:'DM Serif Display',serif;font-size:16px;color:var(--fg);}
+  .top-bar .pi{font-size:12px;color:var(--fg-muted);}
+  .pt{position:fixed;top:50px;left:0;right:0;height:3px;background:var(--border);z-index:100;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--rose),var(--accent));transition:width 0.4s ease;border-radius:0 2px 2px 0;}
+  .sc{position:fixed;top:53px;left:0;right:0;bottom:56px;overflow:hidden;z-index:1;}
+  .sl{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;padding:36px 48px;opacity:0;visibility:hidden;transition:opacity 0.45s ease,visibility 0.45s;}
+  .sl.active{opacity:1;visibility:visible;}
+  .si{max-width:920px;margin:0 auto;display:block;}
+  .sn{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600;}
+  h1.sh{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,46px);line-height:1.15;margin-bottom:20px;color:var(--fg);}
+  h2.ss{font-family:'DM Serif Display',serif;font-size:clamp(22px,3vw,32px);line-height:1.2;margin-bottom:16px;color:var(--fg);}
+  .sb{font-size:15px;line-height:1.75;color:var(--fg-muted);}
+  .sb strong{color:var(--fg);font-weight:600;}
+  .cg{display:grid;gap:14px;margin-top:18px;}
+  .cg.c2{grid-template-columns:repeat(auto-fit,minmax(270px,1fr));}
+  .cg.c3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+  .cd{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color 0.3s,transform 0.3s;}
+  .cd:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .cd .ci{font-size:20px;color:var(--accent);margin-bottom:8px;}
+  .cd h3{font-size:14px;font-weight:600;margin-bottom:5px;color:var(--fg);}
+  .cd p{font-size:13px;line-height:1.6;color:var(--fg-muted);}
+  .hb{border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:14px 0;background:var(--accent-glow);}
+  .hb.t{background:rgba(45,212,191,0.08);border-left-color:var(--teal);}
+  .hb.d{background:rgba(248,113,113,0.08);border-left-color:var(--danger);}
+  .hb.r{background:rgba(251,113,133,0.08);border-left-color:var(--rose);}
+  .hb p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .hb p strong{color:var(--fg);}
+  .qb{border-left:2px solid var(--accent2);padding:14px 20px;margin:14px 0;background:rgba(56,189,248,0.05);border-radius:0 8px 8px 0;font-style:italic;font-size:14px;line-height:1.7;color:var(--fg-muted);}
+  .if{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin:14px 0;}
+  .if img{width:100%;display:block;object-fit:cover;max-height:220px;}
+  .if .cap{font-size:11px;color:var(--fg-muted);text-align:center;padding:7px;background:rgba(13,15,18,0.6);}
+  .scn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:14px 0;}
+  .scn .sl2{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:6px;}
+  .scn p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .scn p strong{color:var(--fg);}
+  .kq{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin:14px 0;}
+  .kq .kt{font-size:14px;font-weight:600;color:var(--fg);margin-bottom:12px;}
+  .ko{display:flex;flex-direction:column;gap:7px;}
+  .kop{background:rgba(148,163,184,0.06);border:1px solid var(--border);border-radius:8px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--fg-muted);transition:all 0.2s;display:flex;align-items:center;gap:10px;}
+  .kop:hover{border-color:var(--accent);color:var(--fg);}
+  .kop.ok{border-color:var(--success)!important;background:rgba(52,211,153,0.1)!important;color:var(--success)!important;}
+  .kop.no{border-color:var(--danger)!important;background:rgba(248,113,113,0.08)!important;color:var(--danger)!important;}
+  .kop .om{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.2s;}
+  .kop.ok .om{border-color:var(--success);background:var(--success);color:var(--bg);}
+  .kop.no .om{border-color:var(--danger);background:var(--danger);color:var(--bg);}
+  .kf{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.6;display:none;}
+  .kf.show{display:block;}
+  .kf.fok{background:rgba(52,211,153,0.1);color:var(--success);}
+  .kf.fno{background:rgba(248,113,113,0.08);color:var(--danger);}
+  .ul{list-style:none;padding:0;margin:10px 0;}
+  .ul li{padding:7px 0 7px 22px;font-size:13px;line-height:1.65;color:var(--fg-muted);position:relative;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .ul li:last-child{border-bottom:none;}
+  .ul li::before{content:'';position:absolute;left:0;top:14px;width:7px;height:7px;background:var(--accent);border-radius:50%;}
+  .tb{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;}
+  .tb th{text-align:left;padding:9px 12px;background:rgba(251,113,133,0.08);color:var(--rose);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+  .tb td{padding:9px 12px;border-bottom:1px solid rgba(148,163,184,0.06);color:var(--fg-muted);line-height:1.55;}
+  .tb tr:hover td{color:var(--fg);}
+  .bg2{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+  .bg2-a{background:rgba(232,168,56,0.15);color:var(--accent);}
+  .bg2-t{background:rgba(45,212,191,0.12);color:var(--teal);}
+  .bg2-r{background:rgba(248,113,113,0.12);color:var(--danger);}
+  .bg2-ro{background:rgba(251,113,133,0.12);color:var(--rose);}
+  .smi{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .smn{width:26px;height:26px;background:var(--rose);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .smt{font-size:13px;line-height:1.6;color:var(--fg-muted);padding-top:2px;}
+  .smt strong{color:var(--fg);}
+  /* Categorise exercise */
+  .cat-zone{border:2px dashed var(--border);border-radius:12px;padding:16px;min-height:80px;margin:8px 0;transition:border-color 0.3s;}
+  .cat-zone.over{border-color:var(--accent);}
+  .cat-zone-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--fg-muted);font-weight:600;margin-bottom:6px;}
+  .cat-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--fg-muted);cursor:grab;user-select:none;margin-bottom:5px;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
+  .cat-item:active{cursor:grabbing;}
+  .cat-item.dragging{border-color:var(--accent);box-shadow:0 4px 12px var(--accent-glow);}
+  .cat-item.placed{border-color:var(--success);background:rgba(52,211,153,0.06);color:var(--success);cursor:default;}
+  .cat-item.wrong-place{border-color:var(--danger);background:rgba(248,113,133,0.06);}
+  .bn{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(13,15,18,0.92);backdrop-filter:blur(16px);border-top:1px solid var(--border);height:56px;}
+  .nb{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);color:var(--fg);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+  .nb:hover{border-color:var(--accent);color:var(--accent);}
+  .nb:disabled{opacity:0.3;cursor:not-allowed;}
+  .nb:disabled:hover{border-color:var(--border);color:var(--fg);}
+  .nb.pr{background:linear-gradient(135deg,var(--rose),#E11D48);border:none;color:#fff;font-weight:600;}
+  .nb.pr:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(251,113,133,0.2);}
+  .sd{display:flex;gap:5px;align-items:center;}
+  .sdt{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all 0.3s;cursor:pointer;}
+  .sdt.active{width:18px;border-radius:3px;background:var(--rose);}
+  .sl::-webkit-scrollbar{width:4px;}
+  .sl::-webkit-scrollbar-track{background:transparent;}
+  .sl::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+  @media(max-width:768px){.sl{padding:20px 16px;}.top-bar{padding:10px 14px;}.top-bar .lt{font-size:13px;}.bn{padding:10px 14px;}.nb{padding:8px 12px;font-size:12px;}.cg.c2,.cg.c3{grid-template-columns:1fr;}}
+  @media(prefers-reduced-motion:reduce){.bg-layer::before,.bg-layer::after{animation:none;}}
+</style>
+
+
+<div class="bg-layer"></div>
+<div class="top-bar">
+  <div><div class="ml">Module 2 — Day 2</div><div class="lt">Lecture 3: Coercion, Practical Consent and Refusing Treatment</div></div>
+  <div class="pi" id="pi">Slide 1 of 30</div>
+</div>
+<div class="pt"><div class="pf" id="pf" style="width: 3.33333%;"></div></div>
+
+<div class="sc" id="sc">
+
+<!-- 1: Title -->
+<div class="sl active" data-i="0">
+<div class="si" style="text-align:center;padding-top:60px;">
+  <div class="sn">Module 2 — Day 2 — Lecture 3</div>
+  <h1 class="sh" style="font-size:clamp(30px,5vw,48px);margin-bottom:22px;">Coercion, Practical Consent<br>and Refusing Treatment</h1>
+  <p class="sb" style="max-width:620px;margin:0 auto 28px;">Applying consent law to real dental scenarios — coercion, local anaesthetic risks, implant timing, and how to refuse treatment ethically.</p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <span class="bg2 bg2-ro">Coercion</span>
+    <span class="bg2 bg2-a">LA Risks</span>
+    <span class="bg2 bg2-t">Refusing Patients</span>
+  </div>
+  <div class="if" style="max-width:680px;margin:22px auto 0;">
+    <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/dental-practical-consent/680/240.jpg" alt="Practical dental consent">
+    <div class="cap">Moving from legal theory to daily clinical practice</div>
+  </div>
+</div>
+</div>
+
+<!-- 2: Learning Objectives -->
+<div class="sl" data-i="1">
+<div class="si">
+  <div class="sn">Overview</div>
+  <h2 class="ss">Learning Objectives</h2>
+  <div class="cg c2">
+    <div class="cd"><div class="ci"><i class="fas fa-ban"></i></div><h3>Identify Coercion</h3><p>Recognise what constitutes coercion in dental practice and why it invalidates consent.</p></div>
+    <div class="cd"><div class="ci"><i class="fas fa-syringe"></i></div><h3>Consent for Local Anaesthesia</h3><p>Understand which LA risks must be disclosed and how to communicate them efficiently.</p></div>
+    <div class="cd"><div class="ci"><i class="fas fa-hand-paper"></i></div><h3>Refuse Treatment Ethically</h3><p>Know when and how to decline a patient's request without breaching your duties.</p></div>
+    <div class="cd"><div class="ci"><i class="fas fa-clock"></i></div><h3>Implant Timing Consent</h3><p>Navigate the consent discussion around immediate vs delayed implant placement.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- 3: What Is Coercion -->
+<div class="sl" data-i="2">
+<div class="si">
+  <div class="sn">Core Concept</div>
+  <h2 class="ss">What Constitutes Coercion in Consent?</h2>
+  <p class="sb">Coercion undermines the voluntariness pillar of valid consent. It doesn't have to be a threat — it can be an incentive that removes the patient's ability to make a free, considered decision.</p>
+  <div class="hb d" style="margin-top:16px;">
+    <p><strong>The legal test:</strong> Did the clinician apply unreasonable pressure that a significant proportion of patients would find hard to resist? If yes, consent is invalid — regardless of whether the treatment was clinically appropriate.</p>
+  </div>
+  <div class="hb r" style="margin-top:8px;">
+    <p><strong>The key insight from case law:</strong> An approach which requires the patient to question the doctor disregards the social and psychological realities of the relationship. Most patients will simply say "yes, doctor" and think about it later.</p>
+  </div>
+</div>
+</div>
+
+<!-- 4: Craftsman Case -->
+<div class="sl" data-i="3">
+<div class="si">
+  <div class="sn">Case Study</div>
+  <h2 class="ss">The Coercion Case: Craftsman v S (2020)</h2>
+  <div class="scn">
+    <div class="sl2">The Facts</div>
+    <p>A patient needed <strong>neck decompression surgery</strong>. He was placed on a waiting list with the plan: <strong>physiotherapy first</strong>, then surgery if needed. Physiotherapy would help but not solve the problem — it was to keep him comfortable while waiting.</p>
+  </div>
+  <div class="scn" style="margin-top:10px;">
+    <div class="sl2">What Happened</div>
+    <p>When he arrived for what he thought was his physiotherapy appointment, he was told: <strong>"If you go for physiotherapy, you'll go to the back of the queue and wait another year. You might as well have the surgery now."</strong> He had the surgery. He suffered nerve damage.</p>
+  </div>
+  <div class="hb d" style="margin-top:10px;">
+    <p><strong>The ruling:</strong> The patient was <strong>coerced</strong>. By saying he would lose his place, they removed his ability to choose physiotherapy first. He may have been content for years without surgery. He never got the chance to find out.</p>
+  </div>
+</div>
+</div>
+
+<!-- 5: Craftsman — Key Principle -->
+<div class="sl" data-i="4">
+<div class="si">
+  <div class="sn">Case Study — Principle</div>
+  <h2 class="ss">Why This Matters for Dentists</h2>
+  <div class="qb">
+    "The patient should have questioned it. Sorry — here's the other thing. The patient didn't have the knowledge to question it. He'd been told by a medical professional what he needs to do. A significant proportion of the population will just say, yes, doctor, and think about it later."
+  </div>
+  <p class="sb" style="margin-top:14px;">The court explicitly rejected the idea that patients should be expected to push back against medical authority. <strong>The power imbalance is real</strong>, and the law recognises it.</p>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>The human approach the court expected:</strong> "Yes, you will go to the back of the queue. But let's try physiotherapy first. Let me see if I can get you the physio. And if it doesn't work, we'll see if we can bump you up the list because your turn had already come." — <strong>Patient care, not patient processing.</strong></p>
+  </div>
+</div>
+</div>
+
+<!-- 6: Coercion in Dental Practice -->
+<div class="sl" data-i="5">
+<div class="si">
+  <div class="sn">Applied Scenarios</div>
+  <h2 class="ss">Coercion in Dental Practice</h2>
+  <table class="tb">
+    <thead><tr><th>Scenario</th><th>Why It's Coercion</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>"Sign up for Invisalign today and get 10% off"</td><td>Financial incentive removes thinking time</td><td><span class="bg2 bg2-r">Coercion</span></td></tr>
+      <tr><td>"Have whitening done today for a discount"</td><td>Urgency incentive; no cooling-off period</td><td><span class="bg2 bg2-r">Coercion</span></td></tr>
+      <tr><td>"If you don't take this slot, you'll wait months"</td><td>Fear-based pressure on availability</td><td><span class="bg2 bg2-r">Coercion</span></td></tr>
+      <tr><td>Month-long discount; patient already decided before arriving</td><td>Patient's decision pre-dates the incentive</td><td><span class="bg2 bg2-t">Acceptable</span></td></tr>
+      <tr><td>"While I was there, I did the other filling too"</td><td>No consent for additional treatment</td><td><span class="bg2 bg2-r">Battery</span></td></tr>
+    </tbody>
+  </table>
+  <div class="hb" style="margin-top:12px;">
+    <p><strong>The rule:</strong> You need to give patients <strong>cooling-off time</strong>. The option to think objectively about their treatment over a period of time. Any incentive that removes that time is coercive.</p>
+  </div>
+</div>
+</div>
+
+<!-- 7: Knowledge Check 1 -->
+<div class="sl" data-i="6">
+<div class="si">
+  <div class="sn">Knowledge Check</div>
+  <h2 class="ss">Identifying Coercion</h2>
+  <div class="kq" data-c="1">
+    <div class="kt">A patient needs two fillings in adjacent teeth. You say: "If I do both today, I'll give you 10% off." Is this coercion?</div>
+    <div class="ko">
+      <div class="kop" data-v="0" onclick="ck(this)"><span class="om">A</span> Yes — any discount offer is coercion</div>
+      <div class="kop" data-v="1" onclick="ck(this)"><span class="om">B</span> It depends on whether the combined treatment is clinically reasonable and the patient understands the trade-offs</div>
+      <div class="kop" data-v="2" onclick="ck(this)"><span class="om">C</span> No — dentists can offer any discount they want</div>
+      <div class="kop" data-v="3" onclick="ck(this)"><span class="om">D</span> Only if the patient asks for a discount first</div>
+    </div>
+    <div class="kf"></div>
+  </div>
+</div>
+</div>
+
+<!-- 8: Ethical Sales -->
+<div class="sl" data-i="7">
+<div class="si">
+  <div class="sn">Controversial Topic</div>
+  <h2 class="ss">"Ethical Sales" — A Contradiction in Terms</h2>
+  <div class="qb" style="border-left-color:var(--rose);background:rgba(251,113,133,0.05);">
+    "Ethical sales is like a square triangle. There's no such thing. You're not in sales. You're in patient care. Can we stop the sales thing? Can we stop the money thing?"
+  </div>
+  <p class="sb" style="margin-top:14px;">The lecturer is unequivocal: the language of "sales" has no place in dentistry. Consider the comparison:</p>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="cd" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-times"></i> Other Professions</h3><p>There is no "ethical sales group" in cardiac surgery. No course on "how to maximise yield from your cancer patients." The idea is absurd.</p></div>
+    <div class="cd" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check"></i> The Right Approach</h3><p>Tell the patient what is required. Get paid for the care you give. If you look after your patients well, you will not be short of work. Reputation brings patients.</p></div>
+  </div>
+  <div class="hb r" style="margin-top:14px;">
+    <p><strong>Do not use the word "sales" in our profession.</strong> Stop thinking about maximising revenue. Think about providing excellent care. The money follows the care — not the other way around.</p>
+  </div>
+</div>
+</div>
+
+<!-- 9: Discount Scenarios -->
+<div class="sl" data-i="8">
+<div class="si">
+  <div class="sn">Practical Guidance</div>
+  <h2 class="ss">Discounts and Offers — What's Acceptable?</h2>
+  <div class="scn">
+    <div class="sl2">Acceptable Approach</div>
+    <p>"We have a discount on whitening this month." Patient comes in: <strong>"Oh, I'm on the right end. There's a discount on."</strong> — Fine. They made the decision <strong>before</strong> the incentive was applied. The discount rewards an existing intention, it doesn't create one.</p>
+  </div>
+  <div class="scn" style="margin-top:10px;">
+    <div class="sl2">Unacceptable Approach</div>
+    <p>"You need whitening. If you have it done <strong>today</strong>, it's 10% off." — Not fine. You're using urgency to prevent them thinking objectively. You're not giving them cooling-off time.</p>
+  </div>
+  <div class="hb" style="margin-top:10px;">
+    <p><strong>The distinction:</strong> A pre-existing offer that a patient responds to is different from a time-limited pressure applied during a consultation. One respects autonomy; the other undermines it.</p>
+  </div>
+</div>
+</div>
+
+<!-- 10: Multiple Fillings Scenario -->
+<div class="sl" data-i="9">
+<div class="si">
+  <div class="sn">Applied Scenario</div>
+  <h2 class="ss">"I Want My Fillings One at a Time"</h2>
+  <div class="scn">
+    <div class="sl2">The Scenario</div>
+    <p>A patient needs <strong>ten fillings</strong> and wants them done individually. You want to do adjacent teeth together to be efficient.</p>
+  </div>
+  <div class="hb t" style="margin-top:10px;">
+    <p><strong>The consent approach:</strong> "If I do two together, you'll need one local anaesthetic instead of two. That halves the risk of any LA side effects. But if you have TMJ problems or can't hold your mouth open for long, separate appointments may be better for you." — <strong>Present the trade-offs and let them choose.</strong></p>
+  </div>
+  <div class="hb d" style="margin-top:8px;">
+    <p><strong>What you must NOT do:</strong> "Oh, while I was there, the tooth next to it needed a filling as well, so I did that too." — The patient didn't consent to that. It's a problem regardless of clinical benefit.</p>
+  </div>
+  <p class="sb" style="margin-top:10px;">The analogy: "Saying you need cardiac bypass but I'll do one artery this month and another in two months, splitting the chest open again — it's not reasonable." But the <strong>patient still has the right to choose</strong> the less efficient option if they understand the trade-offs.</p>
+</div>
+</div>
+
+<!-- 11: Knowledge Check 2 -->
+<div class="sl" data-i="10">
+<div class="si">
+  <div class="sn">Knowledge Check</div>
+  <h2 class="ss">Consent for Additional Treatment</h2>
+  <div class="kq" data-c="2">
+    <div class="kt">You are treating a patient and notice an additional problem. What is the correct approach?</div>
+    <div class="ko">
+      <div class="kop" data-v="0" onclick="ck(this)"><span class="om">A</span> Fix it while you're there — it saves the patient another appointment</div>
+      <div class="kop" data-v="1" onclick="ck(this)"><span class="om">B</span> Mention it after treatment so they can book separately</div>
+      <div class="kop" data-v="2" onclick="ck(this)"><span class="om">C</span> Stop, explain what you've found, discuss options, and obtain consent before proceeding</div>
+      <div class="kop" data-v="3" onclick="ck(this)"><span class="om">D</span> Only mention it if it's urgent — otherwise note it for next time</div>
+    </div>
+    <div class="kf"></div>
+  </div>
+</div>
+</div>
+
+<!-- 12: Refusing Treatment — When -->
+<div class="sl" data-i="11">
+<div class="si">
+  <div class="sn">Difficult Conversations</div>
+  <h2 class="ss">When Can You Refuse to Treat a Patient?</h2>
+  <p class="sb">You have the right to refuse to perform a treatment you disagree with — but you <strong>cannot refuse to treat a patient</strong> in a way that abandons them.</p>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="cd" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check"></i> You CAN Refuse To</h3><p>Perform a treatment you believe is clinically inappropriate. Extract a restorable tooth at a carer's insistence. Place an implant in a site you believe is unsuitable. Do something that you could not defend if challenged.</p></div>
+    <div class="cd" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-times"></i> You CANNOT</h3><p>Abandon a patient in pain without arranging alternative care. Refuse to treat someone based on personal prejudice. Dismiss a patient without reasonable notice and a pathway for ongoing care.</p></div>
+  </div>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>The key distinction:</strong> You can refuse to perform a <strong>specific treatment</strong>. You cannot refuse to continue being the patient's <strong>dentist</strong> without proper process. You can say "I won't do this procedure" — but you should offer to continue their routine care.</p>
+  </div>
+</div>
+</div>
+
+<!-- 13: How to Refuse -->
+<div class="sl" data-i="12">
+<div class="si">
+  <div class="sn">Practical Framework</div>
+  <h2 class="ss">How to Have the Refusal Conversation</h2>
+  <div class="hb r" style="margin-top:10px;">
+    <p><strong>The script:</strong> "I'm really sorry. I don't agree with your appraisal of the situation. It would be wrong of me to do what you're asking me to do, and I'm not prepared to do it. If you'd like to carry on having your hygiene and checkups here, that's fine. But I will not voluntarily do what you're asking me to do. I can't in good faith do it. I won't do it."</p>
+  </div>
+  <ul class="ul" style="margin-top:14px;">
+    <li><strong>Be clear and direct</strong> — don't hedge or leave ambiguity</li>
+    <li><strong>Frame it as your professional judgment</strong> — "I would not be able to defend this"</li>
+    <li><strong>Offer to continue routine care</strong> — you're refusing the treatment, not the patient</li>
+    <li><strong>Document everything</strong> — what was requested, your reasoning, what you offered instead</li>
+    <li><strong>Don't get drawn into the social side</strong> — state your position and leave it</li>
+  </ul>
+</div>
+</div>
+
+<!-- 14: Implant Timing — The Scenario -->
+<div class="sl" data-i="13">
+<div class="si">
+  <div class="sn">Applied Scenario</div>
+  <h2 class="ss">"Take It Out Now, I'll Think About the Implant Later"</h2>
+  <div class="scn">
+    <div class="sl2">The Dilemma</div>
+    <p>A patient needs a tooth out. You want to do an <strong>immediate implant</strong> — maintain bone and tissue volume, guided surgery, minimal trauma, best outcome. The patient says: <strong>"Just take it out. I might not even get an implant. I'll think about it."</strong></p>
+  </div>
+  <p class="sb" style="margin-top:12px;">From the moment you extract that tooth without planning for replacement, the site starts to <strong>compromise</strong>. Buccal plate resorbs. Bone volume decreases. What could have been a straightforward guided implant becomes a case requiring bone grafting, connective tissue grafting, and possibly still insufficient bone.</p>
+  <div class="hb" style="margin-top:12px;">
+    <p><strong>The consent conversation:</strong> "I'd prefer not to take the tooth out until you're ready for the implant. We can pulpectomise and put calcium hydroxide in to keep you comfortable. If we do the extraction and implant together, we get the best result with the least intervention."</p>
+  </div>
+</div>
+</div>
+
+<!-- 15: Implant Timing — What If They Insist -->
+<div class="sl" data-i="14">
+<div class="si">
+  <div class="sn">Applied Scenario — Outcome</div>
+  <h2 class="ss">When the Patient Insists on Early Extraction</h2>
+  <div class="cg c2">
+    <div class="cd" style="border-color:var(--teal);"><h3 style="color:var(--teal);"><i class="fas fa-check"></i> Ideal Pathway</h3><p>Keep the tooth. Plan the implant. Extract and place simultaneously. Guided surgery through the socket. Bone in the gaps. Clean, minimal trauma. This is what the lecturer would do for his own parents.</p></div>
+    <div class="cd" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> If Patient Insists</h3><p>Extract alone. Bone resorption begins. Buccal plate may be lost. Future implant requires grafting, possibly CTG. More surgery, more cost, worse aesthetic outcome. But <strong>it's their choice</strong>.</p></div>
+  </div>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>Your responsibility ends at giving the information.</strong> "I understand your advice, but I want it out. I may never have an implant. I accept the consequences." — That's their decision, their level of involvement with their dentistry, not your responsibility. You've done your job.</p>
+  </div>
+  <div class="qb" style="margin-top:10px;">
+    "If you don't agree with it, but that's what they decided, despite the fact that you've given them the knowledge and the information — that's their decision."
+  </div>
+</div>
+</div>
+
+<!-- 16: Knowledge Check 3 -->
+<div class="sl" data-i="15">
+<div class="si">
+  <div class="sn">Knowledge Check</div>
+  <h2 class="ss">Implant Timing Consent</h2>
+  <div class="kq" data-c="3">
+    <div class="kt">A patient wants a tooth extracted now but is unsure about an implant later. What is your obligation?</div>
+    <div class="ko">
+      <div class="kop" data-v="0" onclick="ck(this)"><span class="om">A</span> Refuse to extract until they commit to an implant</div>
+      <div class="kop" data-v="1" onclick="ck(this)"><span class="om">B</span> Extract it — it's their tooth and their choice</div>
+      <div class="kop" data-v="2" onclick="ck(this)"><span class="om">C</span> Explain the consequences of early extraction for future implant success, offer to temporise the tooth, and respect their decision if they still want extraction</div>
+      <div class="kop" data-v="3" onclick="ck(this)"><span class="om">D</span> Extract and place the implant immediately — it's in their best interests</div>
+    </div>
+    <div class="kf"></div>
+  </div>
+</div>
+</div>
+
+<!-- 17: LA Risks — Introduction -->
+<div class="sl" data-i="16">
+<div class="si">
+  <div class="sn">Practical Consent</div>
+  <h2 class="ss">Consent for Local Anaesthesia</h2>
+  <p class="sb">This was flagged as a question from the audience: <strong>"Even when we give something as simple as an inferior alveolar nerve block, there is a risk of paraesthesia. Do we actually sit and explain before we inject?"</strong></p>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>The short answer:</strong> You don't need to recite every possible complication before every injection. But you DO need to warn about things that are <strong>material</strong> — and under Montgomery, materiality depends on the patient. A musician needs to know about paraesthesia risk more than a non-musician.</p>
+  </div>
+  <p class="sb" style="margin-top:12px;">Let's go through the risks systematically — and think about which ones matter for consent.</p>
+  <div class="if" style="max-width:480px;">
+    <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/dental-anaesthetic-syringe/480/190.jpg" alt="Dental anaesthetic">
+    <div class="img-caption">Local anaesthetic: routine but not risk-free</div>
+  </div>
+</div>
+</div>
+
+<!-- 18: LA Risks — Common/Minor -->
+<div class="sl" data-i="17">
+<div class="si">
+  <div class="sn">LA Risks — Category 1</div>
+  <h2 class="ss">Common and Minor Side Effects</h2>
+  <table class="tb">
+    <thead><tr><th>Risk</th><th>Mechanism</th><th>Must Mention?</th></tr></thead>
+    <tbody>
+      <tr><td>Discomfort or pain on injection</td><td>Needle through tissue; worse with blunt/reused needles or hitting periosteum</td><td><span class="bg2 bg2-t">Implied</span></td></tr>
+      <tr><td>Swelling of tissues</td><td>2ml of fluid deposited in tissue</td><td><span class="bg2 bg2-t">Implied</span></td></tr>
+      <tr><td>Numbness</td><td>That's the point of the injection</td><td><span class="bg2 bg2-t">Implied</span></td></tr>
+      <tr><td>Loss of proprioception / "blocked nose" feeling</td><td>Numb upper lip makes patient feel nasal airflow is blocked</td><td><span class="bg2 bg2-a">Helpful to mention</span></td></tr>
+      <tr><td>Duration of numbness</td><td>Typically 2–4 hours depending on agent used</td><td><span class="bg2 bg2-a">Patient-dependent</span></td></tr>
+    </tbody>
+  </table>
+  <div class="hb t" style="margin-top:10px;">
+    <p><strong>Tip:</strong> "When I numb you up, you're going to feel like your nose is blocked. Just breathe through your nose — you'll notice you can. You just can't feel the airflow." This takes 5 seconds and prevents unnecessary anxiety.</p>
+  </div>
+</div>
+</div>
+
+<!-- 19: LA Risks — The Swallowing Issue -->
+<div class="sl" data-i="18">
+<div class="si">
+  <div class="sn">LA Risks — Clinical Anatomy</div>
+  <h2 class="ss">"I Can't Swallow" — The Mylohyoid Issue</h2>
+  <div class="scn">
+    <div class="sl2">The Clinical Moment</div>
+    <p>After an ID block, the patient says: <strong>"I can't swallow."</strong> Your instinct might be to dismiss this — but they may actually be right.</p>
+  </div>
+  <div class="hb" style="margin-top:12px;">
+    <p><strong>Anatomy check:</strong> Where does the inferior dental nerve carry motor branches? The <strong>mylohyoid nerve to mylohyoid</strong> runs with it. This is a <strong>motor nerve</strong>. If your LA reaches it, the patient <strong>cannot elevate their floor of mouth</strong> — and they genuinely feel they cannot swallow.</p>
+  </div>
+  <p class="sb" style="margin-top:12px;">This is different from the patient who says they can't swallow because they simply can't feel the swallow. The mylohyoid paralysis is a real, explainable effect — and acknowledging it builds trust.</p>
+  <div class="hb t" style="margin-top:10px;">
+    <p><strong>For consent:</strong> "You may feel like you can't swallow properly for a while. This is because the anaesthetic can temporarily affect a small muscle in the floor of your mouth. It will wear off." — Knowing the anatomy makes you confident, and the patient feels heard.</p>
+  </div>
+</div>
+</div>
+
+<!-- 20: LA Risks — More Serious -->
+<div class="sl" data-i="19">
+<div class="si">
+  <div class="sn">LA Risks — Category 2</div>
+  <h2 class="ss">Less Common but More Significant Risks</h2>
+  <table class="tb">
+    <thead><tr><th>Risk</th><th>Mechanism</th><th>Must Mention?</th></tr></thead>
+    <tbody>
+      <tr><td>Bleeding / haematoma</td><td>Hitting a small artery; or deeper — pterygoid venous plexus</td><td><span class="bg2 bg2-a">For surgical extractions</span></td></tr>
+      <tr><td>Trismus</td><td>Trauma to medial pterygoid from needle; spasm</td><td><span class="bg2 bg2-a">For difficult injections</span></td></tr>
+      <tr><td>Paraesthesia / nerve damage</td><td>Direct needle trauma to ID nerve or lingual nerve</td><td><span class="bg2 bg2-r">Yes — material for most patients</span></td></tr>
+      <tr><td>Lack of effect</td><td>Inflamed tissue, altered pH; may need multiple cartridges</td><td><span class="bg2 bg2-a">For known difficult cases</span></td></tr>
+      <tr><td>HSV reactivation / aphthous ulcers</td><td>Stress of injection triggers in predisposed patients</td><td><span class="bg2 bg2-t">If patient has history</span></td></tr>
+    </tbody>
+  </table>
+  <div class="hb d" style="margin-top:10px;">
+    <p><strong>Paraesthesia is the big one.</strong> Under Montgomery, this is material for most patients — permanent or prolonged numbness affects speech, eating, and quality of life. For a patient who is a wind instrument player or public speaker, it is <strong>highly material</strong>.</p>
+  </div>
+</div>
+</div>
+
+<!-- 21: Do You Explain Every Risk? -->
+<div class="sl" data-i="20">
+<div class="si">
+  <div class="sn">Practical Guidance</div>
+  <h2 class="ss">Do You Need to Explain Every LA Risk Every Time?</h2>
+  <p class="sb">The lecturer was asked this directly. The answer is nuanced — and it comes back to Montgomery and McCulloch working together.</p>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="cd"><div class="ci"><i class="fas fa-user-check"></i></div><h3>Montgomery Says</h3><p>Disclose any risk that is material to THIS patient. A trumpet player needs to know about paraesthesia. A patient about to drive needs to know about duration of numbness.</p></div>
+    <div class="cd"><div class="ci"><i class="fas fa-filter"></i></div><h3>McCulloch Says</h3><p>You don't need to list every possible complication. Discuss all reasonable risks for the procedure — not every theoretical possibility no matter how remote.</p></div>
+  </div>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>The practical approach:</strong> For a straightforward restoration with a simple ID block, a brief "you'll be numb for a couple of hours, there's a small risk of some bruising, and very rarely the numbness can persist longer than expected" covers what's reasonable. For surgical procedures, be more thorough. For high-risk patients (musicians, public speakers), be specific.</p>
+  </div>
+</div>
+</div>
+
+<!-- 22: Building a Consent Conversation -->
+<div class="sl" data-i="21">
+<div class="si">
+  <div class="sn">Practical Skill</div>
+  <h2 class="ss">Building an Efficient Consent Conversation</h2>
+  <p class="sb">You don't need a five-minute monologue before every injection. But you do need a <strong>consistent framework</strong> that covers what's material.</p>
+  <div class="scn">
+    <div class="sl2">Template for Routine LA Consent</div>
+    <p>"I'm going to numb you now. You'll feel a small scratch and then the area will go numb for about [X] hours. You might feel like your nose is blocked — that's normal, you can still breathe. Very rarely, the numbness can last longer than expected or a small area of numbness can persist. If you notice anything unusual after the anaesthetic wears off, please contact us."</p>
+  </div>
+  <div class="scn" style="margin-top:10px;">
+    <div class="sl2">Additional for Surgical Procedures</div>
+    <p>"Because we're doing a surgical extraction today, there's a chance of some bruising or swelling in the area. There's also a small risk of bleeding afterwards — I'll give you instructions for that. For lower teeth, there's a very small risk of temporary or permanent numbness in the lip or tongue."</p>
+  </div>
+  <p class="sb" style="margin-top:10px;"><strong>Time taken: 15–20 seconds.</strong> That's all it takes to have a defensible consent conversation.</p>
+</div>
+</div>
+
+<!-- 23: Knowledge Check 4 -->
+<div class="sl" data-i="22">
+<div class="si">
+  <div class="sn">Knowledge Check</div>
+  <h2 class="ss">LA Consent in Practice</h2>
+  <div class="kq" data-c="1">
+    <div class="kt">Before giving an ID nerve block for a simple restoration, what is the minimum you should communicate?</div>
+    <div class="ko">
+      <div class="kop" data-v="0" onclick="ck(this)"><span class="om">A</span> Nothing — LA is implied consent for dental treatment</div>
+      <div class="kop" data-v="1" onclick="ck(this)"><span class="om">B</span> Duration of numbness, the "blocked nose" feeling, and that very rarely numbness can persist</div>
+      <div class="kop" data-v="2" onclick="ck(this)"><span class="om">C</span> A full list of all 10+ possible complications with percentages</div>
+      <div class="kop" data-v="3" onclick="ck(this)"><span class="om">D</span> Only that the injection might hurt — everything else is common knowledge</div>
+    </div>
+    <div class="kf"></div>
+  </div>
+</div>
+</div>
+
+<!-- 24: Interactive — Categorise LA Risks -->
+<div class="sl" data-i="23">
+<div class="si">
+  <div class="sn">Interactive Exercise</div>
+  <h2 class="ss">Categorise the LA Risks</h2>
+  <p class="sb" style="margin-bottom:8px;">Drag each risk into the correct category: <strong>Implied</strong> (no need to mention), <strong>Helpful to Mention</strong> (good practice), or <strong>Must Disclose</strong> (material risk).</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px;" id="catGrid">
+    <div>
+      <div class="cat-zone-label" style="color:var(--teal);">Implied</div>
+      <div class="cat-zone" data-cat="implied" id="zImplied"></div>
+    </div>
+    <div>
+      <div class="cat-zone-label" style="color:var(--accent);">Helpful to Mention</div>
+      <div class="cat-zone" data-cat="helpful" id="zHelpful"></div>
+    </div>
+    <div>
+      <div class="cat-zone-label" style="color:var(--danger);">Must Disclose</div>
+      <div class="cat-zone" data-cat="must" id="zMust"></div>
+    </div>
+  </div>
+  <div style="margin-top:14px;" id="catPool">
+    <div class="cat-item" draggable="true" data-cat="implied" id="ri1"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Numbness (the intended effect)</div>
+    <div class="cat-item" draggable="true" data-cat="implied" id="ri2"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Minor discomfort on injection</div>
+    <div class="cat-item" draggable="true" data-cat="helpful" id="ri3"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> "Blocked nose" feeling</div>
+    <div class="cat-item" draggable="true" data-cat="helpful" id="ri4"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Duration of numbness (2–4 hours)</div>
+    <div class="cat-item" draggable="true" data-cat="helpful" id="ri5"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> May need multiple cartridges for inflamed tissue</div>
+    <div class="cat-item" draggable="true" data-cat="must" id="ri6"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Paraesthesia — temporary or permanent numbness</div>
+    <div class="cat-item" draggable="true" data-cat="must" id="ri7"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Bleeding / haematoma (especially for surgical procedures)</div>
+    <div class="cat-item" draggable="true" data-cat="helpful" id="ri8"><i class="fas fa-grip-vertical" style="color:var(--fg-muted);"></i> Trismus (difficulty opening mouth) after difficult injections</div>
+  </div>
+  <button class="nb pr" style="margin-top:10px;" onclick="checkCat()">Check Categories</button>
+  <div class="kf" id="catFb" style="margin-top:8px;"></div>
+</div>
+</div>
+
+<!-- 25: The "While I Was There" Problem -->
+<div class="sl" data-i="24">
+<div class="si">
+  <div class="sn">Common Pitfall</div>
+  <h2 class="ss">"While I Was There" — The Consent Trap</h2>
+  <div class="scn">
+    <div class="sl2">The Scenario</div>
+    <p>You're doing a filling on UL6. You notice UL7 also needs a filling. You think: "I'm already numb, I'm already here, I'll just do it." You complete both. The patient later complains: <strong>"I didn't consent to you doing UL7."</strong></p>
+  </div>
+  <div class="hb d" style="margin-top:12px;">
+    <p><strong>This is a consent failure.</strong> Regardless of how minor or clinically appropriate the additional treatment was, the patient did not consent to it. You performed a procedure without consent — that is battery in legal terms.</p>
+  </div>
+  <div class="hb t" style="margin-top:8px;">
+    <p><strong>The correct approach:</strong> "I can see the tooth next to it also needs attention. Would you like me to take care of that today while we're set up, or shall we plan it for another visit?" — <strong>Ask first. Always ask first.</strong></p>
+  </div>
+</div>
+</div>
+
+<!-- 26: Referring vs Treating -->
+<div class="sl" data-i="25">
+<div class="si">
+  <div class="sn">Professional Boundaries</div>
+  <h2 class="ss">Knowing When to Refer — Not Everything Is Yours to Do</h2>
+  <p class="sb">Part of valid consent is offering options that are <strong>reasonable</strong> (McCulloch). Sometimes the most reasonable option is referral.</p>
+  <div class="cg c2" style="margin-top:14px;">
+    <div class="cd"><div class="ci"><i class="fas fa-tooth"></i></div><h3>Tongue Biopsy</h3><p>Within your surgical capability? Maybe. But a maxillofacial unit can assess, biopsy, and excise carcinoma in situ in one procedure. Referral may be the more reasonable option.</p></div>
+    <div class="cd"><div class="ci"><i class="fas fa-bone"></i></div><h3>Complex Implant Site</h3><p>You've just learned implant placement. A severely resorbed ridge with minimal bone may be beyond your current competence. Referring is not failure — it's professional judgment.</p></div>
+  </div>
+  <div class="hb" style="margin-top:14px;">
+    <p><strong>The consent implication:</strong> Under McCulloch, you don't have to offer every possible option — but the options you DO offer must be reasonable. Offering to do a complex procedure you're not experienced enough for may itself be a consent failure.</p>
+  </div>
+</div>
+</div>
+
+<!-- 27: Summary of All Three Lectures -->
+<div class="sl" data-i="26">
+<div class="si">
+  <div class="sn">Module 2 — Day 2 — Full Summary</div>
+  <h2 class="ss">How the Three Lectures Connect</h2>
+  <table class="tb">
+    <thead><tr><th>Lecture</th><th>Core Question</th><th>Key Answer</th></tr></thead>
+    <tbody>
+      <tr><td><span class="bg2 bg2-a">Lecture 1</span></td><td>What is valid consent and how do we handle refusal?</td><td>Capacity + Information + Voluntariness. You can't override guardians. Document everything.</td></tr>
+      <tr><td><span class="bg2 bg2-ro">Lecture 2</span></td><td>What does the law require me to disclose?</td><td>Montgomery: material risks from the patient's perspective. McCulloch: reasonable options only.</td></tr>
+      <tr><td><span class="bg2 bg2-t">Lecture 3</span></td><td>How do I apply this in daily practice?</td><td>No coercion. Know your LA risks. Know when to refuse. Know when to refer. Always ask before doing more.</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- 28: Key References Recap -->
+<div class="sl" data-i="27">
+<div class="si">
+  <div class="sn">Resources</div>
+  <h2 class="ss">Your Consent Toolkit</h2>
+  <div class="cg c2">
+    <div class="cd" style="border-color:var(--accent);background:rgba(232,168,56,0.04);"><div class="ci" style="color:var(--accent);"><i class="fas fa-book"></i></div><h3>Dental Protection Concern 2016</h3><p>The single best practical guide to consent for UK dentists. Downloadable PDF. Read it in two hours. If you know this, you won't fall foul of consent processes.</p></div>
+    <div class="cd" style="border-color:var(--accent2);background:rgba(56,189,248,0.04);"><div class="ci" style="color:var(--accent2);"><i class="fas fa-landmark"></i></div><h3>GDC Standards (1–9)</h3><p>Review once a year as a whole-practice CPD exercise. Two hours, block off a Friday afternoon, go through each standard and ask: do we do this?</p></div>
+    <div class="cd" style="border-color:var(--rose);background:rgba(251,113,133,0.04);"><div class="ci" style="color:var(--rose);"><i class="fas fa-gavel"></i></div><h3>The Case Law</h3><p>Bolam → Sidaway → Maynard → Gillick → Rogers → Chester → Montgomery → McCulloch. Understand the trajectory. No dental cases exist — all medical precedents.</p></div>
+    <div class="cd" style="border-color:var(--teal);background:rgba(45,212,191,0.04);"><div class="ci" style="color:var(--teal);"><i class="fas fa-file-alt"></i></div><h3>Documentation Templates</h3><p>Have template phrases for consent disputes, refusal documentation, and referral letters. Write them at the time — never later from memory.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- 29: Summary -->
+<div class="sl" data-i="28">
+<div class="si">
+  <div class="sn">Lecture 3 Summary</div>
+  <h2 class="ss">Key Takeaways</h2>
+  <div class="smi"><div class="smn">1</div><div class="smt"><strong>Coercion invalidates consent.</strong> Financial incentives with time pressure, fear-based urgency, or removing options are all coercive. Give patients cooling-off time.</div></div>
+  <div class="smi"><div class="smn">2</div><div class="smt"><strong>"Ethical sales" is an oxymoron.</strong> You are in patient care, not sales. Tell patients what they need. Get paid for your work. The reputation will follow.</div></div>
+  <div class="smi"><div class="smn">3</div><div class="smt"><strong>You can refuse to perform specific treatments</strong> you believe are wrong — but document your reasoning and offer to continue routine care.</div></div>
+  <div class="smi"><div class="smn">4</div><div class="smt"><strong>For implant timing, advise but respect the patient's decision.</strong> Explain consequences clearly, offer to temporise, but don't force the ideal pathway.</div></div>
+  <div class="smi"><div class="smn">5</div><div class="smt"><strong>LA consent doesn't require listing every risk.</strong> Use Montgomery (material to this patient) and McCulloch (reasonable, not exhaustive) together. 15–20 seconds is enough for routine procedures.</div></div>
+  <div class="smi"><div class="smn">6</div><div class="smt"><strong>"While I was there" is never an excuse.</strong> Always obtain consent for additional treatment before performing it — no matter how minor.</div></div>
+</div>
+</div>
+
+<!-- 30: End -->
+<div class="sl" data-i="29">
+<div class="si" style="text-align:center;padding-top:80px;">
+  <div class="sn">Module 2 — Day 2 — Complete</div>
+  <h1 class="sh" style="font-size:clamp(28px,4vw,42px);margin-bottom:20px;">End of Lecture 3</h1>
+  <p class="sb" style="max-width:560px;margin:0 auto 28px;">You have now covered the full consent framework: from foundational principles through case law to daily clinical application. Request the quizzes when you're ready to test your knowledge.</p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <span class="bg2 bg2-a">Lecture 1: Foundations</span>
+    <span class="bg2 bg2-ro">Lecture 2: Case Law</span>
+    <span class="bg2 bg2-t">Lecture 3: Practice</span>
+  </div>
+  <div class="if" style="max-width:500px;margin:24px auto 0;">
+    <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/dental-course-complete/500/200.jpg" alt="Course complete">
+    <div class="img-caption">Module 2, Day 2 — Consent, Best Interests and Refusal — Complete</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="bn">
+  <button class="nb" id="prevBtn" onclick="go(cur-1)" disabled=""><i class="fas fa-arrow-left"></i> Previous</button>
+  <div class="sd" id="dots"><div class="sdt active"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div></div>
+  <button class="nb pr" id="nextBtn" onclick="go(cur+1)">Next <i class="fas fa-arrow-right"></i></button>
+</div>
+
+<script>
+  const allSl=document.querySelectorAll('.sl');
+  const tot=allSl.length;
+  let cur=0;
+  const dotsEl=document.getElementById('dots');
+  for(let i=0;i<tot;i++){const d=document.createElement('div');d.className='sdt'+(i===0?' active':'');d.onclick=()=>go(i);dotsEl.appendChild(d);}
+  function ui(){
+    document.getElementById('pi').textContent='Slide '+(cur+1)+' of '+tot;
+    document.getElementById('pf').style.width=((cur+1)/tot*100)+'%';
+    document.getElementById('prevBtn').disabled=cur===0;
+    document.getElementById('nextBtn').disabled=cur===tot-1;
+    document.querySelectorAll('.sdt').forEach((d,i)=>d.className='sdt'+(i===cur?' active':''));
+  }
+  function go(idx){
+    if(idx<0||idx>=tot||idx===cur)return;
+    allSl[cur].classList.remove('active');
+    allSl[idx].classList.add('active');
+    allSl[idx].scrollTop=0;
+    cur=idx;ui();
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
+  });
+
+  // Knowledge check
+  function ck(el){
+    const q=el.closest('.kq');
+    if(q.classList.contains('done'))return;
+    q.classList.add('done');
+    const ci=parseInt(q.dataset.c);
+    const si=parseInt(el.dataset.v);
+    const fb=q.querySelector('.kf');
+    q.querySelectorAll('.kop').forEach(o=>{
+      const i=parseInt(o.dataset.v);
+      if(i===ci)o.classList.add('ok');
+      else if(i===si)o.classList.add('no');
+      o.style.pointerEvents='none';
+    });
+    if(si===ci){fb.className='kf show fok';fb.innerHTML='<strong>Correct.</strong> Well done — you\'ve understood this principle.';}
+    else{fb.className='kf show fno';fb.innerHTML='<strong>Not quite.</strong> The correct answer is highlighted in green. Review the relevant slides.';}
+  }
+
+  // Categorise exercise
+  (function(){
+    const zones=document.querySelectorAll('.cat-zone');
+    const pool=document.getElementById('catPool');
+    let dragEl=null;
+    zones.forEach(z=>{
+      z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('over');});
+      z.addEventListener('dragleave',()=>z.classList.remove('over'));
+      z.addEventListener('drop',e=>{
+        e.preventDefault();z.classList.remove('over');
+        if(dragEl){z.appendChild(dragEl);dragEl.classList.remove('dragging');dragEl=null;}
+      });
+    });
+    pool.addEventListener('dragstart',e=>{dragEl=e.target.closest('.cat-item');if(dragEl){dragEl.classList.add('dragging');e.dataTransfer.effectAllowed='move';}});
+    pool.addEventListener('dragend',()=>{if(dragEl){dragEl.classList.remove('dragging');dragEl=null;}});
+    // Touch
+    let touchEl=null;
+    document.addEventListener('touchstart',e=>{const it=e.target.closest('.cat-item');if(it){touchEl=it;touchEl.classList.add('dragging');}},{passive:true});
+    document.addEventListener('touchmove',e=>{
+      if(!touchEl)return;
+      e.preventDefault();
+      const t=e.touches[0];
+      zones.forEach(z=>{const r=z.getBoundingClientRect();if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom)z.classList.add('over');else z.classList.remove('over');});
+    },{passive:false});
+    document.addEventListener('touchend',e=>{
+      if(!touchEl)return;
+      const overZone=document.querySelector('.cat-zone.over');
+      if(overZone){overZone.appendChild(touchEl);overZone.classList.remove('over');}
+      touchEl.classList.remove('dragging');touchEl=null;
+    });
+  })();
+
+  function checkCat(){
+    const zones={implied:document.getElementById('zImplied'),helpful:document.getElementById('zHelpful'),must:document.getElementById('zMust')};
+    const fb=document.getElementById('catFb');
+    let allOk=true;
+    Object.values(zones).forEach(z=>{
+      z.querySelectorAll('.cat-item').forEach(it=>{
+        const actual=it.dataset.cat;
+        const zoneCat=z.dataset.cat;
+        it.classList.remove('placed','wrong-place');
+        if(actual===zoneCat)it.classList.add('placed');
+        else{it.classList.add('wrong-place');allOk=false;}
+      });
+    });
+    const poolItems=document.querySelectorAll('#catPool .cat-item');
+    if(poolItems.length>0){allOk=false;poolItems.forEach(i=>i.classList.add('wrong-place'));}
+    if(allOk){fb.className='kf show fok';fb.innerHTML='<strong>Perfect categorisation!</strong> You understand which LA risks are implied, which are helpful to mention, and which must be disclosed.';}
+    else{fb.className='kf show fno';fb.innerHTML='<strong>Not all correct.</strong> Implied: numbness, discomfort. Helpful: blocked nose feeling, duration, multiple cartridges, trismus. Must disclose: paraesthesia, bleeding/haematoma. Items in red are misplaced.';}
+  }
+
+  ui();
+</script>
+
+
+			
+		
+</body></html>

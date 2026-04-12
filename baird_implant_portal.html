@@ -182,48 +182,49 @@
   }
 
   .hero-title {
-    font-size: clamp(2.9rem, 5vw, 4.8rem);
-    line-height: 0.94;
-    margin-top: 10px;
-    max-width: 700px;
+    font-size: clamp(1.8rem, 3.2vw, 3rem);
+    line-height: 1;
+    margin-top: 6px;
+    max-width: 560px;
   }
 
   .hero-subtitle {
-    margin-top: 14px;
+    margin-top: 8px;
     color: var(--muted);
-    max-width: 680px;
+    max-width: 560px;
+    font-size: 0.95rem;
   }
 
   .hero-meta {
-    margin-top: 20px;
+    margin-top: 12px;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
 
   .pill {
     display: inline-flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 999px;
     border: 1px solid rgba(54, 214, 181, 0.28);
     background: rgba(54, 214, 181, 0.08);
     color: var(--accent2);
-    font-size: 0.76rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
   .hero-stats {
-    margin-top: 22px;
+    margin-top: 14px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 
   .stat-card {
-    padding: 14px;
+    padding: 10px 12px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
     background: var(--surface2);
@@ -231,7 +232,7 @@
 
   .stat-value {
     display: block;
-    font-size: 1.55rem;
+    font-size: 1.2rem;
     font-weight: 800;
     background: linear-gradient(135deg, #fff 15%, var(--accent) 60%, var(--accent3));
     -webkit-background-clip: text;
@@ -241,9 +242,9 @@
 
   .stat-label {
     display: block;
-    margin-top: 5px;
+    margin-top: 3px;
     color: var(--muted);
-    font-size: 0.84rem;
+    font-size: 0.75rem;
   }
 
   .resource-list {
@@ -384,12 +385,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .overview-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.84fr);
-    gap: 18px;
-  }
-
   .card {
     padding: 24px;
   }
@@ -417,13 +412,6 @@
     font-size: 1.18rem;
   }
 
-  .meta-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .meta-item,
   .faculty-list li,
   .module-card {
     border: 1px solid var(--line);
@@ -431,21 +419,6 @@
     background: var(--surface2);
   }
 
-  .meta-item {
-    padding: 15px 16px;
-  }
-
-  .meta-item strong {
-    display: block;
-    margin-bottom: 6px;
-    color: var(--accent);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .overview-copy,
   .faculty-list,
   .module-list {
     display: grid;
@@ -537,8 +510,7 @@
 
   @media (max-width: 980px) {
     .topbar,
-    .hero,
-    .overview-grid {
+    .hero {
       grid-template-columns: 1fr;
       flex-direction: column;
       align-items: start;
@@ -548,8 +520,7 @@
       justify-content: flex-start;
     }
 
-    .hero-stats,
-    .meta-list {
+    .hero-stats {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
@@ -566,8 +537,7 @@
       padding: 16px;
     }
 
-    .hero-stats,
-    .meta-list {
+    .hero-stats {
       grid-template-columns: 1fr;
     }
 
@@ -588,8 +558,7 @@
         <div class="brand-subtitle" id="course-subtitle"></div>
       </div>
       <nav class="tabs" role="tablist" aria-label="Portal sections">
-        <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-button-overview" data-tab="overview">Overview</button>
-        <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
+        <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
         <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
       </nav>
     </header>
@@ -598,7 +567,7 @@
       <section class="hero-card">
         <p class="eyebrow">Year Long Programme</p>
         <div class="hero-title">Implant dentistry study dashboard</div>
-        <p class="hero-subtitle">Use the tabs to move between the course overview, module roadmap, and faculty list, then open any lecture or quiz as its own full page in the same tab.</p>
+        <p class="hero-subtitle">A compact study hub with key dates, faculty, and direct links to each lecture and quiz.</p>
         <div class="hero-meta" id="hero-meta"></div>
         <div class="hero-stats">
           <div class="stat-card">
@@ -623,37 +592,7 @@
     </section>
 
     <main>
-      <section class="tab-panel active" id="tab-overview" role="tabpanel" aria-labelledby="tab-button-overview">
-        <div class="overview-grid">
-          <section class="card">
-            <div class="section-header">
-              <div>
-                <p class="section-kicker">Course Overview</p>
-                <h2>Key details</h2>
-              </div>
-              <p class="section-note">A clean snapshot of the course structure before we keep layering in lecture material and quizzes.</p>
-            </div>
-            <div class="meta-list" id="course-meta"></div>
-            <div class="overview-copy" id="course-description" style="margin-top: 16px;"></div>
-          </section>
-
-          <section class="card">
-            <div class="section-header">
-              <div>
-                <p class="section-kicker">Study Flow</p>
-                <h2>How to use this</h2>
-              </div>
-            </div>
-            <div class="overview-copy">
-              <p>Start in the Modules tab if you want to work sequentially through the course dates and topics.</p>
-              <p>Open lectures and quizzes directly from the relevant module cards in the Modules tab.</p>
-              <p>Each lecture or quiz opens as a full standalone page, with a clear back link to return to the portal.</p>
-            </div>
-          </section>
-        </div>
-      </section>
-
-      <section class="tab-panel" id="tab-modules" role="tabpanel" aria-labelledby="tab-button-modules">
+      <section class="tab-panel active" id="tab-modules" role="tabpanel" aria-labelledby="tab-button-modules">
         <section class="card">
           <div class="section-header">
             <div>
@@ -991,11 +930,56 @@
           },
           {
             title: "Day 2",
-            copy: "Lecture slots ready for upload.",
+            copy: "Uploaded materials for the second day of Module 2.",
             lectures: [
-              { title: "Lecture 1", copy: "To be added." },
-              { title: "Lecture 2", copy: "To be added." },
-              { title: "Lecture 3", copy: "To be added." }
+              {
+                title: "Lecture 1",
+                copy: "Imported Module 2 Day 2 lecture and quiz.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Module 2 Day 2",
+                    file: "materials/lectures/module2_day2_lecture1.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 1: Module 2 Day 2",
+                    file: "materials/quizzes/module2_day2_quiz1.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "Imported Module 2 Day 2 lecture and quiz.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: Module 2 Day 2",
+                    file: "materials/lectures/module2_day2_lecture2.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 2: Module 2 Day 2",
+                    file: "materials/quizzes/module2_day2_quiz2.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Imported Module 2 Day 2 lecture and quiz.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Module 2 Day 2",
+                    file: "materials/lectures/module2_day2_lecture3.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 3: Module 2 Day 2",
+                    file: "materials/quizzes/module2_day2_quiz3.html"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -1283,14 +1267,6 @@
   document.getElementById("stat-faculty").textContent = COURSE.faculty.length;
   document.getElementById("stat-materials").textContent = allResources.length;
   document.getElementById("stat-running").textContent = COURSE.yearsRunning;
-
-  document.getElementById("course-meta").innerHTML = COURSE.details
-    .map(([label, value]) => `<div class="meta-item"><strong>${label}</strong><span>${value}</span></div>`)
-    .join("");
-
-  document.getElementById("course-description").innerHTML = COURSE.description
-    .map((paragraph) => `<p>${paragraph}</p>`)
-    .join("");
 
   document.getElementById("faculty-list").innerHTML = COURSE.faculty
     .map((person) => `<li>${person}</li>`)

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+					body {
+						background-color: white; /* Ensure the iframe has a white background */
+					}
+				</style>
+				<script>
+					var Z_CDN_WHITELIST = [
+						'cdn.jsdelivr.net',
+						'cdnjs.cloudflare.com',
+						'cdn.tailwindcss.com',
+						'unpkg.com',
+						'fonts.googleapis.com',
+						'd3js.org',
+						'cdn.babylonjs.com',
+						'html2canvas.hertzen.com',
+						'code.jquery.com',
+						'cdn.datatables.net',
+						'kit.fontawesome.com',
+						'code.createjs.com',
+						'cdn.plot.ly',
+						'fonts.gstatic.com',
+						'www.rgraph.net',
+						'api.mapbox.com',
+						'polyfill.io',
+						'cdn.quilljs.com',
+						'picsum.photos',
+						'esm.sh'
+					];
+
+					function z_isUrlInWhitelist(url) {
+						if (!url || typeof url !== 'string') {
+							return false;
+						}
+						try {
+							const urlObj = new URL(url);
+							const hostname = urlObj.hostname;
+							return Z_CDN_WHITELIST.some(domain => hostname === domain);
+						} catch (e) {
+							return false;
+						}
+					}
+
+						function z_proxyCdnUrl(url) {
+						if (!url || !url.startsWith('http')) {
+							return url;
+						}
+							if (!z_isUrlInWhitelist(url)) {
+							return url;
+						}
+						if (!url.startsWith('https://artifacts-cdn.chatglm.site/')) {
+							return 'https://artifacts-cdn.chatglm.site/' + url;
+						}
+						return url;
+					}
+					
+					// 增强版外部链接拦截 - 适合放在模板字符串中
+					document.addEventListener('click', function (ev) {
+						try {
+							const anchor = ev.target?.closest?.('a[href]') || null;
+							if (!anchor) return;
+
+							let href = anchor.getAttribute('href')?.trim() || '';
+							if (!href) return;
+
+							if (href.startsWith('javascript:')) return;
+
+							// 新需求：href="#" 的链接完全阻止跳转和任何行为
+							if (href === '#') {
+								ev.preventDefault();
+								return;
+							}
+
+							// 处理其他内部锚点（如 #about、#contact 等）
+							if (href.startsWith('#')) {
+								const rawId = href.slice(1);
+								if (!rawId) return;
+
+								const id = decodeURIComponent(rawId);
+								const target = 
+									document.getElementById(id) ||
+									document.querySelector('a[name="' + id.replace(/"/g, '\"') + '"]') ||
+									document.querySelector('[name="' + id.replace(/"/g, '\"') + '"]');
+
+								if (target && target.scrollIntoView) {
+									ev.preventDefault();
+									try {
+										history.pushState(null, '', href);
+									} catch (e) {}
+									target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								}
+								return;
+							}
+
+							// 处理外部链接
+							let url;
+							try {
+								url = new URL(href, window.location.href);
+							} catch (e) {
+								return;
+							}
+
+							if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+							const isExternal = url.hostname !== window.location.hostname;
+
+							if (isExternal || anchor.getAttribute('target') === '_blank') {
+								ev.preventDefault();
+								window.open(url.toString(), '_blank', 'noopener,noreferrer');
+							}
+
+						} catch (e) {
+							// 出错时不阻止默认行为
+						}
+					}, true);
+
+					// 1. 暴力清除函数：从 DOM 层面抹除 onclick 属性
+					var Z_removeInlineOnclick = function () {
+						// 专门锁定 href="#" 且带有 onclick 的 a 标签
+						const targetedLinks = document.querySelectorAll('a[href="#"][onclick]');
+						for (let i = 0; i < targetedLinks.length; i++) {
+							targetedLinks[i].removeAttribute('onclick');
+							targetedLinks[i].onclick = null; // 确保 JS 层的赋值也被清理
+						}
+					};
+					// 3. 动态监测：防止页面通过异步加载重新生成带 onclick 的元素
+					var z_observer = new MutationObserver(function () {
+						Z_removeInlineOnclick();
+					});
+
+					z_observer.observe(document.documentElement, {
+						childList: true,
+						subtree: true,
+						attributes: true,
+						attributeFilter: ['onclick']
+					});
+
+					// 4. 初始化执行一次
+					Z_removeInlineOnclick();
+
+					const Z_rawCreateElement = document.createElement;
+
+					document.createElement = function (tagName, ...args) {
+						const el = Z_rawCreateElement.call(this, tagName, ...args);
+
+						if (tagName.toLowerCase() === 'script') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let srcValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'src' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									srcValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'src', {
+								get: function() {
+									return srcValue || rawGetAttribute.call(this, 'src') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										srcValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'src', srcValue);
+									} else {
+										srcValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						if (tagName.toLowerCase() === 'link') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let hrefValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'href' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									hrefValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'href', {
+								get: function() {
+									return hrefValue || rawGetAttribute.call(this, 'href') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										hrefValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'href', hrefValue);
+									} else {
+										hrefValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						return el;
+					};
+
+					const Z_OriginalXMLHttpRequest = window.XMLHttpRequest;
+					window.XMLHttpRequest = function (...args) {
+						const xhr = new Z_OriginalXMLHttpRequest(...args);
+						const rawOpen = xhr.open;
+
+						xhr.open = function (method, url, ...rest) {
+							if (typeof url === 'string') {
+								const methodUpper = (method || '').toUpperCase();
+								if (methodUpper === 'GET' && z_isUrlInWhitelist(url)) {
+									url = z_proxyCdnUrl(url);
+								}
+							}
+							return rawOpen.call(this, method, url, ...rest);
+						};
+
+						return xhr;
+					};
+
+					window.XMLHttpRequest.prototype = Z_OriginalXMLHttpRequest.prototype;
+					Object.setPrototypeOf(window.XMLHttpRequest, Z_OriginalXMLHttpRequest);
+
+					const z_originalFetch = window.fetch;
+					window.fetch = async function (...args) {
+						if (args.length > 0) {
+							let url = '';
+							let method = 'GET';
+							
+							if (typeof args[0] === 'string') {
+								url = args[0];
+								if (args[1] && args[1].method) {
+									method = args[1].method.toUpperCase();
+								}
+								if (method === 'GET' && z_isUrlInWhitelist(url)) {
+									args[0] = z_proxyCdnUrl(url);
+								}
+							} else if (args[0] instanceof Request) {
+								const originalUrl = args[0].url;
+								method = (args[0].method || 'GET').toUpperCase();
+								if (method === 'GET' && z_isUrlInWhitelist(originalUrl)) {
+									const proxiedUrl = z_proxyCdnUrl(originalUrl);
+									if (proxiedUrl !== originalUrl) {
+										args[0] = new Request(proxiedUrl, args[0]);
+									}
+								}
+							}
+						}
+						return z_originalFetch.apply(this, args);
+					};
+				</script>
+			</head>
+			<body>
+				
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Day 2 — Quiz 3</title>
+<link href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=DM+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://artifacts-cdn.chatglm.site/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{--bg:#0B0E13;--fg:#F1F0EB;--fg-muted:#94A3B8;--accent:#E8A838;--accent-glow:rgba(232,168,56,0.12);--card:rgba(26,32,44,0.8);--border:rgba(148,163,184,0.13);--danger:#F87171;--success:#34D399;--teal:#2DD4BF;--rose:#FB7185;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden;}
+  .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .bg-layer::before{content:'';position:absolute;top:-20%;left:-15%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(251,113,133,0.04) 0%,transparent 70%);animation:fB 24s ease-in-out infinite;}
+  .bg-layer::after{content:'';position:absolute;bottom:-15%;right:-10%;width:55vw;height:55vw;background:radial-gradient(circle,rgba(232,168,56,0.04) 0%,transparent 70%);animation:fB 28s ease-in-out infinite reverse;}
+  @keyframes fB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(18px,-14px) scale(1.05);}}
+  .top-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(11,14,19,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:50px;}
+  .top-bar .ml{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--rose);font-weight:600;}
+  .top-bar .lt{font-family:'DM Serif Display',serif;font-size:16px;color:var(--fg);}
+  .top-bar .pi{font-size:12px;color:var(--fg-muted);}
+  .main{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:70px 24px 40px;}
+  .start-screen{text-align:center;padding:60px 0;}
+  .start-screen h1{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,44px);line-height:1.15;margin-bottom:16px;}
+  .start-screen p{font-size:15px;line-height:1.7;color:var(--fg-muted);max-width:520px;margin:0 auto 12px;}
+  .start-stats{display:flex;gap:16px;justify-content:center;margin:28px 0;flex-wrap:wrap;}
+  .start-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 22px;text-align:center;}
+  .start-stat .num{font-size:24px;font-weight:700;color:var(--rose);}
+  .start-stat .lbl{font-size:11px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+  .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--rose),#E11D48);border:none;color:#fff;padding:14px 32px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all 0.25s;margin-top:8px;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(251,113,133,0.15);}
+  .btn-secondary{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);color:var(--fg);padding:12px 24px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all 0.25s;}
+  .btn-secondary:hover{border-color:var(--rose);color:var(--rose);}
+  .quiz-progress{margin-bottom:24px;}
+  .qp-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+  .qp-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--accent));border-radius:3px;transition:width 0.4s ease;}
+  .qp-info{display:flex;justify-content:space-between;font-size:12px;color:var(--fg-muted);}
+  .q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;}
+  .q-tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;}
+  .q-tag.l1{background:rgba(232,168,56,0.12);color:var(--accent);}
+  .q-tag.l2{background:rgba(251,113,133,0.12);color:var(--rose);}
+  .q-tag.l3{background:rgba(45,212,191,0.12);color:var(--teal);}
+  .q-tag.mix{background:rgba(167,139,250,0.12);color:#A78BFA;}
+  .q-num{font-size:12px;color:var(--fg-muted);margin-bottom:6px;}
+  .q-text{font-size:16px;font-weight:600;line-height:1.55;color:var(--fg);margin-bottom:18px;}
+  .q-opts{display:flex;flex-direction:column;gap:8px;}
+  .q-opt{background:rgba(148,163,184,0.05);border:1px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;color:var(--fg-muted);transition:all 0.2s;display:flex;align-items:flex-start;gap:12px;line-height:1.5;}
+  .q-opt:hover{border-color:var(--rose);color:var(--fg);background:rgba(251,113,133,0.04);}
+  .q-opt.selected{border-color:var(--accent2);color:var(--accent2);background:rgba(56,189,248,0.06);}
+  .q-opt.correct{border-color:var(--success)!important;background:rgba(52,211,153,0.08)!important;color:var(--success)!important;cursor:default;}
+  .q-opt.wrong{border-color:var(--danger)!important;background:rgba(248,113,113,0.06)!important;color:var(--danger)!important;cursor:default;}
+  .q-opt.dimmed{opacity:0.45;cursor:default;pointer-events:none;}
+  .q-opt .om{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.2s;margin-top:1px;}
+  .q-opt.selected .om{border-color:var(--accent2);color:var(--accent2);}
+  .q-opt.correct .om{border-color:var(--success);background:var(--success);color:var(--bg);}
+  .q-opt.wrong .om{border-color:var(--danger);background:var(--danger);color:var(--bg);}
+  .q-explain{margin-top:14px;padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.65;display:none;}
+  .q-explain.show{display:block;}
+  .q-explain.ok{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);color:var(--success);}
+  .q-explain.no{background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.15);color:var(--fg-muted);}
+  .q-explain strong{color:var(--fg);}
+  .q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+  .q-nav .btn-secondary:disabled{opacity:0.3;cursor:not-allowed;}
+  .q-nav .btn-secondary:disabled:hover{border-color:var(--border);color:var(--fg);}
+  .results{text-align:center;padding:30px 0;}
+  .results .score-ring{width:160px;height:160px;border-radius:50%;margin:0 auto 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+  .results .score-ring::before{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid var(--border);}
+  .results .score-ring::after{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid var(--rose);border-right-color:transparent;border-bottom-color:transparent;transform:rotate(-45deg);}
+  .results .score-ring .score-num{font-size:42px;font-weight:700;color:var(--fg);position:relative;z-index:1;}
+  .results .score-ring .score-lbl{font-size:12px;color:var(--fg-muted);position:relative;z-index:1;}
+  .results h2{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:8px;}
+  .results p{font-size:14px;color:var(--fg-muted);line-height:1.6;max-width:480px;margin:0 auto;}
+  .results .grade{font-size:15px;font-weight:600;margin:16px 0 24px;padding:10px 24px;border-radius:8px;display:inline-block;}
+  .results .grade.high{background:rgba(52,211,153,0.12);color:var(--success);}
+  .results .grade.mid{background:rgba(232,168,56,0.12);color:var(--accent);}
+  .results .grade.low{background:rgba(248,113,113,0.12);color:var(--danger);}
+  .review-section{margin-top:32px;text-align:left;}
+  .review-section h3{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;text-align:center;}
+  .rev-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;}
+  .rev-item.rev-ok{border-left:3px solid var(--success);}
+  .rev-item.rev-no{border-left:3px solid var(--danger);}
+  .rev-q{font-size:13px;font-weight:600;color:var(--fg);margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;}
+  .rev-q .rev-icon{flex-shrink:0;margin-top:2px;}
+  .rev-a{font-size:12px;color:var(--fg-muted);line-height:1.55;}
+  .rev-a strong{color:var(--fg);}
+  @media(max-width:768px){.main{padding:62px 16px 30px;}.q-card{padding:20px 16px;}.start-stats{gap:10px;}.start-stat{padding:10px 16px;}}
+  @media(prefers-reduced-motion:reduce){.bg-layer::before,.bg-layer::after{animation:none;}}
+</style>
+
+
+<div class="bg-layer"></div>
+<div class="top-bar">
+  <div><div class="ml">Module 2 — Day 2</div><div class="lt">Quiz 3: Integration and Application</div></div>
+  <div class="pi" id="topInfo"></div>
+</div>
+<div class="main" id="app">
+    <div class="start-screen">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--rose);font-weight:600;margin-bottom:12px;">Module 2 — Day 2</div>
+      <h1>Integration and<br>Application</h1>
+      <p>Final quiz: 30 questions testing cross-lecture connections, detailed case facts, and scenario-based clinical judgment.</p>
+      <div class="start-stats">
+        <div class="start-stat"><div class="num">30</div><div class="lbl">Questions</div></div>
+        <div class="start-stat"><div class="num">Final</div><div class="lbl">Assessment</div></div>
+        <div class="start-stat"><div class="num">All 3</div><div class="lbl">Lectures</div></div>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()"><i class="fas fa-play"></i> Start Quiz</button>
+    </div></div>
+
+<script>
+const questions=[
+  {lec:1,q:"The lecturer admits he finds safeguarding CPD boring because he 'doesn't see any of this in the West End of London.' Why does he still say you should do it?",
+  opts:["The GDC requires a minimum of 5 hours per CPD cycle","It happens all over the country and some practitioners deal with it weekly — you need to be prepared","Your indemnity insurance requires it","It counts as verifiable CPD in multiple categories"],
+  c:1,exp:"'It does happen all over the country, and some of you will have more frequent interactions where there is a social problem within the family.' His honesty about not seeing it personally is contrasted with the reality that it's universal — you need to be ready regardless of your practice location."},
+
+  {lec:2,q:"Which case was the FIRST to move away from Bolam for consent disclosure, even though it was an Australian case?",
+  opts:["Sidaway v Board of Governors (1985)","Chester v Afshar (2004)","Rogers v Whitaker (1992)","Montgomery v Lanarkshire (2015)"],
+  c:2,exp:"Rogers v Whitaker (1992) overruled Bolam for consent disclosure by establishing that no risk is too small to mention if the patient should have been told. This Australian case influenced UK law before Chester and Montgomery."},
+
+  {lec:3,q:"The lecturer estimates that a routine LA consent conversation takes approximately how long?",
+  opts:["1–2 seconds","15–20 seconds","1–2 minutes","5 minutes"],
+  c:1,exp:"'Time taken: 15–20 seconds. That's all it takes to have a defensible consent conversation.' The point is that thorough consent doesn't require lengthy monologues — just consistent, efficient communication of material risks."},
+
+  {lec:1,q:"Under the best interests framework, when there are multiple treatment options for a patient who lacks capacity, which principle guides your selection?",
+  opts:["Choose the cheapest option to preserve the carer's finances","Choose the option that interferes least with the patient's rights and freedoms","Choose the option the carer prefers","Choose the option with the highest success rate regardless of invasiveness"],
+  c:1,exp:"The 'least restrictive option' principle means choosing the intervention that is proportionate and minimises interference with the patient's rights and freedoms — not simply the most clinically aggressive or the cheapest."},
+
+  {lec:2,q:"In the Montgomery case, why did the Royal College of Obstetricians and Gynaecologists' guidance not protect the doctors?",
+  opts:["The guidance was outdated and had been superseded","The guidance recommended natural childbirth, but Montgomery established that following professional guidance is not a defence for failing to disclose material risks","The doctors hadn't followed the RCOG guidance","The RCOG guidance only applied to Scotland"],
+  c:1,exp:"Even though the RCOG recommended natural childbirth for diabetic mothers, Montgomery established that 'a doctor cannot rely on a practice recommended by a responsible body of medical opinion as a defence' for failing to disclose material risks. The Bolam defence for disclosure was abolished."},
+
+  {lec:3,q:"A patient has a painful lower molar. You advise keeping the tooth and temporising with calcium hydroxide until they're ready for an implant. The lecturer suggests what waiting period as reasonable?",
+  opts:["Two to three weeks","Six months to a year","Up to three years, but not longer","Any duration — as long as the patient is pain-free"],
+  c:1,exp:"'As long as the waiting period isn't inordinate — six months to a year, if not three years.' The point is that a reasonable waiting period to plan and finance treatment is acceptable, but leaving it indefinitely is not."},
+
+  {lec:1,q:"The lecturer says that safeguarding CPD should be done through your practice's safeguarding lead. What additional pathway does he mention for escalating concerns internally?",
+  opts:["Contact the GDC directly","Follow your practice's safeguarding lead, then use the GDC's concerns process if internal routes fail","Contact the police before escalating internally","Write to the patient's MP"],
+  c:1,exp:"'Follow your practice's safeguarding lead initially. If internal routes fail, use the GDC's concerns process or contact relevant external bodies.' The internal pathway comes first, but external escalation exists if it doesn't work."},
+
+  {lec:2,q:"What specific syndrome resulted from the spinal surgery in Chester v Afshar?",
+  opts:["Cauda equina syndrome","Horner's syndrome","Brown-Séquard syndrome","Anterior cord syndrome"],
+  c:0,exp:"Cauda equina syndrome involves loss of function of the lumbar nerve afferent neurons that control muscular activity around the lower back, bladder, and bowel — a devastating outcome that the patient was not warned about."},
+
+  {lec:3,q:"In the 'while I was there' scenario, the legal term for performing treatment without consent is:",
+  opts:["Negligence","Malpractice","Battery","Breach of duty"],
+  c:2,exp:"The lecturer explicitly states: 'If you do it, it's battery.' Battery in medical law means touching a patient without consent — it doesn't require harm, just the lack of valid consent to the touching."},
+
+  {lec:2,q:"The lecturer describes Bolam as 'still a common-sense approach to most things.' In what specific area does he say Bolam NO LONGER applies?",
+  opts:["Clinical judgment about treatment selection","What information must be disclosed to the patient","Infection control procedures","Record-keeping requirements"],
+  c:1,exp:"Bolam still applies to clinical judgment (what treatment to provide) but Montgomery abolished Bolam for consent disclosure (what information to give). The doctor no longer decides what the patient should be told — the patient does."},
+
+  {lec:3,q:"A patient with a known tendency to develop aphthous ulcers is scheduled for an ID block. Under Montgomery, should you mention the risk of ulcer triggering?",
+  opts:["No — it's too minor to mention","Yes — because you know this patient's specific history, it becomes material under the subjective limb","Only if the patient specifically asks about mouth ulcers","No — aphthous ulcers have no connection to dental injections"],
+  c:1,exp:"Under Montgomery's subjective limb, if the doctor is or should be aware that this particular patient would attach significance to the risk, it's material. A known history of aphthous ulcers makes triggering a reasonable concern for that specific patient."},
+
+  {lec:1,q:"When managing a divorced couple at the same practice, what specific logistical step should you take beyond confidentiality?",
+  opts:["Ask them to sign a confidentiality agreement","Ensure they don't meet in the waiting room","Only treat one of them going forward","Charge them double for the administrative burden"],
+  c:1,exp:"'Make sure they don't meet.' This is a practical step beyond just not sharing information — you need to actively manage appointment scheduling to prevent uncomfortable encounters in shared spaces."},
+
+  {lec:2,q:"What were the actual differential diagnoses for the patient in Maynard?",
+  opts:["Diabetes, thyroid disorder, or sarcoidosis","Tuberculosis, Hodgkin's lymphoma, carcinoma, or sarcoidosis","Syphilis, tuberculosis, or lymphoma","Glandular fever, tuberculosis, or HIV"],
+  c:1,exp:"The patient presented with throat symptoms and the differential was tuberculosis, Hodgkin's lymphoma, carcinoma, or sarcoidosis. The possibility of cancer meant waiting for TB results could be fatal — justifying the biopsy despite the risk of nerve damage."},
+
+  {lec:3,q:"The lecturer describes the ideal implant pathway as: guided surgery, bone in the gaps, sulcus former on, done. He then says this is what he'd do on his parents and himself. What GDC Standard does this directly reflect?",
+  opts:["Communicate effectively","Maintain and protect patients' information","Put patients' interests first — not your bank balance, not your Instagram page","Work with colleagues in a way that serves patients' interests"],
+  c:2,exp:"'Not your bank balance. Not your Instagram page. Imagine that was your loved one going to see somebody.' Recommending what you'd do for your own family is the ultimate test of putting patients' interests first."},
+
+  {lec:2,q:"Before Montgomery, which case had already established that failure to warn could be negligent even without clinical negligence in the procedure?",
+  opts:["Bolam (1957)","Sidaway (1985)","Chester v Afshar (2004)","Rogers v Whitaker (1992)"],
+  c:2,exp:"Chester v Afshar (2004) established that the failure to warn of a risk was itself negligent, separate from the question of whether the procedure was performed competently. This paved the way for Montgomery's broader framework."},
+
+  {lec:1,q:"The lecturer says valid consent means the patient must 'understand it.' Which other GDC Standard does this directly connect to?",
+  opts:["Maintain professional knowledge and skills","Communicate effectively","Raise concerns if patients are at risk","Have a clear complaints procedure"],
+  c:1,exp:"Understanding requires effective communication. If the patient doesn't understand, you haven't communicated effectively — and consent isn't valid. These two standards are directly linked."},
+
+  {lec:3,q:"When refusing to perform a treatment, which specific phrase signals that you are NOT abandoning the patient?",
+  opts:["'I think you should find another dentist'","'If you'd like to carry on having your hygiene and checkups here, that's fine'","'I cannot help you with this problem'","'This is beyond my scope of practice'"],
+  c:1,exp:"Offering to continue routine care (hygiene and checkups) signals that you're refusing the specific treatment, not the patient. 'I will not voluntarily do what you're asking me to do' applies to the procedure, not to the therapeutic relationship."},
+
+  {lec:2,q:"What was the risk statistic in Rogers v Whitaker that the patient was not warned about?",
+  opts:["1 in 100","1 in 1,000","1 in 14,000","1 in 100,000"],
+  c:2,exp:"The risk of the delayed hypersensitivity reaction causing blindness in the other eye was 1 in 14,000. Despite this extremely low probability, the court ruled it should have been disclosed because the consequence (bilateral blindness) was so severe."},
+
+  {lec:3,q:"A deep sea diver working on North Sea oil rigs needs restorations. Under Montgomery, why might provisional restorations placed over cotton wool inside a root canal be particularly risky for this patient?",
+  opts:["Provisional restorations are always negligent","Pressure changes at depth could cause a compromised restoration to fail, with potentially serious consequences in a remote location","Deep sea divers cannot receive dental treatment","The cotton wool would absorb seawater"],
+  c:1,exp:"'If they're a deep sea diver working on oil rigs in the North Sea, and you're putting a provisional over cotton wool inside a root canal, it's going to crack your tooth.' The occupational context makes what might be a minor problem for most patients potentially serious for this specific patient."},
+
+  {lec:1,q:"The lecturer distinguishes between two confidentiality scenarios involving spouses. In the scenario where you CAN acknowledge attendance, what specific condition must be met?",
+  opts:["Both spouses must have signed a joint consent form","They must openly know about each other's appointments — it's not hidden information","They must have been married for more than 5 years","The practice must have a policy allowing spousal disclosure"],
+  c:1,exp:"The distinction is whether the attendance is open knowledge. If spouses know each other's appointments, acknowledging attendance is 'common sense.' If they're divorced and hostile, even acknowledging attendance is inappropriate — 'I can't comment one way or the other.'"},
+
+  {lec:2,q:"What happened to Friern Barnet Hospital, where the Bolam case originated?",
+  opts:["It was demolished and replaced with a park","It was converted into luxury apartments","It remains a functioning mental hospital","It became a dental school"],
+  c:1,exp:"The lecturer describes it as now being luxury apartments, having been a mental hospital with 420-metre corridors. He used to visit as a teenager and ride his Chopper bike through the plastic flap doors in the workshops."},
+
+  {lec:3,q:"Why does the lecturer say you should explain the 'blocked nose' feeling before numbing the upper teeth?",
+  opts:["It's a GDC requirement for all upper dental procedures","Without the explanation, patients may genuinely believe they can't breathe and become anxious — the warning takes 5 seconds and prevents unnecessary distress","It's a Bolam requirement that all practitioners follow","Patients may sue if they're not warned about nasal congestion"],
+  c:1,exp:"'You're going to feel like your nose is blocked. But just breathe through your nose and you'll notice you can.' This takes 5 seconds, prevents genuine anxiety from the loss of sensation, and is good communication practice — not a legal requirement but sensible care."},
+
+  {lec:2,q:"In Sidaway, the 1% risk that was not disclosed was of:",
+  opts:["Blindness","Paraplegia","Death","Permanent hoarseness"],
+  c:1,exp:"The surgeon failed to inform the patient of a 1% risk of paraplegia during cervical cord decompression. The patient became paraplegic. The court accepted the Bolam defence — a decision now entirely rejected under Montgomery."},
+
+  {lec:3,q:"A patient's filling needs two appointments because of TMJ problems. You explain: 'You'll need two local anaesthetics with double the risk of any possible after-effects.' What consent principle does this demonstrate?",
+  opts:["Bolam — what colleagues would do","Montgomery — explaining risks specific to the treatment pathway chosen by this patient","Sidaway — the doctor decides what to disclose","Gillick — assessing capacity"],
+  c:1,exp:"By explaining that splitting appointments doubles LA risk, you're giving the patient information specific to their choice — enabling them to weigh shorter appointments against increased anaesthetic risk. This is Montgomery's materiality test applied to a practical decision."},
+
+  {lec:1,q:"The lecturer says: 'If they don't consent, you can't do it. Because if you do it's battery. And then you're in for the hijack.' In context, what does 'the hijack' refer to?",
+  opts:["Being arrested by the police","Facing a legal claim and professional consequences you cannot defend","Being suspended by the GDC without a hearing","Losing your indemnity insurance coverage"],
+  c:1,exp:"'The hijack' is the lecturer's colloquial term for being dragged into a legal or GDC process that you have no defence against — because you performed treatment without consent. There's no defence to battery except valid consent."},
+
+  {lec:2,q:"Gillick competency was originally about contraception for underage girls. In the dental context, the lecturer asks why teeth whitening is prohibited for under-16s. What is his conclusion about the legal basis?",
+  opts:["It's based on robust evidence of enamel damage in developing teeth","No one has been able to explain the medical reason — it's based on the product licence, not evidence of harm","It's based on EU cosmetic regulations","It's based on GDC guidance specific to whitening agents"],
+  c:1,exp:"'No one has ever been able to explain it to me. It's a nonsensical law.' The restriction has no medical basis — bleaching is safe and causes no damage. It's based on the product licence, and the lecturer questions whether a Gillick-competent teenager who needs it for psychological reasons could challenge this."},
+
+  {lec:3,q:"After performing a surgical extraction, which of these post-operative instructions is BOTH clinically appropriate AND part of your consent obligation?",
+  opts:["'Call us if you have any concerns' — this covers everything","Warning about bruising and swelling beforehand, plus providing specific instructions for managing bleeding afterwards","Giving the patient a printed information sheet without verbal discussion","Asking the patient to sign that they received post-operative instructions"],
+  c:1,exp:"Consent includes what happens after treatment. Warning about bruising and swelling before the procedure, plus specific bleeding management instructions, is both clinically appropriate and part of the information a reasonable patient would want — satisfying Montgomery."},
+
+  {lec:1,q:"The lecturer describes the GDC Standards as 'Standard 1 through to 9.' What specific format does he recommend for the annual practice CPD exercise?",
+  opts:["Each dentist reads the standards independently and signs a declaration","The whole practice blocks off 2 hours, goes through each standard together asking 'do we do this?', and signs it off","An external trainer delivers a presentation on the standards","Completing the GDC's online e-learning module individually"],
+  c:1,exp:"'Easy CPD for the whole practice. Two hours. Block off from 3:00 on a Friday. Everyone guys, we're going to go through the standards, do it once a year and you go through it. Do we do this? Make people aware. Sign it off.' The interactive group format catches things individuals miss."},
+
+  {lec:2,q:"In McCulloch, why was the lecturer's example of the single upper 7 denture particularly effective at explaining the judgment?",
+  opts:["Because it's the most common scenario dentists face","Because it clearly distinguishes between something that is POSSIBLE (a denture could be made) but not REASONABLE (no reasonable practitioner would offer it as primary treatment)","Because it shows McCulloch only applies to NHS patients","Because a denture is cheaper than an implant and McCulloch is about cost"],
+  c:1,exp:"'No one makes a removable denture for a single upper seven' — the example powerfully shows that just because something is technically possible doesn't mean it's reasonable to discuss. McCulloch says discuss reasonable options; the clinician defines what's reasonable."},
+
+  {lec:3,q:"A patient who had an ID block says 'I can't swallow.' You explain the mylohyoid mechanism. Under which case law principle does knowing this anatomy help you defend your consent process?",
+  opts:["Bolam — colleagues would know this anatomy","Montgomery — understanding the patient's experience allows you to provide material information about what to expect","Sidaway — the doctor decides what's relevant","McCulloch — it's a reasonable thing to know but you don't have to mention it"],
+  c:1,exp:"Knowing that the mylohyoid is a motor nerve means you can explain WHY the patient feels they can't swallow — turning a frightening symptom into an expected, explainable effect. Under Montgomery, this is providing material information that helps the patient understand their experience."}
+];
+
+const shuffled=questions.map(q=>{const idx=q.opts.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}return{...q,opts:idx.map(i=>q.opts[i]),c:idx.indexOf(q.c)};});
+
+let state='start',curQ=0,answers=[],submitted=[];
+function lecLabel(l){return l===1?'<span class="q-tag l1">Lecture 1</span>':l===2?'<span class="q-tag l2">Lecture 2</span>':'<span class="q-tag l3">Lecture 3</span>';}
+
+function renderStart(){
+  document.getElementById('topInfo').textContent='';
+  document.getElementById('app').innerHTML=`
+    <div class="start-screen">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--rose);font-weight:600;margin-bottom:12px;">Module 2 — Day 2</div>
+      <h1>Integration and<br>Application</h1>
+      <p>Final quiz: 30 questions testing cross-lecture connections, detailed case facts, and scenario-based clinical judgment.</p>
+      <div class="start-stats">
+        <div class="start-stat"><div class="num">30</div><div class="lbl">Questions</div></div>
+        <div class="start-stat"><div class="num">Final</div><div class="lbl">Assessment</div></div>
+        <div class="start-stat"><div class="num">All 3</div><div class="lbl">Lectures</div></div>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()"><i class="fas fa-play"></i> Start Quiz</button>
+    </div>`;
+}
+
+function startQuiz(){state='quiz';curQ=0;answers=new Array(shuffled.length).fill(-1);submitted=new Array(shuffled.length).fill(false);renderQuiz();}
+
+function renderQuiz(){
+  const q=shuffled[curQ],isSub=submitted[curQ],isLast=curQ===shuffled.length-1;
+  const pct=((curQ+1)/shuffled.length)*100;
+  document.getElementById('topInfo').textContent=`Question ${curQ+1} of ${shuffled.length}`;
+  let optsHtml='';const L=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{
+    let cls='q-opt';
+    if(isSub){if(i===q.c)cls+=' correct';else if(i===answers[curQ]&&i!==q.c)cls+=' wrong';else cls+=' dimmed';}
+    else if(answers[curQ]===i)cls+=' selected';
+    optsHtml+=`<div class="${cls}" onclick="selOpt(${i})" role="button" tabindex="0"><span class="om">${L[i]}</span><span>${o}</span></div>`;
+  });
+  let expHtml='';
+  if(isSub){const ok=answers[curQ]===q.c;expHtml=`<div class="q-explain show ${ok?'ok':'no'}"><strong>${ok?'Correct.':'Incorrect.'}</strong> ${q.exp}</div>`;}
+  document.getElementById('app').innerHTML=`
+    <div class="quiz-progress"><div class="qp-bar"><div class="qp-fill" style="width:${pct}%"></div></div><div class="qp-info"><span>Question ${curQ+1} of ${shuffled.length}</span><span>${Math.round(pct)}% complete</span></div></div>
+    <div class="q-card">${lecLabel(q.lec)}<div class="q-num">Question ${curQ+1}</div><div class="q-text">${q.q}</div><div class="q-opts">${optsHtml}</div>${expHtml}</div>
+    <div class="q-nav">
+      <button class="btn-secondary" onclick="pQ()" ${curQ===0?'disabled':''}><i class="fas fa-arrow-left"></i> Previous</button>
+      ${isSub&&!isLast?'<button class="btn-primary" onclick="nQ()">Next <i class="fas fa-arrow-right"></i></button>':isSub&&isLast?'<button class="btn-primary" onclick="showRes()"><i class="fas fa-chart-bar"></i> See Results</button>':`<button class="btn-primary" onclick="subQ()" ${answers[curQ]===-1?'disabled style="opacity:0.4;cursor:not-allowed;"':''}><i class="fas fa-check"></i> Submit Answer</button>`}
+    </div>`;
+}
+
+function selOpt(i){if(!submitted[curQ]){answers[curQ]=i;renderQuiz();}}
+function subQ(){if(answers[curQ]===-1)return;submitted[curQ]=true;renderQuiz();}
+function nQ(){if(curQ<shuffled.length-1){curQ++;renderQuiz();}}
+function pQ(){if(curQ>0){curQ--;renderQuiz();}}
+
+function showRes(){
+  state='results';let score=0;shuffled.forEach((q,i)=>{if(answers[i]===q.c)score++;});
+  const pct=Math.round((score/shuffled.length)*100);
+  document.getElementById('topInfo').textContent=`Score: ${score}/${shuffled.length}`;
+  let gc,gt;
+  if(pct>=80){gc='high';gt='Excellent — You have a thorough understanding of dental consent law and practice';}
+  else if(pct>=60){gc='mid';gt='Good — Some areas need review before clinical application';}
+  else{gc='low';gt:'Needs Improvement — Revisit all three lectures before retaking';}
+  const LL=['A','B','C','D'];let revH='';
+  shuffled.forEach((q,i)=>{
+    const ok=answers[i]===q.c;
+    revH+=`<div class="rev-item ${ok?'rev-ok':'rev-no'}"><div class="rev-q"><span class="rev-icon">${ok?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle" style="color:var(--danger);"></i>'}</span><span>${q.q}</span></div><div class="rev-a">${ok?'':`Your answer: <strong>${answers[i]>=0?LL[answers[i]]+'. '+q.opts[answers[i]]:'Unanswered'}</strong><br>`}Correct: <strong>${LL[q.c]}. ${q.opts[q.c]}</strong><br><span style="color:var(--fg-muted);font-size:11px;">${q.exp}</span></div></div>`;
+  });
+  document.getElementById('app').innerHTML=`
+    <div class="results">
+      <div class="score-ring"><div class="score-num">${score}</div><div class="score-lbl">out of ${shuffled.length}</div></div>
+      <h2>${pct}%</h2>
+      <div class="grade ${gc}">${gt}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="renderStart()"><i class="fas fa-redo"></i> Retake Quiz</button>
+        <button class="btn-secondary" onclick="document.querySelector('.review-section').scrollIntoView({behavior:'smooth'})"><i class="fas fa-list"></i> Review Answers</button>
+      </div>
+      <div class="review-section"><h3>Answer Review</h3>${revH}</div>
+    </div>`;
+}
+
+document.addEventListener('keydown',e=>{
+  if(state!=='quiz')return;
+  if(e.key==='ArrowRight'&&submitted[curQ]&&curQ<shuffled.length-1)nQ();
+  if(e.key==='ArrowLeft'&&curQ>0)pQ();
+  if(e.key==='Enter'&&!submitted[curQ]&&answers[curQ]>=0)subQ();
+  if(e.key==='Enter'&&submitted[curQ]&&curQ===shuffled.length-1)showRes();
+});
+
+renderStart();
+</script>
+
+
+			
+		
+</body></html>

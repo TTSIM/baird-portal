@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+					body {
+						background-color: white; /* Ensure the iframe has a white background */
+					}
+				</style>
+				<script>
+					var Z_CDN_WHITELIST = [
+						'cdn.jsdelivr.net',
+						'cdnjs.cloudflare.com',
+						'cdn.tailwindcss.com',
+						'unpkg.com',
+						'fonts.googleapis.com',
+						'd3js.org',
+						'cdn.babylonjs.com',
+						'html2canvas.hertzen.com',
+						'code.jquery.com',
+						'cdn.datatables.net',
+						'kit.fontawesome.com',
+						'code.createjs.com',
+						'cdn.plot.ly',
+						'fonts.gstatic.com',
+						'www.rgraph.net',
+						'api.mapbox.com',
+						'polyfill.io',
+						'cdn.quilljs.com',
+						'picsum.photos',
+						'esm.sh'
+					];
+
+					function z_isUrlInWhitelist(url) {
+						if (!url || typeof url !== 'string') {
+							return false;
+						}
+						try {
+							const urlObj = new URL(url);
+							const hostname = urlObj.hostname;
+							return Z_CDN_WHITELIST.some(domain => hostname === domain);
+						} catch (e) {
+							return false;
+						}
+					}
+
+						function z_proxyCdnUrl(url) {
+						if (!url || !url.startsWith('http')) {
+							return url;
+						}
+							if (!z_isUrlInWhitelist(url)) {
+							return url;
+						}
+						if (!url.startsWith('https://artifacts-cdn.chatglm.site/')) {
+							return 'https://artifacts-cdn.chatglm.site/' + url;
+						}
+						return url;
+					}
+					
+					// 增强版外部链接拦截 - 适合放在模板字符串中
+					document.addEventListener('click', function (ev) {
+						try {
+							const anchor = ev.target?.closest?.('a[href]') || null;
+							if (!anchor) return;
+
+							let href = anchor.getAttribute('href')?.trim() || '';
+							if (!href) return;
+
+							if (href.startsWith('javascript:')) return;
+
+							// 新需求：href="#" 的链接完全阻止跳转和任何行为
+							if (href === '#') {
+								ev.preventDefault();
+								return;
+							}
+
+							// 处理其他内部锚点（如 #about、#contact 等）
+							if (href.startsWith('#')) {
+								const rawId = href.slice(1);
+								if (!rawId) return;
+
+								const id = decodeURIComponent(rawId);
+								const target = 
+									document.getElementById(id) ||
+									document.querySelector('a[name="' + id.replace(/"/g, '\"') + '"]') ||
+									document.querySelector('[name="' + id.replace(/"/g, '\"') + '"]');
+
+								if (target && target.scrollIntoView) {
+									ev.preventDefault();
+									try {
+										history.pushState(null, '', href);
+									} catch (e) {}
+									target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								}
+								return;
+							}
+
+							// 处理外部链接
+							let url;
+							try {
+								url = new URL(href, window.location.href);
+							} catch (e) {
+								return;
+							}
+
+							if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+							const isExternal = url.hostname !== window.location.hostname;
+
+							if (isExternal || anchor.getAttribute('target') === '_blank') {
+								ev.preventDefault();
+								window.open(url.toString(), '_blank', 'noopener,noreferrer');
+							}
+
+						} catch (e) {
+							// 出错时不阻止默认行为
+						}
+					}, true);
+
+					// 1. 暴力清除函数：从 DOM 层面抹除 onclick 属性
+					var Z_removeInlineOnclick = function () {
+						// 专门锁定 href="#" 且带有 onclick 的 a 标签
+						const targetedLinks = document.querySelectorAll('a[href="#"][onclick]');
+						for (let i = 0; i < targetedLinks.length; i++) {
+							targetedLinks[i].removeAttribute('onclick');
+							targetedLinks[i].onclick = null; // 确保 JS 层的赋值也被清理
+						}
+					};
+					// 3. 动态监测：防止页面通过异步加载重新生成带 onclick 的元素
+					var z_observer = new MutationObserver(function () {
+						Z_removeInlineOnclick();
+					});
+
+					z_observer.observe(document.documentElement, {
+						childList: true,
+						subtree: true,
+						attributes: true,
+						attributeFilter: ['onclick']
+					});
+
+					// 4. 初始化执行一次
+					Z_removeInlineOnclick();
+
+					const Z_rawCreateElement = document.createElement;
+
+					document.createElement = function (tagName, ...args) {
+						const el = Z_rawCreateElement.call(this, tagName, ...args);
+
+						if (tagName.toLowerCase() === 'script') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let srcValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'src' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									srcValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'src', {
+								get: function() {
+									return srcValue || rawGetAttribute.call(this, 'src') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										srcValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'src', srcValue);
+									} else {
+										srcValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						if (tagName.toLowerCase() === 'link') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let hrefValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'href' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									hrefValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'href', {
+								get: function() {
+									return hrefValue || rawGetAttribute.call(this, 'href') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										hrefValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'href', hrefValue);
+									} else {
+										hrefValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						return el;
+					};
+
+					const Z_OriginalXMLHttpRequest = window.XMLHttpRequest;
+					window.XMLHttpRequest = function (...args) {
+						const xhr = new Z_OriginalXMLHttpRequest(...args);
+						const rawOpen = xhr.open;
+
+						xhr.open = function (method, url, ...rest) {
+							if (typeof url === 'string') {
+								const methodUpper = (method || '').toUpperCase();
+								if (methodUpper === 'GET' && z_isUrlInWhitelist(url)) {
+									url = z_proxyCdnUrl(url);
+								}
+							}
+							return rawOpen.call(this, method, url, ...rest);
+						};
+
+						return xhr;
+					};
+
+					window.XMLHttpRequest.prototype = Z_OriginalXMLHttpRequest.prototype;
+					Object.setPrototypeOf(window.XMLHttpRequest, Z_OriginalXMLHttpRequest);
+
+					const z_originalFetch = window.fetch;
+					window.fetch = async function (...args) {
+						if (args.length > 0) {
+							let url = '';
+							let method = 'GET';
+							
+							if (typeof args[0] === 'string') {
+								url = args[0];
+								if (args[1] && args[1].method) {
+									method = args[1].method.toUpperCase();
+								}
+								if (method === 'GET' && z_isUrlInWhitelist(url)) {
+									args[0] = z_proxyCdnUrl(url);
+								}
+							} else if (args[0] instanceof Request) {
+								const originalUrl = args[0].url;
+								method = (args[0].method || 'GET').toUpperCase();
+								if (method === 'GET' && z_isUrlInWhitelist(originalUrl)) {
+									const proxiedUrl = z_proxyCdnUrl(originalUrl);
+									if (proxiedUrl !== originalUrl) {
+										args[0] = new Request(proxiedUrl, args[0]);
+									}
+								}
+							}
+						}
+						return z_originalFetch.apply(this, args);
+					};
+				</script>
+			</head>
+			<body>
+				
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Day 2 — Lecture 1: Consent, Best Interests and Refusal</title>
+<link href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=DM+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://artifacts-cdn.chatglm.site/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0B1120;
+    --bg-light: #111827;
+    --fg: #F1F0EB;
+    --fg-muted: #94A3B8;
+    --accent: #E8A838;
+    --accent-glow: rgba(232,168,56,0.15);
+    --accent2: #38BDF8;
+    --card: rgba(30,41,59,0.7);
+    --border: rgba(148,163,184,0.13);
+    --danger: #F87171;
+    --success: #34D399;
+    --teal: #2DD4BF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    height:100vh;
+    overflow:hidden;
+  }
+  .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .bg-layer::before{
+    content:'';position:absolute;top:-30%;left:-20%;
+    width:70vw;height:70vw;
+    background:radial-gradient(circle,rgba(232,168,56,0.06) 0%,transparent 70%);
+    animation:floatB 20s ease-in-out infinite;
+  }
+  .bg-layer::after{
+    content:'';position:absolute;bottom:-20%;right:-10%;
+    width:60vw;height:60vw;
+    background:radial-gradient(circle,rgba(56,189,248,0.04) 0%,transparent 70%);
+    animation:floatB 25s ease-in-out infinite reverse;
+  }
+  @keyframes floatB{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(40px,-30px) scale(1.1);}
+  }
+  .top-bar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;
+    background:rgba(11,17,32,0.92);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+    height:50px;
+  }
+  .top-bar .module-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;}
+  .top-bar .lecture-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--fg);}
+  .top-bar .progress-info{font-size:12px;color:var(--fg-muted);}
+  .progress-track{position:fixed;top:50px;left:0;right:0;height:3px;background:var(--border);z-index:100;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width 0.4s ease;border-radius:0 2px 2px 0;}
+
+  .slide-container{
+    position:fixed;top:53px;left:0;right:0;bottom:56px;
+    overflow:hidden;z-index:1;
+  }
+  .slide{
+    position:absolute;top:0;left:0;right:0;bottom:0;
+    overflow-y:auto;overflow-x:hidden;
+    padding:36px 48px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.45s ease, visibility 0.45s;
+  }
+  .slide.active{
+    opacity:1;
+    visibility:visible;
+  }
+  .slide-inner{
+    max-width:920px;
+    margin:0 auto;
+    display:block;
+  }
+
+  .slide-number{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600;}
+  h1.slide-heading{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,46px);line-height:1.15;margin-bottom:20px;color:var(--fg);}
+  h2.slide-sub{font-family:'DM Serif Display',serif;font-size:clamp(22px,3vw,32px);line-height:1.2;margin-bottom:16px;color:var(--fg);}
+  .slide-body{font-size:15px;line-height:1.75;color:var(--fg-muted);}
+  .slide-body strong{color:var(--fg);font-weight:600;}
+
+  .card-grid{display:grid;gap:14px;margin-top:18px;}
+  .card-grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(270px,1fr));}
+  .card-grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+  .card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:18px;
+    transition:border-color 0.3s,transform 0.3s;
+  }
+  .card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .card .card-icon{font-size:20px;color:var(--accent);margin-bottom:8px;}
+  .card h3{font-size:14px;font-weight:600;margin-bottom:5px;color:var(--fg);}
+  .card p{font-size:13px;line-height:1.6;color:var(--fg-muted);}
+
+  .hl-box{
+    border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0;
+    padding:16px 20px;margin:14px 0;
+    background:var(--accent-glow);
+  }
+  .hl-box.teal{background:rgba(45,212,191,0.08);border-left-color:var(--teal);}
+  .hl-box.danger{background:rgba(248,113,113,0.08);border-left-color:var(--danger);}
+  .hl-box p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .hl-box p strong{color:var(--fg);}
+
+  .quote-block{
+    border-left:2px solid var(--accent2);
+    padding:14px 20px;margin:14px 0;
+    background:rgba(56,189,248,0.05);
+    border-radius:0 8px 8px 0;
+    font-style:italic;font-size:14px;line-height:1.7;color:var(--fg-muted);
+  }
+
+  .img-frame{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin:14px 0;}
+  .img-frame img{width:100%;display:block;object-fit:cover;max-height:220px;}
+  .img-caption{font-size:11px;color:var(--fg-muted);text-align:center;padding:7px;background:rgba(11,17,32,0.6);}
+
+  .scenario{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:14px 0;}
+  .scenario-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:6px;}
+  .scenario p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .scenario p strong{color:var(--fg);}
+
+  .kc-q{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin:14px 0;}
+  .kc-q-text{font-size:14px;font-weight:600;color:var(--fg);margin-bottom:12px;}
+  .kc-opts{display:flex;flex-direction:column;gap:7px;}
+  .kc-opt{
+    background:rgba(148,163,184,0.06);border:1px solid var(--border);
+    border-radius:8px;padding:11px 14px;cursor:pointer;
+    font-size:13px;color:var(--fg-muted);
+    transition:all 0.2s;display:flex;align-items:center;gap:10px;
+  }
+  .kc-opt:hover{border-color:var(--accent);color:var(--fg);}
+  .kc-opt.correct{border-color:var(--success)!important;background:rgba(52,211,153,0.1)!important;color:var(--success)!important;}
+  .kc-opt.wrong{border-color:var(--danger)!important;background:rgba(248,113,113,0.08)!important;color:var(--danger)!important;}
+  .kc-opt .om{
+    width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.2s;
+  }
+  .kc-opt.correct .om{border-color:var(--success);background:var(--success);color:var(--bg);}
+  .kc-opt.wrong .om{border-color:var(--danger);background:var(--danger);color:var(--bg);}
+  .kc-fb{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.6;display:none;}
+  .kc-fb.show{display:block;}
+  .kc-fb.ok{background:rgba(52,211,153,0.1);color:var(--success);}
+  .kc-fb.no{background:rgba(248,113,113,0.08);color:var(--danger);}
+
+  .flip-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0;}
+  .flip-card{perspective:600px;height:155px;cursor:pointer;}
+  .flip-card-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
+  .flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
+  .flip-card-front,.flip-card-back{
+    position:absolute;inset:0;backface-visibility:hidden;
+    border-radius:12px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:14px;text-align:center;border:1px solid var(--border);
+  }
+  .flip-card-front{background:var(--card);}
+  .flip-card-front .fi{font-size:26px;color:var(--accent);margin-bottom:6px;}
+  .flip-card-front .fl{font-size:13px;font-weight:600;color:var(--fg);}
+  .flip-card-front .fh{font-size:10px;color:var(--fg-muted);margin-top:5px;}
+  .flip-card-back{background:rgba(232,168,56,0.08);border-color:rgba(232,168,56,0.3);transform:rotateY(180deg);}
+  .flip-card-back p{font-size:12px;line-height:1.55;color:var(--fg-muted);}
+
+  .s-list{list-style:none;padding:0;margin:10px 0;}
+  .s-list li{padding:7px 0 7px 22px;font-size:13px;line-height:1.65;color:var(--fg-muted);position:relative;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .s-list li:last-child{border-bottom:none;}
+  .s-list li::before{content:'';position:absolute;left:0;top:14px;width:7px;height:7px;background:var(--accent);border-radius:50%;}
+
+  .ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;}
+  .ctable th{text-align:left;padding:9px 12px;background:rgba(232,168,56,0.08);color:var(--accent);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+  .ctable td{padding:9px 12px;border-bottom:1px solid rgba(148,163,184,0.06);color:var(--fg-muted);line-height:1.55;}
+  .ctable tr:hover td{color:var(--fg);}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+  .badge-amber{background:rgba(232,168,56,0.15);color:var(--accent);}
+  .badge-teal{background:rgba(45,212,191,0.12);color:var(--teal);}
+  .badge-red{background:rgba(248,113,113,0.12);color:var(--danger);}
+
+  .sum-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .sum-num{width:26px;height:26px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .sum-text{font-size:13px;line-height:1.6;color:var(--fg-muted);padding-top:2px;}
+  .sum-text strong{color:var(--fg);}
+
+  /* Drag exercise */
+  .drag-container{display:flex;flex-direction:column;gap:7px;margin:10px 0;min-height:50px;}
+  .drag-item{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:8px;padding:11px 14px;
+    font-size:13px;color:var(--fg-muted);
+    cursor:grab;user-select:none;
+    transition:border-color 0.2s,box-shadow 0.2s;
+    display:flex;align-items:center;gap:10px;
+  }
+  .drag-item:active{cursor:grabbing;}
+  .drag-item.dragging{border-color:var(--accent);box-shadow:0 4px 16px var(--accent-glow);}
+  .drag-item.dok{border-color:var(--success);background:rgba(52,211,153,0.08);color:var(--success);}
+  .drag-item.dbad{border-color:var(--danger);background:rgba(248,113,113,0.06);color:var(--danger);}
+  .drag-item .dh{color:var(--fg-muted);font-size:13px;}
+
+  .bottom-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;
+    background:rgba(11,17,32,0.92);
+    backdrop-filter:blur(16px);
+    border-top:1px solid var(--border);
+    height:56px;
+  }
+  .nav-btn{
+    display:flex;align-items:center;gap:7px;
+    background:var(--card);border:1px solid var(--border);
+    color:var(--fg);padding:9px 18px;border-radius:8px;
+    cursor:pointer;font-size:13px;font-weight:500;
+    font-family:'DM Sans',sans-serif;transition:all 0.2s;
+  }
+  .nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .nav-btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .nav-btn:disabled:hover{border-color:var(--border);color:var(--fg);}
+  .nav-btn.primary{background:linear-gradient(135deg,var(--accent),#D4922E);border:none;color:var(--bg);font-weight:600;}
+  .nav-btn.primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow);}
+  .slide-dots{display:flex;gap:5px;align-items:center;}
+  .slide-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all 0.3s;cursor:pointer;}
+  .slide-dot.active{width:18px;border-radius:3px;background:var(--accent);}
+
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+  @media(max-width:768px){
+    .slide{padding:20px 16px;}
+    .top-bar{padding:10px 14px;}
+    .top-bar .lecture-title{font-size:13px;}
+    .bottom-nav{padding:10px 14px;}
+    .nav-btn{padding:8px 12px;font-size:12px;}
+    .card-grid.cols-2,.card-grid.cols-3{grid-template-columns:1fr;}
+    .flip-cards{grid-template-columns:1fr 1fr;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .bg-layer::before,.bg-layer::after{animation:none;}
+  }
+</style>
+
+
+<div class="bg-layer"></div>
+
+<div class="top-bar">
+  <div>
+    <div class="module-label">Module 2 — Day 2</div>
+    <div class="lecture-title">Lecture 1: Consent, Best Interests and Refusal</div>
+  </div>
+  <div class="progress-info" id="progressInfo">Slide 1 of 25</div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:4%"></div></div>
+
+<div class="slide-container" id="slideContainer">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-inner" style="text-align:center;padding-top:60px;">
+      <div class="slide-number">Module 2 — Day 2 — Lecture 1</div>
+      <h1 class="slide-heading" style="font-size:clamp(30px,5vw,50px);margin-bottom:22px;">Consent, Best Interests<br>and Refusal</h1>
+      <p class="slide-body" style="max-width:600px;margin:0 auto 28px;">Understanding the legal and ethical framework for obtaining valid consent in dental practice — from emergency scenarios to safeguarding vulnerable patients.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <span class="badge badge-amber">GDC Standards</span>
+        <span class="badge badge-teal">Patient Autonomy</span>
+        <span class="badge badge-red">Safeguarding</span>
+      </div>
+      <div class="img-frame" style="max-width:680px;margin:22px auto 0;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/dental-consent-lec1/680/240.jpg" alt="Dental lecture setting">
+        <div class="img-caption">Dental Implant Consent Course — Foundations of Valid Consent</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Learning Objectives -->
+  <div class="slide" data-slide="1">
+    <div class="slide-inner">
+      <div class="slide-number">Overview</div>
+      <h2 class="slide-sub">Learning Objectives</h2>
+      <p class="slide-body" style="margin-bottom:14px;">By the end of this lecture you will be able to:</p>
+      <div class="card-grid cols-2">
+        <div class="card"><div class="card-icon"><i class="fas fa-balance-scale"></i></div><h3>Define Valid Consent</h3><p>Understand what constitutes legally and ethically valid consent in dental practice.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-shield-alt"></i></div><h3>Navigate Best Interests</h3><p>Apply the best interests framework when patients cannot consent for themselves.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-user-shield"></i></div><h3>Identify Safeguarding</h3><p>Recognise when safeguarding concerns arise and understand your professional obligations.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-file-medical"></i></div><h3>Document Decisions</h3><p>Write clear, defensible documentation when consent is refused or conflicts arise.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: What is Valid Consent? -->
+  <div class="slide" data-slide="2">
+    <div class="slide-inner">
+      <div class="slide-number">Core Concept</div>
+      <h2 class="slide-sub">What Is Valid Consent?</h2>
+      <p class="slide-body">Valid consent is not just a signature on a form. It requires that the patient <strong>understands</strong> what will happen, why it is being proposed, what the alternatives are, and what the risks are — and then freely agrees.</p>
+      <div class="hl-box" style="margin-top:18px;">
+        <p><strong>The Department of Health defines consent as:</strong> A patient giving permission for a healthcare professional to provide care or treatment. For consent to be valid, it must be given voluntarily by an appropriately informed person who has the capacity to make the decision.</p>
+      </div>
+      <div class="img-frame" style="max-width:480px;margin-top:18px;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/consent-form-doc1/480/180.jpg" alt="Consent documentation">
+        <div class="img-caption">Consent is a process, not a one-time event</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Three Pillars -->
+  <div class="slide" data-slide="3">
+    <div class="slide-inner">
+      <div class="slide-number">Core Concept</div>
+      <h2 class="slide-sub">The Three Pillars of Valid Consent</h2>
+      <div class="flip-cards" style="margin-top:18px;">
+        <div class="flip-card" onclick="this.classList.toggle(&#39;flipped&#39;)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front"><div class="fi"><i class="fas fa-brain"></i></div><div class="fl">Capacity</div><div class="fh">Tap to reveal</div></div>
+            <div class="flip-card-back"><p>The patient must have the mental ability to understand, retain, use, and weigh the information to make a decision. This can fluctuate — reassess each time.</p></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="this.classList.toggle(&#39;flipped&#39;)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front"><div class="fi"><i class="fas fa-info-circle"></i></div><div class="fl">Information</div><div class="fh">Tap to reveal</div></div>
+            <div class="flip-card-back"><p>The patient must receive sufficient information: what the treatment involves, risks, benefits, alternatives, and consequences of doing nothing — tailored to them.</p></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="this.classList.toggle(&#39;flipped&#39;)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front"><div class="fi"><i class="fas fa-hand-holding-heart"></i></div><div class="fl">Voluntariness</div><div class="fh">Tap to reveal</div></div>
+            <div class="flip-card-back"><p>The decision must be free from coercion or undue pressure. No financial incentives, time pressure, or manipulation. The patient must feel able to say no.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Knowledge Check 1 -->
+  <div class="slide" data-slide="4">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Test Your Understanding</h2>
+      <div class="kc-q" data-correct="2">
+        <div class="kc-q-text">A patient signs a consent form but appears confused about what the procedure involves. Is consent valid?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> Yes — the signed form is legally binding</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> Yes — as long as a witness also signed</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> No — understanding is required for valid consent</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> It depends on the type of procedure</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Emergency Treatment -->
+  <div class="slide" data-slide="5">
+    <div class="slide-inner">
+      <div class="slide-number">Gray Area</div>
+      <h2 class="slide-sub">Emergency Treatment and Consent</h2>
+      <p class="slide-body">What happens when a patient arrives in pain but refuses treatment? This is one of the most challenging gray areas in dental practice.</p>
+      <div class="scenario">
+        <div class="scenario-label">Clinical Scenario</div>
+        <p>A patient presents with a <strong>large abscess and severe pain</strong>. They say: <strong>"I don't want any treatment. Just give me antibiotics."</strong> They are fearful and anxious.</p>
+      </div>
+      <div class="hl-box danger" style="margin-top:14px;">
+        <p><strong>Key principle:</strong> If a patient has capacity and refuses treatment — even emergency treatment — you <strong>cannot proceed</strong>. Doing so would constitute <strong>battery</strong>. You must respect their autonomous decision.</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:8px;">
+        <p><strong>In practice:</strong> Most patients who present in pain want help. The skill is in communicating calmly: "I understand your fear. To resolve the pain, I need to drain the abscess. Here's exactly what I'll do…" This often leads to informed acceptance.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Best Interests Framework -->
+  <div class="slide" data-slide="6">
+    <div class="slide-inner">
+      <div class="slide-number">Framework</div>
+      <h2 class="slide-sub">The Best Interests Framework</h2>
+      <p class="slide-body">When a patient <strong>lacks capacity</strong>, treatment decisions must be made in their best interests. This is not simply what you think is clinically best — it is a holistic assessment.</p>
+      <div class="card-grid cols-2" style="margin-top:18px;">
+        <div class="card"><div class="card-icon"><i class="fas fa-clipboard-list"></i></div><h3>Clinical Factors</h3><p>Diagnosis, prognosis, treatment options, likely outcomes, and risks of inaction.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-heart"></i></div><h3>Patient's Wishes</h3><p>Any previously expressed preferences, values, and beliefs when they had capacity.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-users"></i></div><h3>Carer Views</h3><p>Input from those who know the patient well — but their views are not determinative.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-balance-scale-right"></i></div><h3>Least Restrictive Option</h3><p>Choose the option that interferes least with the patient's rights and freedoms.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Carers and Legal Guardians -->
+  <div class="slide" data-slide="7">
+    <div class="slide-inner">
+      <div class="slide-number">Critical Distinction</div>
+      <h2 class="slide-sub">Carers, Legal Guardians and Your Role</h2>
+      <p class="slide-body">A common misconception: if you disagree with a legal guardian's decision, can you override it?</p>
+      <div class="hl-box danger">
+        <p><strong>No — you cannot override a legal guardian or someone with Lasting Power of Attorney.</strong> If they have legal authority, the decision is theirs. Your role is to advise, urge reconsideration, and document — not to impose your clinical judgment.</p>
+      </div>
+      <div class="scenario" style="margin-top:14px;">
+        <div class="scenario-label">What You Can Do</div>
+        <p><strong>Step 1:</strong> Clearly state your disagreement and clinical reasoning.<br><strong>Step 2:</strong> Urge them to reconsider based on the patient's best interests.<br><strong>Step 3:</strong> Document everything — your recommendation, their decision, your advice against it.<br><strong>Step 4:</strong> If they insist on something clinically inappropriate, you can <strong>refuse to perform it</strong> — but you cannot force treatment they decline.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Extraction Request Scenario -->
+  <div class="slide" data-slide="8">
+    <div class="slide-inner">
+      <div class="slide-number">Applied Scenario</div>
+      <h2 class="slide-sub">"Take It Out" — The Carer Who Wants Extraction</h2>
+      <div class="scenario">
+        <div class="scenario-label">Scenario</div>
+        <p>A patient has <strong>occlusal caries on a lower six</strong>. The carer insists: <strong>"Just take it out. People used to come out all the time."</strong> You believe the tooth is restorable and extraction is not in the patient's best interests.</p>
+      </div>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-times-circle"></i> What You Must NOT Do</h3><p>Extract the tooth against your clinical judgment. You would not be able to defend this — and the carer's instruction does not protect you.</p></div>
+        <div class="card" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check-circle"></i> What You SHOULD Do</h3><p>Refuse to extract. Write a letter: state your recommendation, that extraction is not in the patient's best interests, and that the consequences are the carer's responsibility.</p></div>
+      </div>
+      <div class="quote-block" style="margin-top:14px;">
+        "I don't agree with it coming out. I wouldn't be able to defend that. I think you should reconsider. If you do not consent to this, that is your responsibility, not mine."
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Knowledge Check 2 -->
+  <div class="slide" data-slide="9">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Scenario-Based Question</h2>
+      <div class="kc-q" data-correct="3">
+        <div class="kc-q-text">A legal guardian insists you extract a restorable tooth. You believe this is wrong. What is the correct course of action?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> Extract it — the guardian has legal authority</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> Override the guardian and place a filling</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> Report the guardian to social services immediately</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> Refuse to extract, document your advice, and state consequences are the carer's responsibility</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Safeguarding -->
+  <div class="slide" data-slide="10">
+    <div class="slide-inner">
+      <div class="slide-number">Safeguarding</div>
+      <h2 class="slide-sub">Safeguarding — Why It Matters in Dentistry</h2>
+      <p class="slide-body">Safeguarding is not optional. It is a professional obligation. Even if you work in an area where you rarely see it, the principles must be current in your mind.</p>
+      <div class="hl-box" style="margin-top:14px;">
+        <p><strong>The lecturer's honest view:</strong> "I go through it in the West End saying, I don't see any of this in the West End of London. But it does happen all over the country, and some of you will have more frequent interactions where there is a social problem within the family."</p>
+      </div>
+      <div class="img-frame" style="max-width:520px;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/safeguarding-aware1/520/200.jpg" alt="Safeguarding awareness">
+        <div class="img-caption">Safeguarding training is mandatory CPD — not a box-ticking exercise</div>
+      </div>
+      <ul class="s-list" style="margin-top:14px;">
+        <li>Keep your safeguarding CPD <strong>up to date</strong> — go through it regularly</li>
+        <li>Know your local safeguarding <strong>pathways and contacts</strong></li>
+        <li>Understand that <strong>detecting</strong> abuse triggers your duty to act</li>
+        <li>If you detect harm by a carer — <strong>flag it</strong> through the proper channels</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Safeguarding Meets Consent -->
+  <div class="slide" data-slide="11">
+    <div class="slide-inner">
+      <div class="slide-number">Intersection</div>
+      <h2 class="slide-sub">Where Safeguarding Meets Consent</h2>
+      <p class="slide-body">Some consent dilemmas are actually safeguarding concerns in disguise. A carer who refuses necessary treatment may be neglecting the patient.</p>
+      <table class="ctable">
+        <thead><tr><th>Situation</th><th>Consent Issue</th><th>Possible Safeguarding Flag</th></tr></thead>
+        <tbody>
+          <tr><td>Carer refuses pain-relieving treatment</td><td>Refusal of treatment</td><td>Possible neglect</td></tr>
+          <tr><td>Family member coerces patient into expensive treatment</td><td>Lack of voluntariness</td><td>Financial abuse</td></tr>
+          <tr><td>"I don't want to spend money on my wife's teeth"</td><td>Best interests conflict</td><td>Neglect / coercive control</td></tr>
+          <tr><td>Patient appears fearful of accompanying person</td><td>Capacity may be affected</td><td>Domestic abuse</td></tr>
+        </tbody>
+      </table>
+      <div class="hl-box danger" style="margin-top:14px;">
+        <p><strong>Remember:</strong> If a carer is doing something to harm the person they are supposed to be looking after, that is not your responsibility to adjudicate — but it <strong>is</strong> your responsibility to <strong>detect and refer</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: GDC Standards -->
+  <div class="slide" data-slide="12">
+    <div class="slide-inner">
+      <div class="slide-number">Regulatory Framework</div>
+      <h2 class="slide-sub">GDC Standards for the Dental Team</h2>
+      <p class="slide-body">The GDC Standards (Standard 1–9) set out the principles every dental professional must follow. When was the last time you read them cover to cover?</p>
+      <div class="hl-box teal">
+        <p><strong>Practical tip from the lecturer:</strong> "Easy CPD for the whole practice. Two hours. Block off from 3:00 on a Friday. Go through the standards once a year — do we do this? Do we do this? Make people aware. Sign it off."</p>
+      </div>
+      <ul class="s-list" style="margin-top:14px;">
+        <li><strong>Put patients' interests first</strong> — not your bank balance, not your Instagram</li>
+        <li><strong>Communicate effectively</strong> — patients must understand you</li>
+        <li><strong>Obtain valid consent</strong> — they must comprehend what they're agreeing to</li>
+        <li><strong>Maintain and protect patient information</strong> — don't share without authority</li>
+        <li><strong>Have a clear complaints procedure</strong> — hopefully never used but must exist</li>
+        <li><strong>Work with colleagues</strong> — medical, dental, and specialists</li>
+        <li><strong>Maintain professional knowledge and skills</strong> — you're learning now</li>
+        <li><strong>Raise concerns if patients are at risk</strong> — safeguarding duty</li>
+        <li><strong>Personal behaviour</strong> — maintain confidence in the profession</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Patient Interests First -->
+  <div class="slide" data-slide="13">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Put Patients' Interests First</h2>
+      <p class="slide-body">This is described as "a really big one." It underpins everything else in the standards.</p>
+      <div class="quote-block" style="margin:18px 0;">
+        "Not your bank balance. Not your Instagram page. Imagine that was your loved one going to see somebody. Ask yourself how you want them to be treated."
+      </div>
+      <div class="card-grid cols-2">
+        <div class="card" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check"></i> Patient-First Thinking</h3><p>Recommending what you would do for your own family. Being honest about what is needed versus optional. Prioritising long-term outcomes over short-term revenue.</p></div>
+        <div class="card" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-times"></i> Non-Patient-First Thinking</h3><p>Recommending the most expensive option when simpler suffices. Upselling unnecessary cosmetic procedures. Prioritising your schedule over the patient's best clinical pathway.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Confidentiality -->
+  <div class="slide" data-slide="14">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Maintain and Protect Patient Information</h2>
+      <div class="scenario">
+        <div class="scenario-label">Scenario 1 — The Parent</div>
+        <p>A mother calls: <strong>"My daughter came in to see you the other day and had this done."</strong> The daughter is <strong>26 years old</strong>.</p>
+      </div>
+      <div class="hl-box danger">
+        <p><strong>Your response:</strong> "I'm really sorry, but I don't have any written authority to share information. I can't even confirm or deny that your daughter has been to this practice."</p>
+      </div>
+      <div class="scenario" style="margin-top:14px;">
+        <div class="scenario-label">Scenario 2 — The Spouse</div>
+        <p>A husband says: <strong>"You saw my wife earlier, didn't you?"</strong> They are married, attend the same practice, and know each other's appointments.</p>
+      </div>
+      <div class="hl-box teal">
+        <p><strong>Your response:</strong> "Yes, I had the pleasure of meeting her." — You can acknowledge the attendance since it's open knowledge. But <strong>what was done</strong>? "I'm really not at liberty to say." <strong>Common sense applies</strong> — but when in doubt, say nothing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: Divorced Couple -->
+  <div class="slide" data-slide="15">
+    <div class="slide-inner">
+      <div class="slide-number">Applied Scenario</div>
+      <h2 class="slide-sub">The Divorced Couple — Confidentiality Under Pressure</h2>
+      <div class="scenario">
+        <div class="scenario-label">Complex Scenario</div>
+        <p>A husband and wife are <strong>divorced</strong> but still attend the same practice. They <strong>hate the sight of each other</strong>. The wife arrives and says: <strong>"My husband was here last week with his new partner, wasn't he?"</strong></p>
+      </div>
+      <div class="hl-box danger" style="margin-top:14px;">
+        <p><strong>Your response:</strong> "I'm really sorry. I can't comment one way or the other."</p>
+      </div>
+      <ul class="s-list" style="margin-top:14px;">
+        <li>Ensure separated/divorced patients <strong>don't meet in the waiting room</strong></li>
+        <li>Never confirm or deny anything about one patient to another — <strong>regardless of prior relationship</strong></li>
+        <li>The fact they once shared a life does not create a <strong>right to information</strong></li>
+        <li>This is <strong>common sense professionalism</strong> — but it's also legally enforceable</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: Knowledge Check 3 -->
+  <div class="slide" data-slide="16">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Confidentiality Scenario</h2>
+      <div class="kc-q" data-correct="1">
+        <div class="kc-q-text">A 28-year-old patient's father calls and asks what treatment his son had today. What should you say?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> Tell him — he's the patient's father</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> You cannot confirm or deny the patient attended without written authority</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> Confirm the patient attended but don't discuss treatment details</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> Ask the father to put the patient on the phone, then share everything</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: Working with Colleagues -->
+  <div class="slide" data-slide="17">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Work with Colleagues in the Patient's Best Interest</h2>
+      <p class="slide-body">"Colleagues" means more than the dentist next door. It includes medical professionals, specialists, and anyone involved in the patient's care.</p>
+      <div class="card-grid cols-3" style="margin-top:18px;">
+        <div class="card"><div class="card-icon"><i class="fas fa-tooth"></i></div><h3>Dental Colleagues</h3><p>Hygienists, therapists, specialists, lab technicians — everyone in the dental team.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-stethoscope"></i></div><h3>Medical Colleagues</h3><p>GPs, cardiologists, endocrinologists — for medically compromised patients.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-user-md"></i></div><h3>Specialist Referrals</h3><p>ENT for airway issues, neurologists for facial pain, oral medicine for mucosal lesions.</p></div>
+      </div>
+      <div class="hl-box" style="margin-top:14px;">
+        <p><strong>The principle:</strong> Work with whoever is going to be able to provide that patient with a remedy to their problem. Don't hold onto patients out of pride — refer when it's in their interest.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: Professional Knowledge -->
+  <div class="slide" data-slide="18">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Maintain, Develop and Work Within Your Competence</h2>
+      <p class="slide-body">You are here on an implant course — you are extending your skills. But extending skills comes with responsibility.</p>
+      <div class="quote-block">
+        "The way you get good at something is by thinking about it before you do it, understanding all the skill set that's required, and tripping your way through."
+      </div>
+      <div class="img-frame" style="max-width:520px;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/dental-training-skill1/520/190.jpg" alt="Dental skills training">
+        <div class="img-caption">Skill acquisition requires preparation, supervision, and honest self-assessment</div>
+      </div>
+      <ul class="s-list" style="margin-top:14px;">
+        <li><strong>Know your limits</strong> — work within your competence at all times</li>
+        <li><strong>Prepare thoroughly</strong> — study the procedure before attempting it</li>
+        <li><strong>Seek mentorship</strong> — have experienced colleagues oversee early cases</li>
+        <li><strong>Reflect honestly</strong> — identify what went well and what didn't after each case</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: Raising Concerns -->
+  <div class="slide" data-slide="19">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Raise Concerns if Patients Are at Risk</h2>
+      <p class="slide-body">This standard directly links to safeguarding but extends further — it includes concerns about colleagues, systems, and practice environments.</p>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card"><div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div><h3>What to Raise Concerns About</h3><p>Patient abuse or neglect, coercive decision-making, colleague impairment, unsafe practice environments, systemic failures affecting care.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-route"></i></div><h3>How to Raise Concerns</h3><p>Follow your practice's safeguarding lead initially. If internal routes fail, use the GDC's concerns process or contact relevant external bodies.</p></div>
+      </div>
+      <div class="scenario" style="margin-top:14px;">
+        <div class="scenario-label">Real Example from the Lecture</div>
+        <p>"I don't want to spend money on my deteriorating wife's teeth now. He's not long for this world. I don't care if she's in pain or not." — <strong>This is a safeguarding concern.</strong> It involves potential neglect, coercion, and a decision that is not in the patient's best interests.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: Personal Behaviour -->
+  <div class="slide" data-slide="20">
+    <div class="slide-inner">
+      <div class="slide-number">Standard Deep Dive</div>
+      <h2 class="slide-sub">Personal Behaviour and Professional Confidence</h2>
+      <div class="quote-block">
+        "Make sure your personal behaviour maintains patients' confidence in you and the dental profession. And I think our profession is slipping from that in many ways."
+      </div>
+      <p class="slide-body" style="margin-top:14px;">This standard is about how you conduct yourself both inside and outside the practice. In the age of social media, the boundary between personal and professional has blurred.</p>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card"><h3>In Practice</h3><p>Professional appearance, respectful communication, appropriate boundaries with patients, punctuality, and honesty.</p></div>
+        <div class="card"><h3>Online and Social Media</h3><p>Before-and-after photos without consent, boasting about cases, unprofessional content, or anything that undermines public trust in the profession.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: Key References -->
+  <div class="slide" data-slide="21">
+    <div class="slide-inner">
+      <div class="slide-number">Key References</div>
+      <h2 class="slide-sub">Essential Reading for Consent</h2>
+      <div class="card-grid cols-2">
+        <div class="card" style="border-color:var(--accent);background:rgba(232,168,56,0.04);">
+          <div class="card-icon" style="color:var(--accent);"><i class="fas fa-book"></i></div>
+          <h3>Dental Protection — Concern 2016</h3>
+          <p>Described as "probably the best guide to consent in the UK." Downloadable PDF, comprehensive, well-written, common-sense approach. Read it in a couple of hours.</p>
+          <p style="margin-top:6px;"><span class="badge badge-amber">Highly Recommended</span></p>
+        </div>
+        <div class="card" style="border-color:var(--accent2);background:rgba(56,189,248,0.04);">
+          <div class="card-icon" style="color:var(--accent2);"><i class="fas fa-landmark"></i></div>
+          <h3>Department of Health — Consent Guidance</h3>
+          <p>The definition used by law. More detailed — covers life, disability, fetal material. You don't need all of it, but the core consent definition is what courts apply.</p>
+          <p style="margin-top:6px;"><span class="badge badge-teal">Legal Standard</span></p>
+        </div>
+      </div>
+      <div class="hl-box" style="margin-top:14px;">
+        <p><strong>Key point:</strong> The Dental Protection Concern 2016 guide is for England. <strong>Scotland has different rules and laws.</strong> If you practise in Scotland, ensure you reference the appropriate guidance.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: Documentation -->
+  <div class="slide" data-slide="22">
+    <div class="slide-inner">
+      <div class="slide-number">Practical Skill</div>
+      <h2 class="slide-sub">How to Document Consent Disputes</h2>
+      <p class="slide-body">When consent is refused or there is disagreement, your documentation becomes your defence. Here is a template approach:</p>
+      <div class="hl-box" style="margin-top:14px;font-size:12px;">
+        <p><strong>Example letter / note:</strong><br><br>"Following our conversation on [date], I recommended [treatment X] for [patient name].<br><br>This recommendation is based on [clinical reasoning].<br><br>The decision was made not to proceed with this treatment. I do not believe this is in the patient's best interests, and I am not happy to carry out the alternative requested [treatment Y].<br><br>My recommendation remains [treatment X]. If you do not consent to this, that is your responsibility, not mine. I will not be responsible for the aftermath of not proceeding.<br><br>I strongly advise [treatment X] as the most appropriate course of action."</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:10px;">
+        <p><strong>The rule:</strong> The problem is you want to get involved in the social side of things. <strong>Don't.</strong> State your clinical position clearly, document it, and leave the decision to the legally responsible party.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 24: Interactive — Order the Steps -->
+  <div class="slide" data-slide="23">
+    <div class="slide-inner">
+      <div class="slide-number">Interactive Exercise</div>
+      <h2 class="slide-sub">Order the Steps: Responding to a Carer's Refusal</h2>
+      <p class="slide-body" style="margin-bottom:8px;">Drag the items into the correct order from first to last:</p>
+      <div class="drag-container" id="dragContainer">
+        <div class="drag-item" draggable="true" data-order="3"><span class="dh"><i class="fas fa-grip-vertical"></i></span> Document everything in the clinical notes</div>
+        <div class="drag-item" draggable="true" data-order="1"><span class="dh"><i class="fas fa-grip-vertical"></i></span> State your clinical recommendation clearly</div>
+        <div class="drag-item" draggable="true" data-order="4"><span class="dh"><i class="fas fa-grip-vertical"></i></span> State that consequences of not following advice are the carer's responsibility</div>
+        <div class="drag-item" draggable="true" data-order="2"><span class="dh"><i class="fas fa-grip-vertical"></i></span> Explain why the requested alternative is not in the patient's best interests</div>
+        <div class="drag-item" draggable="true" data-order="5"><span class="dh"><i class="fas fa-grip-vertical"></i></span> Refuse to perform the treatment you disagree with, or accept their decision and proceed</div>
+      </div>
+      <button class="nav-btn primary" style="margin-top:10px;" onclick="checkDrag()">Check Order</button>
+      <div class="kc-fb" id="dragFb" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 25: Summary -->
+  <div class="slide" data-slide="24">
+    <div class="slide-inner">
+      <div class="slide-number">Lecture 1 Summary</div>
+      <h2 class="slide-sub">Key Takeaways</h2>
+      <div class="sum-item"><div class="sum-num">1</div><div class="sum-text"><strong>Valid consent requires capacity, information, and voluntariness</strong> — a signature alone is not enough.</div></div>
+      <div class="sum-item"><div class="sum-num">2</div><div class="sum-text"><strong>You cannot override a legal guardian</strong> — but you can refuse to perform treatment you believe is wrong, and you must document your position.</div></div>
+      <div class="sum-item"><div class="sum-num">3</div><div class="sum-text"><strong>Emergency treatment in a capacitated patient who refuses is battery</strong> — communication skills are your best tool to convert refusal into informed acceptance.</div></div>
+      <div class="sum-item"><div class="sum-num">4</div><div class="sum-text"><strong>Safeguarding is everyone's responsibility</strong> — keep your CPD current, know your pathways, and act when you detect harm.</div></div>
+      <div class="sum-item"><div class="sum-num">5</div><div class="sum-text"><strong>Confidentiality applies regardless of relationship</strong> — even parents of adult children have no automatic right to information.</div></div>
+      <div class="sum-item"><div class="sum-num">6</div><div class="sum-text"><strong>Read the Dental Protection Concern 2016 guide</strong> — it is the most practical consent resource available for UK dentists.</div></div>
+      <div style="text-align:center;margin-top:22px;">
+        <p class="slide-body" style="color:var(--accent);font-weight:600;">End of Lecture 1 — Proceed to Lecture 2 for Case Law.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled=""><i class="fas fa-arrow-left"></i> Previous</button>
+  <div class="slide-dots" id="slideDots"><div class="slide-dot active"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div></div>
+  <button class="nav-btn primary" id="nextBtn" onclick="changeSlide(1)">Next <i class="fas fa-arrow-right"></i></button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  const dotsEl = document.getElementById('slideDots');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'slide-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  }
+
+  function ui() {
+    document.getElementById('progressInfo').textContent = 'Slide ' + (cur + 1) + ' of ' + total;
+    document.getElementById('progressFill').style.width = ((cur + 1) / total * 100) + '%';
+    document.getElementById('prevBtn').disabled = cur === 0;
+    document.getElementById('nextBtn').disabled = cur === total - 1;
+    document.querySelectorAll('.slide-dot').forEach((d, i) => d.className = 'slide-dot' + (i === cur ? ' active' : ''));
+  }
+
+  function go(idx) {
+    if (idx < 0 || idx >= total || idx === cur) return;
+    slides[cur].classList.remove('active');
+    slides[idx].classList.add('active');
+    slides[idx].scrollTop = 0;
+    cur = idx;
+    ui();
+  }
+
+  function changeSlide(dir) { go(cur + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  function checkKC(el) {
+    const q = el.closest('.kc-q');
+    if (q.classList.contains('done')) return;
+    q.classList.add('done');
+    const ci = parseInt(q.dataset.correct);
+    const si = parseInt(el.dataset.idx);
+    const fb = q.querySelector('.kc-fb');
+    q.querySelectorAll('.kc-opt').forEach(o => {
+      const i = parseInt(o.dataset.idx);
+      if (i === ci) o.classList.add('correct');
+      else if (i === si) o.classList.add('wrong');
+      o.style.pointerEvents = 'none';
+    });
+    if (si === ci) {
+      fb.className = 'kc-fb show ok';
+      fb.innerHTML = '<strong>Correct.</strong> Well done — you\'ve understood this principle.';
+    } else {
+      fb.className = 'kc-fb show no';
+      fb.innerHTML = '<strong>Not quite.</strong> The correct answer is highlighted in green. Review the relevant slide to reinforce this concept.';
+    }
+  }
+
+  // Drag and drop
+  (function() {
+    const c = document.getElementById('dragContainer');
+    if (!c) return;
+    let dragEl = null;
+
+    c.addEventListener('dragstart', e => {
+      dragEl = e.target.closest('.drag-item');
+      if (dragEl) { dragEl.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+    });
+    c.addEventListener('dragend', () => { if (dragEl) dragEl.classList.remove('dragging'); dragEl = null; });
+    c.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const after = getAfter(c, e.clientY);
+      if (dragEl) { if (!after) c.appendChild(dragEl); else c.insertBefore(dragEl, after); }
+    });
+
+    // Touch support
+    let touchEl = null;
+    c.addEventListener('touchstart', e => {
+      const item = e.target.closest('.drag-item');
+      if (!item) return;
+      touchEl = item;
+      touchEl.classList.add('dragging');
+    }, {passive:true});
+    c.addEventListener('touchmove', e => {
+      if (!touchEl) return;
+      e.preventDefault();
+      const after = getAfter(c, e.touches[0].clientY);
+      if (!after) c.appendChild(touchEl); else c.insertBefore(touchEl, after);
+    }, {passive:false});
+    c.addEventListener('touchend', () => { if (touchEl) touchEl.classList.remove('dragging'); touchEl = null; });
+
+    function getAfter(container, y) {
+      const els = [...container.querySelectorAll('.drag-item:not(.dragging)')];
+      return els.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const off = y - box.top - box.height / 2;
+        if (off < 0 && off > closest.offset) return {offset:off, element:child};
+        return closest;
+      }, {offset:Number.NEGATIVE_INFINITY}).element;
+    }
+  })();
+
+  function checkDrag() {
+    const items = document.querySelectorAll('#dragContainer .drag-item');
+    const fb = document.getElementById('dragFb');
+    let allOk = true;
+    items.forEach((item, i) => {
+      const exp = i + 1;
+      const act = parseInt(item.dataset.order);
+      item.classList.remove('dok','dbad');
+      if (act === exp) item.classList.add('dok');
+      else { item.classList.add('dbad'); allOk = false; }
+    });
+    if (allOk) {
+      fb.className = 'kc-fb show ok';
+      fb.innerHTML = '<strong>Perfect order!</strong> State recommendation, explain why alternative is wrong, document, state responsibility, then decide whether to proceed or refuse.';
+    } else {
+      fb.className = 'kc-fb show no';
+      fb.innerHTML = '<strong>Not quite right.</strong> Correct order: 1) State recommendation, 2) Explain why alternative is wrong, 3) Document, 4) State responsibility, 5) Refuse or accept. Items in red are misplaced.';
+    }
+  }
+
+  ui();
+</script>
+
+
+			
+		
+</body></html>

@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+					body {
+						background-color: white; /* Ensure the iframe has a white background */
+					}
+				</style>
+				<script>
+					var Z_CDN_WHITELIST = [
+						'cdn.jsdelivr.net',
+						'cdnjs.cloudflare.com',
+						'cdn.tailwindcss.com',
+						'unpkg.com',
+						'fonts.googleapis.com',
+						'd3js.org',
+						'cdn.babylonjs.com',
+						'html2canvas.hertzen.com',
+						'code.jquery.com',
+						'cdn.datatables.net',
+						'kit.fontawesome.com',
+						'code.createjs.com',
+						'cdn.plot.ly',
+						'fonts.gstatic.com',
+						'www.rgraph.net',
+						'api.mapbox.com',
+						'polyfill.io',
+						'cdn.quilljs.com',
+						'picsum.photos',
+						'esm.sh'
+					];
+
+					function z_isUrlInWhitelist(url) {
+						if (!url || typeof url !== 'string') {
+							return false;
+						}
+						try {
+							const urlObj = new URL(url);
+							const hostname = urlObj.hostname;
+							return Z_CDN_WHITELIST.some(domain => hostname === domain);
+						} catch (e) {
+							return false;
+						}
+					}
+
+						function z_proxyCdnUrl(url) {
+						if (!url || !url.startsWith('http')) {
+							return url;
+						}
+							if (!z_isUrlInWhitelist(url)) {
+							return url;
+						}
+						if (!url.startsWith('https://artifacts-cdn.chatglm.site/')) {
+							return 'https://artifacts-cdn.chatglm.site/' + url;
+						}
+						return url;
+					}
+					
+					// 增强版外部链接拦截 - 适合放在模板字符串中
+					document.addEventListener('click', function (ev) {
+						try {
+							const anchor = ev.target?.closest?.('a[href]') || null;
+							if (!anchor) return;
+
+							let href = anchor.getAttribute('href')?.trim() || '';
+							if (!href) return;
+
+							if (href.startsWith('javascript:')) return;
+
+							// 新需求：href="#" 的链接完全阻止跳转和任何行为
+							if (href === '#') {
+								ev.preventDefault();
+								return;
+							}
+
+							// 处理其他内部锚点（如 #about、#contact 等）
+							if (href.startsWith('#')) {
+								const rawId = href.slice(1);
+								if (!rawId) return;
+
+								const id = decodeURIComponent(rawId);
+								const target = 
+									document.getElementById(id) ||
+									document.querySelector('a[name="' + id.replace(/"/g, '\"') + '"]') ||
+									document.querySelector('[name="' + id.replace(/"/g, '\"') + '"]');
+
+								if (target && target.scrollIntoView) {
+									ev.preventDefault();
+									try {
+										history.pushState(null, '', href);
+									} catch (e) {}
+									target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								}
+								return;
+							}
+
+							// 处理外部链接
+							let url;
+							try {
+								url = new URL(href, window.location.href);
+							} catch (e) {
+								return;
+							}
+
+							if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+							const isExternal = url.hostname !== window.location.hostname;
+
+							if (isExternal || anchor.getAttribute('target') === '_blank') {
+								ev.preventDefault();
+								window.open(url.toString(), '_blank', 'noopener,noreferrer');
+							}
+
+						} catch (e) {
+							// 出错时不阻止默认行为
+						}
+					}, true);
+
+					// 1. 暴力清除函数：从 DOM 层面抹除 onclick 属性
+					var Z_removeInlineOnclick = function () {
+						// 专门锁定 href="#" 且带有 onclick 的 a 标签
+						const targetedLinks = document.querySelectorAll('a[href="#"][onclick]');
+						for (let i = 0; i < targetedLinks.length; i++) {
+							targetedLinks[i].removeAttribute('onclick');
+							targetedLinks[i].onclick = null; // 确保 JS 层的赋值也被清理
+						}
+					};
+					// 3. 动态监测：防止页面通过异步加载重新生成带 onclick 的元素
+					var z_observer = new MutationObserver(function () {
+						Z_removeInlineOnclick();
+					});
+
+					z_observer.observe(document.documentElement, {
+						childList: true,
+						subtree: true,
+						attributes: true,
+						attributeFilter: ['onclick']
+					});
+
+					// 4. 初始化执行一次
+					Z_removeInlineOnclick();
+
+					const Z_rawCreateElement = document.createElement;
+
+					document.createElement = function (tagName, ...args) {
+						const el = Z_rawCreateElement.call(this, tagName, ...args);
+
+						if (tagName.toLowerCase() === 'script') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let srcValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'src' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									srcValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'src', {
+								get: function() {
+									return srcValue || rawGetAttribute.call(this, 'src') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										srcValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'src', srcValue);
+									} else {
+										srcValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						if (tagName.toLowerCase() === 'link') {
+							const rawSetAttribute = el.setAttribute;
+							const rawGetAttribute = el.getAttribute;
+							let hrefValue = '';
+							
+							el.setAttribute = function (name, value) {
+								if (name === 'href' && typeof value === 'string') {
+									value = z_proxyCdnUrl(value);
+									hrefValue = value;
+								}
+								return rawSetAttribute.call(this, name, value);
+							};
+
+							Object.defineProperty(el, 'href', {
+								get: function() {
+									return hrefValue || rawGetAttribute.call(this, 'href') || '';
+								},
+								set: function(value) {
+									if (typeof value === 'string') {
+										hrefValue = z_proxyCdnUrl(value);
+										rawSetAttribute.call(this, 'href', hrefValue);
+									} else {
+										hrefValue = value;
+									}
+								},
+								configurable: true,
+								enumerable: true
+							});
+						}
+
+						return el;
+					};
+
+					const Z_OriginalXMLHttpRequest = window.XMLHttpRequest;
+					window.XMLHttpRequest = function (...args) {
+						const xhr = new Z_OriginalXMLHttpRequest(...args);
+						const rawOpen = xhr.open;
+
+						xhr.open = function (method, url, ...rest) {
+							if (typeof url === 'string') {
+								const methodUpper = (method || '').toUpperCase();
+								if (methodUpper === 'GET' && z_isUrlInWhitelist(url)) {
+									url = z_proxyCdnUrl(url);
+								}
+							}
+							return rawOpen.call(this, method, url, ...rest);
+						};
+
+						return xhr;
+					};
+
+					window.XMLHttpRequest.prototype = Z_OriginalXMLHttpRequest.prototype;
+					Object.setPrototypeOf(window.XMLHttpRequest, Z_OriginalXMLHttpRequest);
+
+					const z_originalFetch = window.fetch;
+					window.fetch = async function (...args) {
+						if (args.length > 0) {
+							let url = '';
+							let method = 'GET';
+							
+							if (typeof args[0] === 'string') {
+								url = args[0];
+								if (args[1] && args[1].method) {
+									method = args[1].method.toUpperCase();
+								}
+								if (method === 'GET' && z_isUrlInWhitelist(url)) {
+									args[0] = z_proxyCdnUrl(url);
+								}
+							} else if (args[0] instanceof Request) {
+								const originalUrl = args[0].url;
+								method = (args[0].method || 'GET').toUpperCase();
+								if (method === 'GET' && z_isUrlInWhitelist(originalUrl)) {
+									const proxiedUrl = z_proxyCdnUrl(originalUrl);
+									if (proxiedUrl !== originalUrl) {
+										args[0] = new Request(proxiedUrl, args[0]);
+									}
+								}
+							}
+						}
+						return z_originalFetch.apply(this, args);
+					};
+				</script>
+			</head>
+			<body>
+				
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Day 2 — Lecture 2: Consent Case Law and Legal Principles</title>
+<link href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=DM+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://artifacts-cdn.chatglm.site/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0C0F14;
+    --bg-light: #13171F;
+    --fg: #F1F0EB;
+    --fg-muted: #94A3B8;
+    --accent: #E8A838;
+    --accent-glow: rgba(232,168,56,0.15);
+    --accent2: #38BDF8;
+    --card: rgba(28,34,48,0.75);
+    --border: rgba(148,163,184,0.13);
+    --danger: #F87171;
+    --success: #34D399;
+    --teal: #2DD4BF;
+    --purple: #A78BFA;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    height:100vh;
+    overflow:hidden;
+  }
+  .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .bg-layer::before{
+    content:'';position:absolute;top:-25%;right:-15%;
+    width:65vw;height:65vw;
+    background:radial-gradient(circle,rgba(167,139,250,0.05) 0%,transparent 70%);
+    animation:floatB 22s ease-in-out infinite;
+  }
+  .bg-layer::after{
+    content:'';position:absolute;bottom:-20%;left:-10%;
+    width:55vw;height:55vw;
+    background:radial-gradient(circle,rgba(232,168,56,0.04) 0%,transparent 70%);
+    animation:floatB 28s ease-in-out infinite reverse;
+  }
+  @keyframes floatB{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(30px,-25px) scale(1.08);}
+  }
+
+  /* Top bar */
+  .top-bar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;
+    background:rgba(12,15,20,0.92);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+    height:50px;
+  }
+  .top-bar .module-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;}
+  .top-bar .lecture-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--fg);}
+  .top-bar .progress-info{font-size:12px;color:var(--fg-muted);}
+  .progress-track{position:fixed;top:50px;left:0;right:0;height:3px;background:var(--border);z-index:100;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--accent));transition:width 0.4s ease;border-radius:0 2px 2px 0;}
+
+  /* Slide container */
+  .slide-container{
+    position:fixed;top:53px;left:0;right:0;bottom:56px;
+    overflow:hidden;z-index:1;
+  }
+  .slide{
+    position:absolute;top:0;left:0;right:0;bottom:0;
+    overflow-y:auto;overflow-x:hidden;
+    padding:36px 48px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.45s ease, visibility 0.45s;
+  }
+  .slide.active{
+    opacity:1;
+    visibility:visible;
+  }
+  .slide-inner{
+    max-width:920px;
+    margin:0 auto;
+    display:block;
+  }
+
+  /* Typography */
+  .slide-number{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600;}
+  h1.slide-heading{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,46px);line-height:1.15;margin-bottom:20px;color:var(--fg);}
+  h2.slide-sub{font-family:'DM Serif Display',serif;font-size:clamp(22px,3vw,32px);line-height:1.2;margin-bottom:16px;color:var(--fg);}
+  .slide-body{font-size:15px;line-height:1.75;color:var(--fg-muted);}
+  .slide-body strong{color:var(--fg);font-weight:600;}
+
+  /* Cards */
+  .card-grid{display:grid;gap:14px;margin-top:18px;}
+  .card-grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(270px,1fr));}
+  .card-grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+  .card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:18px;
+    transition:border-color 0.3s,transform 0.3s;
+  }
+  .card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .card .card-icon{font-size:20px;color:var(--accent);margin-bottom:8px;}
+  .card h3{font-size:14px;font-weight:600;margin-bottom:5px;color:var(--fg);}
+  .card p{font-size:13px;line-height:1.6;color:var(--fg-muted);}
+
+  /* Highlight box */
+  .hl-box{
+    border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0;
+    padding:16px 20px;margin:14px 0;
+    background:var(--accent-glow);
+  }
+  .hl-box.teal{background:rgba(45,212,191,0.08);border-left-color:var(--teal);}
+  .hl-box.danger{background:rgba(248,113,113,0.08);border-left-color:var(--danger);}
+  .hl-box.purple{background:rgba(167,139,250,0.08);border-left-color:var(--purple);}
+  .hl-box p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .hl-box p strong{color:var(--fg);}
+
+  /* Quote */
+  .quote-block{
+    border-left:2px solid var(--accent2);
+    padding:14px 20px;margin:14px 0;
+    background:rgba(56,189,248,0.05);
+    border-radius:0 8px 8px 0;
+    font-style:italic;font-size:14px;line-height:1.7;color:var(--fg-muted);
+  }
+
+  /* Image */
+  .img-frame{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin:14px 0;}
+  .img-frame img{width:100%;display:block;object-fit:cover;max-height:220px;}
+  .img-caption{font-size:11px;color:var(--fg-muted);text-align:center;padding:7px;background:rgba(12,15,20,0.6);}
+
+  /* Scenario */
+  .scenario{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:14px 0;}
+  .scenario-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:6px;}
+  .scenario p{font-size:13px;line-height:1.7;color:var(--fg-muted);}
+  .scenario p strong{color:var(--fg);}
+
+  /* Knowledge check */
+  .kc-q{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin:14px 0;}
+  .kc-q-text{font-size:14px;font-weight:600;color:var(--fg);margin-bottom:12px;}
+  .kc-opts{display:flex;flex-direction:column;gap:7px;}
+  .kc-opt{
+    background:rgba(148,163,184,0.06);border:1px solid var(--border);
+    border-radius:8px;padding:11px 14px;cursor:pointer;
+    font-size:13px;color:var(--fg-muted);
+    transition:all 0.2s;display:flex;align-items:center;gap:10px;
+  }
+  .kc-opt:hover{border-color:var(--accent);color:var(--fg);}
+  .kc-opt.correct{border-color:var(--success)!important;background:rgba(52,211,153,0.1)!important;color:var(--success)!important;}
+  .kc-opt.wrong{border-color:var(--danger)!important;background:rgba(248,113,113,0.08)!important;color:var(--danger)!important;}
+  .kc-opt .om{
+    width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.2s;
+  }
+  .kc-opt.correct .om{border-color:var(--success);background:var(--success);color:var(--bg);}
+  .kc-opt.wrong .om{border-color:var(--danger);background:var(--danger);color:var(--bg);}
+  .kc-fb{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.6;display:none;}
+  .kc-fb.show{display:block;}
+  .kc-fb.ok{background:rgba(52,211,153,0.1);color:var(--success);}
+  .kc-fb.no{background:rgba(248,113,113,0.08);color:var(--danger);}
+
+  /* Flip cards */
+  .flip-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0;}
+  .flip-card{perspective:600px;height:155px;cursor:pointer;}
+  .flip-card-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
+  .flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
+  .flip-card-front,.flip-card-back{
+    position:absolute;inset:0;backface-visibility:hidden;
+    border-radius:12px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:14px;text-align:center;border:1px solid var(--border);
+  }
+  .flip-card-front{background:var(--card);}
+  .flip-card-front .fi{font-size:26px;color:var(--accent);margin-bottom:6px;}
+  .flip-card-front .fl{font-size:13px;font-weight:600;color:var(--fg);}
+  .flip-card-front .fh{font-size:10px;color:var(--fg-muted);margin-top:5px;}
+  .flip-card-back{background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.3);transform:rotateY(180deg);}
+  .flip-card-back p{font-size:12px;line-height:1.55;color:var(--fg-muted);}
+
+  /* Styled list */
+  .s-list{list-style:none;padding:0;margin:10px 0;}
+  .s-list li{padding:7px 0 7px 22px;font-size:13px;line-height:1.65;color:var(--fg-muted);position:relative;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .s-list li:last-child{border-bottom:none;}
+  .s-list li::before{content:'';position:absolute;left:0;top:14px;width:7px;height:7px;background:var(--accent);border-radius:50%;}
+
+  /* Table */
+  .ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;}
+  .ctable th{text-align:left;padding:9px 12px;background:rgba(167,139,250,0.08);color:var(--purple);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+  .ctable td{padding:9px 12px;border-bottom:1px solid rgba(148,163,184,0.06);color:var(--fg-muted);line-height:1.55;}
+  .ctable tr:hover td{color:var(--fg);}
+
+  /* Badge */
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+  .badge-amber{background:rgba(232,168,56,0.15);color:var(--accent);}
+  .badge-teal{background:rgba(45,212,191,0.12);color:var(--teal);}
+  .badge-red{background:rgba(248,113,113,0.12);color:var(--danger);}
+  .badge-purple{background:rgba(167,139,250,0.12);color:var(--purple);}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:28px;margin:18px 0;}
+  .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border);}
+  .tl-item{position:relative;margin-bottom:18px;}
+  .tl-item::before{content:'';position:absolute;left:-25px;top:4px;width:11px;height:11px;border-radius:50%;border:2px solid var(--purple);background:var(--bg);}
+  .tl-item.lit::before{background:var(--purple);}
+  .tl-year{font-size:11px;color:var(--purple);font-weight:700;letter-spacing:1px;}
+  .tl-title{font-size:13px;font-weight:600;color:var(--fg);margin:2px 0;}
+  .tl-desc{font-size:12px;color:var(--fg-muted);line-height:1.5;}
+
+  /* Summary */
+  .sum-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(148,163,184,0.06);}
+  .sum-num{width:26px;height:26px;background:var(--purple);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .sum-text{font-size:13px;line-height:1.6;color:var(--fg-muted);padding-top:2px;}
+  .sum-text strong{color:var(--fg);}
+
+  /* Match exercise */
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+  .match-col-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--fg-muted);font-weight:600;margin-bottom:6px;}
+  .match-item{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:8px;padding:10px 14px;cursor:pointer;
+    font-size:12px;color:var(--fg-muted);transition:all 0.2s;margin-bottom:5px;
+  }
+  .match-item:hover{border-color:var(--accent);}
+  .match-item.sel{border-color:var(--accent2);background:rgba(56,189,248,0.08);color:var(--accent2);}
+  .match-item.ok{border-color:var(--success);background:rgba(52,211,153,0.08);color:var(--success);pointer-events:none;}
+  .match-item.bad{border-color:var(--danger);background:rgba(248,113,113,0.06);}
+
+  /* Bottom nav */
+  .bottom-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;
+    background:rgba(12,15,20,0.92);
+    backdrop-filter:blur(16px);
+    border-top:1px solid var(--border);
+    height:56px;
+  }
+  .nav-btn{
+    display:flex;align-items:center;gap:7px;
+    background:var(--card);border:1px solid var(--border);
+    color:var(--fg);padding:9px 18px;border-radius:8px;
+    cursor:pointer;font-size:13px;font-weight:500;
+    font-family:'DM Sans',sans-serif;transition:all 0.2s;
+  }
+  .nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .nav-btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .nav-btn:disabled:hover{border-color:var(--border);color:var(--fg);}
+  .nav-btn.primary{background:linear-gradient(135deg,var(--purple),#8B5CF6);border:none;color:#fff;font-weight:600;}
+  .nav-btn.primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(167,139,250,0.2);}
+  .slide-dots{display:flex;gap:5px;align-items:center;}
+  .slide-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all 0.3s;cursor:pointer;}
+  .slide-dot.active{width:18px;border-radius:3px;background:var(--purple);}
+
+  /* Scrollbar */
+  .slide::-webkit-scrollbar{width:4px;}
+  .slide::-webkit-scrollbar-track{background:transparent;}
+  .slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+  @media(max-width:768px){
+    .slide{padding:20px 16px;}
+    .top-bar{padding:10px 14px;}
+    .top-bar .lecture-title{font-size:13px;}
+    .bottom-nav{padding:10px 14px;}
+    .nav-btn{padding:8px 12px;font-size:12px;}
+    .card-grid.cols-2{grid-template-columns:1fr;}
+    .flip-cards{grid-template-columns:1fr 1fr;}
+    .match-grid{grid-template-columns:1fr;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .bg-layer::before,.bg-layer::after{animation:none;}
+  }
+</style>
+
+
+<div class="bg-layer"></div>
+
+<div class="top-bar">
+  <div>
+    <div class="module-label">Module 2 — Day 2</div>
+    <div class="lecture-title">Lecture 2: Consent Case Law and Legal Principles</div>
+  </div>
+  <div class="progress-info" id="progressInfo">Slide 1 of 30</div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width: 3.33333%;"></div></div>
+
+<div class="slide-container" id="slideContainer">
+
+  <!-- SLIDE 1 -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-inner" style="text-align:center;padding-top:60px;">
+      <div class="slide-number">Module 2 — Day 2 — Lecture 2</div>
+      <h1 class="slide-heading" style="font-size:clamp(30px,5vw,50px);margin-bottom:22px;">Consent Case Law<br>and Legal Principles</h1>
+      <p class="slide-body" style="max-width:600px;margin:0 auto 28px;">The landmark cases that shaped how consent is understood and practised in UK healthcare — and what they mean for every dental procedure you perform.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <span class="badge badge-purple">Case Law</span>
+        <span class="badge badge-amber">Bolam to Montgomery</span>
+        <span class="badge badge-teal">Dental Application</span>
+      </div>
+      <div class="img-frame" style="max-width:680px;margin:22px auto 0;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/law-books-court2/680/240.jpg" alt="Legal case law">
+        <div class="img-caption">Understanding case law is essential for defensible dental practice</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide" data-slide="1">
+    <div class="slide-inner">
+      <div class="slide-number">Overview</div>
+      <h2 class="slide-sub">Learning Objectives</h2>
+      <div class="card-grid cols-2">
+        <div class="card"><div class="card-icon"><i class="fas fa-gavel"></i></div><h3>Understand the Bolam Test</h3><p>The original "reasonable body of opinion" standard and its influence on clinical negligence.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-arrow-right"></i></div><h3>Trace the Evolution to Montgomery</h3><p>How the law shifted from paternalism to patient-centred material risk disclosure.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-tooth"></i></div><h3>Apply Cases to Dentistry</h3><p>Translate medical landmark rulings into practical dental consent scenarios you will face.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-shield-alt"></i></div><h3>Understand McCulloch's Tempering</h3><p>How the law pulled back from Montgomery's extremes — reasonable, not all possible, options.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide" data-slide="2">
+    <div class="slide-inner">
+      <div class="slide-number">Context</div>
+      <h2 class="slide-sub">Why Case Law Matters for Dentists</h2>
+      <div class="hl-box danger">
+        <p><strong>Not one of the landmark consent cases is dental.</strong> They are all medical. And almost all involve some level of permanent disability that became the subject of legal wrangling.</p>
+      </div>
+      <p class="slide-body" style="margin-top:14px;">This means every dental consent case that reaches a court or GDC hearing will be judged against these medical precedents. You need to understand them not as abstract legal theory — but as the framework that will be applied to <strong>your</strong> clinical decisions.</p>
+      <div class="img-frame" style="max-width:480px;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/courtroom-uk2/480/190.jpg" alt="UK courtroom">
+        <div class="img-caption">Courts apply medical precedents to dental consent disputes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="slide" data-slide="3">
+    <div class="slide-inner">
+      <div class="slide-number">Overview</div>
+      <h2 class="slide-sub">The Consent Case Law Timeline</h2>
+      <div class="timeline">
+        <div class="tl-item lit"><div class="tl-year">1957</div><div class="tl-title">Bolam v Friern Hospital</div><div class="tl-desc">The "reasonable body of opinion" test is established.</div></div>
+        <div class="tl-item"><div class="tl-year">1984</div><div class="tl-title">Maynard v West Midlands RHA</div><div class="tl-desc">Clinical judgment acknowledged — risk of harm does not equal negligence.</div></div>
+        <div class="tl-item"><div class="tl-year">1985</div><div class="tl-title">Sidaway v Board of Governors</div><div class="tl-desc">Paternalistic approach — doctor decides what to disclose. Now entirely invalid.</div></div>
+        <div class="tl-item"><div class="tl-year">1985</div><div class="tl-title">Gillick v West Norfolk</div><div class="tl-desc">Minors can consent if they have sufficient understanding.</div></div>
+        <div class="tl-item lit"><div class="tl-year">2004</div><div class="tl-title">Chester v Afshar</div><div class="tl-desc">"Had I known" — failure to warn can be negligent even if the procedure was not negligent.</div></div>
+        <div class="tl-item lit"><div class="tl-year">2015</div><div class="tl-title">Montgomery v Lanarkshire</div><div class="tl-desc">The watershed — material risk must be disclosed from the patient's perspective.</div></div>
+        <div class="tl-item"><div class="tl-year">2023</div><div class="tl-title">McCulloch v Lavin</div><div class="tl-desc">Tempers Montgomery — discuss all reasonable options, not all possible ones.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="slide" data-slide="4">
+    <div class="slide-inner">
+      <div class="slide-number">Case 1 of 7</div>
+      <h2 class="slide-sub">Bolam v Friern Barnet Hospital (1957)</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>Mr Bolam, a patient at a mental hospital, received <strong>electroconvulsive therapy (ECT)</strong>. During the procedure, he <strong>fell off the gurney and fractured his hip</strong>. He was not physically restrained during treatment.</p>
+      </div>
+      <p class="slide-body" style="margin-top:10px;">The key question: Was failing to restrain him negligent?</p>
+      <div class="hl-box" style="margin-top:10px;">
+        <p><strong>The expert evidence was divided:</strong> Some clinicians said restraining patients during ECT was standard. Others said patients injured themselves <em>more</em> when restrained. The camps were roughly equal.</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:8px;">
+        <p><strong>Historical note from the lecturer:</strong> Friern Barnet Hospital had corridors of 420 metres — the longest in Europe. It is now luxury apartments.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 -->
+  <div class="slide" data-slide="5">
+    <div class="slide-inner">
+      <div class="slide-number">Case 1 of 7 — Ruling</div>
+      <h2 class="slide-sub">The Bolam Test: "Would Your Mates Do the Same?"</h2>
+      <div class="hl-box purple">
+        <p><strong>The ruling:</strong> "A man is not negligent if he is acting in accordance with such a practice as is accepted as proper by a responsible body of men skilled in that art… merely because there is a body of opinion who would take a contrary view."</p>
+      </div>
+      <p class="slide-body" style="margin-top:14px;">In plain language: if a <strong>reasonable number</strong> of competent professionals would do what you did, you are not negligent — even if some would disagree.</p>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check"></i> Would Pass Bolam</h3><p>Composite instead of amalgam. No rubber dam for RCT. Choosing extraction over RCT in a specific scenario.</p></div>
+        <div class="card" style="border-color:var(--danger);"><h3 style="color:var(--danger);"><i class="fas fa-times"></i> Would Fail Bolam</h3><p>Extracting a restorable tooth and immediately placing an implant without discussing conservative options.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 -->
+  <div class="slide" data-slide="6">
+    <div class="slide-inner">
+      <div class="slide-number">Case 1 of 7 — Dental Application</div>
+      <h2 class="slide-sub">Bolam Applied to Dental Scenarios</h2>
+      <table class="ctable">
+        <thead><tr><th>Scenario</th><th>Bolam Analysis</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Occlusal caries — you extract instead of restore</td><td>Would a reasonable body of dentists extract for simple caries? Probably not.</td><td><span class="badge badge-red">Likely Negligent</span></td></tr>
+          <tr><td>Amalgam vs composite for posterior</td><td>Both acceptable to different practitioners. Reasonable disagreement exists.</td><td><span class="badge badge-teal">Not Negligent</span></td></tr>
+          <tr><td>RCT without rubber dam</td><td>Not best practice, but many still work without it. Not unreasonable.</td><td><span class="badge badge-amber">Grey Area</span></td></tr>
+          <tr><td>Extraction + immediate implant, no discussion</td><td>Few would say this is standard first-line without exploring options.</td><td><span class="badge badge-red">Likely Negligent</span></td></tr>
+        </tbody>
+      </table>
+      <div class="hl-box" style="margin-top:10px;">
+        <p><strong>Bolam is still common sense</strong> for many clinical decisions — but it has been significantly modified by later cases, particularly Montgomery.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 -->
+  <div class="slide" data-slide="7">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Bolam Test Understanding</h2>
+      <div class="kc-q" data-correct="2">
+        <div class="kc-q-text">Under the Bolam test, a practitioner is negligent if:</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> Any single expert witness disagrees with their approach</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> The patient suffered harm as a result of the treatment</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> No responsible body of professional opinion would support their approach</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> They did not follow the most up-to-date clinical guideline</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9 -->
+  <div class="slide" data-slide="8">
+    <div class="slide-inner">
+      <div class="slide-number">Case 2 of 7</div>
+      <h2 class="slide-sub">Sidaway v Board of Governors (1985)</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>A patient underwent <strong>cervical cord decompression</strong> to alleviate pain. The surgeon <strong>failed to inform</strong> her of a <strong>1% risk of paraplegia</strong>. The patient became paraplegic.</p>
+      </div>
+      <div class="hl-box danger" style="margin-top:14px;">
+        <p><strong>The court's reasoning:</strong> Giving unsought information might cause unreasonable fear of very minor risks and deter patients from appropriate treatment. The surgeon's discretion should apply — Bolam was used to judge what should be disclosed.</p>
+      </div>
+      <div class="hl-box danger" style="margin-top:8px;">
+        <p><strong>This is the paternalistic approach — and it has been absolutely thrown out in its entirety.</strong> This is no longer valid law. But it is essential to understand because it shows how recently the law has changed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10 -->
+  <div class="slide" data-slide="9">
+    <div class="slide-inner">
+      <div class="slide-number">Case 2 of 7 — Dental Parallel</div>
+      <h2 class="slide-sub">The Sidaway Mindset in Dentistry</h2>
+      <div class="quote-block">
+        "This is like saying, I'm not going to tell the patient about risk to the ID nerve because it happens so rarely. And then you prang the nerve. You don't use stop drills. You don't use a guide. Suddenly your implant's in an empty mandible and your ID nerve is wrapped around your drill tip."
+      </div>
+      <p class="slide-body" style="margin-top:14px;">Under Sidaway's logic, the surgeon could argue: "The risk was so small I didn't mention it." Under current law, that defence is <strong>completely unavailable</strong>.</p>
+      <div class="hl-box purple" style="margin-top:14px;">
+        <p><strong>Key lesson:</strong> Within the lecturer's practicing lifetime, the law shifted from "the doctor decides what to tell you" to "the patient decides what they need to know." Sidaway is the old world. Montgomery is the new one.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11 -->
+  <div class="slide" data-slide="10">
+    <div class="slide-inner">
+      <div class="slide-number">Case 3 of 7</div>
+      <h2 class="slide-sub">Maynard v West Midlands RHA (1984)</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>A patient presented with throat symptoms. Differential diagnoses: <strong>tuberculosis, Hodgkin's lymphoma, carcinoma, or sarcoidosis</strong>. Doctors recommended a <strong>biopsy</strong> rather than waiting weeks for TB results. During biopsy, the <strong>recurrent laryngeal nerve was damaged</strong> — permanent hoarse voice. The patient had TB — not cancer.</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:14px;">
+        <p><strong>The ruling:</strong> Claim thrown out. Not doing the biopsy could have meant death from undiagnosed cancer. Nerve damage versus death — the doctors acted in the patient's best interests despite a known risk of harm.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12 -->
+  <div class="slide" data-slide="11">
+    <div class="slide-inner">
+      <div class="slide-number">Case 3 of 7 — Dental Parallel</div>
+      <h2 class="slide-sub">Maynard and the Tongue Biopsy Dilemma</h2>
+      <div class="scenario">
+        <div class="scenario-label">Dental Scenario</div>
+        <p>A patient has a <strong>lesion on the lateral tongue</strong>. You suspect squamous cell carcinoma. You take a biopsy. During the procedure, you hit a <strong>lingual artery branch</strong> — heavy bleeding, hospital admission. Histology shows benign leukoplakia.</p>
+      </div>
+      <div class="hl-box" style="margin-top:14px;">
+        <p><strong>Could you be criticised?</strong> The question becomes: should you have referred to a maxillofacial unit? The biopsy was within your capabilities, but complications were significant. Maynard protects you if the biopsy was <strong>clinically indicated</strong> — ruling out cancer justified the risk.</p>
+      </div>
+      <ul class="s-list" style="margin-top:10px;">
+        <li><strong>Warn the patient</strong> about bleeding risk before the biopsy</li>
+        <li>Consider referral if the lesion is in a <strong>high-risk anatomical area</strong></li>
+        <li>A maxillofacial unit can assess and excise carcinoma in situ <strong>in one procedure</strong></li>
+        <li>Biopsy of an active lesion carries theoretical risk of <strong>spread and metastasis</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 13 -->
+  <div class="slide" data-slide="12">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Maynard Principle</h2>
+      <div class="kc-q" data-correct="0">
+        <div class="kc-q-text">Why was the surgeon in Maynard not found negligent despite causing permanent nerve damage?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> The biopsy was clinically justified to rule out life-threatening conditions — the risk was proportionate</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> The patient had signed a consent form listing nerve damage as a risk</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> Nerve damage is an accepted complication under the Bolam test</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> The patient would have died anyway from tuberculosis</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14 -->
+  <div class="slide" data-slide="13">
+    <div class="slide-inner">
+      <div class="slide-number">Case 4 of 7</div>
+      <h2 class="slide-sub">Gillick Competency (1985)</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>The Department of Health issued guidance allowing GPs to prescribe <strong>contraception to underage girls</strong> without parental consent, provided the child understood the issues. Victoria Gillick, an MP, challenged this, arguing it encouraged underage sex.</p>
+      </div>
+      <div class="hl-box purple" style="margin-top:14px;">
+        <p><strong>The ruling:</strong> There are no parental rights over a child who has sufficient understanding to make their own medical decisions. A child under 16 who demonstrates <strong>Gillick competency</strong> can consent to treatment without parental involvement.</p>
+      </div>
+      <p class="slide-body" style="margin-top:10px;">The court held that parental rights diminish as the child's understanding grows. A 14-year-old who comprehends the implications can legally consent — and parents cannot stop them.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 15 -->
+  <div class="slide" data-slide="14">
+    <div class="slide-inner">
+      <div class="slide-number">Case 4 of 7 — Dental Application</div>
+      <h2 class="slide-sub">Gillick Competency and Tooth Whitening</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Clinical Dilemma</div>
+        <p>A <strong>14-year-old girl</strong> is being teased at school for yellow teeth. She asks for whitening. Legally, whitening agents <strong>cannot be used on under-16s</strong>. But what is this based on?</p>
+      </div>
+      <div class="hl-box" style="margin-top:10px;">
+        <p><strong>The answer:</strong> The product licence — not evidence of harm. Bleaching is perfectly safe and causes no damage. The restriction has no medical basis.</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:8px;">
+        <p><strong>The Gillick argument:</strong> A Gillick-competent 14-year-old understands whitening will stop bullying. She's requesting it for psychological welfare, not vanity. You could argue this is in her best interests. <strong>This has never been tested in court.</strong></p>
+      </div>
+      <div class="quote-block">
+        "Those are exactly the people who need it. So far it has never been tested. There is no case law."
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16 -->
+  <div class="slide" data-slide="15">
+    <div class="slide-inner">
+      <div class="slide-number">Case 5 of 7</div>
+      <h2 class="slide-sub">Rogers v Whitaker (1992) — Australian Case</h2>
+      <p class="slide-body" style="margin-bottom:10px;">Though an <strong>Australian case</strong>, it profoundly influenced UK law and is essential context.</p>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>Christopher Rogers, a highly skilled ophthalmic surgeon, operated on Marie Whitaker's <strong>right eye</strong>. A <strong>1 in 14,000</strong> complication: antigens from inside the eye were exposed to the immune system, triggering a <strong>delayed hypersensitivity reaction</strong> that destroyed the <strong>left eye</strong>. She lost sight in both eyes.</p>
+      </div>
+      <div class="hl-box danger" style="margin-top:10px;">
+        <p><strong>The clinching statement:</strong> "You're not going to do any damage to my other eye, are you?" — <strong>"Had I known this was a risk, I would not have had the operation. I would rather have lost one eye than risked losing both."</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17 -->
+  <div class="slide" data-slide="16">
+    <div class="slide-inner">
+      <div class="slide-number">Case 5 of 7 — Ruling</div>
+      <h2 class="slide-sub">Rogers v Whitaker: No Risk Is Too Small</h2>
+      <div class="hl-box purple">
+        <p><strong>The court overruled Bolam for consent disclosure.</strong> A doctor could not rely on professional practice as a defence for failing to warn. This was a significant enough risk — even at 1 in 14,000 — that the patient should have been told.</p>
+      </div>
+      <p class="slide-body" style="margin-top:14px;"><strong>This set the precedent:</strong> There is no risk that is too small to mention if you want valid consent that will stand up in court.</p>
+      <div class="img-frame" style="max-width:460px;">
+        <img src="https://artifacts-cdn.chatglm.site/https://picsum.photos/seed/surgery-risk-consult/460/180.jpg" alt="Risk discussion">
+        <div class="img-caption">Even extremely rare risks must be disclosed when consequences are severe</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18 -->
+  <div class="slide" data-slide="17">
+    <div class="slide-inner">
+      <div class="slide-number">Case 6 of 7</div>
+      <h2 class="slide-sub">Chester v Afshar (2004) — "Had I Known"</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>A patient underwent spinal surgery. She was <strong>not warned</strong> of cauda equina syndrome risk (loss of bowel/bladder function) because the surgeon considered it too small. The complication occurred. <strong>The surgery itself was not negligent.</strong></p>
+      </div>
+      <div class="hl-box danger" style="margin-top:14px;">
+        <p><strong>The ruling:</strong> Even though the procedure was performed competently, the failure to warn was itself negligent. The patient's statement — <strong>"Had I known, I would never have consented"</strong> — established liability.</p>
+      </div>
+      <div class="hl-box" style="margin-top:8px;">
+        <p><strong>This is the solicitor's easiest tool:</strong> "Had the patient known about the risk of numbness? Sinus infection? Swelling on their daughter's wedding day? They would never have had it done."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19 -->
+  <div class="slide" data-slide="18">
+    <div class="slide-inner">
+      <div class="slide-number">Case 6 of 7 — Dental Application</div>
+      <h2 class="slide-sub">"Had I Known" in Dental Practice</h2>
+      <p class="slide-body">Think about every minor thing a patient could complain about that you might not have mentioned:</p>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card"><h3><i class="fas fa-comment-dots" style="color:var(--danger);margin-right:5px;"></i>"Had I known I'd have stitches for two weeks"</h3><p>Goes without saying after surgery — but did you explicitly tell them?</p></div>
+        <div class="card"><h3><i class="fas fa-comment-dots" style="color:var(--danger);margin-right:5px;"></i>"Had I known I'd be numb for three hours"</h3><p>A patient returning to work immediately might argue this. Did you warn about duration?</p></div>
+        <div class="card"><h3><i class="fas fa-comment-dots" style="color:var(--danger);margin-right:5px;"></i>"Had I known my teeth would be cut down for crowns"</h3><p>Irreversible tooth reduction. Was this fully explained and understood?</p></div>
+        <div class="card"><h3><i class="fas fa-comment-dots" style="color:var(--danger);margin-right:5px;"></i>"Had I known about sinus infection risk"</h3><p>Upper implant placement — sinus communication risk. Absolutely must be disclosed.</p></div>
+      </div>
+      <div class="hl-box danger" style="margin-top:10px;">
+        <p><strong>The lesson:</strong> Consent is about everything the patient could possibly complain about. This starts getting complicated — but that is the legal reality post-Chester v Afshar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20 -->
+  <div class="slide" data-slide="19">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Chester v Afshar Principle</h2>
+      <div class="kc-q" data-correct="3">
+        <div class="kc-q-text">What made Chester v Afshar particularly significant for consent law?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> It established the Bolam test for consent</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> It ruled that all risks over 1% must be disclosed in writing</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> It introduced Gillick competency for minors</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> Failure to warn of a risk can be negligent even when the procedure was performed competently</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21 -->
+  <div class="slide" data-slide="20">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — The Big One</div>
+      <h2 class="slide-sub">Montgomery v Lanarkshire Health Board (2015)</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>A <strong>diabetic woman of small stature</strong> was pregnant. In diabetic mothers, babies gather more fat around the <strong>shoulders</strong>, making them the widest part. The baby's head delivered but <strong>shoulders became stuck</strong>. Forceps were used. The child was born with <strong>brain damage and a brachial plexus injury</strong> — mentally disabled with no use of one arm.</p>
+      </div>
+      <div class="hl-box danger" style="margin-top:10px;">
+        <p><strong>The mother's statement:</strong> "Had I known this was a risk, I would never have done it. I would have insisted on a caesarean. I would not have destroyed my life and destroyed my baby's life."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22 -->
+  <div class="slide" data-slide="21">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — Ruling</div>
+      <h2 class="slide-sub">The Montgomery Judgment</h2>
+      <div class="hl-box purple">
+        <p><strong>"An adult person of sound mind is entitled to decide which, if any, of the available forms of treatment to undergo, and their consent must be obtained before treatment interfering with their bodily integrity is undertaken."</strong></p>
+      </div>
+      <div class="hl-box purple" style="margin-top:8px;">
+        <p><strong>"The doctor is therefore under a duty to take reasonable care to ensure that the patient is aware of any material risk involved in any recommended treatment, and any reasonable alternative or variant treatment."</strong></p>
+      </div>
+      <p class="slide-body" style="margin-top:14px;">Bolam was <strong>disregarded for consent disclosure</strong>. The test is no longer "what would a doctor say?" but "what would <strong>this patient</strong> want to know?"</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 23 -->
+  <div class="slide" data-slide="22">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — The Materiality Test</div>
+      <h2 class="slide-sub">What Makes a Risk "Material"?</h2>
+      <p class="slide-body">Montgomery established a <strong>two-part test</strong> — case-specific, not one-size-fits-all:</p>
+      <div class="flip-cards" style="margin-top:18px;">
+        <div class="flip-card" onclick="this.classList.toggle(&#39;flipped&#39;)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front"><div class="fi"><i class="fas fa-users"></i></div><div class="fl">Objective Limb</div><div class="fh">Tap to reveal</div></div>
+            <div class="flip-card-back"><p>Would a <strong>reasonable person in the patient's position</strong> be likely to attach significance to this risk?</p></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="this.classList.toggle(&#39;flipped&#39;)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front"><div class="fi"><i class="fas fa-user"></i></div><div class="fl">Subjective Limb</div><div class="fh">Tap to reveal</div></div>
+            <div class="flip-card-back"><p>Is the doctor <strong>aware (or should be aware)</strong> that <strong>this particular patient</strong> would likely attach significance to this risk?</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="hl-box danger" style="margin-top:18px;">
+        <p><strong>Why this matters:</strong> "I'm going to remove that mole on your neck. Small risk of brachial plexus damage — tingling in your fingers." For most: negligible. For a <strong>concert pianist</strong>? That risk is material.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 24 -->
+  <div class="slide" data-slide="23">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — Practical Implications</div>
+      <h2 class="slide-sub">Why Social History Is a Consent Tool</h2>
+      <p class="slide-body">Under Montgomery, you must understand what your patient does, values, and fears — because this determines what is "material."</p>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card"><div class="card-icon"><i class="fas fa-hard-hat"></i></div><h3>Deep Sea Diver / Oil Rig Worker</h3><p>Restorations with voids or provisionals over cotton wool could crack under pressure changes. A compromised restoration is material for them.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-music"></i></div><h3>Opera Singer / Musician</h3><p>Any procedure affecting the oral cavity, TMJ, or facial sensation carries amplified significance. Lingual nerve injury could be career-ending.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-microphone"></i></div><h3>Public Speaker / Teacher</h3><p>Altered speech from new restorations, swelling affecting presentation schedule — material considerations.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-heart"></i></div><h3>Upcoming Life Event</h3><p>Daughter's wedding in two days, important interview — swelling, bruising, or visible treatment effects are material for this patient at this time.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 25 -->
+  <div class="slide" data-slide="24">
+    <div class="slide-inner">
+      <div class="slide-number">Knowledge Check</div>
+      <h2 class="slide-sub">Montgomery Materiality</h2>
+      <div class="kc-q" data-correct="2">
+        <div class="kc-q-text">You are placing an upper anterior implant near the nasopalatine foramen. The patient is a professional trumpet player. Under Montgomery, what is your obligation?</div>
+        <div class="kc-opts">
+          <div class="kc-opt" data-idx="0" onclick="checkKC(this)"><span class="om">A</span> Warn of risks a reasonable dentist would mention — Bolam applies</div>
+          <div class="kc-opt" data-idx="1" onclick="checkKC(this)"><span class="om">B</span> Provide a standard consent form and let the patient read it</div>
+          <div class="kc-opt" data-idx="2" onclick="checkKC(this)"><span class="om">C</span> Specifically discuss risks to palatal sensation and embouchure material to a brass player</div>
+          <div class="kc-opt" data-idx="3" onclick="checkKC(this)"><span class="om">D</span> Only discuss risks occurring in more than 1% of cases</div>
+        </div>
+        <div class="kc-fb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 26 -->
+  <div class="slide" data-slide="25">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — The Temper</div>
+      <h2 class="slide-sub">McCulloch v Lavin — Tempering Montgomery</h2>
+      <p class="slide-body" style="margin-bottom:10px;">Montgomery pushed the law to an extreme. McCulloch pulled it back.</p>
+      <div class="scenario">
+        <div class="scenario-label">The Facts</div>
+        <p>Mr McCulloch had a cardiac arrest, was stabilised, then died. The family argued the consultant should have discussed <strong>NSAIDs</strong> as a treatment option for pericarditis.</p>
+      </div>
+      <div class="hl-box teal" style="margin-top:10px;">
+        <p><strong>The reality:</strong> McCulloch was overweight, drank heavily, chronically abused heart. NSAIDs were <strong>contraindicated</strong> due to bleeding risk. Not a reasonable option at all.</p>
+      </div>
+      <div class="hl-box purple" style="margin-top:8px;">
+        <p><strong>The ruling:</strong> Claim failed. Not all possible options must be discussed — only all <strong>reasonable</strong> ones. Reasonableness is judged by the <strong>clinician's experience</strong>, not what the patient feels should have been discussed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 27 -->
+  <div class="slide" data-slide="26">
+    <div class="slide-inner">
+      <div class="slide-number">Case 7 of 7 — Dental Application</div>
+      <h2 class="slide-sub">Reasonable vs Possible Options</h2>
+      <div class="scenario">
+        <div class="scenario-label">The Lecturer's Example</div>
+        <p>A patient is losing an <strong>upper 7</strong>. Do you need to discuss a <strong>removable partial denture</strong> as an alternative to an implant?</p>
+      </div>
+      <div class="hl-box" style="margin-top:10px;">
+        <p><strong>"No one makes a removable denture for a single upper seven."</strong> Just because something is possible doesn't make it reasonable. You recommend an implant — state-of-the-art dentistry. Not mentioning a cobalt chrome denture for one tooth is not a consent failure.</p>
+      </div>
+      <div class="card-grid cols-2" style="margin-top:14px;">
+        <div class="card" style="border-color:var(--success);"><h3 style="color:var(--success);"><i class="fas fa-check"></i> Must Discuss (Reasonable)</h3><p>Implant, bridge, or leaving the space — reasonable alternatives the patient should know about.</p></div>
+        <div class="card" style="opacity:0.55;"><h3><i class="fas fa-minus"></i> Need Not Discuss (Possible but Unreasonable)</h3><p>Single-tooth removable denture for an upper 7 — no reasonable practitioner would offer this as a primary option.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 28 -->
+  <div class="slide" data-slide="27">
+    <div class="slide-inner">
+      <div class="slide-number">Interactive Exercise</div>
+      <h2 class="slide-sub">Match Each Case to Its Core Principle</h2>
+      <p class="slide-body" style="margin-bottom:6px;">Click a case on the left, then click its matching principle on the right:</p>
+      <div class="match-grid" id="matchGrid">
+        <div>
+          <div class="match-col-label">Cases</div>
+          <div class="match-item" data-match="a" onclick="selMatch(this,&#39;L&#39;)">Bolam (1957)</div>
+          <div class="match-item" data-match="b" onclick="selMatch(this,&#39;L&#39;)">Sidaway (1985)</div>
+          <div class="match-item" data-match="c" onclick="selMatch(this,&#39;L&#39;)">Chester v Afshar (2004)</div>
+          <div class="match-item" data-match="d" onclick="selMatch(this,&#39;L&#39;)">Montgomery (2015)</div>
+          <div class="match-item" data-match="e" onclick="selMatch(this,&#39;L&#39;)">McCulloch (2023)</div>
+        </div>
+        <div>
+          <div class="match-col-label">Principles</div>
+          <div class="match-item" data-match="d" onclick="selMatch(this,&#39;R&#39;)">Material risk disclosure from patient's perspective</div>
+          <div class="match-item" data-match="a" onclick="selMatch(this,&#39;R&#39;)">Reasonable body of professional opinion</div>
+          <div class="match-item" data-match="c" onclick="selMatch(this,&#39;R&#39;)">Failure to warn is negligent even if procedure was competent</div>
+          <div class="match-item" data-match="e" onclick="selMatch(this,&#39;R&#39;)">Discuss all reasonable options, not all possible ones</div>
+          <div class="match-item" data-match="b" onclick="selMatch(this,&#39;R&#39;)">Doctor decides what patient is told (now invalid)</div>
+        </div>
+      </div>
+      <div class="kc-fb" id="matchFb"></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 29 -->
+  <div class="slide" data-slide="28">
+    <div class="slide-inner">
+      <div class="slide-number">Synthesis</div>
+      <h2 class="slide-sub">The Evolution of Consent Law</h2>
+      <table class="ctable">
+        <thead><tr><th>Era</th><th>Who Decides What to Disclose?</th><th>Key Case</th><th>Dental Impact</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-amber">1957–84</span></td><td>The doctor (Bolam peer group)</td><td>Bolam</td><td>"My colleagues would do the same" was a defence</td></tr>
+          <tr><td><span class="badge badge-red">1985</span></td><td>The doctor (paternalistic)</td><td>Sidaway</td><td>"I decided not to tell them" — now completely invalid</td></tr>
+          <tr><td><span class="badge badge-purple">2004</span></td><td>The patient ("had I known")</td><td>Chester v Afshar</td><td>Even competent surgery fails if risks weren't disclosed</td></tr>
+          <tr><td><span class="badge badge-purple">2015</span></td><td>The patient (material risk)</td><td>Montgomery</td><td>You must know your patient to know what is material</td></tr>
+          <tr><td><span class="badge badge-teal">2023</span></td><td>Clinician filters reasonableness</td><td>McCulloch</td><td>Don't list every option — only reasonable ones</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 30 -->
+  <div class="slide" data-slide="29">
+    <div class="slide-inner">
+      <div class="slide-number">Lecture 2 Summary</div>
+      <h2 class="slide-sub">Key Takeaways</h2>
+      <div class="sum-item"><div class="sum-num">1</div><div class="sum-text"><strong>Bolam survives for clinical judgment</strong> but is no longer the test for what you must disclose to patients.</div></div>
+      <div class="sum-item"><div class="sum-num">2</div><div class="sum-text"><strong>Sidaway's paternalism is dead.</strong> You can no longer decide what the patient "doesn't need to know."</div></div>
+      <div class="sum-item"><div class="sum-num">3</div><div class="sum-text"><strong>Chester v Afshar:</strong> "Had I known" is a powerful claim. Document every risk you discussed.</div></div>
+      <div class="sum-item"><div class="sum-num">4</div><div class="sum-text"><strong>Montgomery is the current standard:</strong> material risks must be disclosed from the patient's perspective — know your patient's life, job, and values.</div></div>
+      <div class="sum-item"><div class="sum-num">5</div><div class="sum-text"><strong>McCulloch tempers Montgomery:</strong> discuss all reasonable options, not every possible one. The clinician defines "reasonable."</div></div>
+      <div class="sum-item"><div class="sum-num">6</div><div class="sum-text"><strong>No dental consent cases exist.</strong> All precedents are medical. Every dental dispute will be judged against these cases.</div></div>
+      <div style="text-align:center;margin-top:22px;">
+        <p class="slide-body" style="color:var(--purple);font-weight:600;">End of Lecture 2 — Request Lecture 3 to continue.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled=""><i class="fas fa-arrow-left"></i> Previous</button>
+  <div class="slide-dots" id="slideDots"><div class="slide-dot active"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div><div class="slide-dot"></div></div>
+  <button class="nav-btn primary" id="nextBtn" onclick="changeSlide(1)">Next <i class="fas fa-arrow-right"></i></button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  // Build dots
+  const dotsEl = document.getElementById('slideDots');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'slide-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  }
+
+  function ui() {
+    document.getElementById('progressInfo').textContent = 'Slide ' + (cur + 1) + ' of ' + total;
+    document.getElementById('progressFill').style.width = ((cur + 1) / total * 100) + '%';
+    document.getElementById('prevBtn').disabled = cur === 0;
+    document.getElementById('nextBtn').disabled = cur === total - 1;
+    document.querySelectorAll('.slide-dot').forEach((d, i) => d.className = 'slide-dot' + (i === cur ? ' active' : ''));
+  }
+
+  function go(idx) {
+    if (idx < 0 || idx >= total || idx === cur) return;
+    slides[cur].classList.remove('active');
+    slides[idx].classList.add('active');
+    slides[idx].scrollTop = 0;
+    cur = idx;
+    ui();
+  }
+
+  function changeSlide(dir) { go(cur + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  // Knowledge check
+  function checkKC(el) {
+    const q = el.closest('.kc-q');
+    if (q.classList.contains('done')) return;
+    q.classList.add('done');
+    const ci = parseInt(q.dataset.correct);
+    const si = parseInt(el.dataset.idx);
+    const fb = q.querySelector('.kc-fb');
+    q.querySelectorAll('.kc-opt').forEach(o => {
+      const i = parseInt(o.dataset.idx);
+      if (i === ci) o.classList.add('correct');
+      else if (i === si) o.classList.add('wrong');
+      o.style.pointerEvents = 'none';
+    });
+    if (si === ci) {
+      fb.className = 'kc-fb show ok';
+      fb.innerHTML = '<strong>Correct.</strong> Well done — you\'ve grasped this principle.';
+    } else {
+      fb.className = 'kc-fb show no';
+      fb.innerHTML = '<strong>Not quite.</strong> The correct answer is highlighted in green. Review the relevant case slides.';
+    }
+  }
+
+  // Match exercise
+  let selL = null, mCnt = 0;
+  function selMatch(el, side) {
+    if (el.classList.contains('ok')) return;
+    const fb = document.getElementById('matchFb');
+    if (side === 'L') {
+      document.querySelectorAll('#matchGrid .match-item').forEach(i => i.classList.remove('sel', 'bad'));
+      el.classList.add('sel');
+      selL = el;
+    } else if (side === 'R' && selL) {
+      if (selL.dataset.match === el.dataset.match) {
+        selL.classList.remove('sel');
+        selL.classList.add('ok');
+        el.classList.add('ok');
+        mCnt++;
+        if (mCnt === 5) {
+          fb.className = 'kc-fb show ok';
+          fb.innerHTML = '<strong>All matched correctly!</strong> You understand how each case maps to its core legal principle.';
+        }
+      } else {
+        selL.classList.add('bad');
+        el.classList.add('bad');
+        const ref = selL;
+        setTimeout(() => { ref.classList.remove('sel', 'bad'); el.classList.remove('bad'); }, 600);
+        fb.className = 'kc-fb show no';
+        fb.innerHTML = '<strong>Not a match.</strong> Try again — think about the core principle each case established.';
+      }
+      selL = null;
+    }
+  }
+
+  ui();
+</script>
+
+
+			
+		
+</body></html>
