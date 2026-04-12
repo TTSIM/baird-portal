@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 1 · Quiz 3 — Whole-Case Planning & Risk</title>
+<style>
+:root{--bg:#0b1120;--panel:#152038;--panel2:#1c2a47;--border:#2a3a5e;--text:#e6ecf7;--muted:#9aa8c4;--accent:#5ee0c1;--accent2:#7ab8ff;--good:#5ee0c1;--bad:#ff7a9c;--warn:#ffb86b;--shadow:0 10px 30px rgba(0,0,0,.4)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#0b1120 0%,#0f1830 100%);color:var(--text);min-height:100vh;line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.title{font-size:15px;font-weight:600;color:var(--accent)}
+.title span{color:var(--muted);font-weight:400}
+.score-pill{background:var(--panel);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.progress-bar{height:4px;background:var(--panel);position:relative;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .4s ease}
+.container{max-width:820px;margin:0 auto;padding:40px 24px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:36px;box-shadow:var(--shadow);animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.q-num{color:var(--accent);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.q-text{font-size:19px;font-weight:500;margin-bottom:24px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{background:var(--panel2);border:2px solid var(--border);border-radius:10px;padding:16px 20px;cursor:pointer;transition:all .2s;font-size:15px;text-align:left;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:12px}
+.option:hover:not(:disabled){border-color:var(--accent);background:#22325a}
+.option:disabled{cursor:default}
+.option .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.option.correct{border-color:var(--good);background:rgba(94,224,193,.12)}
+.option.correct .letter{background:var(--good);color:#0b1120}
+.option.incorrect{border-color:var(--bad);background:rgba(255,122,156,.12)}
+.option.incorrect .letter{background:var(--bad);color:#0b1120}
+.feedback{margin-top:20px;padding:16px 20px;border-radius:10px;background:var(--panel2);border-left:4px solid var(--accent);font-size:14px;line-height:1.6;display:none}
+.feedback.show{display:block;animation:fadeIn .3s}
+.feedback.right{border-left-color:var(--good)}
+.feedback.wrong{border-left-color:var(--bad)}
+.feedback strong{color:var(--accent)}
+.feedback.right strong{color:var(--good)}
+.feedback.wrong strong{color:var(--bad)}
+.controls{margin-top:24px;display:flex;justify-content:space-between;gap:12px}
+.btn{background:var(--accent);color:#0b1120;border:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(94,224,193,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn.ghost:hover{color:var(--text);border-color:var(--accent)}
+.results{text-align:center;padding:20px}
+.results h1{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.results .score{font-size:64px;font-weight:700;margin:24px 0;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.results .pct{font-size:18px;color:var(--muted);margin-bottom:24px}
+.results .verdict{font-size:16px;margin-bottom:32px;padding:16px;background:var(--panel2);border-radius:10px;border-left:4px solid var(--accent)}
+.review-list{text-align:left;margin-top:24px}
+.review-item{padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--good);font-size:13px}
+.review-item.wrong{border-left-color:var(--bad)}
+.review-item .qt{font-weight:600;margin-bottom:6px}
+.review-item .at{color:var(--muted);font-size:12px}
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:40px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">Module 2 · Day 1 · Quiz 3 <span>— Whole-Case Planning, Risk & Litigation</span></div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="score-pill" id="scorePill">Q <span id="qNum">1</span>/30 · Score <span id="scoreNum">0</span></div>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="container" id="quizArea"></div>
+<div class="footer">Educational use only. Based on visiting professor lecture content.</div>
+
+<script>
+const questions = [
+  {q:"By approximately how much do SSRIs increase implant failure risk?",o:["No effect","1.2x","2–3x","10x"],a:2,e:"SSRIs are associated with a 2–3x increase in implant failure due to effects on bone metabolism and osteoblast activity."},
+  {q:"What is the reported odds ratio for implant failure in patients on PPIs?",o:["1.0","1.77","3.0","5.5"],a:1,e:"PPIs were associated with an odds ratio of approximately 1.77 for implant failure — pantoprazole appeared to be the exception."},
+  {q:"Which PPI was reported NOT to increase implant failure risk?",o:["Omeprazole","Lansoprazole","Pantoprazole","Esomeprazole"],a:2,e:"Pantoprazole appeared to be relatively spared in the data on PPI-associated implant failure."},
+  {q:"By how much does a documented penicillin allergy (without immediate-type history) increase implant failure risk?",o:["No effect","1.5x","3x","10x"],a:2,e:"Penicillin allergy is associated with approximately a 3-fold increase in failure, partly via use of less effective alternative antibiotics."},
+  {q:"For a patient with IMMEDIATE-type penicillin reaction, the failure risk is approximately:",o:["3x","5x","10x","20x"],a:2,e:"Immediate-type allergy carries roughly a 10-fold increase in failure risk."},
+  {q:"Clindamycin use for surgical prophylaxis is associated with approximately how much increased infection risk?",o:["2x","6x","10x","No increase"],a:1,e:"Clindamycin was reported to carry approximately a 6-fold increased infection risk compared with amoxicillin."},
+  {q:"According to Slots, what proportion of peri-implantitis cases require active treatment?",o:["10%","30%","50%","90%"],a:0,e:"Slots' provocative quote: 90% of peri-implantitis doesn't need treatment, and the 10% that does is largely untreatable."},
+  {q:"How much more likely are perio patients to lose an implant compared to losing a tooth over 10 years?",o:["2x","5x","10x","20x"],a:2,e:"Patients with perio history are roughly 10x more likely to lose an implant than to lose a tooth over a 10-year period."},
+  {q:"Which finding from Coley & Jemt is most relevant to peri-implant assessment?",o:["Early bone loss strongly predicts late failure","Early bone loss is NOT predictive of long-term failure","All bone loss is progressive","Bone loss is irrelevant"],a:1,e:"Coley & Jemt showed that early bone loss is NOT a reliable predictor of long-term implant failure — challenging older assumptions."},
+  {q:"Why are short implants no longer considered high-risk in modern practice?",o:["Better impressions","Rough-surface implants have improved osseointegration","Cheaper","Patient preference"],a:1,e:"With modern rough-surface implants, short implants achieve comparable success and avoid risky augmentation procedures."},
+  {q:"What is the maximum cantilever length the lecturer suggested for implant prostheses?",o:["8mm","14mm","20mm","25mm"],a:1,e:"Around 14mm is cited as a sensible maximum. The litigated case mentioned used 25mm and settled for £50k."},
+  {q:"What is the recommended approach to consent templates?",o:["Use them verbatim","Never use pre-written templates verbatim — always tailor","Skip consent","Use only video consent"],a:1,e:"Verbatim templates are a litigation risk. Consent must be patient-specific and demonstrably tailored."},
+  {q:"What does the 'problem-list method' use to organise patient issues?",o:["Cost categories","A = Active, I = Inactive","Aesthetic vs functional","Urgent vs routine"],a:1,e:"The problem-list method tags each issue as Active (needs management) or Inactive (monitored), drawn from medical practice."},
+  {q:"What aesthetic risk assessment tool was specifically mentioned by the lecturer?",o:["PES/WES","Mayo Clinic linear scale","Smile index","SAC classification"],a:1,e:"The Mayo Clinic linear scale was the aesthetic risk tool specifically referenced."},
+  {q:"What is the lecturer's recommended timing to phone a patient after surgery?",o:["Next morning","Same evening (e.g. football half-time)","One week later","Don't phone"],a:1,e:"Phone the same evening — even briefly (~75 seconds at football half-time was the anecdote) — patients hugely appreciate it and it markedly reduces complaints."},
+  {q:"What does the Walter Cohen quote convey about surgical training?",o:["Surgery is easy","6 weeks to teach the procedure, 2–10 years to learn when NOT to do it","Surgery is dangerous","Avoid surgery"],a:1,e:"The quote underlines that case selection — knowing when not to operate — is the hardest and most important skill."},
+  {q:"Vitamin D evidence in implant outcomes was described as:",o:["Strong and conclusive","Weak — based on flawed studies with outliers","No evidence","Definitive"],a:1,e:"The evidence base is weak — one influential paper had outlier patients who skewed conclusions disproportionately."},
+  {q:"In the lecture's whole-case planning approach, what comes first?",o:["Implant placement","A complete diagnosis and full problem list","Aesthetics","Cost"],a:1,e:"Whole-case planning starts with a comprehensive diagnosis and a complete problem list before any treatment decisions."},
+  {q:"Which is described as a key marker of an aesthetic high-risk case?",o:["Low lip line","Thin biotype with high lip line","Posterior tooth","Older patient"],a:1,e:"Thin gingival biotype combined with a high lip line is one of the highest aesthetic risk combinations."},
+  {q:"What is the principal difference between 'success' and 'survival' in implant outcomes?",o:["No difference","Success requires meeting health criteria; survival means the implant is still present","Success is shorter-term","Survival is more rigorous"],a:1,e:"Survival just means the implant is still in place; success requires meeting strict health, function and aesthetic criteria."},
+  {q:"Which of the following is a 'red flag' patient profile?",o:["Compliant non-smoker","Litigious patient with unrealistic expectations and multiple previous opinions","Diabetic well-controlled","Older patient with good hygiene"],a:1,e:"Multiple opinions, unrealistic expectations and litigious history together form a classic red-flag profile."},
+  {q:"What does 'A=Active, I=Inactive' refer to in the problem-list method?",o:["Tooth status","How each problem is currently being managed","Patient compliance","Insurance status"],a:1,e:"Each item on the problem list is labelled Active (currently being addressed) or Inactive (monitored but stable)."},
+  {q:"What was the bisphosphonate-related complication concern raised in the lecture?",o:["Caries","MRONJ","Tooth wear","Bleeding"],a:1,e:"Medication-related osteonecrosis of the jaw (MRONJ) is the principal concern with antiresorptive use."},
+  {q:"Which question is essential to ask before placing an implant in a smoker?",o:["How much do they smoke and willingness to stop","Brand of cigarettes","Where they smoke","Cost of cigarettes"],a:0,e:"Quantity and cessation willingness directly inform risk and consent. Heavy smokers have markedly worse outcomes."},
+  {q:"In litigation cases discussed, the most common preventable failing was:",o:["Surgical technique","Inadequate consent and documentation","Implant brand","Imaging errors"],a:1,e:"Most cases that progress to litigation hinge on inadequate consent and documentation rather than purely technical errors."},
+  {q:"What is the recommended approach when a treatment plan is challenged by the patient?",o:["Insist on the original plan","Document the discussion thoroughly and offer alternatives","Refuse treatment","Refer immediately"],a:1,e:"Document the conversation, offer reasonable alternatives, and ensure the patient's choice is informed and recorded."},
+  {q:"Which patient behaviour is a strong predictor of poor implant outcome?",o:["Daily brushing","Failure to attend hygienist appointments","Mouthwash use","Drinking water"],a:1,e:"Non-attendance at maintenance is one of the strongest behavioural predictors of peri-implant disease and failure."},
+  {q:"The 'iceberg model' of litigation refers to:",o:["Visible complaints vs hidden complaints","Cost of treatment","Number of implants","Bone density"],a:0,e:"Most patient dissatisfaction never surfaces as a formal complaint — the visible complaints are only the tip of a much larger iceberg of dissatisfaction."},
+  {q:"What is the lecturer's overall stance on whole-case planning?",o:["Treat what you see","Comprehensive diagnosis, problem list, risk assessment, then sequenced treatment","Cheapest first","Implant first"],a:1,e:"The whole-case philosophy: diagnose comprehensively, list every problem, assess every risk, then sequence treatment logically."},
+  {q:"What is the single most important takeaway from this lecture?",o:["Place more implants","Case selection and risk assessment are paramount; not every patient should receive implants","Faster surgery","Cheaper implants"],a:1,e:"The recurring message: implants are not for everyone. Knowing WHO not to treat is as important as knowing how to treat."}
+];
+
+let currentQ = 0, score = 0, answered = false, userAnswers = [];
+
+function render(){
+  const qa = document.getElementById('quizArea');
+  if(currentQ >= questions.length){showResults();return;}
+  const q = questions[currentQ];
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('progress').style.width = ((currentQ)/questions.length*100) + '%';
+  const letters = ['A','B','C','D'];
+  qa.innerHTML = `
+    <div class="card">
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.o.map((opt,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${opt}</span></button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn ghost" onclick="restart()">Restart</button>
+        <button class="btn" id="nextBtn" disabled onclick="next()">Next →</button>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>pick(parseInt(b.dataset.i))));
+  answered = false;
+}
+
+function pick(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o=>o.disabled=true);
+  const correct = i === q.a;
+  if(correct){score++; opts[i].classList.add('correct');}
+  else{opts[i].classList.add('incorrect'); opts[q.a].classList.add('correct');}
+  userAnswers.push({q:q.q,user:q.o[i],correct:q.o[q.a],right:correct});
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct?'right':'wrong');
+  fb.innerHTML = `<strong>${correct?'✓ Correct':'✗ Incorrect'}</strong> — ${q.e}`;
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('scoreNum').textContent = score;
+}
+
+function next(){currentQ++; render();}
+function restart(){currentQ=0;score=0;userAnswers=[];render();}
+
+function showResults(){
+  const pct = Math.round(score/questions.length*100);
+  let verdict = '';
+  if(pct>=85) verdict='Excellent — you have strong command of whole-case planning, risk assessment and medico-legal principles.';
+  else if(pct>=70) verdict='Solid performance. Review the topics you missed and revisit the lecture.';
+  else if(pct>=50) verdict='A reasonable foundation. Re-watch Lecture 3 and revisit your weak areas.';
+  else verdict='Recommend re-reviewing Lecture 3 in full and re-attempting this quiz.';
+  document.getElementById('progress').style.width='100%';
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card results">
+      <h1>Quiz Complete</h1>
+      <div class="score">${score}/${questions.length}</div>
+      <div class="pct">${pct}%</div>
+      <div class="verdict">${verdict}</div>
+      <button class="btn" onclick="restart()">Try Again</button>
+      <div class="review-list">
+        <h3 style="margin:24px 0 12px;color:var(--accent)">Review</h3>
+        ${userAnswers.map((a,i)=>`
+          <div class="review-item ${a.right?'':'wrong'}">
+            <div class="qt">Q${i+1}. ${a.q}</div>
+            <div class="at">Your answer: ${a.user} ${a.right?'✓':'✗'}${a.right?'':' &nbsp;|&nbsp; Correct: '+a.correct}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>

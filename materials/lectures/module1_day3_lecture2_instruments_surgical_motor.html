@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2: Instruments & Surgical Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0c1118;--surface:#131b27;--surface2:#1a2438;--card:#16202f;
+--accent:#8b5cf6;--accent2:#a78bfa;--accent-warm:#f59e0b;--accent-green:#10b981;--accent-red:#ef4444;--accent-blue:#3b82f6;
+--text:#e2e8f0;--text-dim:#94a3b8;--text-bright:#f8fafc;
+--border:#1e293b;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.lecture-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text-bright)}
+.slide-counter{font-size:13px;color:var(--text-dim);font-weight:500}
+.progress-track{height:3px;background:var(--border);width:100%}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;border-radius:0 2px 2px 0}
+.slide-area{flex:1;overflow:hidden;position:relative}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;pointer-events:none;transition:opacity .45s,transform .45s;transform:translateX(60px)}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide-inner{max-width:960px;width:100%;animation:su .5s ease both}
+@keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.nav-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px;background:var(--surface);border-top:1px solid var(--border)}
+.nav-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 24px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.nav-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+.nav-btn:disabled{opacity:.3;pointer-events:none}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .25s}
+.nav-dot.active{background:var(--accent);transform:scale(1.3)}
+.nav-dot.visited{background:var(--text-dim)}
+.slide-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,42px);color:var(--text-bright);margin-bottom:8px;line-height:1.2}
+.slide-subtitle{font-size:15px;color:var(--accent2);font-weight:500;margin-bottom:28px;letter-spacing:.5px}
+.slide-text{font-size:16px;line-height:1.75;color:var(--text);max-width:720px}
+.slide-text strong{color:var(--text-bright);font-weight:600}
+.title-slide{text-align:center}
+.title-slide .slide-title{font-size:clamp(36px,5vw,56px);margin-bottom:16px}
+.title-slide .slide-subtitle{font-size:18px;margin-bottom:32px}
+.title-meta{font-size:13px;color:var(--text-dim)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:all .3s}
+.card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 30px rgba(139,92,246,.1)}
+.card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.card h3{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+.card p{font-size:13px;color:var(--text-dim);line-height:1.6}
+.quiz-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:20px}
+.quiz-q{font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:18px}
+.quiz-opts{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;font-size:14px;transition:all .25s;display:flex;align-items:center;gap:12px}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(139,92,246,.06)}
+.quiz-opt.correct{border-color:var(--accent-green);background:rgba(16,185,129,.1);color:var(--accent-green)}
+.quiz-opt.wrong{border-color:var(--accent-red);background:rgba(239,68,68,.08);color:var(--accent-red)}
+.quiz-opt .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0}
+.quiz-opt.correct .letter{background:var(--accent-green);color:#fff}
+.quiz-opt.wrong .letter{background:var(--accent-red);color:#fff}
+.quiz-feedback{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.6;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent-green)}
+.quiz-feedback.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--accent-red)}
+.diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:16px;overflow-x:auto}
+.diagram-wrap svg{width:100%;max-width:800px;margin:0 auto;display:block}
+.highlight{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.03));border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:18px 22px;margin-top:16px}
+.highlight-title{font-size:13px;font-weight:700;color:var(--accent-warm);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.highlight p{font-size:14px;color:var(--text);line-height:1.7}
+.reveal-list{margin-top:16px}
+.reveal-item{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;transition:all .3s}
+.reveal-header{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:14px;color:var(--text-bright)}
+.reveal-header:hover{color:var(--accent2)}
+.reveal-arrow{transition:transform .3s;color:var(--text-dim)}
+.reveal-item.open .reveal-arrow{transform:rotate(180deg)}
+.reveal-body{max-height:0;overflow:hidden;transition:max-height .4s}
+.reveal-item.open .reveal-body{max-height:400px}
+.reveal-body-inner{padding:0 18px 16px;font-size:13px;color:var(--text-dim);line-height:1.7}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+.key-point{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.key-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.key-content h4{font-size:15px;color:var(--text-bright);font-weight:600;margin-bottom:3px}
+.key-content p{font-size:13px;color:var(--text-dim);line-height:1.6}
+.comp-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+.comp-table th{background:var(--surface2);color:var(--accent2);padding:12px 16px;text-align:left;font-weight:600;border-bottom:2px solid var(--accent)}
+.comp-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+.comp-table tr:hover td{background:rgba(139,92,246,.04)}
+.warn-box{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:18px 22px;margin-top:16px}
+.warn-title{font-size:13px;font-weight:700;color:var(--accent-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.warn-box p{font-size:14px;color:var(--text);line-height:1.7}
+/* Instrument explorer */
+.inst-explorer{display:grid;grid-template-columns:200px 1fr;gap:16px;margin-top:16px;min-height:280px}
+.inst-tabs{display:flex;flex-direction:column;gap:6px}
+.inst-tab{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-dim);transition:all .2s}
+.inst-tab:hover{color:var(--text-bright);border-color:var(--accent)}
+.inst-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.inst-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;display:none}
+.inst-panel.active{display:block}
+.inst-panel h3{font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.inst-panel .aka{font-size:12px;color:var(--accent2);margin-bottom:12px}
+.inst-panel p{font-size:14px;color:var(--text-dim);line-height:1.7}
+@media(max-width:600px){.inst-explorer{grid-template-columns:1fr}.inst-tabs{flex-direction:row;flex-wrap:wrap}}
+/* Torque dial */
+.dial-wrap{display:flex;justify-content:center;margin-top:20px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.portal-back:hover{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+      <span class="lecture-badge">Lecture 2</span>
+      <h1>Instruments & Surgical Motor</h1>
+    </div>
+    <span class="slide-counter" id="counter">1 / 30</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  <div class="slide-area" id="slideArea"></div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" onclick="go(-1)">← Prev</button>
+    <div class="nav-dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="go(1)">Next →</button>
+  </div>
+</div>
+<script>
+const slides=[
+// 0 Title
+`<div class="title-slide">
+  <div class="slide-subtitle">Dental Implant Course — Lecture 2 of 3</div>
+  <div class="slide-title">Instruments &<br>Surgical Motor</div>
+  <p class="title-meta" style="margin-top:24px;max-width:550px;margin-left:auto;margin-right:auto;line-height:1.7">Covering the Hu-Friedy surgical cassette, elevators (Buser & Mini Me), Prichard curette, Minnesota retractor, probes, surgical motor setup, handpieces, cables, foot pedals, and the manual torque wrench.</p>
+  <p class="title-meta" style="margin-top:32px;opacity:.5">Use arrow keys or buttons to navigate • 30 slides</p>
+</div>`,
+
+// 1 Hu-Friedy brand
+`<div>
+  <div class="slide-subtitle">Brand</div>
+  <div class="slide-title">Hu-Friedy Surgical Instruments</div>
+  <div class="slide-text">Hu-Friedy are one of the most popular and high-quality manufacturers of surgical instrumentation. They originally built their reputation on <strong>surgical instruments only</strong> before expanding into restorative instruments in recent years.</div>
+  <div class="highlight" style="margin-top:20px">
+    <div class="highlight-title">💡 What Makes Them Special</div>
+    <p>Their instruments use <strong>strong stainless steel on the outside while remaining hollow inside</strong>. This makes them lightweight yet extremely durable — critical for long surgical procedures where hand fatigue matters.</p>
+  </div>
+</div>`,
+
+// 2 Interactive instrument explorer
+`<div>
+  <div class="slide-subtitle">Overview</div>
+  <div class="slide-title">Surgical Instrument Cassette</div>
+  <div class="slide-text" style="font-size:14px">Click each instrument to learn about its purpose and usage. These are the core instruments in your implant surgery kit.</div>
+  <div class="inst-explorer">
+    <div class="inst-tabs">
+      <div class="inst-tab active" onclick="showInst(0,this)">Williams Probe</div>
+      <div class="inst-tab" onclick="showInst(1,this)">Buser Elevator</div>
+      <div class="inst-tab" onclick="showInst(2,this)">Mini Me (Urban)</div>
+      <div class="inst-tab" onclick="showInst(3,this)">Prichard Curette</div>
+      <div class="inst-tab" onclick="showInst(4,this)">Minnesota Retractor</div>
+      <div class="inst-tab" onclick="showInst(5,this)">Saline Pot</div>
+      <div class="inst-tab" onclick="showInst(6,this)">Scalpel (15C)</div>
+    </div>
+    <div>
+      <div class="inst-panel active" id="ip0"><h3>Williams Periodontal Probe</h3><div class="aka">Measurement | Assessment</div><p>Used for bone sounding (measuring mucosa-to-bone distance) and verifying implant depth. Marks at 1-2-3-5-7-8-9-10 mm. Choose <strong>plastic over metal</strong> — no reflection under bright lights, markings are clearer, and they don't bend over time.</p></div>
+      <div class="inst-panel" id="ip1"><h3>Buser Elevator</h3><div class="aka">Periosteal Elevator | Initial Elevation</div><p>Has a <strong>pointed tip</strong> for initial flap elevation. Polished surface always faces the gum; sharp surface faces bone. Used to tuck under the mucosa and create a tunnel, separating tissue from bone. Essential for the first delicate elevation steps.</p></div>
+      <div class="inst-panel" id="ip2"><h3>Mini Me (Urban Tunnelling Instrument)</h3><div class="aka">Blunt Dissection | Periosteal Release</div><p>Designed by <strong>Istvan Urban</strong> (Budapest). Has <strong>blunt, ovate tips</strong> — no sharp corners. Used for periosteal release and tissue dissection with minimal trauma. Causes significantly <strong>less swelling, bruising, and bleeding</strong> compared to using a blade for the same task. Named "Mini Me" by Urban himself.</p></div>
+      <div class="inst-panel" id="ip3"><h3>Prichard Curette</h3><div class="aka">Debridement | Cleaning</div><p>Sharp, curved curette that works in <strong>almost all types of defects</strong>. Used to clean granulation tissue, debride extraction sockets, and prepare the surgical site. Essential when there's residual tissue from a healing socket.</p></div>
+      <div class="inst-panel" id="ip4"><h3>Minnesota Retractor</h3><div class="aka">Retraction | Visualisation</div><p>Two ends: <strong>cheek contour end</strong> (smooth) for retracting mobile mucosa/cheek, and <strong>sharper end</strong> for retracting flaps against bone. Retract by pushing <strong>down towards the bone</strong> rather than pulling back — better ergonomics and less shoulder strain.</p></div>
+      <div class="inst-panel" id="ip5"><h3>Saline Pot / Measuring Cup</h3><div class="aka">Cleaning | Bone Graft Mixing</div><p>Primary use: <strong>cleaning burs during surgery</strong>. Fill with saline, dip used burs to prevent blood from drying on them. Also used for soaking bone graft material and mixing. In a 2-hour procedure, dried blood on burs is extremely difficult to clean afterwards.</p></div>
+      <div class="inst-panel" id="ip6"><h3>15C Scalpel Blade</h3><div class="aka">Incision | Flap Design</div><p>The standard blade for implant surgery incisions. Smaller and more curved than a standard 15 blade. Used for intrasulcular incisions, mid-crestal incisions, and vertical releasing incisions. Every cut must go <strong>down to bone</strong> for full-thickness flaps.</p></div>
+    </div>
+  </div>
+</div>`,
+
+// 3 Elevator rules
+`<div>
+  <div class="slide-subtitle">Principle</div>
+  <div class="slide-title">The Universal Elevator Rule</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="50" y="20" width="280" height="160" rx="14" fill="#16202f" stroke="#10b981" stroke-width="2"/>
+      <text x="190" y="55" font-family="DM Serif Display" font-size="18" fill="#10b981" text-anchor="middle">Polished Surface</text>
+      <text x="190" y="85" font-family="Outfit" font-size="14" fill="#e2e8f0" text-anchor="middle" font-weight="600">→ Always faces the GUM</text>
+      <text x="190" y="115" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">Smooth, gentle contact</text>
+      <text x="190" y="135" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">Protects soft tissue</text>
+      <rect x="370" y="20" width="280" height="160" rx="14" fill="#16202f" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="510" y="55" font-family="DM Serif Display" font-size="18" fill="#a78bfa" text-anchor="middle">Sharp Surface</text>
+      <text x="510" y="85" font-family="Outfit" font-size="14" fill="#e2e8f0" text-anchor="middle" font-weight="600">→ Always faces the BONE</text>
+      <text x="510" y="115" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">More rigid, aggressive</text>
+      <text x="510" y="135" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">Engages periosteum</text>
+    </svg>
+  </div>
+  <div class="slide-text" style="margin-top:20px">This rule applies to <strong>every elevator</strong> — the Buser, the Mini Me, and any periosteal elevator. Get this orientation wrong and you'll damage the soft tissue flap.</div>
+</div>`,
+
+// 4 Buser vs Mini Me
+`<div>
+  <div class="slide-subtitle">Comparison</div>
+  <div class="slide-title">Buser Elevator vs Mini Me</div>
+  <table class="comp-table">
+    <thead><tr><th>Feature</th><th>Buser Elevator</th><th>Mini Me (Urban)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tip shape</strong></td><td>Pointed, sharp</td><td>Blunt, ovate on both sides</td></tr>
+      <tr><td><strong>Primary use</strong></td><td>Initial flap elevation, papilla release</td><td>Periosteal release, blunt dissection</td></tr>
+      <tr><td><strong>Tissue effect</strong></td><td>Clean separation at bone level</td><td>Gentle separation with minimal trauma</td></tr>
+      <tr><td><strong>Post-op swelling</strong></td><td>Standard</td><td>Significantly less than blade dissection</td></tr>
+      <tr><td><strong>When to use</strong></td><td>Start of flap elevation</td><td>After initial cuts — for periosteal release</td></tr>
+      <tr><td><strong>Visual ID</strong></td><td>Pointed metal tip</td><td>Looks like "flat plastic" — blunt corners</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">Clinical Evidence</div>
+    <p>Urban found that using blunt dissection instead of blade dissection for periosteal release <strong>dramatically reduced post-operative swelling</strong>, especially in larger grafting cases and near the inferior dental nerve.</p>
+  </div>
+</div>`,
+
+// 5 Mini Me technique
+`<div>
+  <div class="slide-subtitle">Technique</div>
+  <div class="slide-title">Periosteal Release with the Mini Me</div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Create a Thin Line</h4><p>Use your 15C blade to create a thin incision line through the periosteum, from one side to the other.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Insert the Mini Me</h4><p>Polished flat surface towards the gum (always). Gently insert into the incision line.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Dissect the Pocket</h4><p>Slowly dissect between the mobile mucosa and the periosteum. You're creating a pocket that allows the flap to stretch and close over the augmented site.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Assess Closure</h4><p>The released flap should now passively reach the other side of the surgical site for tension-free closure.</p></div></div>
+  <div class="slide-text" style="margin-top:8px;font-size:14px;color:var(--text-dim)"><strong>Timing:</strong> Periosteal release should be done at the <strong>end of surgery</strong> — after grafting — so you can accurately assess how much release is actually needed. Doing it at the start risks under- or over-releasing.</div>
+</div>`,
+
+// 6 Why end?
+`<div>
+  <div class="slide-subtitle">Timing</div>
+  <div class="slide-title">Why Do Periosteal Release at the End?</div>
+  <div class="two-col">
+    <div>
+      <div class="card" style="border-color:rgba(16,185,129,.3)">
+        <h3 style="color:var(--accent-green)">Reasons to Wait</h3>
+        <p style="margin-top:8px;line-height:1.8">• Can't predict how much closure you'll need until after grafting<br>• If a nerve is present (e.g. ID nerve), early release means the nurse retracts over it for hours → nerve trauma<br>• Less total surgical time with tissues exposed<br>• The "shirt analogy" — build the volume first, then size the shirt</p>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:rgba(239,68,68,.3)">
+        <h3 style="color:var(--accent-red)">Applies to ALL GBR</h3>
+        <p style="margin-top:8px;line-height:1.8">Not just vertical augmentation — all bone grafting increases volume, meaning the flap must close over more material. Whether it's a small buccal defect or a large block graft, periosteal release is almost always needed.</p>
+      </div>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">💡 The Shirt Analogy</div>
+    <p>"You can always get fatter, but then you need a bigger shirt to fit." — Build the bone volume first, then release enough periosteum to close the "shirt" over it comfortably.</p>
+  </div>
+</div>`,
+
+// 7 Minnesota retractor
+`<div>
+  <div class="slide-subtitle">Retraction</div>
+  <div class="slide-title">Minnesota Retractor — Proper Use</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">
+      <rect x="50" y="20" width="280" height="200" rx="14" fill="#16202f" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="190" y="55" font-family="DM Serif Display" font-size="16" fill="#f59e0b" text-anchor="middle">Cheek Contour End</text>
+      <text x="190" y="85" font-family="Outfit" font-size="13" fill="#e2e8f0" text-anchor="middle">Smooth, rounded curve</text>
+      <text x="190" y="115" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">Use for: Mobile mucosa,</text>
+      <text x="190" y="135" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">cheek retraction, LA, and</text>
+      <text x="190" y="155" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">periosteal release area</text>
+      <text x="190" y="190" font-family="Outfit" font-size="12" fill="#f59e0b" text-anchor="middle" font-weight="600">→ NEVER use sharp end on cheek</text>
+      <rect x="370" y="20" width="280" height="200" rx="14" fill="#16202f" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="510" y="55" font-family="DM Serif Display" font-size="16" fill="#a78bfa" text-anchor="middle">Sharp End</text>
+      <text x="510" y="85" font-family="Outfit" font-size="13" fill="#e2e8f0" text-anchor="middle">Pointed, firm surface</text>
+      <text x="510" y="115" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">Use for: Flap retraction</text>
+      <text x="510" y="135" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">against bone. Go underneath</text>
+      <text x="510" y="155" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">the mucosa, flip back, and</text>
+      <text x="510" y="175" font-family="Outfit" font-size="12" fill="#94a3b8" text-anchor="middle">push DOWN towards bone</text>
+      <text x="510" y="200" font-family="Outfit" font-size="12" fill="#a78bfa" text-anchor="middle" font-weight="600">→ Push down, don't pull back</text>
+    </svg>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">Ergonomics</div>
+    <p>Push <strong>down towards the bone</strong> rather than pulling back with your shoulder. Support the instrument into the bone. This prevents shoulder strain over long procedures and gives more stable retraction.</p>
+  </div>
+</div>`,
+
+// 8 Probes
+`<div>
+  <div class="slide-subtitle">Measurement</div>
+  <div class="slide-title">Plastic vs Metal Probes</div>
+  <table class="comp-table">
+    <thead><tr><th>Feature</th><th>Plastic Probe</th><th>Metal Probe</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Durability</strong></td><td>Don't break</td><td>Bend over time; tips can flick back</td></tr>
+      <tr><td><strong>Visibility</strong></td><td>Clear markings, no reflection</td><td>Reflections from lights obscure markings</td></tr>
+      <tr><td><strong>Under bright lights</strong></td><td>No issues</td><td>Can blind you (especially with loupes/headlights)</td></tr>
+      <tr><td><strong>Aesthetics</strong></td><td>Less "premium" looking</td><td>Look nicer in photos</td></tr>
+      <tr><td><strong>Long-term</strong></td><td>More reliable measurements</td><td>Bend, break, or lose tip accuracy</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">Recommendation</div>
+    <p>Despite metal probes looking nicer, <strong>plastic probes are more practical</strong> for surgery. Clearer markings, no reflection interference, and more durable in the long run.</p>
+  </div>
+</div>`,
+
+// 9 Quiz 1
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Instruments</div>
+  <div class="quiz-box">
+    <div class="quiz-q">When using any periosteal elevator, which surface should always face the gum tissue?</div>
+    <div class="quiz-opts" id="q1">
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">A</span>The sharp surface</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,true)"><span class="letter">B</span>The polished surface</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">C</span>Either surface — it doesn't matter</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">D</span>The concave surface</div>
+    </div>
+    <div class="quiz-feedback correct" id="q1-correct">✓ Correct! The polished/smooth surface always faces the gum to protect the soft tissue. The sharp surface faces the bone.</div>
+    <div class="quiz-feedback wrong" id="q1-wrong">✗ Always: polished surface → gum, sharp surface → bone. This applies to the Buser, Mini Me, and all periosteal elevators.</div>
+  </div>
+</div>`,
+
+// 10 Surgical motor intro
+`<div>
+  <div class="slide-subtitle">Equipment</div>
+  <div class="slide-title">The Surgical Motor</div>
+  <div class="slide-text">The surgical motor is the workhorse of implant placement. It provides controlled drilling with precise torque measurement and built-in irrigation.</div>
+  <div class="card-grid" style="margin-top:20px">
+    <div class="card"><div class="card-icon" style="background:rgba(139,92,246,.15);color:var(--accent)">🔄</div><h3>20:1 Contra-Angle</h3><p>Uses a 20:1 reduction handpiece for controlled, low-speed drilling with high torque.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(59,130,246,.15);color:var(--accent-blue)">💧</div><h3>Built-In Irrigation</h3><p>Saline irrigation via the handpiece prevents overheating of bone during drilling. The irrigation tip is ideally metal and built-in (not detachable).</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(16,185,129,.15);color:var(--accent-green)">📊</div><h3>Torque Display</h3><p>Shows real-time insertion torque, critical for assessing primary stability and knowing when to stop.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(245,158,11,.15);color:var(--accent-warm)">⚙️</div><h3>Preset Programs</h3><p>Multiple programs for different drilling stages — lance, pilot, template, and implant insertion — each with appropriate RPM settings.</p></div>
+  </div>
+</div>`,
+
+// 11 Handpiece care
+`<div>
+  <div class="slide-subtitle">Maintenance</div>
+  <div class="slide-title">Handpiece Care & Common Mistakes</div>
+  <div class="warn-box">
+    <div class="warn-title">⚠️ Critical Warning</div>
+    <p>Do <strong>NOT</strong> let the clinic mix slow-speed handpieces with your implant handpiece. It happens to everyone. Implant handpieces have internal optics, a light, and irrigation — they are precision equipment. Use them <strong>only</strong> for implant work.</p>
+  </div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Oil Regularly</h4><p>Just like any handpiece — follow manufacturer schedule for oiling.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Keep Two in Clinic</h4><p>Nurse forgot to sterilise one? Back-to-back surgeries? One broke? Always have a backup handpiece available.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Replace, Don't Repair</h4><p>After 3–4 years of wear, buying a new cheaper handpiece costs less than repairing an expensive one. Optics, light, and fibers degrade over time.</p></div></div>
+</div>`,
+
+// 12 Cable sterilisation
+`<div>
+  <div class="slide-subtitle">Sterilisation</div>
+  <div class="slide-title">Cable Sterilisation — Don't Do It</div>
+  <div class="slide-text">Electricity runs through the motor cable. Putting it through a vacuum autoclave (which uses water/steam) risks water ingress, destroying the cable.</div>
+  <div class="two-col" style="margin-top:20px">
+    <div>
+      <div class="card" style="border-color:rgba(239,68,68,.3)">
+        <h3 style="color:var(--accent-red)">❌ Don't</h3>
+        <p style="margin-top:8px">Sterilise the cable through autoclave unless it has a manufacturer-supplied plastic cap that seals the cable work. Replacement cost: <strong>£600–700</strong>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:rgba(16,185,129,.3)">
+        <h3 style="color:var(--accent-green)">✓ Do</h3>
+        <p style="margin-top:8px">Use a <strong>good alcohol wipe</strong> after each use. The handpiece is dressed in a sterile long sleeve during surgery, so the cable itself stays outside the sterile field.</p>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+// 13 Foot pedal
+`<div>
+  <div class="slide-subtitle">Controls</div>
+  <div class="slide-title">Foot Pedal Controls</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <rect x="150" y="30" width="400" height="200" rx="20" fill="#16202f" stroke="#1e293b" stroke-width="2"/>
+      <!-- Main pedal -->
+      <rect x="275" y="80" width="150" height="100" rx="12" fill="#1a2438" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="350" y="125" font-family="Outfit" font-size="14" fill="#a78bfa" text-anchor="middle" font-weight="700">GO / STOP</text>
+      <text x="350" y="145" font-family="Outfit" font-size="11" fill="#94a3b8" text-anchor="middle">Main control</text>
+      <!-- Left button -->
+      <rect x="175" y="100" width="80" height="60" rx="8" fill="#1a2438" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="215" y="127" font-family="Outfit" font-size="11" fill="#60a5fa" text-anchor="middle" font-weight="600">Irrigation</text>
+      <text x="215" y="143" font-family="Outfit" font-size="10" fill="#64748b" text-anchor="middle">On / Off only</text>
+      <!-- Right top -->
+      <rect x="445" y="80" width="80" height="45" rx="8" fill="#1a2438" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="485" y="107" font-family="Outfit" font-size="11" fill="#f59e0b" text-anchor="middle" font-weight="600">Program</text>
+      <!-- Right bottom -->
+      <rect x="445" y="140" width="80" height="45" rx="8" fill="#1a2438" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="485" y="167" font-family="Outfit" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="600">Reverse ⚠️</text>
+    </svg>
+  </div>
+  <div class="warn-box" style="margin-top:12px">
+    <div class="warn-title">Reverse Safety</div>
+    <p>If you accidentally press Reverse during surgery, the motor alerts you. The only time you use reverse is to <strong>remove an implant</strong> or with special reverse-cutting drills. If the motor beeps — check your foot pedal immediately.</p>
+  </div>
+</div>`,
+
+// 14 Motor recommendation
+`<div>
+  <div class="slide-subtitle">Purchase</div>
+  <div class="slide-title">Choosing a Surgical Motor</div>
+  <div class="slide-text">Motors are a one-time investment, usually purchased by the practice. They're universal — not tied to any specific implant system.</div>
+  <table class="comp-table" style="margin-top:20px">
+    <thead><tr><th>Factor</th><th>W&H (Premium)</th><th>Woodpecker DT (Value)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Price</strong></td><td>Higher</td><td>~£1,550 + VAT</td></tr>
+      <tr><td><strong>Quality</strong></td><td>Excellent</td><td>Excellent (proven over 5+ years)</td></tr>
+      <tr><td><strong>Maintenance</strong></td><td>Expensive if things go wrong</td><td>Lower maintenance costs</td></tr>
+      <tr><td><strong>Features</strong></td><td>Surgical handpiece</td><td>Surgical + straight handpiece combo</td></tr>
+      <tr><td><strong>Recalibration</strong></td><td>Needed periodically</td><td>Minimal issues reported</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">Practical Advice</div>
+    <p>A <strong>cheaper motor you can replace</strong> beats an expensive one you have to send for repair. The handpiece itself is the most critical component — have at least two in clinic at all times.</p>
+  </div>
+</div>`,
+
+// 15 Sterile sleeve
+`<div>
+  <div class="slide-subtitle">Sterility</div>
+  <div class="slide-title">Sterile Draping of the Handpiece</div>
+  <div class="slide-text">Every surgical handpiece must be dressed in a <strong>sterile long sleeve</strong> before use. This sleeve covers the entire cable and non-sterile components.</div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Sleeve Over Handpiece</h4><p>The sterile sleeve gets stuck at the handpiece end and extends all the way back, covering the cable.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>No Touching</h4><p>Your sterile surgical gloves must never touch any non-sterile part — only the sleeved handpiece.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Cable Connection</h4><p>Cables have a red dot alignment system. Click together before draping. This is the non-sterile assistant's job.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Post-Op</h4><p>Sleeve is discarded. Cable gets an alcohol wipe. Handpiece goes for sterilisation.</p></div></div>
+</div>`,
+
+// 16 Torque wrench intro
+`<div>
+  <div class="slide-subtitle">Tool</div>
+  <div class="slide-title">The Manual Torque Wrench</div>
+  <div class="slide-text">Used for inserting implants by hand, torquing screws, and seating components. Understanding its orientation is critical — mistakes here can damage implants or connections.</div>
+  <div class="diagram-wrap" style="margin-top:20px">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Wrench body -->
+      <rect x="100" y="60" width="500" height="60" rx="30" fill="#1a2438" stroke="#8b5cf6" stroke-width="2"/>
+      <!-- Connection end (left) -->
+      <rect x="80" y="70" width="60" height="40" rx="8" fill="#16202f" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="110" y="94" font-family="Outfit" font-size="10" fill="#a78bfa" text-anchor="middle" font-weight="600">Connector</text>
+      <!-- Dial -->
+      <circle cx="350" cy="90" r="25" fill="#16202f" stroke="#f59e0b" stroke-width="2"/>
+      <text x="350" y="87" font-family="Outfit" font-size="9" fill="#f59e0b" text-anchor="middle" font-weight="600">Torque</text>
+      <text x="350" y="99" font-family="Outfit" font-size="9" fill="#f59e0b" text-anchor="middle">Dial</text>
+      <!-- Arrow indicator -->
+      <polygon points="300,55 310,45 320,55" fill="#ef4444"/>
+      <text x="310" y="40" font-family="Outfit" font-size="10" fill="#ef4444" text-anchor="middle" font-weight="700">Arrow</text>
+      <!-- Lever (right) -->
+      <rect x="540" y="50" width="100" height="80" rx="8" fill="#16202f" stroke="#10b981" stroke-width="2"/>
+      <text x="590" y="87" font-family="Outfit" font-size="11" fill="#10b981" text-anchor="middle" font-weight="700">LEVER</text>
+      <text x="590" y="102" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Right hand</text>
+      <!-- Labels -->
+      <text x="110" y="135" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Goes into implant</text>
+      <text x="350" y="145" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Shows Ncm reading</text>
+      <text x="590" y="145" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Controls torque</text>
+    </svg>
+  </div>
+</div>`,
+
+// 17 Arrow direction
+`<div>
+  <div class="slide-subtitle">Orientation</div>
+  <div class="slide-title">Torque Wrench — Arrow Direction</div>
+  <div class="two-col">
+    <div>
+      <div class="card" style="border-color:rgba(16,185,129,.3)">
+        <h3 style="color:var(--accent-green)">⬇️ Arrow Down = INSERT</h3>
+        <p style="margin-top:12px;line-height:1.8;font-size:14px">Arrow pointing <strong>towards the lever</strong> = clockwise insertion. Use this for placing implants and torquing screws in.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:rgba(239,68,68,.3)">
+        <h3 style="color:var(--accent-red)">⬆️ Arrow Up = REMOVE</h3>
+        <p style="margin-top:12px;line-height:1.8;font-size:14px">Arrow pointing <strong>away from the lever</strong> = counter-clockwise removal. Use for removing components.</p>
+      </div>
+    </div>
+  </div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">!</div><div class="key-content"><h4>Always Check Seating</h4><p>When you change direction, make sure the arrow <strong>fully clicks</strong> into its new position. If it's halfway, the wrench won't function correctly. Twist the cog ring to confirm it's tight.</p></div></div>
+  <div class="key-point"><div class="key-num">!</div><div class="key-content"><h4>Sterilise in Two Pieces</h4><p>The arrow is attached to a cog that separates. The wrench should always be <strong>sterilised disassembled</strong>, then reassembled on the sterile field by the sterile nurse.</p></div></div>
+</div>`,
+
+// 18 Lever technique
+`<div>
+  <div class="slide-subtitle">Technique</div>
+  <div class="slide-title">How to Hold the Torque Wrench</div>
+  <div class="warn-box">
+    <div class="warn-title">⚠️ Never Grab the Top</div>
+    <p>If you grab the torque wrench at the top and yank, you have <strong>no gauge of torque</strong> and could easily exceed 100 Ncm — risking fracture of the connector or damage to the implant connection.</p>
+  </div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Lever in Dominant Hand</h4><p>If right-handed, the lever is always in the right hand. This prevents confusion about insertion direction.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>One Finger Supports the Top</h4><p>The index finger or thumb of the non-dominant hand stabilises the top of the wrench. This prevents the implant from drifting buccally (natural pulling tendency).</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Pull From the Lever</h4><p>Apply torque only through the lever. When the lever stops moving easily, that's your insertion torque reading. The dial shows the value.</p></div></div>
+</div>`,
+
+// 19 Fracture points
+`<div>
+  <div class="slide-subtitle">Safety</div>
+  <div class="slide-title">Connector Fracture Points</div>
+  <div class="slide-text">The ratchet connectors have a <strong>built-in weak point</strong> — a fail-safe designed to break before the implant's internal connection is damaged.</div>
+  <div class="diagram-wrap" style="margin-top:16px">
+    <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="50" y1="80" x2="650" y2="80" stroke="#1e293b" stroke-width="3"/>
+      <!-- Connector fracture -->
+      <circle cx="200" cy="80" r="20" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+      <text x="200" y="85" font-family="Outfit" font-size="12" fill="#f59e0b" text-anchor="middle" font-weight="700">190</text>
+      <text x="200" y="120" font-family="Outfit" font-size="11" fill="#f59e0b" text-anchor="middle">Connector fractures</text>
+      <text x="200" y="135" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">(designed fail-safe)</text>
+      <!-- Connection damage -->
+      <circle cx="450" cy="80" r="20" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+      <text x="450" y="85" font-family="Outfit" font-size="12" fill="#ef4444" text-anchor="middle" font-weight="700">200</text>
+      <text x="450" y="120" font-family="Outfit" font-size="11" fill="#ef4444" text-anchor="middle">Implant connection</text>
+      <text x="450" y="135" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">permanently damaged</text>
+      <!-- Scale labels -->
+      <text x="50" y="50" font-family="Outfit" font-size="11" fill="#64748b">0 Ncm</text>
+      <text x="630" y="50" font-family="Outfit" font-size="11" fill="#64748b">200+ Ncm</text>
+      <!-- Normal range -->
+      <rect x="50" y="72" width="150" height="16" rx="4" fill="rgba(16,185,129,.2)" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
+      <text x="125" y="45" font-family="Outfit" font-size="10" fill="#10b981" text-anchor="middle" font-weight="600">Normal range: 35–50 Ncm</text>
+    </svg>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">The Logic</div>
+    <p>Better to fracture a <strong>replaceable connector at 190 Ncm</strong> than destroy the internal connection of an implant that's already placed in bone. The connector is a sacrificial component.</p>
+  </div>
+</div>`,
+
+// 20 Fixture drivers
+`<div>
+  <div class="slide-subtitle">Emergency</div>
+  <div class="slide-title">Fixture Drivers — For When Things Go Wrong</div>
+  <div class="slide-text">Fixture drivers are emergency tools. Unlike ratchet connectors, they have <strong>no fracture point</strong> — they don't snap.</div>
+  <div class="two-col" style="margin-top:20px">
+    <div>
+      <div class="card">
+        <h3>When to Use</h3>
+        <p style="margin-top:8px;line-height:1.8">• Your carrier/connector has snapped<br>• An implant is stuck and needs reverse torque to remove<br>• You need more force than the ratchet connector allows</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Why No Fracture Point?</h3>
+        <p style="margin-top:8px;line-height:1.8">A stuck implant requires higher torque to reverse out than what caused it to get stuck. The fixture driver must handle this without breaking, so the weak point is intentionally omitted.</p>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+// 21 Hex drivers
+`<div>
+  <div class="slide-subtitle">Components</div>
+  <div class="slide-title">1.2 mm Hex Drivers</div>
+  <div class="slide-text" style="margin-bottom:16px">Two blue-topped drivers (short and long) at the bottom of your kit. These connect to <strong>everything prosthetic</strong>:</div>
+  <div class="card-grid">
+    <div class="card"><h3>Cover Screws</h3><p>Seal the implant internal connection during submerged healing.</p></div>
+    <div class="card"><h3>Healing Abutments</h3><p>Allow transmucosal healing and shape the soft tissue emergence profile.</p></div>
+    <div class="card"><h3>Prosthetic Screws</h3><p>Secure the final crown or bridge to the implant.</p></div>
+    <div class="card"><h3>Scan / Impression Copings</h3><p>Transfer the implant position to your lab or digital workflow.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">Friction Fit</div>
+    <p>These drivers are <strong>friction-fit</strong> — components click on and stay in place. You don't need to balance a healing abutment on the tip while walking to the patient. They click, they hold.</p>
+  </div>
+</div>`,
+
+// 22 Insertion components
+`<div>
+  <div class="slide-subtitle">Kit Layout</div>
+  <div class="slide-title">Implant Insertion Components</div>
+  <div class="slide-text" style="margin-bottom:16px">Two methods of placing implants. Each has its own set of connectors in the kit:</div>
+  <table class="comp-table">
+    <thead><tr><th></th><th>Handpiece Connectors</th><th>Torque Wrench Connectors</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Identified by</strong></td><td>Latch-grip end</td><td>Square top (fits torque wrench star)</td></tr>
+      <tr><td><strong>NC (Narrow)</strong></td><td>Short + Long</td><td>Short + Long</td></tr>
+      <tr><td><strong>RC (Regular)</strong></td><td>Short + Long</td><td>Short + Long</td></tr>
+      <tr><td><strong>Colour code</strong></td><td>Yellow = NC, Red = RC</td><td>Yellow = NC, Red = RC</td></tr>
+      <tr><td><strong>Shank marking</strong></td><td>NCS, NCL, RCS, RCL</td><td>NCS, NCL, RCS, RCL</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px">
+    <div class="highlight-title">💡 End-of-Session Habit</div>
+    <p>Spend a couple of minutes after each practical making sure connectors are in the right slots — RC with RC, NC with NC, short and long in the right places. You'll be using the same kit next time.</p>
+  </div>
+</div>`,
+
+// 23 Quiz 2
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Torque Wrench</div>
+  <div class="quiz-box">
+    <div class="quiz-q">When inserting an implant with the manual torque wrench, which direction should the arrow point?</div>
+    <div class="quiz-opts" id="q2">
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">A</span>Arrow pointing away from the lever (upward)</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,true)"><span class="letter">B</span>Arrow pointing towards the lever (downward)</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">C</span>Arrow position doesn't matter for insertion</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">D</span>Arrow pointing left</div>
+    </div>
+    <div class="quiz-feedback correct" id="q2-correct">✓ Correct! Arrow towards the lever = clockwise = insertion. Arrow away = counter-clockwise = removal. Always check it's fully seated when changing direction.</div>
+    <div class="quiz-feedback wrong" id="q2-wrong">✗ Arrow pointing towards the lever (downward) = insertion (clockwise). Arrow away from the lever = removal (counter-clockwise).</div>
+  </div>
+</div>`,
+
+// 24 Torque values
+`<div>
+  <div class="slide-subtitle">Clinical</div>
+  <div class="slide-title">Critical Torque Values to Remember</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Scale bar -->
+      <rect x="60" y="100" width="580" height="20" rx="10" fill="#1a2438"/>
+      <!-- Green zone -->
+      <rect x="60" y="100" width="200" height="20" rx="10" fill="rgba(16,185,129,.3)"/>
+      <text x="160" y="90" font-family="Outfit" font-size="12" fill="#10b981" text-anchor="middle" font-weight="700">IDEAL: 35 Ncm</text>
+      <!-- Yellow zone -->
+      <rect x="260" y="100" width="100" height="20" fill="rgba(245,158,11,.3)"/>
+      <text x="310" y="90" font-family="Outfit" font-size="11" fill="#f59e0b" text-anchor="middle" font-weight="600">50 Ncm</text>
+      <text x="310" y="150" font-family="Outfit" font-size="10" fill="#f59e0b" text-anchor="middle">⚠️ Stop here if</text>
+      <text x="310" y="165" font-family="Outfit" font-size="10" fill="#f59e0b" text-anchor="middle">supracrestal</text>
+      <!-- Red zone -->
+      <rect x="360" y="100" width="100" height="20" fill="rgba(239,68,68,.3)"/>
+      <text x="410" y="90" font-family="Outfit" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="600">60 Ncm</text>
+      <text x="410" y="150" font-family="Outfit" font-size="10" fill="#ef4444" text-anchor="middle">MAX — take out</text>
+      <text x="410" y="165" font-family="Outfit" font-size="10" fill="#ef4444" text-anchor="middle">and drill bigger</text>
+      <!-- Labels -->
+      <text x="60" y="80" font-family="Outfit" font-size="10" fill="#64748b">0</text>
+      <text x="640" y="80" font-family="Outfit" font-size="10" fill="#64748b">190+ Ncm</text>
+      <!-- Decision boxes -->
+      <rect x="80" y="190" width="170" height="55" rx="8" fill="#16202f" stroke="#10b981" stroke-width="1.5"/>
+      <text x="165" y="213" font-family="Outfit" font-size="11" fill="#10b981" text-anchor="middle" font-weight="600">20–35 Ncm</text>
+      <text x="165" y="230" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Trans or submerged</text>
+      <rect x="270" y="190" width="170" height="55" rx="8" fill="#16202f" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="355" y="213" font-family="Outfit" font-size="11" fill="#f59e0b" text-anchor="middle" font-weight="600">50 Ncm supracrestal</text>
+      <text x="355" y="230" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Back off or drill bigger</text>
+      <rect x="460" y="190" width="170" height="55" rx="8" fill="#16202f" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="545" y="213" font-family="Outfit" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="600">60+ Ncm anywhere</text>
+      <text x="545" y="230" font-family="Outfit" font-size="10" fill="#94a3b8" text-anchor="middle">Remove and re-drill</text>
+    </svg>
+  </div>
+</div>`,
+
+// 25 Healing abutment
+`<div>
+  <div class="slide-subtitle">Prosthetics</div>
+  <div class="slide-title">Choosing a Healing Abutment</div>
+  <div class="slide-text" style="margin-bottom:16px">Healing abutments come in different <strong>connections</strong> (NC/RC), <strong>widths</strong>, and <strong>heights</strong>.</div>
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <h3>Width Selection</h3>
+        <p style="margin-top:8px;line-height:1.8">Corresponds to the <strong>future emergence profile</strong> of the restoration. Narrow for incisors, wider for premolars/molars. A wider abutment may require polishing bone peaks to seat properly.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Height Formula</h3>
+        <p style="margin-top:8px;line-height:1.8;font-size:15px;color:var(--text-bright)"><strong>Implant depth + Mucosa thickness + 1–2 mm</strong></p>
+        <p style="margin-top:8px;line-height:1.6">Example: 2 mm subcrestal + 3 mm mucosa = <strong>6 mm</strong> healing abutment. The extra 1–2 mm ensures the abutment is visible and will self-expose through the tissue.</p>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+// 26 Healing abutment calc
+`<div>
+  <div class="slide-subtitle">Calculator</div>
+  <div class="slide-title">Healing Abutment Height Calculator</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:16px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <span style="font-size:14px;color:var(--text-dim);min-width:200px">Implant depth below crest (mm):</span>
+      <input class="calc-input" type="number" id="hDepth" value="2" min="0" max="6" step="0.5" oninput="calcHA()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-bright);font-size:15px;font-family:Outfit;width:100px">
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <span style="font-size:14px;color:var(--text-dim);min-width:200px">Mucosa thickness (mm):</span>
+      <input class="calc-input" type="number" id="hMucosa" value="3" min="1" max="8" step="0.5" oninput="calcHA()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-bright);font-size:15px;font-family:Outfit;width:100px">
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <span style="font-size:14px;color:var(--text-dim);min-width:200px">Safety margin (mm):</span>
+      <input class="calc-input" type="number" id="hMargin" value="1" min="1" max="3" step="0.5" oninput="calcHA()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-bright);font-size:15px;font-family:Outfit;width:100px">
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(139,92,246,.03));border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:18px;text-align:center;margin-top:8px">
+      <div style="font-size:32px;font-weight:700;color:var(--accent2);font-family:DM Serif Display" id="haResult">6</div>
+      <div style="font-size:14px;color:var(--text-dim);margin-top:4px">mm healing abutment recommended</div>
+    </div>
+  </div>
+</div>`,
+
+// 27 Quiz 3
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Surgical Motor</div>
+  <div class="quiz-box">
+    <div class="quiz-q">Why should you NOT sterilise the surgical motor cable through a vacuum autoclave?</div>
+    <div class="quiz-opts" id="q3">
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">A</span>It damages the foot pedal connection</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,true)"><span class="letter">B</span>Water from the autoclave can get inside and destroy the electrical cable (£600–700 replacement)</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">C</span>The heat melts the cable insulation</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">D</span>It voids the manufacturer warranty only</div>
+    </div>
+    <div class="quiz-feedback correct" id="q3-correct">✓ Correct! Electricity runs through the cable. Vacuum autoclaves use water/steam. If water gets inside, the cable is destroyed — and replacement costs £600–700. Use an alcohol wipe instead.</div>
+    <div class="quiz-feedback wrong" id="q3-wrong">✗ The main risk is water ingress. Vacuum autoclaves use water/steam, and the cable carries electricity. Water inside = destroyed cable at £600–700 replacement cost.</div>
+  </div>
+</div>`,
+
+// 28 Torque decisions
+`<div>
+  <div class="slide-subtitle">Decision Making</div>
+  <div class="slide-title">Post-Placement Torque Decisions</div>
+  <div class="reveal-list">
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">⬇️ Up to 20–25 Ncm — Low Torque <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner"><strong>Submerge the implant.</strong> Low torque means limited primary stability. Bury it under the mucosa for protected healing. The implant will need a second-stage exposure surgery later.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">↔️ 25–35 Ncm — Moderate Torque <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner"><strong>Either approach works.</strong> You can go transmucosal (healing abutment through the gum) or submerged, depending on other factors like grafting needs.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">⬆️ 35+ Ncm — Good Torque <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner"><strong>Transmucosal healing.</strong> Place a healing abutment that extends through the mucosa. No need for a second exposure surgery. You can sometimes even consider immediate loading protocols.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">⚠️ 50+ Ncm Supracrestal — Too High <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner"><strong>The implant is telling you the osteotomy is too tight.</strong> Options: back off a few turns, wait, then try again (the implant self-taps). Or remove and drill wider. Never force past 60 Ncm.</div></div>
+    </div>
+  </div>
+</div>`,
+
+// 29 Summary
+`<div>
+  <div class="slide-subtitle">Summary</div>
+  <div class="slide-title">Lecture 2 — Key Takeaways</div>
+  <div class="key-point" style="margin-top:20px"><div class="key-num">1</div><div class="key-content"><h4>Elevator Rule</h4><p>Polished surface → gum. Sharp surface → bone. Always. Every elevator.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Buser = Elevation, Mini Me = Release</h4><p>Buser for initial pointed elevation. Mini Me for blunt periosteal release with less swelling.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Motor Essentials</h4><p>Don't mix handpieces. Have two in clinic. Don't autoclave cables. Use sterile sleeves.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Torque Wrench</h4><p>Arrow towards lever = insert. Always use the lever, never grab the top. Sterilise in two pieces.</p></div></div>
+  <div class="key-point"><div class="key-num">5</div><div class="key-content"><h4>Torque Values</h4><p>35 Ncm ideal. 50 Ncm supracrestal = stop. 60 Ncm max = remove and re-drill.</p></div></div>
+</div>`,
+
+// 30 End
+`<div class="title-slide">
+  <div class="slide-subtitle">End of Lecture 2</div>
+  <div class="slide-title">Up Next: Lecture 3</div>
+  <p class="title-meta" style="margin-top:24px;max-width:550px;margin-left:auto;margin-right:auto;line-height:1.7">The Drilling Sequence — covering the full drill kit, lance/pilot/shaping drills, stopper vs laser-banded systems, bone density classification, osteotomy preparation, and implant placement protocol.</p>
+</div>`
+];
+
+let cur=0;const total=slides.length;
+const area=document.getElementById('slideArea'),counter=document.getElementById('counter'),progress=document.getElementById('progress'),dotsC=document.getElementById('dots');
+const visited=new Set([0]);
+function render(){area.innerHTML='';const d=document.createElement('div');d.className='slide active';d.innerHTML=`<div class="slide-inner">${slides[cur]}</div>`;area.appendChild(d);counter.textContent=`${cur+1} / ${total}`;progress.style.width=((cur+1)/total*100)+'%';document.getElementById('prevBtn').disabled=cur===0;document.getElementById('nextBtn').disabled=cur===total-1;visited.add(cur);renderDots();if(document.getElementById('hDepth'))calcHA()}
+function renderDots(){dotsC.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='nav-dot'+(i===cur?' active':visited.has(i)?' visited':'');d.onclick=()=>{cur=i;render()};dotsC.appendChild(d)}}
+function go(dir){cur=Math.max(0,Math.min(total-1,cur+dir));render()}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);if(e.key==='ArrowLeft')go(-1)});
+function showInst(n,el){document.querySelectorAll('.inst-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.inst-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('ip'+n).classList.add('active')}
+function checkQ(id,el,correct){if(el.closest('.quiz-opts').querySelector('.correct,.wrong'))return;el.classList.add(correct?'correct':'wrong');document.getElementById(id+'-'+(correct?'correct':'wrong')).classList.add('show');if(!correct)el.closest('.quiz-opts').querySelectorAll('.quiz-opt').forEach(o=>{if(o!==el){o.onclick=null;o.style.opacity='.4'}})}
+function toggleR(el){el.classList.toggle('open')}
+function calcHA(){const d=parseFloat(document.getElementById('hDepth')?.value)||2;const m=parseFloat(document.getElementById('hMucosa')?.value)||3;const mg=parseFloat(document.getElementById('hMargin')?.value)||1;document.getElementById('haResult').textContent=(d+m+mg).toFixed(1)}
+render();
+</script>
+</body>
+</html>

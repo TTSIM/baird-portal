@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module 2 · Day 1 · Lecture 3 — Whole-Case Planning &amp; High-Risk Patients</title>
+<style>
+:root{--bg:#0b1120;--bg2:#111a2e;--panel:#152038;--panel2:#1c2a48;--ink:#e6edf7;--muted:#9fb1cf;--accent:#5ee0c1;--accent2:#7ab8ff;--warn:#ffb86b;--bad:#ff6b8a;--good:#5ee0c1;--border:#26365a}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;line-height:1.55}
+header.bar{position:sticky;top:0;z-index:50;background:rgba(11,17,32,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.bar h1{font-size:14px;margin:0;font-weight:600;color:var(--accent)}
+.bar h1 span{color:var(--muted);font-weight:400}
+.controls{display:flex;gap:8px;align-items:center}
+.btn{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+.btn:hover{background:var(--accent);color:#0b1120}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.counter{color:var(--muted);font-size:13px;min-width:70px;text-align:center}
+.progress{height:3px;background:var(--panel);overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+main{max-width:1100px;margin:0 auto;padding:30px 24px 80px}
+.slide{display:none;animation:fade .35s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide h2{font-size:30px;margin:0 0 6px;color:var(--accent)}
+.slide .num{color:var(--muted);font-size:13px;margin-bottom:18px;text-transform:uppercase;letter-spacing:1.5px}
+.slide h3{color:var(--accent2);margin-top:24px;font-size:18px}
+.card{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:14px;padding:24px;margin:18px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.pill{display:inline-block;background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--border);margin:2px}
+.tag-good{background:#0e3a2e;color:var(--good);border-color:#1f6b54}
+.tag-warn{background:#3a2a0e;color:var(--warn);border-color:#6b531f}
+.tag-bad{background:#3a0e1c;color:var(--bad);border-color:#6b1f33}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:10px 14px;border-left:3px solid var(--accent);background:var(--panel);margin:8px 0;border-radius:6px}
+.stat{font-size:42px;font-weight:700;color:var(--accent);line-height:1}
+.stat-label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.flip{perspective:1000px;height:180px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--border)}
+.flip-front{background:linear-gradient(135deg,var(--panel2),var(--panel));text-align:center}
+.flip-front .icon{font-size:34px;margin-bottom:8px}
+.flip-front .label{font-weight:600;color:var(--accent2)}
+.flip-front .hint{font-size:11px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+.flip-back{background:linear-gradient(135deg,#13384a,#0e2233);transform:rotateY(180deg);font-size:13px}
+svg.diag{width:100%;height:auto;background:#0a1426;border-radius:10px;border:1px solid var(--border)}
+.callout{background:#13384a;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;margin:14px 0}
+.callout strong{color:var(--accent)}
+.warn-call{background:#3a2a0e;border-left-color:var(--warn)}
+.warn-call strong{color:var(--warn)}
+.bad-call{background:#3a0e1c;border-left-color:var(--bad)}
+.bad-call strong{color:var(--bad)}
+.click-reveal{background:var(--panel);padding:14px;border-radius:8px;cursor:pointer;border:1px dashed var(--border);margin:8px 0;transition:.2s}
+.click-reveal:hover{border-color:var(--accent)}
+.click-reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--accent)}
+.click-reveal.open .answer{display:block}
+.click-reveal .q{font-weight:600;color:var(--accent2)}
+.click-reveal .q::before{content:"❓ "}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+th{background:var(--panel2);color:var(--accent2)}
+footer.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px;border-top:1px solid var(--border);margin-top:40px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:20px}
+.toc-item{background:var(--panel);padding:14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:.2s}
+.toc-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.toc-item .n{color:var(--accent);font-weight:700;font-size:13px}
+.toc-item .t{display:block;margin-top:4px;color:var(--ink);font-size:14px}
+.flag{display:inline-block;background:#3a0e1c;color:var(--bad);padding:5px 12px;border-radius:6px;font-size:13px;margin:4px;border:1px solid #6b1f33}
+.flag::before{content:"🚩 "}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Module 2 · Day 1 · Lecture 3 <span>— Whole-Case Planning &amp; High-Risk Patients</span></h1>
+  <div class="controls">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <button class="btn" id="prev">← Prev</button>
+    <span class="counter" id="counter">1 / 1</span>
+    <button class="btn" id="next">Next →</button>
+  </div>
+</header>
+<div class="progress"><div class="progress-bar" id="pbar" style="width:0"></div></div>
+
+<main id="deck">
+
+<!-- 1 -->
+<section class="slide active">
+  <div class="num">Slide 1 · Welcome</div>
+  <h2>Whole-Case Planning, Risk &amp; Litigation in Implant Dentistry</h2>
+  <div class="card">
+    <p style="font-size:18px;color:var(--accent2)">Lecturer: visiting professor, Glasgow — periodontist, prosthodontist and dento-legal expert with 40+ years of practice across Scotland, Canada, the US and the UAE.</p>
+    <p>This third lecture is the perspective of someone who has lived through six different periodontal classifications and now spends most of his time providing expert opinion on cases that have gone wrong. Expect a different lens: less protocol, more pattern recognition. The recurring message: <em>plan the case, not the space.</em></p>
+  </div>
+  <h3>Lecture roadmap</h3>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="goto(2)"><span class="n">02</span><span class="t">Plan the case, not the space</span></div>
+    <div class="toc-item" onclick="goto(3)"><span class="n">03</span><span class="t">What "high risk" really means</span></div>
+    <div class="toc-item" onclick="goto(4)"><span class="n">04</span><span class="t">Risk factors then vs now</span></div>
+    <div class="toc-item" onclick="goto(5)"><span class="n">05</span><span class="t">Smoking — still relevant?</span></div>
+    <div class="toc-item" onclick="goto(6)"><span class="n">06</span><span class="t">Cessation protocol</span></div>
+    <div class="toc-item" onclick="goto(7)"><span class="n">07</span><span class="t">Antidepressants (SSRIs)</span></div>
+    <div class="toc-item" onclick="goto(8)"><span class="n">08</span><span class="t">Proton pump inhibitors</span></div>
+    <div class="toc-item" onclick="goto(9)"><span class="n">09</span><span class="t">Antibiotic allergy</span></div>
+    <div class="toc-item" onclick="goto(10)"><span class="n">10</span><span class="t">Bisphosphonates &amp; vitamin D</span></div>
+    <div class="toc-item" onclick="goto(11)"><span class="n">11</span><span class="t">Peri-implantitis: 90/10 rule</span></div>
+    <div class="toc-item" onclick="goto(12)"><span class="n">12</span><span class="t">Perio history vs implant outcome</span></div>
+    <div class="toc-item" onclick="goto(13)"><span class="n">13</span><span class="t">Short implants are no longer short</span></div>
+    <div class="toc-item" onclick="goto(14)"><span class="n">14</span><span class="t">Patient red flags</span></div>
+    <div class="toc-item" onclick="goto(15)"><span class="n">15</span><span class="t">Read the patient, not the X-rays</span></div>
+    <div class="toc-item" onclick="goto(16)"><span class="n">16</span><span class="t">Same-day teeth — marketing</span></div>
+    <div class="toc-item" onclick="goto(17)"><span class="n">17</span><span class="t">The litigation iceberg</span></div>
+    <div class="toc-item" onclick="goto(18)"><span class="n">18</span><span class="t">Why patients sue</span></div>
+    <div class="toc-item" onclick="goto(19)"><span class="n">19</span><span class="t">Non-defensible errors</span></div>
+    <div class="toc-item" onclick="goto(20)"><span class="n">20</span><span class="t">Communication &amp; consent</span></div>
+    <div class="toc-item" onclick="goto(21)"><span class="n">21</span><span class="t">Records, templates &amp; honesty</span></div>
+    <div class="toc-item" onclick="goto(22)"><span class="n">22</span><span class="t">The problem-list method</span></div>
+    <div class="toc-item" onclick="goto(23)"><span class="n">23</span><span class="t">Active vs inactive problems</span></div>
+    <div class="toc-item" onclick="goto(24)"><span class="n">24</span><span class="t">From problems to plan</span></div>
+    <div class="toc-item" onclick="goto(25)"><span class="n">25</span><span class="t">Patient letters &amp; lay terms</span></div>
+    <div class="toc-item" onclick="goto(26)"><span class="n">26</span><span class="t">Aesthetic risk &amp; smile line</span></div>
+    <div class="toc-item" onclick="goto(27)"><span class="n">27</span><span class="t">Knowledge check</span></div>
+    <div class="toc-item" onclick="goto(28)"><span class="n">28</span><span class="t">Take-home messages</span></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="num">Slide 2 · Plan the case</div>
+  <h2>Plan the case — not the space</h2>
+  <div class="card">
+    <p>Early in your training you will be given relatively simple cases, focused on a single space. The temptation is to keep planning that way: see a gap, plan an implant. The successful clinician learns to do the opposite — to back out of the gap and look at the entire mouth, the whole patient, the whole life.</p>
+    <div class="callout"><strong>Snooker analogy:</strong> Snooker players plan four or five shots ahead. Golfers plan their second shot while playing the first. Why do we not think three or four appointments ahead when treating patients?</div>
+    <h3>What "the case" includes</h3>
+    <ul class="clean">
+      <li>The chief complaint — and the unstated complaint behind it.</li>
+      <li>Adjacent and opposing teeth, not just the missing tooth.</li>
+      <li>The occlusal scheme as a whole.</li>
+      <li>Periodontal status of the mouth.</li>
+      <li>Future contingencies — what happens if a tooth or implant fails in five years?</li>
+      <li>Medical, social, psychological, financial, time and behavioural factors.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="num">Slide 3 · What is "high risk"?</div>
+  <h2>High risk in implant dentistry — the full picture</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3 style="margin-top:0">Implant failure</h3>
+      <p>The classic worry. Marketed heavily by implant companies. But often quoted out of context — one company famously counted boxed implants in cupboards as "successes".</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Peri-implantitis</h3>
+      <p>By definition a late phenomenon. Real, but the literature has overstated its inevitability. Treated and untreated cases sometimes show similar tooth loss outcomes.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Aesthetic failure</h3>
+      <p>Defined by the patient, not the dentist. A clinically perfect crown can still be a failure if the patient feels the result is wrong.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Phonetic failure</h3>
+      <p>High-profile examples: Margaret Thatcher and Elton John reportedly never sounded the same after their implant work. Listen for S, F, V sounds during temporaries.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Litigation</h3>
+      <p>Increasingly the dominant risk. A real or perceived adverse event + poor communication + arrogance = a complaint. Then a lawsuit.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Mortality</h3>
+      <p>Around six known cases globally of patient death during implant treatment. Sedation risk, undiagnosed cardiovascular events, anaphylaxis. Implants are not minor surgery.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="num">Slide 4 · Risk factors then vs now</div>
+  <h2>What we worried about then — and what we worry about now</h2>
+  <table>
+    <tr><th>Risk factor</th><th>1990s view</th><th>Current view</th></tr>
+    <tr><td>Heavy smoking</td><td>Major risk</td><td>Still a risk above 20–25/day; less below — and less relevant overall as smoking declines</td></tr>
+    <tr><td>Poor bone quality</td><td>Major risk</td><td>Minor risk now thanks to rough-surface implants</td></tr>
+    <tr><td>Poorly controlled diabetes</td><td>Risk</td><td>Still a risk only when very poorly controlled</td></tr>
+    <tr><td>Short implants</td><td>Major risk — failure rates 20–30%</td><td>Now match long implants for survival (rough surface)</td></tr>
+    <tr><td>SSRI antidepressants</td><td>Unknown</td><td>2–3× failure rate</td></tr>
+    <tr><td>Proton pump inhibitors</td><td>Unknown</td><td>~1.8× failure rate</td></tr>
+    <tr><td>Penicillin allergy</td><td>Unknown</td><td>~3× failure rate; 10× with immediate placement</td></tr>
+    <tr><td>Challenging patient</td><td>Soft factor</td><td>Now a leading cause of litigation</td></tr>
+    <tr><td>Vitamin D deficiency</td><td>N/A</td><td>Equivocal — supplementation not proven</td></tr>
+  </table>
+  <div class="callout">The medications and the patient have replaced bone quality and implant length as the dominant modern risks.</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="num">Slide 5 · Smoking</div>
+  <h2>Smoking is declining — but still matters at high doses</h2>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">The vascular effect</h3>
+        <p>One cigarette cuts peripheral blood flow by ~40% for one hour. A pack-a-day smoker is essentially in a state of self-imposed peripheral vascular disease.</p>
+        <p>Smokers don't bleed easily on probing — which means BoP is a poor measure of perio control in heavy smokers.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Numbers from the Glasgow study</h3>
+        <ul class="clean">
+          <li>2,118 implants placed by one private operator.</li>
+          <li>Failure rate: <strong>4.76% in non-smokers vs 11.28% in smokers</strong>.</li>
+          <li>Anterior maxilla — close to <strong>45% failure rate</strong> in heavy smokers.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">Rough-surface implants have largely closed the gap between smokers and non-smokers in modern data. They should be the implant of choice for any patient who cannot or will not stop smoking.</div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="num">Slide 6 · Cessation protocol</div>
+  <h2>The cessation protocol that works</h2>
+  <div class="card">
+    <p>An early Canadian study of 226 patients and 638 implants tested a three-arm comparison: never-smokers, smokers who quit (1 week before, 8 weeks after placement), and smokers who continued.</p>
+    <div class="grid3">
+      <div class="card" style="background:#1c2a48;margin:0;text-align:center">
+        <div class="stat">≈</div>
+        <div class="stat-label">No difference between never-smokers and smokers who quit per protocol</div>
+      </div>
+      <div class="card" style="background:#1c2a48;margin:0;text-align:center">
+        <div class="stat">↑↑</div>
+        <div class="stat-label">Significantly higher failures in smokers who continued</div>
+      </div>
+      <div class="card" style="background:#1c2a48;margin:0;text-align:center">
+        <div class="stat">💷</div>
+        <div class="stat-label">Money is the best motivator — open a separate "cigarette account"</div>
+      </div>
+    </div>
+    <div class="callout">Two patients from the lecturer's practice paid for all of their perio treatment <em>plus a holiday</em> within two years simply by diverting their cigarette money into a separate bank account. The financial framing converts more patients than the clinical one.</div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="num">Slide 7 · Antidepressants</div>
+  <h2>SSRIs and implant failure — a growing problem</h2>
+  <div class="card">
+    <p>Selective serotonin reuptake inhibitors (e.g. citalopram, sertraline, fluoxetine) have an effect on bone metabolism. Multiple studies — increasing in size — show an increased implant failure rate.</p>
+    <table>
+      <tr><th>Study</th><th>Size</th><th>Effect</th></tr>
+      <tr><td>Early small study (~12 yrs ago)</td><td>Small</td><td>Approximately doubled failure rate</td></tr>
+      <tr><td>2018 large study</td><td>~2,000+ implants</td><td>Tripled failure rate</td></tr>
+      <tr><td>Subsequent larger study</td><td>Very large</td><td>~4× failure rate (84% vs 96% success)</td></tr>
+      <tr><td>Recent meta-analysis</td><td>Pooled</td><td>~2.5× failure rate at both patient and implant level</td></tr>
+    </table>
+    <div class="callout warn-call">SSRI use has become widespread in the general population. <strong>Document the medication, document the conversation, document that you informed the patient of the elevated risk.</strong> This is not an exclusion — but it is a consent issue.</div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="num">Slide 8 · Proton pump inhibitors</div>
+  <h2>PPIs — a newer concern</h2>
+  <div class="card">
+    <p>Proton pump inhibitors (e.g. omeprazole, lansoprazole, esomeprazole) interfere with calcium absorption and bone metabolism. A large retrospective British study of approximately 20,000 patients and 50,000 implants over 12 years found:</p>
+    <div class="grid2">
+      <div class="callout"><strong>Failure rate:</strong> ~1.77× higher in PPI users compared to non-users.</div>
+      <div class="callout"><strong>Pantoprazole:</strong> appears not to increase failure — though this is a newer drug with less data.</div>
+    </div>
+    <div class="callout warn-call">PPI use has gone from "never heard of" in 1990 to ~20–30% of the adult population today. This is one of the fastest-growing consent issues in implant dentistry.</div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="num">Slide 9 · Antibiotic allergy</div>
+  <h2>Penicillin allergy — surprisingly impactful</h2>
+  <div class="card">
+    <p>A study of 5,500 implants in two systems treated over 10 years:</p>
+    <table>
+      <tr><th>Group</th><th>Failure rate</th></tr>
+      <tr><td>Patients who could take penicillin</td><td>Baseline</td></tr>
+      <tr><td>Patients allergic to penicillin (overall)</td><td>~3.2× higher</td></tr>
+      <tr><td>Penicillin-allergic + immediate implant placement</td><td>~10× higher failure</td></tr>
+      <tr><td>Clindamycin alternative</td><td>Up to 6× more risk of infection</td></tr>
+    </table>
+    <div class="callout warn-call"><strong>Clinical rule:</strong> Do not place immediate implants in patients allergic to penicillin. The combination is one of the highest published failure scenarios in modern implant dentistry.</div>
+    <p>Tetracycline allergy does not necessarily increase implant loss but is associated with increased soft-tissue breakdown / mucositis-type problems.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="num">Slide 10 · Bisphosphonates &amp; vitamin D</div>
+  <h2>Bisphosphonates and vitamin D — separating signal from noise</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Oral bisphosphonates</h3>
+      <p>Per consensus conference data, oral bisphosphonates do not significantly affect implant survival. Caution remains around <strong>IV bisphosphonates</strong> and other antiresorptives, where MRONJ risk is higher.</p>
+      <span class="pill tag-good">Oral: usually safe to proceed</span>
+      <span class="pill tag-bad">IV: refer / avoid</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Vitamin D supplementation</h3>
+      <p>A 2022 systematic review found <strong>no effect</strong> of vitamin D supplements on implant success in three studies; one outlier study suggested a relationship with deficiency, but on close reading the methodology was flawed (mixing implants and patients in the denominator with only 27 patients and 3 failures).</p>
+      <span class="pill tag-warn">Evidence too weak to recommend routine supplementation</span>
+    </div>
+  </div>
+  <div class="callout"><strong>Reading lesson:</strong> When one study is an outlier, read it three or four times before believing it. You either count implants or you count patients — never mix and match.</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="num">Slide 11 · Peri-implantitis</div>
+  <h2>The 90/10 rule — and why peri-implantitis is partly fake news</h2>
+  <div class="card">
+    <p>A famous quote from the periodontal microbiologist Jorgen Slots, opening a three-hour seminar with no slides:</p>
+    <div class="callout" style="font-size:18px;text-align:center">
+      <em>"90% of peri-implantitis doesn't need treatment, 10% is untreatable. Discuss."</em>
+    </div>
+    <p>The data behind this provocation: in untreated cohorts, around 6.5–10% of implants are lost to peri-implantitis. In treated cohorts, around 9% are still lost. If doing nothing and doing everything produce similar outcomes, the value of the heroic intervention is questionable.</p>
+    <h3>The Coley & Jemt insight</h3>
+    <p>A history of marginal bone loss is <strong>not</strong> a reliable predictor of future bone loss. Most implants with 2–3 mm of early bone loss <em>do not</em> progress. Unnecessary alarmism leads to overtreatment that does not benefit the patient.</p>
+    <div class="callout warn-call"><strong>Don't ignore — but don't over-react.</strong> Monitor, image, and intervene if bone loss is genuinely <em>progressive</em>, not just present.</div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="num">Slide 12 · Perio history</div>
+  <h2>If you have to bet — bet on the implant or the tooth?</h2>
+  <div class="card">
+    <p>A 10-year retrospective study of 58 patients with periodontitis who also had implants:</p>
+    <ul class="clean">
+      <li>Average annual <strong>tooth</strong> loss: ~0.07 per year (slightly more than half of those for periodontal reasons).</li>
+      <li>Average annual <strong>implant</strong> loss: ~0.4 per year.</li>
+      <li>Patients were <strong>10× more likely to lose an implant</strong> than a tooth over the decade.</li>
+    </ul>
+    <div class="callout warn-call"><strong>Counter-intuitive but important:</strong> In a maintained periodontal patient, teeth often outlast implants. This is one of the strongest arguments for <em>preserving teeth aggressively</em> rather than reaching for extraction-and-implant.</div>
+    <p>The exception: aggressive periodontitis (now stage IV grade C) — where rapid downhill progression of teeth makes implants the only viable long-term scaffold for prosthodontic stability.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <div class="num">Slide 13 · Short implants</div>
+  <h2>Short implants are no longer "short"</h2>
+  <div class="card">
+    <p>Twenty-five years ago, the data was clear: 7 mm implants in the posterior maxilla had ~25–30% failure rates. The longer the implant, the higher the success rate. That data drove a generation of sinus lifts and complex grafting.</p>
+    <p>Then implant surfaces changed. Machined → micro-roughened (sandblasted, acid-etched, dual acid-etched). The surface area increased, the cellular response improved, and the relationship with length collapsed.</p>
+    <h3>Modern findings</h3>
+    <ul class="clean">
+      <li>4 mm "ultra-short" implants in the posterior jaw match longer implants for survival in trials.</li>
+      <li>Higher crown-to-implant ratio is paradoxically associated with <em>less</em> marginal bone loss.</li>
+      <li>The decision to graft and lengthen is no longer automatic — short can work.</li>
+    </ul>
+    <div class="callout">Lesson: textbook risk factors have a shelf life. What was true in 1995 may be obsolete in 2025. Always read the surface chemistry and the publication date.</div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <div class="num">Slide 14 · Patient red flags</div>
+  <h2>Red flags — the patients who will hurt you</h2>
+  <div class="card">
+    <p>In the lecturer's medical-legal caseload, certain patient profiles recur. None of these alone is a contraindication, but combinations should make you pause.</p>
+    <div style="margin:14px 0">
+      <span class="flag">Aesthetics is the main reason for treatment</span>
+      <span class="flag">"I just know you can do it"</span>
+      <span class="flag">Pulls their lips back to show you the problem</span>
+      <span class="flag">Has a hard deadline (wedding, holiday)</span>
+      <span class="flag">A staff member dislikes them</span>
+      <span class="flag">History of psychiatric illness or self-harm</span>
+      <span class="flag">Wants the cheapest option but the best result</span>
+      <span class="flag">Has shopped multiple clinicians already</span>
+      <span class="flag">Won't bring family or partner to discussion</span>
+      <span class="flag">Argues with the assistant before meeting you</span>
+      <span class="flag">Wants to use the plan as a menu — picks and chooses</span>
+    </div>
+    <div class="callout bad-call"><strong>Two real cases:</strong> A 38-year-old single parent with three suicide attempts had cosmetic bonding sold to her on a sales call, used her life savings, and was unhappy with the result. A 70-year-old type-2 diabetic on anticoagulants signed an 8-page consent on the day of surgery and was hospitalised for hypovolaemic shock 12 days later. Both settled for tens of thousands. Both should never have been treated.</div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <div class="num">Slide 15 · Read the patient</div>
+  <h2>Read the patient — not just the X-rays</h2>
+  <div class="card">
+    <p>Norman Friedman first described the apically positioned flap in 1962. When he was invited to give a career-spanning lecture decades later, he spoke not about flap design but about <strong>patient body language</strong>. At the time, the audience was disappointed. In retrospect, it was the most important lesson he could have taught.</p>
+    <h3>Body language signals to learn</h3>
+    <ul class="clean">
+      <li>Where do they sit in the waiting room? How do they greet your reception staff?</li>
+      <li>Do they make eye contact, or look at the floor / their phone?</li>
+      <li>Do they crowd you when speaking, or hold themselves back?</li>
+      <li>Do they ask realistic questions, or lecture you on what they want?</li>
+      <li>Do they listen — or wait for you to finish so they can speak?</li>
+    </ul>
+    <div class="callout">In the cosmetic dentistry capitals of the 1970s and 80s, the very best clinicians were known for screening patients out before they ever picked up a handpiece. The first appointment was an audition — both ways.</div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <div class="num">Slide 16 · Same-day teeth</div>
+  <h2>Same-day teeth: an artificial expectation</h2>
+  <div class="card">
+    <p>Same-day teeth are not a treatment concept demanded by patients. They are an artificially created concept developed by dentists for financial and marketing reasons, then sold back to patients as if it were what they had always wanted.</p>
+    <div class="grid2">
+      <div class="callout"><strong>The problem:</strong> Patients who go straight from extraction to immediate restoration to definitive bridge — without ever wearing a temporary denture — tend to be more critical of the final result. They have nothing to compare it to.</div>
+      <div class="callout"><strong>The solution:</strong> A period in a well-made temporary denture builds appreciation. They suffer a little, then they love the final result. <em>Make the temporary thick — don't let them like it too much.</em></div>
+    </div>
+    <div class="callout warn-call"><strong>Errors in haste, repent at leisure.</strong> Aggressive same-day marketing has produced a generation of dissatisfied patients and a steady pipeline of medical-legal cases. Most of the time, slower is better.</div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <div class="num">Slide 17 · The litigation iceberg</div>
+  <h2>The litigation iceberg</h2>
+  <svg class="diag" viewBox="0 0 700 360">
+    <defs><linearGradient id="ice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ab8ff"/><stop offset="1" stop-color="#0a1426"/></linearGradient></defs>
+    <line x1="0" y1="120" x2="700" y2="120" stroke="#5ee0c1" stroke-dasharray="6 6" stroke-width="1.5"/>
+    <text x="690" y="115" fill="#5ee0c1" font-size="11" text-anchor="end">Waterline = visible</text>
+
+    <polygon points="350,40 280,120 420,120" fill="#7ab8ff"/>
+    <text x="350" y="95" fill="#0b1120" font-size="14" font-weight="700" text-anchor="middle">NEGLIGENCE</text>
+
+    <polygon points="280,120 200,200 500,200 420,120" fill="#5377a8"/>
+    <text x="350" y="170" fill="#e6edf7" font-size="13" font-weight="600" text-anchor="middle">LITIGATION</text>
+
+    <polygon points="200,200 130,260 570,260 500,200" fill="#3a5c8e"/>
+    <text x="350" y="237" fill="#e6edf7" font-size="13" text-anchor="middle">COMPLAINTS</text>
+
+    <polygon points="130,260 80,320 620,320 570,260" fill="#243d63"/>
+    <text x="350" y="297" fill="#e6edf7" font-size="13" text-anchor="middle">DISSATISFACTION</text>
+
+    <polygon points="80,320 30,355 670,355 620,320" fill="#162741"/>
+    <text x="350" y="345" fill="#e6edf7" font-size="13" text-anchor="middle">REAL OR PERCEIVED ADVERSE EVENTS</text>
+  </svg>
+  <div class="callout">There are several chances along the way to head off a lawsuit. The visible negligence is the tip — most of the iceberg sits underwater as quiet dissatisfaction that could have been resolved with a phone call.</div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <div class="num">Slide 18 · Why patients sue</div>
+  <h2>Why patients actually sue</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">It is rarely the clinical error</h3>
+      <p>A famous Los Angeles case: a dentist removing a failed subperiosteal implant cut all four major vessels to the premaxilla. The premaxilla sloughed. The patient did <strong>not sue</strong>. Asked why, she said: <em>"He's such a nice man. He keeps calling to see how I am."</em></p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">It is the response</h3>
+      <p>Patients sue when they feel ignored, dismissed, lied to or belittled. They do not sue when they feel cared for — even after catastrophic outcomes.</p>
+      <p>One simple secret: <strong>phone the patient that evening</strong>. Wait until half-time of the football match (otherwise they call you in the 85th minute). Average call length is about 75 seconds. It almost never costs you anything and it heads off the majority of complaints.</p>
+    </div>
+  </div>
+  <div class="callout"><strong>If you make a mistake:</strong> acknowledge it, apologise, fix it. Do not deny, do not belittle, do not blame somebody else. Patients will not sue if they think you are going to fix it.</div>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <div class="num">Slide 19 · Non-defensible errors</div>
+  <h2>Errors that are simply not defensible</h2>
+  <div class="card">
+    <p>Some clinical errors will lose any case in court. They are characterised by failure to act on information that was available at the time.</p>
+    <ul class="clean">
+      <li><strong>Implant contacting an adjacent tooth.</strong> Visible on the post-op radiograph. Inexcusable not to act.</li>
+      <li><strong>Watching and waiting</strong> for post-operative neuropathic symptoms to resolve. If you can remove an implant touching the inferior dental nerve within 36–48 hours, sensation may return. Vitamin B and waiting will not help.</li>
+      <li><strong>Cantilevers too long.</strong> The textbook maximum is ~14 mm. Some cases litigated involved 25 mm cantilevers — the implant nearest the cantilever fractures because the lever multiplies the load.</li>
+      <li><strong>Excess cement.</strong> A leading cause of late peri-implantitis. Remove excess cement at delivery — every time.</li>
+      <li><strong>Treating the saveable tooth as if it were unsaveable.</strong> Implants are <em>not</em> an alternative to a tooth that could have been saved. This is the single most common dento-legal theme.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide">
+  <div class="num">Slide 20 · Communication &amp; consent</div>
+  <h2>Consent that actually counts</h2>
+  <div class="card">
+    <p>Consent is not a signed form. Consent is a documented conversation in which the patient understood the options, the risks, the alternatives, and chose freely.</p>
+    <h3>Elements that matter</h3>
+    <ul class="clean">
+      <li>Clear written and verbal communication.</li>
+      <li>Time to reflect — not signed on the day of surgery under pressure.</li>
+      <li>Realistic, balanced presentation — both the advantages <em>and</em> disadvantages of each option.</li>
+      <li>Documentation of what was said, when, and what the patient said back.</li>
+    </ul>
+    <div class="callout warn-call"><strong>Common failure:</strong> A consent document for an All-on-X case that lists every disadvantage of dentures and every advantage of implants — but none of the disadvantages of implants and none of the advantages of dentures. That is not consent. That is sales.</div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide">
+  <div class="num">Slide 21 · Records &amp; templates</div>
+  <h2>Records, templates &amp; honesty</h2>
+  <div class="card">
+    <p>If it isn't in the records, it didn't happen. Court will not accept "I always do that" as evidence.</p>
+    <h3>The template trap</h3>
+    <p>Pre-written templates are convenient but dangerous. Real cases the lecturer has reviewed:</p>
+    <ul class="clean">
+      <li>Composite placed in a screw-retained implant bridge — patient noted as "advised of sensitivity from composite". Implants do not get sensitive from composite. The template was a copy-paste from another case.</li>
+      <li>Patient "advised of risk of inferior dental nerve damage" — for an upper central incisor. The IDN does not run anywhere near an upper central. The template betrayed the lack of personalised consent.</li>
+    </ul>
+    <div class="callout warn-call"><strong>Rule:</strong> If you use templates, customise them every single time to the specific tooth, the specific patient, and the specific risks of <em>that</em> case. Generic notes can actively undermine your defence.</div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section class="slide">
+  <div class="num">Slide 22 · The problem-list method</div>
+  <h2>The problem-list method of treatment planning</h2>
+  <div class="card">
+    <p>"Now develop a treatment plan" is the worst instruction in dental school. All the data in the world isn't a treatment plan — it's a list of findings. The <em>problem list</em> is the bridge between findings and a plan.</p>
+    <h3>How a problem list is built</h3>
+    <ol style="line-height:1.9">
+      <li>List every finding that requires a separate course of action.</li>
+      <li>Each finding is a numbered line item.</li>
+      <li>Mark each as <strong>A</strong>ctive or <strong>I</strong>nactive.</li>
+      <li>An <em>active</em> problem must be addressed within the present treatment plan.</li>
+      <li>An <em>inactive</em> problem is a deviation from normal that needs monitoring but not active treatment now.</li>
+    </ol>
+    <div class="callout"><strong>Worked example:</strong> A patient with two carious lesions, generalised gingivitis, an unerupted asymptomatic third molar, and an over-erupted opposing tooth might generate four problems: two active (caries × 2 + gingivitis), one inactive (third molar to monitor), and one active (the over-erupted tooth — because you cannot fit an implant crown opposing it without addressing the over-eruption).</div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section class="slide">
+  <div class="num">Slide 23 · Active vs inactive</div>
+  <h2>Active vs inactive — how to decide</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Active problem</h3>
+      <ul class="clean">
+        <li>Causes symptoms or harm.</li>
+        <li>Will worsen if untreated within the planning horizon.</li>
+        <li>Blocks another planned treatment from succeeding.</li>
+        <li>Patient is unhappy with it (aesthetic / functional).</li>
+      </ul>
+      <p><em>Examples:</em> caries, periodontal disease, missing teeth the patient wants replaced, parafunction in a planned restorative case, mobile teeth.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Inactive problem</h3>
+      <ul class="clean">
+        <li>Stable on serial review.</li>
+        <li>Not causing symptoms.</li>
+        <li>Not interfering with planned treatment.</li>
+        <li>Patient not concerned about it.</li>
+      </ul>
+      <p><em>Examples:</em> impacted asymptomatic wisdom tooth, long-standing diastema the patient likes, midline asymmetry the patient doesn't notice, healed root-treated tooth.</p>
+    </div>
+  </div>
+  <div class="callout">An inactive problem can become active later. Document it on the list and on the recall — that is your audit trail.</div>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <div class="num">Slide 24 · From problems to plan</div>
+  <h2>From the problem list to the treatment plan</h2>
+  <div class="card">
+    <p>Once the problem list is complete, draft the treatment plan and then go back and check that <strong>every active problem is addressed</strong>. This single discipline catches an enormous number of oversights.</p>
+    <h3>The matrix workflow</h3>
+    <table>
+      <tr><th>#</th><th>Problem</th><th>A/I</th><th>Treatment item</th></tr>
+      <tr><td>1</td><td>Missing UL2</td><td>A</td><td>Resin-bonded bridge or implant</td></tr>
+      <tr><td>2</td><td>Peg lateral UR2</td><td>A</td><td>Composite build-up or veneer</td></tr>
+      <tr><td>3</td><td>Diastema mesial UL1</td><td>A</td><td>Limited orthodontics</td></tr>
+      <tr><td>4</td><td>Wear facets canines</td><td>A</td><td>Composite restorations + night guard</td></tr>
+      <tr><td>5</td><td>Unerupted UL8</td><td>I</td><td>Monitor at recall</td></tr>
+      <tr><td>6</td><td>Stress / time pressure</td><td>A</td><td>Clear sequencing letter, realistic timeline</td></tr>
+    </table>
+    <p>Every active item gets a treatment. Every inactive item gets a monitoring plan. Nothing is left orphaned.</p>
+  </div>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <div class="num">Slide 25 · Patient letters</div>
+  <h2>Communicating the plan in lay terms</h2>
+  <div class="card">
+    <p>The lecturer's standard approach is to write a letter to the patient after the consultation. The structure:</p>
+    <ol style="line-height:1.9">
+      <li><strong>Pleasure to meet you.</strong> Open warmly and recap their chief complaint in their own words.</li>
+      <li><strong>List the problems</strong> — translated into lay language. "Missing left lateral incisor — the small tooth next to the front tooth."</li>
+      <li><strong>State the treatment plan</strong> in plain English, sequenced.</li>
+      <li><strong>Caveats</strong> — what we cannot fix, what may go wrong, what depends on healing.</li>
+      <li><strong>Estimated timeline and costs</strong>.</li>
+      <li><strong>Invitation to ask questions</strong> before agreeing to proceed.</li>
+    </ol>
+    <div class="callout">This letter <em>is</em> the consent process. It gives the patient time to reflect, share with family, and come back with questions. It also creates a contemporaneous record that protects both parties.</div>
+  </div>
+</section>
+
+<!-- 26 -->
+<section class="slide">
+  <div class="num">Slide 26 · Aesthetic risk &amp; smile line</div>
+  <h2>Aesthetic risk assessment</h2>
+  <div class="card">
+    <p>Some aesthetic situations are simply harder than others. Recognising them early is the only way to manage expectations honestly.</p>
+    <div class="grid2">
+      <div>
+        <h3>High aesthetic risk</h3>
+        <ul class="clean">
+          <li>High smile line (gum visible).</li>
+          <li>Thin gingival biotype.</li>
+          <li>Adjacent crowns or restorations.</li>
+          <li>Bone/soft tissue deficit at the site.</li>
+          <li>Asymmetry between sides.</li>
+          <li>Patient with very high aesthetic expectations.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Lower aesthetic risk</h3>
+        <ul class="clean">
+          <li>Low smile line (gum not shown).</li>
+          <li>Thick gingival biotype.</li>
+          <li>Healthy adjacent teeth.</li>
+          <li>Adequate bone and soft tissue.</li>
+          <li>Symmetric starting point.</li>
+          <li>Patient with realistic expectations.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><strong>The Mayo Clinic scale:</strong> Plastic surgeons there use a simple linear scale — the patient marks where they currently are (0 = ugliest, 100 = most beautiful) and where they hope to get to. The surgeon does the same independently. If the surgeon cannot meet the patient's hopes, the surgeon does not treat. If the patient's hopes are realistic and the surgeon thinks they can be exceeded, treatment proceeds.</div>
+  </div>
+</section>
+
+<!-- 27 -->
+<section class="slide">
+  <div class="num">Slide 27 · Knowledge check</div>
+  <h2>Quick self-check</h2>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">A patient on long-term citalopram (an SSRI) wants implants. What is your approach?</div>
+    <div class="answer">Treat — but document. SSRIs are associated with roughly 2–3× the failure rate. This is a consent issue, not an exclusion. Note the medication, explain the elevated risk in writing, and confirm acceptance. Liaise with the GP only if dose changes are clinically reasonable; do not stop antidepressants for a dental procedure.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Why is "watch and wait" the wrong approach to post-operative inferior dental nerve symptoms after implant placement?</div>
+    <div class="answer">Because the window of reversibility is very short. If an implant in contact with the inferior dental nerve is removed within 36–48 hours, sensation may return. After that, you have lost the chance. Vitamin B is not a treatment.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">What is the maximum textbook cantilever length for an implant bridge — and what was wrong with the litigated case described in the lecture?</div>
+    <div class="answer">Approximately <strong>14 mm</strong> is the textbook maximum. The litigated case used 25 mm cantilevers — almost double. The implant nearest the cantilever became the pivot and fractured. The case settled for £50,000 without going to court.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Why phone the patient on the evening of surgery?</div>
+    <div class="answer">Because it heads off the majority of complaints before they start. Average call length is about 75 seconds. Patients who feel cared for do not sue. Wait until half-time of the football, otherwise they will call you in the 85th minute.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">What is the difference between an active and an inactive problem on a problem list?</div>
+    <div class="answer">An <strong>active</strong> problem must be addressed within the current treatment plan — it is symptomatic, harmful, will worsen, or blocks other treatment. An <strong>inactive</strong> problem is a deviation from normal that needs monitoring but not active treatment right now (e.g. asymptomatic impacted wisdom tooth).</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Why are short implants no longer the risk factor they used to be?</div>
+    <div class="answer">Because implant surfaces have moved from machined to micro-roughened (sandblasted, acid-etched). The increased surface area improves the cellular response, and modern data shows 4 mm implants matching longer ones for survival. The 1990s data on length is now obsolete.</div>
+  </div>
+</section>
+
+<!-- 28 -->
+<section class="slide">
+  <div class="num">Slide 28 · Take-home messages</div>
+  <h2>Take-home messages from Lecture 3</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">🎯 The big ideas</h3>
+      <ul class="clean">
+        <li><strong>Plan the case, not the space.</strong></li>
+        <li>Read the patient — body language matters more than radiographs.</li>
+        <li>Risk factors evolve — what was true in 1995 may be wrong now.</li>
+        <li>Implants are <strong>not</strong> an alternative to a saveable tooth.</li>
+        <li>Most lawsuits are about communication, not clinical skill.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🛠 The clinical habits</h3>
+      <ul class="clean">
+        <li>Build a <strong>problem list</strong> on every complex case.</li>
+        <li>Mark each problem A or I; address every A.</li>
+        <li>Send a <strong>plan letter</strong> in lay terms after consultation.</li>
+        <li>Customise templates — never copy-paste consent.</li>
+        <li>Phone post-op patients the same evening.</li>
+        <li>Six weeks to learn how to do an implant. Ten years to learn when not to.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="text-align:center;margin-top:30px">
+    <em>"It takes me six weeks to teach you how to do surgery, and two years to teach you when not to."</em><br>
+    <span style="color:var(--muted);font-size:13px">— Walter Cohen, University of Pennsylvania</span>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">Module 2 · Day 1 · Lecture 3 — based on the visiting professor's lecture. For educational use only. Not a substitute for clinical judgement or current guidelines.</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+function show(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=(((i+1)/slides.length)*100)+'%';
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goto(n){show(n-1)}
+document.getElementById('prev').onclick=()=>show(i-1);
+document.getElementById('next').onclick=()=>show(i+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')show(i+1);
+  if(e.key==='ArrowLeft')show(i-1);
+});
+show(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1: Partial Dentures</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0f14;--surface:#141820;--surface2:#1a1f2a;--border:#2a3040;--text:#e8eaf0;--text-dim:#8890a4;--accent:#4ecdc4;--accent2:#ff6b6b;--accent3:#ffe66d;--green:#4ecdc4;--red:#ff6b6b;--gradient1:linear-gradient(135deg,#4ecdc4,#44b09e);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:820px;margin:0 auto;padding:32px 24px 80px;}
+header{text-align:center;margin-bottom:40px;padding:40px 0 32px;border-bottom:1px solid var(--border);}
+header .tag{display:inline-block;padding:6px 18px;border-radius:100px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;background:rgba(78,205,196,.12);color:var(--accent);border:1px solid rgba(78,205,196,.25);margin-bottom:16px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,48px);margin-bottom:8px;}
+header p{color:var(--text-dim);font-size:16px;}
+.progress-wrap{position:sticky;top:0;z-index:50;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);}
+.progress-bar-bg{width:100%;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--gradient1);border-radius:3px;transition:width .4s ease;width:0%;}
+.progress-text{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;transition:border-color .3s;}
+.question-card.answered-correct{border-color:rgba(78,205,196,.4);}
+.question-card.answered-wrong{border-color:rgba(255,107,107,.4);}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:1px;margin-bottom:8px;}
+.q-topic{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:inline-block;padding:3px 10px;background:var(--surface2);border-radius:6px;}
+.q-text{font-size:18px;font-weight:500;line-height:1.6;margin-bottom:20px;}
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{padding:16px 20px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif;text-align:left;line-height:1.5;display:flex;gap:12px;align-items:flex-start;}
+.opt-btn:hover:not(.disabled){border-color:var(--accent);background:rgba(78,205,196,.06);}
+.opt-btn .opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;transition:all .25s;}
+.opt-btn.selected .opt-letter{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.opt-btn.correct{border-color:var(--green);background:rgba(78,205,196,.08);}
+.opt-btn.correct .opt-letter{background:var(--green);color:var(--bg);border-color:var(--green);}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,107,107,.06);}
+.opt-btn.wrong .opt-letter{background:var(--red);color:var(--bg);border-color:var(--red);}
+.opt-btn.disabled{cursor:default;opacity:.7;}
+.opt-btn.disabled.correct{opacity:1;}
+.explanation{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:14px;line-height:1.6;display:none;}
+.explanation.show{display:block;}
+.explanation.correct-exp{background:rgba(78,205,196,.08);border:1px solid rgba(78,205,196,.2);color:var(--green);}
+.explanation.wrong-exp{background:rgba(255,107,107,.06);border:1px solid rgba(255,107,107,.2);color:var(--red);}
+.results-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;text-align:center;margin-top:32px;}
+.results-panel.show{display:block;}
+.results-panel h2{font-family:'DM Serif Display',serif;font-size:36px;margin-bottom:8px;}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:24px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+.score-circle .score-num{font-family:'DM Serif Display',serif;font-size:48px;line-height:1;}
+.score-circle .score-label{font-size:13px;color:var(--text-dim);margin-top:4px;}
+.score-circle svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.score-circle circle{fill:none;stroke-width:6;stroke-linecap:round;}
+.score-circle .track{stroke:var(--border);}
+.score-circle .fill{stroke:var(--accent);transition:stroke-dashoffset 1.5s ease;}
+.stats-row{display:flex;justify-content:center;gap:40px;margin:24px 0;}
+.stat-item{text-align:center;}
+.stat-item .stat-num{font-family:'DM Serif Display',serif;font-size:28px;}
+.stat-item .stat-lab{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.grade-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-weight:600;font-size:14px;letter-spacing:1px;margin-top:16px;}
+.btn-restart{margin-top:24px;padding:14px 32px;border-radius:14px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-restart:hover{background:var(--accent);color:var(--bg);}
+.btn-submit{display:none;margin:32px auto 0;padding:16px 48px;border-radius:16px;border:none;background:var(--gradient1);color:var(--bg);font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 24px rgba(78,205,196,.25);}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(78,205,196,.35);}
+.btn-submit.show{display:block;}
+.review-filter{display:none;margin:24px 0;text-align:center;}
+.review-filter.show{display:flex;justify-content:center;gap:8px;}
+.filter-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(78,205,196,.08);}
+@media(max-width:600px){.container{padding:20px 16px 60px;}.question-card{padding:24px 18px;}.q-text{font-size:16px;}.opt-btn{font-size:14px;padding:14px 16px;}}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(78,205,196,.12);border:1px solid rgba(78,205,196,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:18px;}
+.portal-back:hover{background:var(--accent);color:var(--bg);}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+  <div class="tag">Quiz 1 of 3</div>
+  <h1>Partial Dentures</h1>
+  <p>30 questions covering denture design, surveying, occlusion, impressions & more</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progFill"></div></div>
+  <div class="progress-text"><span id="progText">0 of 30 answered</span><span id="progPct">0%</span></div>
+</div>
+<div id="questionsContainer"></div>
+<button class="btn-submit" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+<div class="review-filter" id="reviewFilter">
+  <button class="filter-btn active" onclick="filterQuestions('all',this)">All</button>
+  <button class="filter-btn" onclick="filterQuestions('wrong',this)">Incorrect Only</button>
+  <button class="filter-btn" onclick="filterQuestions('correct',this)">Correct Only</button>
+</div>
+<div class="results-panel" id="resultsPanel"></div>
+</div>
+<script>
+const questions = [
+  {q:"What is the minimum number of functional occlusal unit pairs required for adequate masticatory efficiency?",opts:["5 pairs","8 pairs","10 pairs","12 pairs"],ans:2,topic:"Masticatory Efficiency",exp:"Research shows masticatory efficiency is reduced below 10 functional unit pairs (effectively 5 to 5 dentition)."},
+  {q:"A patient presents with poor oral hygiene and multiple missing posterior teeth. What is the best initial approach?",opts:["Place implants immediately","Make a partial denture straight away","Stabilise oral health first, then consider tooth replacement","Extract remaining teeth for a complete denture"],ans:2,topic:"Tip 1: Be Holistic",exp:"The holistic approach is to stabilise oral health first. Optimise brushing/hygiene, then assess readiness for tooth replacement."},
+  {q:"A shortened dental arch (5 to 5) is acceptable because:",opts:["Patients cannot eat hard foods","Patients can eat all the same foods but chewing takes longer","It eliminates the need for any prosthesis","Posterior teeth don't contribute to function"],ans:1,topic:"Shortened Dental Arch",exp:"Studies show patients with a 5-to-5 dentition can eat all the same foods — it just takes longer to chew."},
+  {q:"When making an immediate partial denture, how far should the pontic extend into the extraction socket?",opts:["Flush with the ridge","About 1mm into the socket","3mm into the socket","It should sit above the socket"],ans:1,topic:"Tip 2: Tissue Sculpting",exp:"Extending the pontic ~1mm into the socket sculpts the tissues, creating an ovate pontic emergence for a more natural result with future restorations."},
+  {q:"When assessing existing restorations in the denture planning stage, what time frame should you consider for potential failure?",opts:["1 year","3 years","5 years","10 years"],ans:2,topic:"Tip 3: Planning for Failure",exp:"Ask: 'Will this restoration fail in the next 5 years?' If likely, plan the denture design to accommodate adding that tooth later."},
+  {q:"Why must indirect restorations be completed BEFORE taking impressions for a metal-based denture?",opts:["Acrylic dentures can't be adjusted","Metal frameworks cannot be adjusted chairside","The lab needs to see the crowns first","It's more cost-effective"],ans:1,topic:"Tip 3: Indirect Restorations",exp:"Unlike acrylic (adjustable with a handpiece), metal frameworks cannot be adjusted. All indirect restorations must be done first so the metal fits accurately."},
+  {q:"What is the main advantage of retaining teeth as overdenture abutments?",opts:["They provide direct retention for clasps","They act as natural socket preservation, maintaining bone","They eliminate the need for a soft liner","They prevent the need for relines"],ans:1,topic:"Tip 4: Overdenture Abutments",exp:"Retained roots keep the bone in place — a form of natural socket preservation. The denture sits over the trimmed-down teeth."},
+  {q:"When retaining teeth as overdenture abutments with tooth wear, root canal treatment is:",opts:["Always required before placing the denture","Only needed if the pulp has receded","Not always necessary — the pulp may have naturally receded","Contraindicated in all cases"],ans:2,topic:"Tip 4: Root Treatment",exp:"In teeth with wear, the pulp often recedes naturally. You can remove undermined enamel and place the denture over the top without root treatment. If symptomatic later, extract."},
+  {q:"If using a soft liner over retained roots, what must the lab ensure?",opts:["The soft liner is as thin as possible","There is enough blocked-out space for the liner to be thick enough to grip","The liner covers the entire fitting surface","The roots are completely sealed with composite first"],ans:1,topic:"Tip 4: Soft Liners",exp:"The lab must block out enough space so the soft liner is thick enough to adhere properly. Too thin = poor adhesion to the denture base."},
+  {q:"In what percentage of cases does the lecturer typically conform to the patient's existing bite?",opts:["50%","60%","80%","95%"],ans:2,topic:"Tip 5: Occlusion",exp:"In approximately 80% of cases, the approach is to conform to the existing bite. Only 20% require reorganisation."},
+  {q:"When assessing OVD, you get the patient to say the letter 'M'. What does this establish?",opts:["Their maximum opening","Their centric relation position","Their resting vertical dimension","Their working side contacts"],ans:2,topic:"Tip 5: OVD Assessment",exp:"Saying 'M' brings the lips together naturally, establishing the resting vertical dimension. Compare this to the occlusal VD when biting together."},
+  {q:"What is the acceptable difference between resting vertical dimension and occlusal vertical dimension?",opts:["0–1mm","2–4mm","5–7mm","8–10mm"],ans:1,topic:"Tip 5: OVD Measurement",exp:"The Willis bite gauge measurement should show resting VD and occlusal VD within 2–4mm of each other. More than this suggests over-closure."},
+  {q:"Activation of which muscle is a clue that the patient is over-closed?",opts:["Masseter","Temporalis","Mentalis","Buccinator"],ans:2,topic:"Tip 5: Clinical Signs",exp:"Mentalis muscle strain/activation on closure is a clinical indicator that the patient is over-closed and may benefit from OVD increase."},
+  {q:"Why does the lecturer recommend composites and dentures BEFORE implants when reorganising the bite?",opts:["They are cheaper","They are reversible and adjustable","Implants don't work in reorganised bites","Patients prefer them"],ans:1,topic:"Tip 5: Reorganisation",exp:"Composites can be adjusted, and dentures can be removed. They allow you to establish the new ICP in a reversible way before committing to irreversible implants/crowns."},
+  {q:"Which of the following is NOT an indication for an acrylic partial denture?",opts:["Further multiple tooth loss is likely","Testing a new OVD","Long-term definitive prosthesis in a stable dentition","Metallic allergy"],ans:2,topic:"Tip 6: Acrylic Indications",exp:"Acrylic is for transitional, interim, or cases where further change is expected. A long-term definitive prosthesis in a stable dentition is better served by a metal-based (CoCr) denture."},
+  {q:"Why should Valplast dentures be avoided, especially when implants are planned?",opts:["They're too expensive","They engage undercuts causing gum stripping and bone/soft tissue loss","They don't look natural","They break too easily"],ans:1,topic:"Tip 6: Valplast",exp:"Valplast dentures rely on engaging undercuts around teeth, leading to gum stripping, bone and soft tissue loss, and periodontal problems. They're especially bad before implant placement."},
+  {q:"What does the survey line on a tooth represent?",opts:["The gingival margin","The maximum bulbosity (equator) of the tooth","The line where the clasp should end","The CEJ"],ans:1,topic:"Tip 7: Surveying",exp:"The survey line marks the maximum bulbosity (equator). Above it = non-undercut (reciprocation zone). Below it = undercut (retention zone for clasps)."},
+  {q:"Why should occlusally approaching clasps be avoided on premolars?",opts:["Premolars are too anterior for clasps","The small circumference makes the clasp arm too stiff, risking fracture","They interfere with the occlusion","The undercuts are always in the wrong place"],ans:1,topic:"Tip 7: Clasp Selection",exp:"Premolars have a much smaller circumference than molars. An occlusally approaching clasp on a premolar is stiffer and has a much higher fracture risk. Use gingivally approaching clasps instead."},
+  {q:"Where is the best undercut typically found on a lower molar?",opts:["Mesio-buccal","Disto-buccal","Lingual","Palatal"],ans:2,topic:"Tip 7: Undercut Locations",exp:"Due to the Curve of Wilson, lower molars are tilted lingually, so the best undercut tends to be on the lingual side."},
+  {q:"What is the minimum length requirement for a guide plane?",opts:["1mm","2mm","3mm","5mm"],ans:1,topic:"Guide Planes",exp:"Guide planes must be at least 2mm long vertically and should slightly engage into both the buccal and palatal aspects of the tooth."},
+  {q:"What bur is recommended for cutting guide planes?",opts:["Diamond round bur","Tungsten carbide shoulder bur","Flame-shaped diamond","Tapered fissure bur"],ans:1,topic:"Guide Planes",exp:"A tungsten carbide shoulder bur is ideal because it's easy to keep parallel to the tooth surface, ensuring an accurate guide plane."},
+  {q:"In an acrylic denture with stainless steel clasps, what provides reciprocation?",opts:["The opposing half of the stainless steel clasp","The acrylic plate sitting above the survey line on the opposing side","The guide planes alone","The rest seats"],ans:1,topic:"Reciprocation",exp:"Stainless steel clasps deform easily and quickly lose reciprocation. The acrylic plate must sit above the survey line on the opposite side of the tooth from the clasp to provide reciprocation."},
+  {q:"If the survey line is too low (gingival), what can be done to raise it?",opts:["Extract the tooth","Add flowable composite to the mid-third of the tooth","Grind the tooth down","Place a stainless steel band"],ans:1,topic:"Survey Line Adjustment",exp:"Adding flowable composite (e.g. SDR) to the mid-third of the tooth creates a new maximum bulbosity higher up, moving the survey line to a more favourable position."},
+  {q:"What is the correct depth for a rest seat at the marginal ridge?",opts:["0.5mm","1mm","2mm","3mm"],ans:1,topic:"Tip 8: Rest Seats",exp:"The deepest part of the rest seat is at the marginal ridge — approximately 1mm. It tapers to about 0.5mm towards the centre of the tooth."},
+  {q:"What is the ideal shape of a rest seat when viewed from the occlusal surface?",opts:["Square","Circular","Rounded triangular","Rectangular"],ans:2,topic:"Tip 8: Rest Seats",exp:"Rest seats should have a rounded triangular form — widest at the marginal ridge, tapering towards the centre of the tooth."},
+  {q:"Why are tissue stops important on special trays?",opts:["They make the tray stronger","They create a tripod ensuring even impression material thickness","They prevent gagging","They allow border moulding to be skipped"],ans:1,topic:"Tip 10: Tissue Stops",exp:"Tissue stops sit on non-compressible tissue creating a tripod. This means the tray can only go in one position, giving even impression material thickness and consistent positioning for border moulding."},
+  {q:"What temperature water is suitable for warming pink stick?",opts:["Room temperature (20°C)","About 45°C from the tap","60°C boiled water","100°C boiling water"],ans:1,topic:"Tip 11: Pink Stick",exp:"Pink stick has a lower melting temperature than green stick. Hot water from a tap at about 45°C is sufficient — no Bunsen burner needed."},
+  {q:"Where should pink stick be placed on the special tray?",opts:["All around the tray borders","Only on the buccal flange","In the centre of the tray over the ridge crest","On the palatal surface only"],ans:2,topic:"Tip 11: Pink Stick Technique",exp:"Place pink stick in the centre of the tray over the ridge crest. Push the tray down until tissue stops touch — the pink stick flows buccally and lingually to border mould automatically."},
+  {q:"How thick is shimstock foil?",opts:["2 microns","8 microns","20 microns","50 microns"],ans:1,topic:"Tip 12: Shimstock",exp:"Shimstock foil is approximately 8 microns thick, providing very accurate detection of occlusal contacts."},
+  {q:"At which stages should shimstock foil be checked on reference teeth?",opts:["Only at the fit stage","At the bite registration and fit stages","At the start, bite registration, on models, try-in, AND fit","Only during impression taking"],ans:2,topic:"Tip 12: Shimstock Protocol",exp:"Shimstock should be checked at every stage: identify reference teeth at the start, check at bite registration, verify on models, check at try-in, and verify at the fit. This ensures the OVD and ICP haven't been altered."}
+];
+
+let answered=0,correct=0,userAnswers=new Array(questions.length).fill(-1);
+const container=document.getElementById('questionsContainer');
+
+function renderQuestions(){
+  container.innerHTML='';
+  questions.forEach((q,i)=>{
+    const letters=['A','B','C','D'];
+    let optsHtml=q.opts.map((o,j)=>`<button class="opt-btn" data-qi="${i}" data-oi="${j}" onclick="selectAnswer(${i},${j})"><span class="opt-letter">${letters[j]}</span><span>${o}</span></button>`).join('');
+    container.innerHTML+=`<div class="question-card" id="qcard${i}"><div class="q-number">QUESTION ${i+1}</div><div class="q-topic">${q.topic}</div><div class="q-text">${q.q}</div><div class="options">${optsHtml}</div><div class="explanation" id="exp${i}"></div></div>`;
+  });
+}
+
+function selectAnswer(qi,oi){
+  const card=document.getElementById('qcard'+qi);
+  if(card.classList.contains('answered-correct')||card.classList.contains('answered-wrong'))return;
+  card.querySelectorAll('.opt-btn').forEach(b=>{b.classList.remove('selected');});
+  card.querySelector(`[data-oi="${oi}"]`).classList.add('selected');
+  if(userAnswers[qi]===-1)answered++;
+  userAnswers[qi]=oi;
+  updateProgress();
+}
+
+function updateProgress(){
+  const pct=Math.round(answered/questions.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=answered+' of '+questions.length+' answered';
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('submitBtn').classList.toggle('show',answered===questions.length);
+}
+
+function submitQuiz(){
+  correct=0;
+  questions.forEach((q,i)=>{
+    const card=document.getElementById('qcard'+i);
+    const btns=card.querySelectorAll('.opt-btn');
+    btns.forEach(b=>b.classList.add('disabled'));
+    const chosen=userAnswers[i];
+    if(chosen===q.ans){correct++;card.classList.add('answered-correct');btns[chosen].classList.add('correct');}
+    else{card.classList.add('answered-wrong');btns[chosen].classList.add('wrong');btns[q.ans].classList.add('correct');}
+    const exp=document.getElementById('exp'+i);
+    exp.classList.add('show',chosen===q.ans?'correct-exp':'wrong-exp');
+    exp.textContent=(chosen===q.ans?'✓ ':'✗ ')+q.exp;
+  });
+  document.getElementById('submitBtn').style.display='none';
+  showResults();
+  document.getElementById('reviewFilter').classList.add('show');
+  window.scrollTo({top:document.getElementById('resultsPanel').offsetTop-100,behavior:'smooth'});
+}
+
+function showResults(){
+  const pct=Math.round(correct/questions.length*100);
+  let grade,gradeColor;
+  if(pct>=90){grade='Excellent';gradeColor='#4ecdc4';}
+  else if(pct>=75){grade='Good';gradeColor='#ffe66d';}
+  else if(pct>=60){grade='Pass';gradeColor='#f0a050';}
+  else{grade='Needs Review';gradeColor='#ff6b6b';}
+  const circ=2*Math.PI*72;
+  const offset=circ-(pct/100)*circ;
+  const panel=document.getElementById('resultsPanel');
+  panel.classList.add('show');
+  panel.innerHTML=`<h2>Quiz Complete!</h2><div class="score-circle"><svg viewBox="0 0 160 160"><circle class="track" cx="80" cy="80" r="72"/><circle class="fill" cx="80" cy="80" r="72" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" style="stroke:${gradeColor};"/></svg><div class="score-num">${pct}%</div><div class="score-label">${correct} / ${questions.length}</div></div><div class="stats-row"><div class="stat-item"><div class="stat-num" style="color:var(--green)">${correct}</div><div class="stat-lab">Correct</div></div><div class="stat-item"><div class="stat-num" style="color:var(--red)">${questions.length-correct}</div><div class="stat-lab">Incorrect</div></div></div><div class="grade-badge" style="background:${gradeColor}22;color:${gradeColor};border:1px solid ${gradeColor}44;">${grade}</div><br><button class="btn-restart" onclick="location.reload()">Retake Quiz</button>`;
+  setTimeout(()=>{panel.querySelector('.fill').style.strokeDashoffset=offset;},100);
+}
+
+function filterQuestions(type,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  questions.forEach((_,i)=>{
+    const card=document.getElementById('qcard'+i);
+    if(type==='all')card.style.display='';
+    else if(type==='wrong')card.style.display=card.classList.contains('answered-wrong')?'':'none';
+    else card.style.display=card.classList.contains('answered-correct')?'':'none';
+  });
+}
+
+renderQuestions();
+</script>
+</body>
+</html>

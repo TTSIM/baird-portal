@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 1 · Quiz 2 — PECOFA Framework</title>
+<style>
+:root{--bg:#0b1120;--panel:#152038;--panel2:#1c2a47;--border:#2a3a5e;--text:#e6ecf7;--muted:#9aa8c4;--accent:#5ee0c1;--accent2:#7ab8ff;--good:#5ee0c1;--bad:#ff7a9c;--warn:#ffb86b;--shadow:0 10px 30px rgba(0,0,0,.4)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#0b1120 0%,#0f1830 100%);color:var(--text);min-height:100vh;line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(11,17,32,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.title{font-size:15px;font-weight:600;color:var(--accent)}
+.title span{color:var(--muted);font-weight:400}
+.score-pill{background:var(--panel);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.progress-bar{height:4px;background:var(--panel);position:relative;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .4s ease}
+.container{max-width:820px;margin:0 auto;padding:40px 24px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:36px;box-shadow:var(--shadow);animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.q-num{color:var(--accent);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.q-text{font-size:19px;font-weight:500;margin-bottom:24px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{background:var(--panel2);border:2px solid var(--border);border-radius:10px;padding:16px 20px;cursor:pointer;transition:all .2s;font-size:15px;text-align:left;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:12px}
+.option:hover:not(:disabled){border-color:var(--accent);background:#22325a}
+.option:disabled{cursor:default}
+.option .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.option.correct{border-color:var(--good);background:rgba(94,224,193,.12)}
+.option.correct .letter{background:var(--good);color:#0b1120}
+.option.incorrect{border-color:var(--bad);background:rgba(255,122,156,.12)}
+.option.incorrect .letter{background:var(--bad);color:#0b1120}
+.feedback{margin-top:20px;padding:16px 20px;border-radius:10px;background:var(--panel2);border-left:4px solid var(--accent);font-size:14px;line-height:1.6;display:none}
+.feedback.show{display:block;animation:fadeIn .3s}
+.feedback.right{border-left-color:var(--good)}
+.feedback.wrong{border-left-color:var(--bad)}
+.feedback strong{color:var(--accent)}
+.feedback.right strong{color:var(--good)}
+.feedback.wrong strong{color:var(--bad)}
+.controls{margin-top:24px;display:flex;justify-content:space-between;gap:12px}
+.btn{background:var(--accent);color:#0b1120;border:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(94,224,193,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn.ghost:hover{color:var(--text);border-color:var(--accent)}
+.results{text-align:center;padding:20px}
+.results h1{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.results .score{font-size:64px;font-weight:700;margin:24px 0;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.results .pct{font-size:18px;color:var(--muted);margin-bottom:24px}
+.results .verdict{font-size:16px;margin-bottom:32px;padding:16px;background:var(--panel2);border-radius:10px;border-left:4px solid var(--accent)}
+.review-list{text-align:left;margin-top:24px}
+.review-item{padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--good);font-size:13px}
+.review-item.wrong{border-left-color:var(--bad)}
+.review-item .qt{font-weight:600;margin-bottom:6px}
+.review-item .at{color:var(--muted);font-size:12px}
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:40px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">Module 2 · Day 1 · Quiz 2 <span>— PECOFA Stabilisation Framework</span></div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="score-pill" id="scorePill">Q <span id="qNum">1</span>/30 · Score <span id="scoreNum">0</span></div>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="container" id="quizArea"></div>
+<div class="footer">Educational use only. Based on Dr Sarah Jawad lecture content.</div>
+
+<script>
+const questions = [
+  {q:"What does the PECOFA acronym stand for in stabilisation sequencing?",o:["Periodontal, Endodontic, Coronal, Occlusal, Functional, Aesthetic","Patient, Endodontic, Caries, Occlusion, Fitting, Aesthetic","Perio, Extraction, Crown, Onlay, Fillings, Aesthetic","Plaque, Endo, Caries, Occlusion, Function, Aesthetic"],a:0,e:"PECOFA = Perio → Endo → Coronal → Occlusal → Functional → Aesthetic. Stabilise in this order; plan in reverse."},
+  {q:"In what order should you PLAN treatment using the PECOFA framework?",o:["Same order as stabilisation (Perio first)","Reverse order — Aesthetic outcome first, working backwards","Random","Endo first"],a:1,e:"You stabilise forwards (perio first) but plan backwards from the aesthetic/functional end-point."},
+  {q:"What BoP threshold is generally considered indicative of periodontal stability?",o:["<5%","<10%","<20%","<30%"],a:1,e:"Bleeding on probing below 10% is the widely accepted threshold for periodontal stability."},
+  {q:"In the BPE pathway, a code 4 indicates:",o:["Bleeding only","Calculus","Pocket 4–5mm","Pocket ≥6mm"],a:3,e:"BPE 4 = pocket depth of 6mm or greater, requiring full perio assessment and management."},
+  {q:"By how much can good coronal seal improve endodontic outcomes (per the literature cited)?",o:["2x","5x","11x","20x"],a:2,e:"A well-fitting coronal restoration was associated with an 11-fold improvement in endodontic success."},
+  {q:"What is the Aquilino & Caplan finding regarding cuspal coverage on root-treated posterior teeth?",o:["No effect","2x survival","6x survival","10x survival"],a:2,e:"Aquilino & Caplan demonstrated approximately a 6x improvement in survival when root-treated posterior teeth received cuspal coverage."},
+  {q:"What is the recommended ferrule height for an anterior tooth requiring a post-crown?",o:["1mm","2–3mm","4–5mm","≥6mm"],a:1,e:"2–3mm of circumferential ferrule is the accepted minimum for anterior teeth."},
+  {q:"What ferrule is required for posterior teeth?",o:["1mm","2mm","≥4mm","No ferrule needed"],a:2,e:"Posterior teeth require approximately 4mm of ferrule due to higher occlusal loads."},
+  {q:"Which combination of irrigants produces the carcinogenic by-product parachloroaniline?",o:["NaOCl + EDTA","NaOCl + chlorhexidine","Chlorhexidine + EDTA","Saline + NaOCl"],a:1,e:"Mixing NaOCl with chlorhexidine produces parachloroaniline — avoid this combination."},
+  {q:"What does EDTA do during root canal irrigation?",o:["Kills bacteria directly","Removes the smear layer","Bleaches dentine","Sets the obturation"],a:1,e:"EDTA chelates inorganic material and removes the smear layer, improving sealer penetration and disinfection."},
+  {q:"For every millimetre short of the apex an obturation finishes, by how much does endo success drop (approximately)?",o:["2%","6%","12%","20%"],a:2,e:"Approximately 12% drop in success per mm short of the apex was the figure cited."},
+  {q:"A pre-operative sinus tract reduces endodontic success by approximately how much?",o:["10%","25%","48%","75%"],a:2,e:"A sinus tract pre-operatively reduces endodontic success by around 48%."},
+  {q:"In the King paper, what was the 5-year survival rate for resin-bonded bridges?",o:["60%","70%","81%","95%"],a:2,e:"The King paper reported approximately 81% survival at 5 years for RBBs, and around 80% at 10 years."},
+  {q:"Which RBB design is generally preferred according to the lecture?",o:["Fixed-fixed","Cantilever","Spring cantilever","Screw-retained"],a:1,e:"Cantilever RBBs outperform fixed-fixed designs because they avoid debonding stress from differential abutment movement."},
+  {q:"How much does an existing composite restoration on an RBB abutment increase the risk of failure?",o:["No increase","2x","3x","5x"],a:2,e:"Existing composite on the abutment increases RBB failure risk approximately 3-fold compared with a virgin abutment."},
+  {q:"Which adhesive monomer is recommended for bonding RBBs to metal frameworks?",o:["Bis-GMA","HEMA","10-MDP (e.g. Panavia)","UDMA"],a:2,e:"10-MDP-containing cements such as Panavia provide the strongest bond to metal RBB frameworks."},
+  {q:"What is the recommended sequence when restoring a heavily broken-down tooth before considering an indirect restoration?",o:["Crown immediately","Stabilise with a definitive direct restoration first, then re-evaluate","Extract and implant","Post and core only"],a:1,e:"A definitive direct build-up first lets you reassess restorability and seal before committing to an indirect solution."},
+  {q:"For a previously root-treated tooth with periapical pathology, what is the first management decision?",o:["Re-RCT","Extraction and implant","Assess restorability AND endodontic prognosis together","Crown lengthening"],a:2,e:"You cannot decide between re-RCT and extraction without considering both restorability and endo prognosis as a combined judgement."},
+  {q:"Which periodontal staging best fits a patient with bone loss in the apical third of the root?",o:["Stage I","Stage II","Stage III","Stage IV"],a:3,e:"Bone loss extending to the apical third corresponds to Stage IV periodontitis."},
+  {q:"Which is NOT one of the principles of the PECOFA framework?",o:["Stabilise before reconstructing","Plan from the end-point backwards","Aesthetics drives function","Disease control before restoration"],a:2,e:"In PECOFA, function drives aesthetics — not the reverse. Aesthetic considerations are integrated last during stabilisation but planned first during planning."},
+  {q:"What is the role of an occlusal assessment in PECOFA?",o:["Decorative","To identify risk before restoration; manage parafunction","Cost calculation","Aesthetic only"],a:1,e:"Occlusal assessment identifies parafunction, occlusal overload risks, and informs splint or restoration design before any reconstruction."},
+  {q:"For an RBB, what is the minimum recommended enamel coverage on the abutment?",o:["10% enamel","30% enamel","50% enamel","≥80% enamel"],a:3,e:"At least ~80% enamel is preferred — composite or dentine reduces bond strength substantially."},
+  {q:"Which periodontal parameter is the LEAST useful for assessing stability after treatment?",o:["BoP","Probing depth","Plaque score","Tooth shade"],a:3,e:"Tooth shade has no bearing on periodontal stability — BoP, PD and plaque scores are the relevant indicators."},
+  {q:"Which of these is a recognised reason to retain a heavily root-filled tooth rather than replace with an implant?",o:["It's always cheaper","Strategic value for future prosthetic options","Easier","Faster"],a:1,e:"Strategic retention preserves bone, papillae and provides options — particularly when adjacent teeth may also need replacement later."},
+  {q:"What is meant by 'restorative driven implant planning'?",o:["Surgeon places where bone is available","Final restoration position dictates implant position","Cheapest implant","Insurance dictates"],a:1,e:"The desired prosthetic outcome dictates implant position; bone augmentation is performed if needed to facilitate this."},
+  {q:"Which is a key advantage of RBBs over implants in young patients?",o:["Lower failure rate","Minimal preparation, reversible, preserves alveolar growth","Longer lifespan","More aesthetic"],a:1,e:"In young patients with continuing alveolar growth, RBBs are minimally invasive, reversible, and avoid implant infraocclusion as the alveolus grows."},
+  {q:"What is the preferred timing of definitive restoration after endodontic treatment?",o:["Immediately when possible to maintain coronal seal","Wait 1 year","Wait 6 months","Never crown"],a:0,e:"Restore as soon as feasible — delay risks coronal leakage, fracture and treatment failure."},
+  {q:"In assessing restorability, which is the MOST critical factor?",o:["Tooth shade","Adequate ferrule and structural integrity","Patient age","Tooth number"],a:1,e:"Adequate ferrule and remaining sound tooth structure are the most critical determinants of restorability and long-term success."},
+  {q:"Which tool/technique is most useful for monitoring perio stability long-term?",o:["Bitewings only","6-point pocket charting with BoP","Vitality testing","Shade guide"],a:1,e:"Six-point pocket charting with bleeding scores is the standard for monitoring periodontal stability."},
+  {q:"What is the underlying philosophy of the PECOFA approach?",o:["Quick fix","Disease control first, then sequenced reconstruction toward a planned end-point","Cheapest first","Aesthetic first"],a:1,e:"PECOFA is fundamentally about controlling disease, then stabilising and reconstructing in a logical sequence toward a pre-planned outcome."}
+];
+
+let currentQ = 0, score = 0, answered = false, userAnswers = [];
+
+function render(){
+  const qa = document.getElementById('quizArea');
+  if(currentQ >= questions.length){showResults();return;}
+  const q = questions[currentQ];
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('progress').style.width = ((currentQ)/questions.length*100) + '%';
+  const letters = ['A','B','C','D'];
+  qa.innerHTML = `
+    <div class="card">
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.o.map((opt,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${opt}</span></button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn ghost" onclick="restart()">Restart</button>
+        <button class="btn" id="nextBtn" disabled onclick="next()">Next →</button>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>pick(parseInt(b.dataset.i))));
+  answered = false;
+}
+
+function pick(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o=>o.disabled=true);
+  const correct = i === q.a;
+  if(correct){score++; opts[i].classList.add('correct');}
+  else{opts[i].classList.add('incorrect'); opts[q.a].classList.add('correct');}
+  userAnswers.push({q:q.q,user:q.o[i],correct:q.o[q.a],right:correct});
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct?'right':'wrong');
+  fb.innerHTML = `<strong>${correct?'✓ Correct':'✗ Incorrect'}</strong> — ${q.e}`;
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('scoreNum').textContent = score;
+}
+
+function next(){currentQ++; render();}
+function restart(){currentQ=0;score=0;userAnswers=[];render();}
+
+function showResults(){
+  const pct = Math.round(score/questions.length*100);
+  let verdict = '';
+  if(pct>=85) verdict='Excellent — you have strong command of the PECOFA stabilisation framework.';
+  else if(pct>=70) verdict='Solid performance. Review the topics you missed and revisit the lecture.';
+  else if(pct>=50) verdict='A reasonable foundation. Re-watch Lecture 2 and revisit your weak areas.';
+  else verdict='Recommend re-reviewing Lecture 2 in full and re-attempting this quiz.';
+  document.getElementById('progress').style.width='100%';
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card results">
+      <h1>Quiz Complete</h1>
+      <div class="score">${score}/${questions.length}</div>
+      <div class="pct">${pct}%</div>
+      <div class="verdict">${verdict}</div>
+      <button class="btn" onclick="restart()">Try Again</button>
+      <div class="review-list">
+        <h3 style="margin:24px 0 12px;color:var(--accent)">Review</h3>
+        ${userAnswers.map((a,i)=>`
+          <div class="review-item ${a.right?'':'wrong'}">
+            <div class="qt">Q${i+1}. ${a.q}</div>
+            <div class="at">Your answer: ${a.user} ${a.right?'✓':'✗'}${a.right?'':' &nbsp;|&nbsp; Correct: '+a.correct}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>

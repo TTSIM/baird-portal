@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2: Resin Bonded Bridges</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d12;--surface:#12161e;--surface2:#1a1f2a;--border:#252c3a;--text:#e8eaf0;--text-dim:#8890a4;--accent:#f0a050;--accent2:#e86060;--accent3:#60c8b0;--accent4:#8890e8;--gradient1:linear-gradient(135deg,#f0a050,#e88040);--gradient2:linear-gradient(135deg,#60c8b0,#40b090);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:translateY(20px);}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0);}
+.slide-number{position:fixed;bottom:24px;left:80px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);z-index:100;letter-spacing:1px;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gradient1);z-index:100;transition:width .4s;}
+.nav{position:fixed;bottom:24px;right:40px;display:flex;gap:12px;z-index:100;}
+.nav button{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.nav button:hover{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,64px);line-height:1.1;margin-bottom:24px;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(28px,3.5vw,48px);line-height:1.15;margin-bottom:20px;}
+p,li{font-size:18px;line-height:1.7;color:var(--text-dim);max-width:800px;}
+.tag{display:inline-block;padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
+.tag-o{background:rgba(240,160,80,.12);color:var(--accent);border:1px solid rgba(240,160,80,.25);}
+.tag-g{background:rgba(96,200,176,.12);color:var(--accent3);border:1px solid rgba(96,200,176,.25);}
+.tag-r{background:rgba(232,96,96,.12);color:var(--accent2);border:1px solid rgba(232,96,96,.25);}
+.tag-b{background:rgba(136,144,232,.12);color:var(--accent4);border:1px solid rgba(136,144,232,.25);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.card h4{font-size:16px;font-weight:600;margin-bottom:8px;}
+.card p{font-size:15px;}
+.highlight-box{background:linear-gradient(135deg,rgba(240,160,80,.08),rgba(240,160,80,.02));border:1px solid rgba(240,160,80,.2);border-radius:16px;padding:24px;margin:12px 0;}
+.highlight-box.green{background:linear-gradient(135deg,rgba(96,200,176,.08),rgba(96,200,176,.02));border-color:rgba(96,200,176,.2);}
+.highlight-box.red{background:linear-gradient(135deg,rgba(232,96,96,.08),rgba(232,96,96,.02));border-color:rgba(232,96,96,.2);}
+.stat{text-align:center;}
+.stat .num{font-family:'DM Serif Display',serif;font-size:52px;background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat .label{font-size:13px;color:var(--text-dim);margin-top:6px;}
+.interactive-zone{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;margin-top:12px;}
+.quiz-btn{padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;cursor:pointer;transition:.25s;font-family:'DM Sans',sans-serif;display:block;width:100%;text-align:left;margin-bottom:8px;}
+.quiz-btn:hover{border-color:var(--accent);background:rgba(240,160,80,.06);}
+.quiz-btn.correct{border-color:#60c8b0;background:rgba(96,200,176,.15);color:#60c8b0;}
+.quiz-btn.wrong{border-color:#e86060;background:rgba(232,96,96,.1);color:#e86060;}
+.quiz-feedback{margin-top:12px;padding:14px;border-radius:12px;font-size:14px;display:none;}
+.title-slide{text-align:center;align-items:center;}
+.glow-line{width:80px;height:3px;background:var(--gradient1);border-radius:2px;margin:0 auto 24px;}
+.slide ul{list-style:none;padding:0;}
+.slide ul li{padding:6px 0;padding-left:18px;position:relative;font-size:16px;color:var(--text-dim);line-height:1.6;}
+.slide ul li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.vs-container{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin-top:16px;}
+.vs-badge{background:var(--surface2);border:2px solid var(--border);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--accent);align-self:center;}
+.diagram-container{display:flex;justify-content:center;margin:12px 0;}
+.compare-bar{display:flex;align-items:center;gap:12px;margin:8px 0;}
+.compare-bar .bar{height:24px;border-radius:6px;transition:width 1s ease;}
+.compare-bar .label{font-size:12px;color:var(--text-dim);white-space:nowrap;min-width:80px;}
+.compare-bar .val{font-size:13px;font-weight:600;min-width:40px;}
+.flip-card{perspective:1000px;cursor:pointer;height:160px;}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:center;}
+.flip-front{background:var(--surface);border:1px solid var(--border);}
+.flip-back{background:var(--surface2);border:1px solid var(--accent3);transform:rotateY(180deg);}
+@media(max-width:900px){.slide{padding:30px 24px;}.two-col,.three-col,.vs-container{grid-template-columns:1fr;}.nav{right:20px;}.slide-number{left:24px;}}
+.portal-back{position:fixed;top:20px;left:20px;z-index:120;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(18,22,30,.92);border:1px solid rgba(240,160,80,.25);padding:10px 16px;border-radius:999px;font-size:12px;font-weight:600;}
+.portal-back:hover{background:var(--accent);color:var(--bg);}
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="presentation" id="pres">
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1 -->
+<div class="slide title-slide active" data-slide="0">
+  <div class="glow-line"></div>
+  <span class="tag tag-o">Lecture 2 of 3</span>
+  <h1>Resin Bonded Bridges</h1>
+  <p style="font-size:20px;color:var(--text-dim);margin-bottom:32px;">From transitional prostheses to long-term solutions — design, cementation & case selection</p>
+  <p style="font-size:14px;color:var(--text-dim);">Arrow keys or swipe to navigate</p>
+</div>
+
+<!-- SLIDE 2: Why RBBs -->
+<div class="slide" data-slide="1">
+  <span class="tag tag-o">Context</span>
+  <h2>Why Learn Resin Bonded Bridges?</h2>
+  <div class="three-col" style="margin-top:20px;">
+    <div class="card" style="border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);">Young Patients</h4>
+      <p style="font-size:14px;">Implants in growing patients become infra-occluded (ankylosed, no PDL). Wait until growth is complete: ~21 for males, up to 25 for females.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent3);">
+      <h4 style="color:var(--accent3);">During Implant Journey</h4>
+      <p style="font-size:14px;">Fixed interim prosthesis that minimises pressure on healing bone and soft tissue. Better than a denture for patients who need something fixed.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent4);">
+      <h4 style="color:var(--accent4);">Medically Compromised</h4>
+      <p style="font-size:14px;">Patients unsuitable for implant surgery: uncontrolled diabetes, radiotherapy >50Gy, IV bisphosphonates, high ASA status, reduced mental capacity.</p>
+    </div>
+  </div>
+  <div class="highlight-box green" style="margin-top:20px;">
+    <p style="font-size:15px;"><strong style="color:var(--accent3);">Strategy:</strong> RBB as Plan A. If it fails → the patient now understands implants may be the only fixed option. If it works → great, money saved.</p>
+  </div>
+</div>
+
+<!-- SLIDE 3: Advantages & Disadvantages -->
+<div class="slide" data-slide="2">
+  <span class="tag tag-g">Overview</span>
+  <h2>Advantages & Disadvantages</h2>
+  <div class="vs-container">
+    <div class="card" style="border-color:rgba(96,200,176,.3);">
+      <h4 style="color:var(--accent3);">Advantages ✓</h4>
+      <ul>
+        <li style="font-size:14px;">Fixed replacement</li>
+        <li style="font-size:14px;">Tooth-supported → minimal resorption</li>
+        <li style="font-size:14px;">Conservative (technically reversible)</li>
+        <li style="font-size:14px;">No local anaesthesia needed</li>
+        <li style="font-size:14px;">Only 2 visits, minimal chair time</li>
+        <li style="font-size:14px;">80% survival at 4–10 years</li>
+        <li style="font-size:14px;">Not very technique-sensitive</li>
+      </ul>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="card" style="border-color:rgba(232,96,96,.3);">
+      <h4 style="color:var(--accent2);">Disadvantages ✗</h4>
+      <ul>
+        <li style="font-size:14px;">Best for single-tooth spans</li>
+        <li style="font-size:14px;">Requires good enamel for bonding</li>
+        <li style="font-size:14px;">Relies on adhesive retention (can debond)</li>
+        <li style="font-size:14px;">Risk of silent debond (fixed-fixed)</li>
+        <li style="font-size:14px;">Framework fracture risk</li>
+        <li style="font-size:14px;">Aesthetic considerations (metal shine-through)</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:16px;font-size:14px;text-align:center;">Always make a backup Essex retainer with teeth/pontic paint in case the bridge debonds at a weekend.</p>
+</div>
+
+<!-- SLIDE 4: Evidence -->
+<div class="slide" data-slide="3">
+  <span class="tag tag-o">Evidence</span>
+  <h2>What the Research Says</h2>
+  <p style="margin-bottom:24px;">King's study of 800 resin bonded bridges at Bristol Dental Hospital:</p>
+  <div class="three-col">
+    <div class="stat">
+      <div class="num">80%</div>
+      <div class="label">Survival at 4–10 years</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="background:var(--gradient2);-webkit-background-clip:text;">↑</div>
+      <div class="label">Cantilever > Fixed-fixed</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="background:var(--gradient2);-webkit-background-clip:text;">↑</div>
+      <div class="label">Non-prepped > Prepped</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:28px;">
+    <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px;">EVIDENCE SUMMARY</h4>
+    <ul>
+      <li style="font-size:15px;">Cantilever design is better than fixed-fixed</li>
+      <li style="font-size:15px;">No or minimal prep is better than prepped</li>
+      <li style="font-size:15px;">No contact on the retainer in excursions</li>
+      <li style="font-size:15px;">Unrestored abutment teeth perform better than restored ones</li>
+      <li style="font-size:15px;">Only recommended prep: minimal guide plane preparation</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SLIDE 5: Abutment Selection -->
+<div class="slide" data-slide="4">
+  <span class="tag tag-o">Design</span>
+  <h2>Choosing Your Abutment Tooth</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">Six factors determine which adjacent tooth makes the best abutment:</p>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent);">1. Enamel availability</h4><p style="font-size:13px;">Maximum enamel = maximum bond strength. Avoid composite-covered palatal surfaces.</p></div>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent);">2. Endodontic status</h4><p style="font-size:13px;">Root-treated teeth reduce bridge survival. Avoid if possible.</p></div>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent);">3. Root length</h4><p style="font-size:13px;">Minimum 1:1 crown-to-root ratio for the abutment.</p></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent3);">4. Surface area</h4><p style="font-size:13px;">More palatal surface area = more retention. Central incisors often have more area than canines.</p></div>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent3);">5. Connector height</h4><p style="font-size:13px;">The connector must be tall enough to prevent fracture. This often determines the abutment choice.</p></div>
+      <div class="card" style="margin-bottom:8px;"><h4 style="font-size:14px;color:var(--accent3);">6. Resistance form</h4><p style="font-size:13px;">Cingulum provides resistance form. Flat teeth = less retention.</p></div>
+      <p style="font-size:14px;margin-top:12px;">Also consider: translucency (metal shine-through risk), previous orthodontics (relapse risk).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Connector Height -->
+<div class="slide" data-slide="5">
+  <span class="tag tag-o">Critical Dimension</span>
+  <h2>Connector Height</h2>
+  <p style="margin-bottom:16px;">The connector is the weakest point. If it's too short, it fractures.</p>
+  <div class="two-col">
+    <div class="diagram-container">
+      <svg viewBox="0 0 350 260" width="340">
+        <rect x="0" y="0" width="350" height="260" rx="12" fill="#12161e"/>
+        <!-- Canine abutment -->
+        <path d="M60,220 Q50,150 60,100 Q70,50 100,35 Q115,30 120,40 Q130,60 125,100" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+        <text x="90" y="240" text-anchor="middle" fill="#8890a4" font-size="10">Canine</text>
+        <!-- Pontic -->
+        <rect x="130" y="50" width="50" height="150" rx="8" fill="rgba(240,160,80,.08)" stroke="#f0a050" stroke-width="1.5" stroke-dasharray="4"/>
+        <text x="155" y="130" text-anchor="middle" fill="#f0a050" font-size="10">Pontic</text>
+        <!-- Central abutment -->
+        <path d="M195,100 Q190,60 200,40 Q215,25 230,25 Q250,30 255,50 Q265,100 260,220" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+        <text x="228" y="240" text-anchor="middle" fill="#8890a4" font-size="10">Central</text>
+        <!-- Connector from canine - short -->
+        <line x1="125" y1="70" x2="130" y2="70" stroke="#e86060" stroke-width="3"/>
+        <line x1="125" y1="95" x2="125" y2="70" stroke="#e86060" stroke-width="1" stroke-dasharray="3"/>
+        <text x="115" y="85" text-anchor="end" fill="#e86060" font-size="9">Short</text>
+        <!-- Connector from central - tall -->
+        <line x1="180" y1="50" x2="195" y2="50" stroke="#60c8b0" stroke-width="3"/>
+        <line x1="195" y1="95" x2="195" y2="50" stroke="#60c8b0" stroke-width="1" stroke-dasharray="3"/>
+        <text x="205" y="75" fill="#60c8b0" font-size="9">Tall ✓</text>
+      </svg>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">MINIMUM CONNECTOR DIMENSIONS</h4>
+      <div class="card" style="margin-bottom:10px;border-left:3px solid var(--accent);">
+        <h4 style="font-size:14px;">Metal</h4>
+        <p style="font-size:14px;">2mm × 2mm (4mm²). Can use canines even with shorter connector height.</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;border-left:3px solid var(--accent4);">
+        <h4 style="font-size:14px;">Zirconia</h4>
+        <p style="font-size:14px;">4–5mm height × 2mm width (~9–11mm²). Requires taller connectors → may dictate abutment choice.</p>
+      </div>
+      <div class="highlight-box">
+        <p style="font-size:14px;"><strong style="color:var(--accent);">Tip:</strong> You can increase connector height by preparing a minimal guide plane — reducing the bulbosity between the pontic and abutment allows a taller connector without altering the occlusion.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Bridge Design Specs -->
+<div class="slide" data-slide="6">
+  <span class="tag tag-g">Lab Prescription</span>
+  <h2>Bridge Design Specifications</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">WHAT TO TELL YOUR LAB</h4>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:14px;"><strong>Retainer wing:</strong> ≥0.7mm (metal) or ≥0.5mm (zirconia)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:14px;"><strong>Connector:</strong> 2×2mm (metal) or ~11mm² (zirconia)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:14px;"><strong>Wrap-around:</strong> 180° full retainer extension</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:14px;"><strong>Locating lug:</strong> Metal retainers — include a lug/dimple for precise seating (cut off after cementation)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:14px;"><strong>Occlusion:</strong> No contact on retainer in excursions</p></div>
+      <div class="card"><p style="font-size:14px;"><strong>Pontic:</strong> Ovate (ideal) or modified ridge lap. Never a saddle design.</p></div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent3);font-size:14px;margin-bottom:12px;">PONTIC DESIGN COMPARISON</h4>
+      <div class="diagram-container">
+        <svg viewBox="0 0 300 220" width="280">
+          <rect x="0" y="0" width="300" height="220" rx="12" fill="#12161e"/>
+          <!-- Ridge line -->
+          <path d="M20,130 Q150,125 280,130" fill="none" stroke="#8890a4" stroke-width="1.5"/>
+          <!-- Ovate -->
+          <path d="M40,130 Q45,115 60,110 Q75,115 80,130" fill="rgba(96,200,176,.2)" stroke="#60c8b0" stroke-width="2"/>
+          <rect x="40" y="70" width="40" height="40" rx="6" fill="rgba(96,200,176,.1)" stroke="#60c8b0" stroke-width="1.5"/>
+          <text x="60" y="55" text-anchor="middle" fill="#60c8b0" font-size="10" font-weight="600">Ovate ✓</text>
+          <text x="60" y="160" text-anchor="middle" fill="#8890a4" font-size="9">Best aesthetics</text>
+          <!-- Modified ridge lap -->
+          <path d="M120,130 Q125,118 140,110 Q155,115 160,130" fill="rgba(240,160,80,.2)" stroke="#f0a050" stroke-width="2"/>
+          <rect x="120" y="70" width="40" height="40" rx="6" fill="rgba(240,160,80,.1)" stroke="#f0a050" stroke-width="1.5"/>
+          <text x="140" y="55" text-anchor="middle" fill="#f0a050" font-size="10" font-weight="600">Mod. ridge lap</text>
+          <text x="140" y="160" text-anchor="middle" fill="#8890a4" font-size="9">Acceptable</text>
+          <!-- Saddle - bad -->
+          <path d="M200,130 Q205,110 220,105 Q235,105 240,110 Q250,115 255,130" fill="rgba(232,96,96,.2)" stroke="#e86060" stroke-width="2"/>
+          <rect x="200" y="70" width="55" height="40" rx="6" fill="rgba(232,96,96,.1)" stroke="#e86060" stroke-width="1.5"/>
+          <text x="228" y="55" text-anchor="middle" fill="#e86060" font-size="10" font-weight="600">Saddle ✗</text>
+          <text x="228" y="160" text-anchor="middle" fill="#e86060" font-size="9">Uncleansable</text>
+          <text x="150" y="200" text-anchor="middle" fill="#8890a4" font-size="10">Cross-section view — pontic sitting on ridge</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;margin-top:8px;">Ovate pontics create the most natural emergence profile. Modified ridge lap is the minimum acceptable — buccal contact, palatal cut-back.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Transitional vs Long-term -->
+<div class="slide" data-slide="7">
+  <span class="tag tag-b">Strategy</span>
+  <h2>Transitional vs Long-Term Design</h2>
+  <div class="vs-container">
+    <div class="card" style="border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);">Transitional (Implant Journey)</h4>
+      <ul>
+        <li style="font-size:14px;">Fixed-fixed design (stays better short-term)</li>
+        <li style="font-size:14px;">Metal with perforated retainer (Rochette)</li>
+        <li style="font-size:14px;">Cemented with resin-modified GIC (easy removal)</li>
+        <li style="font-size:14px;">Removal: scaler through holes → crown removal tool → tap off</li>
+        <li style="font-size:14px;">Always wrap floss around the bridge first</li>
+      </ul>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="card" style="border-top:3px solid var(--accent3);">
+      <h4 style="color:var(--accent3);">Long-Term (Definitive)</h4>
+      <ul>
+        <li style="font-size:14px;">Cantilever design (better survival)</li>
+        <li style="font-size:14px;">Zirconia or metal retainer</li>
+        <li style="font-size:14px;">Cemented with resin cement (Panavia)</li>
+        <li style="font-size:14px;">Consider connector dimensions carefully</li>
+        <li style="font-size:14px;">Full 180° wrap-around</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Cementation - Metal -->
+<div class="slide" data-slide="8">
+  <span class="tag tag-o">Cementation</span>
+  <h2>Cementing Metal Bridges (Panavia)</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:16px;">STEP-BY-STEP PROTOCOL</h4>
+      <div class="card" style="margin-bottom:6px;cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>1. Sandblast the retainer</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Aluminium oxide particles. Creates micro-mechanical retention.</p>
+      </div>
+      <div class="card" style="margin-bottom:6px;cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>2. Wash and dry</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Remove all debris from sandblasting.</p>
+      </div>
+      <div class="card" style="margin-bottom:6px;cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>3. Apply alloy primer (optional for CoCr)</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Strictly needed for precious metals. For non-precious CoCr, optional but doesn't hurt.</p>
+      </div>
+      <div class="card" style="margin-bottom:6px;cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>4. Apply gel on tooth → 30 sec → air dry</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Do NOT light cure. Gently air dry only.</p>
+      </div>
+      <div class="card" style="margin-bottom:6px;cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>5. Mix cement, apply, seat bridge</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Panavia F2: flash cure. Panavia 21: wipe excess with microbrush.</p>
+      </div>
+      <div class="card" style="cursor:pointer;" onclick="this.querySelector('.det').style.display=this.querySelector('.det').style.display==='block'?'none':'block'">
+        <p style="font-size:14px;"><strong>6. Apply Oxyguard</strong> ▾</p>
+        <p class="det" style="display:none;font-size:13px;margin-top:6px;color:var(--text-dim);">Inhibits the oxygen layer for complete cure.</p>
+      </div>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <p style="font-size:15px;"><strong style="color:var(--accent);">Key point:</strong> Cement WITHOUT rubber dam for resin bonded bridges — it gets in the way. Moisture control with cotton rolls and suction is sufficient.</p>
+      </div>
+      <div class="interactive-zone" style="margin-top:16px;">
+        <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">QUIZ</h4>
+        <p style="font-size:14px;margin-bottom:12px;">After applying the tooth surface gel for 30 seconds, what do you do next?</p>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','cementQ')">Light cure for 20 seconds</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'correct','cementQ')">Gently air dry — do NOT light cure</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','cementQ')">Wash with water for 10 seconds</button>
+        <div class="quiz-feedback" id="cementQ"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Zirconia Bonding -->
+<div class="slide" data-slide="9">
+  <span class="tag tag-b">Cementation</span>
+  <h2>Bonding Zirconia: The APC Concept</h2>
+  <p style="margin-bottom:20px;">Marcus Blatz's APC concept makes zirconia bridges viable. Success comparable to metal.</p>
+  <div class="three-col">
+    <div class="card" style="border-top:3px solid var(--accent);text-align:center;">
+      <h4 style="color:var(--accent);font-size:40px;margin-bottom:8px;">A</h4>
+      <h4>Air particle Abrasion</h4>
+      <p style="font-size:14px;">Sandblast wings with <strong>30-micron</strong> particles at <strong>low pressure</strong>. Creates micro-mechanical retention.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent3);text-align:center;">
+      <h4 style="color:var(--accent3);font-size:40px;margin-bottom:8px;">P</h4>
+      <h4>Primer (MDP)</h4>
+      <p style="font-size:14px;">Apply zirconia-specific primer with MDP (e.g. MKZ primer, Bredent). Replaces silane in the standard protocol.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent4);text-align:center;">
+      <h4 style="color:var(--accent4);font-size:40px;margin-bottom:8px;">C</h4>
+      <h4>Cement (Resin)</h4>
+      <p style="font-size:14px;">Resin-based cement (e.g. Calibra). Swap the silane for the MDP zirconia primer. Rest of the protocol stays the same.</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:20px;">
+    <p style="font-size:14px;"><strong style="color:var(--accent);">Zirconia selection:</strong> Anterior bridges → minimum <strong>4Y zirconia</strong> (stronger, slightly more opaque). Posterior → <strong>3Y zirconia</strong> (strongest). 5Y zirconia is more translucent but only suitable for single crowns — too weak for bridge connectors.</p>
+  </div>
+</div>
+
+<!-- SLIDE 11: Case - Zirconia Bridges -->
+<div class="slide" data-slide="10">
+  <span class="tag tag-g">Case Study</span>
+  <h2>Zirconia Bridges: Replacing Metal Retainers</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent2);font-size:14px;margin-bottom:12px;">PROBLEMS IDENTIFIED</h4>
+      <ul>
+        <li style="font-size:14px;">Metal shine-through on translucent central incisors</li>
+        <li style="font-size:14px;">Pontics too short (gingival margin 2–3mm short vs ideal 1–2mm)</li>
+        <li style="font-size:14px;">Shade mismatch (opaque pontics)</li>
+        <li style="font-size:14px;">Ridge-lapped pontic design</li>
+      </ul>
+      <h4 style="color:var(--accent3);font-size:14px;margin-top:20px;margin-bottom:12px;">TREATMENT SEQUENCE</h4>
+      <ul>
+        <li style="font-size:14px;">1. Remove old bridges</li>
+        <li style="font-size:14px;">2. Fit immediate partial denture</li>
+        <li style="font-size:14px;">3. Electrosurgery to allow taller pontics</li>
+        <li style="font-size:14px;">4. Condition soft tissues (2 weeks)</li>
+        <li style="font-size:14px;">5. Whitening</li>
+        <li style="font-size:14px;">6. Take impressions/scans</li>
+        <li style="font-size:14px;">7. Cement zirconia bridges (APC concept)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="highlight-box green">
+        <h4 style="color:var(--accent3);font-size:14px;margin-bottom:8px;">RESULT</h4>
+        <p style="font-size:15px;">No metal shine-through, correct pontic dimensions, natural shade match, comparable to implant result. Patient was young — can progress to implants when ready.</p>
+      </div>
+      <div class="interactive-zone" style="margin-top:16px;">
+        <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">GINGIVAL MARGIN RULE</h4>
+        <div class="diagram-container">
+          <svg viewBox="0 0 280 160" width="260">
+            <rect x="0" y="0" width="280" height="160" rx="12" fill="#12161e"/>
+            <!-- Central incisor -->
+            <rect x="80" y="30" width="40" height="80" rx="6" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+            <text x="100" y="125" text-anchor="middle" fill="#8890a4" font-size="10">Central</text>
+            <!-- Lateral -->
+            <rect x="140" y="40" width="35" height="70" rx="6" fill="rgba(240,160,80,.1)" stroke="#f0a050" stroke-width="1.5"/>
+            <text x="158" y="125" text-anchor="middle" fill="#f0a050" font-size="10">Lateral</text>
+            <!-- Margin lines -->
+            <line x1="70" y1="30" x2="130" y2="30" stroke="#60c8b0" stroke-width="1" stroke-dasharray="3"/>
+            <line x1="70" y1="40" x2="185" y2="40" stroke="#60c8b0" stroke-width="1" stroke-dasharray="3"/>
+            <!-- 1-2mm label -->
+            <line x1="65" y1="30" x2="65" y2="40" stroke="#f0a050" stroke-width="1.5"/>
+            <text x="55" y="38" text-anchor="end" fill="#f0a050" font-size="9">1–2mm</text>
+            <text x="140" y="150" text-anchor="middle" fill="#8890a4" font-size="9">Lateral margin should be 1–2mm shorter than central</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Natural Tooth Pontic -->
+<div class="slide" data-slide="11">
+  <span class="tag tag-o">Case Study</span>
+  <h2>Natural Tooth Pontic Bridge</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:12px;">73-year-old lady with external cervical root resorption — hopeless prognosis. Characterful teeth impossible to match with conventional methods. On Apixaban.</p>
+      <h4 style="color:var(--accent);font-size:14px;margin-top:16px;margin-bottom:12px;">TECHNIQUE</h4>
+      <ul>
+        <li style="font-size:14px;">Metal retainer with locating lugs on both adjacent teeth</li>
+        <li style="font-size:14px;">Extract tooth</li>
+        <li style="font-size:14px;">Clean root canal, place composite, reshape cervical area to ovate bullet shape</li>
+        <li style="font-size:14px;">Bond tooth to metal framework outside the mouth</li>
+        <li style="font-size:14px;">Collagen sponge + PTFE tape in socket</li>
+        <li style="font-size:14px;">Cement with resin-modified GIC</li>
+        <li style="font-size:14px;">Cut lugs off, polish</li>
+        <li style="font-size:14px;">Sutures (patient on blood thinners)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="highlight-box green">
+        <h4 style="color:var(--accent3);font-size:14px;margin-bottom:8px;">OUTCOME: 3+ YEARS AND COUNTING</h4>
+        <p style="font-size:14px;">Expected lifespan was 3–6 months. Excellent soft tissue healing thanks to ovate pontic shape and well-polished composite. Patient wrote a grateful letter 9 days post-op.</p>
+      </div>
+      <div class="highlight-box" style="margin-top:12px;">
+        <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px;">WHY IT WORKED</h4>
+        <ul>
+          <li style="font-size:14px;">Perfect colour match — it's the patient's actual tooth</li>
+          <li style="font-size:14px;">Ovate pontic shape guided soft tissue healing</li>
+          <li style="font-size:14px;">Composite repair in cervical area well-polished</li>
+          <li style="font-size:14px;">Bought time for implant planning and saving</li>
+        </ul>
+      </div>
+      <p style="font-size:13px;margin-top:12px;color:var(--text-dim);">Modern improvement: use a 3D-printed model without the tooth as a jig for bonding. Clean resorption area with degranulation burs (Meisinger).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: Post-Op & Complications -->
+<div class="slide" data-slide="12">
+  <span class="tag tag-r">Complications</span>
+  <h2>Post-Op & Complications</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:16px;">COMPLICATION MANAGEMENT</h4>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')" style="margin-bottom:12px;">
+        <div class="flip-inner">
+          <div class="flip-front"><h4 style="font-size:15px;">Debond</h4><p style="font-size:12px;color:var(--text-dim);">Click to flip</p></div>
+          <div class="flip-back"><p style="font-size:13px;color:var(--accent3);">Most common complication. Not catastrophic — can be recemented. Keep the bridge, reschedule patient.</p></div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')" style="margin-bottom:12px;">
+        <div class="flip-inner">
+          <div class="flip-front"><h4 style="font-size:15px;">Framework Fracture</h4><p style="font-size:12px;color:var(--text-dim);">Click to flip</p></div>
+          <div class="flip-back"><p style="font-size:13px;color:var(--accent2);">Requires remake or alternative treatment. Usually due to inadequate connector dimensions or bruxism.</p></div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-front"><h4 style="font-size:15px;">Silent Debond (Fixed-Fixed)</h4><p style="font-size:12px;color:var(--text-dim);">Click to flip</p></div>
+          <div class="flip-back"><p style="font-size:13px;color:var(--accent);">One wing debonds while the other holds — caries develops underneath undetected. Check regularly during implant journey.</p></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent3);font-size:14px;margin-bottom:16px;">CLEANING INSTRUCTIONS</h4>
+      <div class="card" style="margin-bottom:12px;">
+        <h4 style="font-size:14px;">Super Floss</h4>
+        <p style="font-size:13px;">Thread the stiff end under the pontic, pull through. The spongy section cleans the fitting surface. Essential for all bridge patients.</p>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4 style="font-size:14px;">Interdental Brushes</h4>
+        <p style="font-size:13px;">If space allows, use to clean around the retainer wings.</p>
+      </div>
+      <div class="card">
+        <h4 style="font-size:14px;">Emergency Backup</h4>
+        <p style="font-size:13px;">Always provide an Essex retainer with pontic as backup. Weekend debonds happen — give patients a solution.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Summary -->
+<div class="slide title-slide" data-slide="13">
+  <div class="glow-line"></div>
+  <span class="tag tag-o">Summary</span>
+  <h2>Key Takeaways</h2>
+  <div style="max-width:600px;margin:0 auto;text-align:left;">
+    <ul>
+      <li>Cantilever design outperforms fixed-fixed for long-term bridges</li>
+      <li>Don't prep — evidence shows non-prepped has higher success</li>
+      <li>Choose abutments based on enamel, surface area, and connector height</li>
+      <li>Metal: 2×2mm connectors, Panavia cement</li>
+      <li>Zirconia: APC concept (Air abrasion, Primer with MDP, resin Cement)</li>
+      <li>Natural tooth pontics can buy years of time</li>
+      <li>Always provide a backup Essex retainer</li>
+    </ul>
+  </div>
+  <p style="font-size:16px;color:var(--text-dim);margin-top:32px;">End of Lecture 2 — Proceed to Lecture 3: Implant Size & Position →</p>
+</div>
+
+</div>
+
+<div class="slide-number" id="slideNum">01 / 14</div>
+<div class="nav">
+  <button onclick="prevSlide()">←</button>
+  <button onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current=0;const slides=document.querySelectorAll('.slide');const total=slides.length;
+function showSlide(n){slides.forEach(s=>s.classList.remove('active'));slides[n].classList.add('active');document.getElementById('slideNum').textContent=String(n+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');document.getElementById('progressBar').style.width=((n+1)/total*100)+'%';}
+function nextSlide(){if(current<total-1){current++;showSlide(current);}}
+function prevSlide(){if(current>0){current--;showSlide(current);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();}if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}});
+function checkQuiz(btn,result,fid){const p=btn.parentElement;p.querySelectorAll('.quiz-btn').forEach(b=>{b.disabled=true;b.style.opacity='.6';});btn.style.opacity='1';btn.classList.add(result);const fb=document.getElementById(fid);fb.style.display='block';if(result==='correct'){fb.style.background='rgba(96,200,176,.1)';fb.style.color='#60c8b0';fb.textContent='✓ Correct!';}else{fb.style.background='rgba(232,96,96,.1)';fb.style.color='#e86060';fb.textContent='✗ Not quite — see the highlighted answer.';p.querySelectorAll('.quiz-btn').forEach(b=>{if(b.getAttribute('onclick')?.includes("'correct'"))b.classList.add('correct');});}}
+let tX=0;document.addEventListener('touchstart',e=>{tX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{const d=e.changedTouches[0].screenX-tX;if(d<-50)nextSlide();if(d>50)prevSlide();});
+showSlide(0);
+</script>
+</body>
+</html>

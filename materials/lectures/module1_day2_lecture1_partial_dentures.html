@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1: Mastering Partial Dentures</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0f14;
+  --surface: #141820;
+  --surface2: #1a1f2a;
+  --border: #2a3040;
+  --text: #e8eaf0;
+  --text-dim: #8890a4;
+  --accent: #4ecdc4;
+  --accent2: #ff6b6b;
+  --accent3: #ffe66d;
+  --accent4: #a78bfa;
+  --gradient1: linear-gradient(135deg, #4ecdc4, #44b09e);
+  --gradient2: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  --gradient3: linear-gradient(135deg, #ffe66d, #f0c040);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; height:100vh; }
+.presentation { width:100vw; height:100vh; position:relative; }
+.slide { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:60px 80px; opacity:0; pointer-events:none; transition: opacity .5s ease, transform .5s ease; transform:translateY(20px); }
+.slide.active { opacity:1; pointer-events:all; transform:translateY(0); }
+.slide-number { position:fixed; bottom:24px; left:80px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-dim); z-index:100; letter-spacing:1px; }
+.progress-bar { position:fixed; top:0; left:0; height:3px; background:var(--gradient1); z-index:100; transition:width .4s ease; }
+.nav { position:fixed; bottom:24px; right:40px; display:flex; gap:12px; z-index:100; }
+.nav button { width:44px; height:44px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.nav button:hover { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+h1 { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,64px); line-height:1.1; margin-bottom:24px; }
+h2 { font-family:'DM Serif Display',serif; font-size:clamp(28px,3.5vw,48px); line-height:1.15; margin-bottom:20px; }
+h3 { font-size:20px; font-weight:600; margin-bottom:12px; color:var(--accent); text-transform:uppercase; letter-spacing:2px; font-size:13px; }
+p, li { font-size:18px; line-height:1.7; color:var(--text-dim); max-width:800px; }
+.tag { display:inline-block; padding:6px 16px; border-radius:100px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; }
+.tag-teal { background:rgba(78,205,196,.12); color:var(--accent); border:1px solid rgba(78,205,196,.25); }
+.tag-red { background:rgba(255,107,107,.12); color:var(--accent2); border:1px solid rgba(255,107,107,.25); }
+.tag-yellow { background:rgba(255,230,109,.12); color:var(--accent3); border:1px solid rgba(255,230,109,.2); }
+.tag-purple { background:rgba(167,139,250,.12); color:var(--accent4); border:1px solid rgba(167,139,250,.25); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px; }
+.card h4 { font-size:17px; font-weight:600; margin-bottom:8px; color:var(--text); }
+.card p { font-size:15px; }
+.highlight-box { background:linear-gradient(135deg, rgba(78,205,196,.08), rgba(78,205,196,.02)); border:1px solid rgba(78,205,196,.2); border-radius:16px; padding:28px; margin:16px 0; }
+.highlight-box.red { background:linear-gradient(135deg, rgba(255,107,107,.08), rgba(255,107,107,.02)); border-color:rgba(255,107,107,.2); }
+.stat { text-align:center; }
+.stat .num { font-family:'DM Serif Display',serif; font-size:56px; background:var(--gradient1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+.stat .label { font-size:14px; color:var(--text-dim); margin-top:6px; }
+.checklist { list-style:none; }
+.checklist li { padding:10px 0; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:12px; font-size:16px; color:var(--text-dim); cursor:pointer; transition:.2s; }
+.checklist li:hover { color:var(--text); }
+.checklist li::before { content:'○'; color:var(--accent); font-size:18px; flex-shrink:0; transition:.2s; }
+.checklist li.checked::before { content:'●'; }
+.checklist li.checked { color:var(--accent); }
+.interactive-zone { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:32px; margin-top:16px; }
+svg text { font-family:'DM Sans',sans-serif; }
+.quiz-btn { padding:14px 24px; border-radius:12px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:15px; cursor:pointer; transition:all .25s; font-family:'DM Sans',sans-serif; display:block; width:100%; text-align:left; margin-bottom:8px; }
+.quiz-btn:hover { border-color:var(--accent); background:rgba(78,205,196,.06); }
+.quiz-btn.correct { border-color:#4ecdc4; background:rgba(78,205,196,.15); color:#4ecdc4; }
+.quiz-btn.wrong { border-color:#ff6b6b; background:rgba(255,107,107,.1); color:#ff6b6b; }
+.quiz-feedback { margin-top:12px; padding:16px; border-radius:12px; font-size:15px; display:none; }
+.title-slide { text-align:center; align-items:center; }
+.title-slide h1 { font-size:clamp(42px,6vw,80px); }
+.title-slide .subtitle { font-size:22px; color:var(--text-dim); margin-bottom:32px; }
+.glow-line { width:80px; height:3px; background:var(--gradient1); border-radius:2px; margin:0 auto 24px; }
+.step-indicator { display:flex; gap:8px; margin-bottom:20px; }
+.step-dot { width:10px; height:10px; border-radius:50%; background:var(--border); }
+.step-dot.active { background:var(--accent); }
+.diagram-container { display:flex; justify-content:center; margin:16px 0; }
+.tooltip-trigger { cursor:help; border-bottom:1px dashed var(--accent); }
+.tabs { display:flex; gap:4px; margin-bottom:20px; }
+.tab-btn { padding:10px 20px; border-radius:10px 10px 0 0; border:1px solid var(--border); border-bottom:none; background:var(--surface); color:var(--text-dim); cursor:pointer; font-size:14px; font-family:'DM Sans',sans-serif; transition:.2s; }
+.tab-btn.active { background:var(--surface2); color:var(--accent); border-color:var(--accent); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.flip-card { perspective:1000px; cursor:pointer; height:180px; }
+.flip-inner { position:relative; width:100%; height:100%; transition:transform .6s; transform-style:preserve-3d; }
+.flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+.flip-front,.flip-back { position:absolute; inset:0; backface-visibility:hidden; border-radius:16px; padding:24px; display:flex; flex-direction:column; justify-content:center; }
+.flip-front { background:var(--surface); border:1px solid var(--border); }
+.flip-back { background:var(--surface2); border:1px solid var(--accent); transform:rotateY(180deg); }
+.drag-item { padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; margin:6px 0; cursor:grab; font-size:14px; transition:.2s; user-select:none; }
+.drag-item:hover { border-color:var(--accent); }
+.drag-item.dragging { opacity:.5; }
+.drop-zone { min-height:50px; border:2px dashed var(--border); border-radius:12px; padding:12px; margin:8px 0; transition:.2s; }
+.drop-zone.over { border-color:var(--accent); background:rgba(78,205,196,.05); }
+.drop-zone.filled { border-style:solid; border-color:rgba(78,205,196,.3); }
+.slide ul { list-style:none; padding:0; }
+.slide ul li { padding:8px 0; padding-left:20px; position:relative; font-size:17px; color:var(--text-dim); line-height:1.6; }
+.slide ul li::before { content:''; position:absolute; left:0; top:16px; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.anim-in { animation: fadeUp .5s ease forwards; }
+.anim-delay-1 { animation-delay:.1s; opacity:0; }
+.anim-delay-2 { animation-delay:.2s; opacity:0; }
+.anim-delay-3 { animation-delay:.3s; opacity:0; }
+.anim-delay-4 { animation-delay:.4s; opacity:0; }
+@media(max-width:900px) {
+  .slide { padding:30px 24px; }
+  .two-col,.three-col { grid-template-columns:1fr; }
+  .nav { right:20px; }
+  .slide-number { left:24px; }
+}
+.portal-back { position:fixed; top:20px; left:20px; z-index:120; display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); background:rgba(20,24,32,.92); border:1px solid rgba(78,205,196,.25); padding:10px 16px; border-radius:999px; font-size:12px; font-weight:600; }
+.portal-back:hover { background:var(--accent); color:var(--bg); }
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="presentation" id="pres">
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Title -->
+<div class="slide title-slide active" data-slide="0">
+  <div class="glow-line"></div>
+  <span class="tag tag-teal">Lecture 1 of 3</span>
+  <h1>Mastering Partial Dentures</h1>
+  <p class="subtitle">13 tips for predictable outcomes, from occlusion to impression technique</p>
+  <p style="font-size:14px;color:var(--text-dim);margin-top:32px;">Use arrow keys or buttons to navigate &bull; Click interactive elements to engage</p>
+</div>
+
+<!-- SLIDE 2: Why Dentures Matter -->
+<div class="slide" data-slide="1">
+  <span class="tag tag-teal">Foundation</span>
+  <h2>Why Getting Good at Dentures Matters</h2>
+  <div class="two-col" style="margin-top:24px;">
+    <div>
+      <p>Mastering dentures builds the foundation for full-mouth rehabilitation and implant dentistry. The skills transfer directly:</p>
+      <ul style="margin-top:16px;">
+        <li>Midline and incisal plane positioning</li>
+        <li>Occlusal plane management</li>
+        <li>Aesthetic assessment and smile design</li>
+        <li>Transition to full-arch implant work</li>
+      </ul>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:16px;font-size:15px;">Masticatory Efficiency</h4>
+      <div class="diagram-container">
+        <svg viewBox="0 0 340 200" width="340">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4ecdc4"/><stop offset="100%" stop-color="#44b09e"/></linearGradient></defs>
+          <rect x="30" y="20" width="280" height="36" rx="8" fill="url(#g1)" opacity=".9"/>
+          <text x="170" y="43" text-anchor="middle" fill="#0c0f14" font-size="13" font-weight="600">10+ pairs = Full efficiency</text>
+          <rect x="30" y="70" width="200" height="36" rx="8" fill="#ffe66d" opacity=".8"/>
+          <text x="130" y="93" text-anchor="middle" fill="#0c0f14" font-size="13" font-weight="600">5–9 pairs = Reduced</text>
+          <rect x="30" y="120" width="110" height="36" rx="8" fill="#ff6b6b" opacity=".8"/>
+          <text x="85" y="143" text-anchor="middle" fill="#0c0f14" font-size="13" font-weight="600">&lt;5 = Poor</text>
+          <text x="30" y="185" fill="#8890a4" font-size="12">Functional occlusal units (pairs)</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;margin-top:8px;">Efficiency drops below 10 functional pairs (5 to 5 dentition). This impacts nutrition, digestion and quality of life.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Patient Journey -->
+<div class="slide" data-slide="2">
+  <span class="tag tag-yellow">Patient Pathway</span>
+  <h2>The Rehabilitation Journey</h2>
+  <p style="margin-bottom:24px;">Even seemingly hopeless cases can become lifelong implant patients with the right staged approach.</p>
+  <div class="diagram-container">
+    <svg viewBox="0 0 800 120" width="100%" style="max-width:800px;">
+      <defs>
+        <linearGradient id="gStep"><stop offset="0%" stop-color="#4ecdc4"/><stop offset="100%" stop-color="#44b09e"/></linearGradient>
+      </defs>
+      <rect x="0" y="30" width="140" height="60" rx="12" fill="#1a1f2a" stroke="#ff6b6b" stroke-width="1.5"/>
+      <text x="70" y="55" text-anchor="middle" fill="#ff6b6b" font-size="11" font-weight="600">DISEASE</text>
+      <text x="70" y="72" text-anchor="middle" fill="#8890a4" font-size="10">Caries, roots, poor OH</text>
+      <line x1="148" y1="60" x2="178" y2="60" stroke="#2a3040" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4ecdc4"/></marker></defs>
+      <rect x="180" y="30" width="140" height="60" rx="12" fill="#1a1f2a" stroke="#ffe66d" stroke-width="1.5"/>
+      <text x="250" y="55" text-anchor="middle" fill="#ffe66d" font-size="11" font-weight="600">STABILISE</text>
+      <text x="250" y="72" text-anchor="middle" fill="#8890a4" font-size="10">Composites, hygiene, XLAs</text>
+      <line x1="328" y1="60" x2="358" y2="60" stroke="#2a3040" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="360" y="30" width="140" height="60" rx="12" fill="#1a1f2a" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="430" y="55" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">DENTURES</text>
+      <text x="430" y="72" text-anchor="middle" fill="#8890a4" font-size="10">Restore function & aesthetics</text>
+      <line x1="508" y1="60" x2="538" y2="60" stroke="#2a3040" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="540" y="30" width="140" height="60" rx="12" fill="#1a1f2a" stroke="#4ecdc4" stroke-width="1.5"/>
+      <text x="610" y="55" text-anchor="middle" fill="#4ecdc4" font-size="11" font-weight="600">ASSESS</text>
+      <text x="610" y="72" text-anchor="middle" fill="#8890a4" font-size="10">OH improved? Motivated?</text>
+      <line x1="688" y1="60" x2="718" y2="60" stroke="#2a3040" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="720" y="30" width="80" height="60" rx="12" fill="url(#gStep)"/>
+      <text x="760" y="57" text-anchor="middle" fill="#0c0f14" font-size="11" font-weight="700">IMPLANTS</text>
+    </svg>
+  </div>
+  <div class="highlight-box" style="margin-top:24px;">
+    <p style="font-size:15px;"><strong style="color:var(--accent);">Key principle:</strong> Don't jump straight to implants. Stabilise first, prove the patient can maintain their oral health, then progress to definitive restorations.</p>
+  </div>
+</div>
+
+<!-- SLIDE 4: Tip 1 - Be Holistic -->
+<div class="slide" data-slide="3">
+  <span class="tag tag-teal">Tip 1</span>
+  <h2>Be Holistic</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <p>Pay attention to the patient as a whole, not just their teeth. Don't rush into tooth replacement — sometimes the best plan is to wait.</p>
+      <div class="highlight-box" style="margin-top:20px;">
+        <h4 style="color:var(--accent3);font-size:14px;margin-bottom:8px;">SHORTENED DENTAL ARCH</h4>
+        <p style="font-size:15px;">A 5-to-5 dentition works. Patients can eat all the same foods — it just takes longer to chew. Consider this before adding posterior dentures.</p>
+      </div>
+      <ul style="margin-top:16px;">
+        <li>Compromised OH? → Optimise first, replace later</li>
+        <li>Only posterior teeth missing? → Short arch may suffice</li>
+        <li>Front teeth missing? → More urgency to replace</li>
+      </ul>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">DECISION TOOL: Replace now or wait?</h4>
+      <ul class="checklist" id="holisticChecklist">
+        <li onclick="toggleCheck(this)">Patient has good oral hygiene</li>
+        <li onclick="toggleCheck(this)">Missing teeth are in the aesthetic zone</li>
+        <li onclick="toggleCheck(this)">Patient is motivated to maintain</li>
+        <li onclick="toggleCheck(this)">Periodontal disease is controlled</li>
+        <li onclick="toggleCheck(this)">Patient has functional concerns</li>
+      </ul>
+      <div id="holisticResult" style="margin-top:16px;padding:16px;border-radius:12px;background:var(--surface2);font-size:14px;color:var(--text-dim);">
+        Click items above to assess readiness for tooth replacement
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Tip 2 & 3 - Immediate Dentures & Planning for Failure -->
+<div class="slide" data-slide="4">
+  <span class="tag tag-teal">Tips 2 & 3</span>
+  <h2>Sculpt Tissues & Plan for Tooth Loss</h2>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card">
+      <h4 style="color:var(--accent);">Tip 2: Immediate Dentures Shape Tissues</h4>
+      <div class="diagram-container" style="margin:16px 0;">
+        <svg viewBox="0 0 300 160" width="280">
+          <rect x="0" y="0" width="300" height="160" rx="12" fill="#1a1f2a"/>
+          <!-- Socket -->
+          <path d="M100,120 Q100,60 130,50 Q140,48 150,50 Q180,60 180,120" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="4"/>
+          <text x="140" y="140" text-anchor="middle" fill="#8890a4" font-size="10">Socket</text>
+          <!-- Pontic 1mm in -->
+          <rect x="120" y="50" width="40" height="60" rx="6" fill="rgba(78,205,196,.3)" stroke="#4ecdc4" stroke-width="1.5"/>
+          <text x="140" y="83" text-anchor="middle" fill="#4ecdc4" font-size="10" font-weight="600">Pontic</text>
+          <!-- Arrow showing 1mm -->
+          <line x1="165" y1="52" x2="165" y2="62" stroke="#ffe66d" stroke-width="1.5"/>
+          <text x="195" y="58" fill="#ffe66d" font-size="10">~1mm into socket</text>
+          <!-- Result -->
+          <text x="140" y="22" text-anchor="middle" fill="#4ecdc4" font-size="11" font-weight="600">→ Ovate pontic emergence</text>
+        </svg>
+      </div>
+      <p style="font-size:14px;">Extend the pontic ~1mm into the extraction socket. This sculpts the soft tissues for a natural ovate emergence when you later do a bridge or implant.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent3);">Tip 3: Plan for the Next 5 Years</h4>
+      <p style="font-size:14px;margin-bottom:16px;">Ask: <em>"Will this restoration fail in the next 5 years?"</em></p>
+      <ul>
+        <li style="font-size:14px;">If likely → build denture design to allow tooth addition</li>
+        <li style="font-size:14px;">Acrylic → acrylic goes around the tooth</li>
+        <li style="font-size:14px;">Metal → metal framework extends to the tooth</li>
+        <li style="font-size:14px;">Consider replacing with indirect crown + milled rest seats & guide planes</li>
+      </ul>
+      <div class="highlight-box red" style="margin-top:16px;">
+        <p style="font-size:13px;"><strong style="color:var(--accent2);">Critical:</strong> If doing a metal denture, complete all indirect restorations BEFORE taking your denture impression. Metal cannot be adjusted chairside.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Tip 4 - Overdenture Abutments -->
+<div class="slide" data-slide="5">
+  <span class="tag tag-teal">Tip 4</span>
+  <h2>Overdenture Abutments</h2>
+  <div class="two-col">
+    <div>
+      <p>Retaining teeth as overdenture abutments provides natural socket preservation. The bone stays because the root stays.</p>
+      <ul style="margin-top:16px;">
+        <li>Grind teeth to gum level</li>
+        <li>Denture sits directly over the top</li>
+        <li>No root canal needed if pulp has receded (e.g. tooth wear)</li>
+        <li>If symptomatic later → extract at that point</li>
+        <li>Soft liner optional — acrylic alone often gives good retention</li>
+      </ul>
+      <div class="highlight-box" style="margin-top:16px;">
+        <p style="font-size:14px;"><strong style="color:var(--accent);">Lab tip:</strong> If using a soft liner, ensure the lab blocks out enough space over retained roots so the liner is thick enough to grip and adhere.</p>
+      </div>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">CASE: The Clencher</h4>
+      <div class="diagram-container">
+        <svg viewBox="0 0 300 180" width="280">
+          <rect x="0" y="0" width="300" height="180" rx="12" fill="#1a1f2a"/>
+          <!-- Jaw outline -->
+          <path d="M40,80 Q40,30 150,25 Q260,30 260,80 L260,100 Q260,140 150,150 Q40,140 40,100 Z" fill="none" stroke="#2a3040" stroke-width="1.5"/>
+          <!-- Trimmed roots -->
+          <circle cx="100" cy="75" r="8" fill="rgba(255,107,107,.3)" stroke="#ff6b6b" stroke-width="1"/>
+          <circle cx="130" cy="70" r="7" fill="rgba(255,107,107,.3)" stroke="#ff6b6b" stroke-width="1"/>
+          <circle cx="160" cy="68" r="7" fill="rgba(255,107,107,.3)" stroke="#ff6b6b" stroke-width="1"/>
+          <circle cx="190" cy="72" r="8" fill="rgba(255,107,107,.3)" stroke="#ff6b6b" stroke-width="1"/>
+          <text x="150" y="60" text-anchor="middle" fill="#ff6b6b" font-size="9">Retained roots at gum level</text>
+          <!-- Metal plate -->
+          <path d="M60,85 Q60,110 150,120 Q240,110 240,85" fill="rgba(167,139,250,.15)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="150" y="108" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600">Metal bite plate</text>
+          <text x="150" y="168" text-anchor="middle" fill="#8890a4" font-size="10">Over-engineered for bruxist</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;margin-top:8px;">For heavy clenchers: use wider implants, over-engineer with metal plates, and be aware of increased forces throughout the treatment plan.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Tip 5 - Occlusion -->
+<div class="slide" data-slide="6">
+  <span class="tag tag-purple">Tip 5</span>
+  <h2>Conform or Reorganise?</h2>
+  <p style="margin-bottom:20px;">The single biggest mistake in partial dentures: not deciding this upfront.</p>
+  <div class="two-col">
+    <div class="card" style="border-color:rgba(78,205,196,.3);">
+      <h4 style="color:var(--accent);">Conform (80% of cases)</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Keep the patient's existing bite. Straightforward planning.</p>
+      <ul>
+        <li style="font-size:14px;">OVD is acceptable facially</li>
+        <li style="font-size:14px;">Reproducible ICP with stable contacts</li>
+        <li style="font-size:14px;">Sufficient space for materials</li>
+        <li style="font-size:14px;">Implant placement is straightforward</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(255,107,107,.3);">
+      <h4 style="color:var(--accent2);">Reorganise (20% of cases)</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Change the bite. More complex but sometimes necessary.</p>
+      <ul>
+        <li style="font-size:14px;">Patient is over-closed</li>
+        <li style="font-size:14px;">No stable ICP</li>
+        <li style="font-size:14px;">Insufficient space for materials</li>
+        <li style="font-size:14px;">Do composites + dentures FIRST, then implants</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:20px;">
+    <p style="font-size:14px;"><strong style="color:var(--accent3);">Golden rule:</strong> Composites and acrylic dentures are reversible and adjustable. Establish the new bite with these first. Only then convert to implants and indirect restorations.</p>
+  </div>
+</div>
+
+<!-- SLIDE 8: OVD Assessment -->
+<div class="slide" data-slide="7">
+  <span class="tag tag-purple">Tip 5 continued</span>
+  <h2>Assessing OVD</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">The Conforming Checklist</h4>
+      <ul class="checklist" id="ovdChecklist">
+        <li onclick="toggleCheck(this)">OVD acceptable facially (say "M", check resting vs biting)</li>
+        <li onclick="toggleCheck(this)">Resting VD and occlusal VD within 2–4mm</li>
+        <li onclick="toggleCheck(this)">No mentalis muscle activation on closure</li>
+        <li onclick="toggleCheck(this)">Reproducible ICP (same position every time)</li>
+        <li onclick="toggleCheck(this)">Stable intercuspal contacts present</li>
+        <li onclick="toggleCheck(this)">Sufficient space for prosthetic teeth/materials</li>
+      </ul>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:16px;font-size:14px;color:var(--accent);">QUIZ: Conform or Reorganise?</h4>
+      <p style="font-size:14px;margin-bottom:16px;">Patient has worn-down teeth, over-closed appearance, mentalis strain visible on closure. What do you do?</p>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','ovdQuiz')">Conform — the patient has been like this for years</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'correct','ovdQuiz')">Reorganise — OVD is not acceptable, need to open the bite</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','ovdQuiz')">Extract and place implants immediately</button>
+      <div class="quiz-feedback" id="ovdQuiz"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Acrylic vs Metal -->
+<div class="slide" data-slide="8">
+  <span class="tag tag-teal">Tip 6</span>
+  <h2>Acrylic vs Metal vs Valplast</h2>
+  <div class="three-col" style="margin-top:16px;">
+    <div class="card" style="border-top:3px solid var(--accent);">
+      <h4>Acrylic ✓</h4>
+      <ul>
+        <li style="font-size:13px;">Multiple tooth loss likely</li>
+        <li style="font-size:13px;">Stabilisation phase</li>
+        <li style="font-size:13px;">Immediate/interim</li>
+        <li style="font-size:13px;">Testing OVD changes</li>
+        <li style="font-size:13px;">Long spans / few abutments</li>
+        <li style="font-size:13px;">Metallic allergy</li>
+        <li style="font-size:13px;">Cost-effective</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent4);">
+      <h4>Metal (CoCr) ✓</h4>
+      <ul>
+        <li style="font-size:13px;">Stable dentition</li>
+        <li style="font-size:13px;">No further tooth loss expected (5yr)</li>
+        <li style="font-size:13px;">Long-term prosthesis</li>
+        <li style="font-size:13px;">Better support & retention</li>
+        <li style="font-size:13px;">Thinner, more comfortable</li>
+        <li style="font-size:13px;">Can incorporate rests & clasps</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent2);">
+      <h4>Valplast ✗</h4>
+      <ul>
+        <li style="font-size:13px;color:var(--accent2);">Engages undercuts → gum stripping</li>
+        <li style="font-size:13px;color:var(--accent2);">Purely mucosal-supported</li>
+        <li style="font-size:13px;color:var(--accent2);">Causes soft tissue & bone loss</li>
+        <li style="font-size:13px;color:var(--accent2);">Discolouration</li>
+        <li style="font-size:13px;color:var(--accent2);">Difficult to polish, repair, adjust</li>
+        <li style="font-size:13px;color:var(--accent2);">Leads to periodontal problems</li>
+        <li style="font-size:13px;color:var(--accent2);">Avoid if implants planned</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Surveying -->
+<div class="slide" data-slide="9">
+  <span class="tag tag-teal">Tip 7</span>
+  <h2>Survey Your Models</h2>
+  <div class="two-col">
+    <div>
+      <p>Understanding survey lines is the foundation of good denture design. The surveyor marks the maximum bulbosity (equator) of each tooth.</p>
+      <div class="diagram-container" style="margin:20px 0;">
+        <svg viewBox="0 0 280 240" width="260">
+          <rect x="0" y="0" width="280" height="240" rx="12" fill="#1a1f2a"/>
+          <!-- Tooth shape -->
+          <path d="M90,200 Q80,140 85,100 Q90,60 140,40 Q190,60 195,100 Q200,140 190,200" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+          <!-- Survey line -->
+          <path d="M82,120 Q100,115 140,112 Q180,115 198,120" fill="none" stroke="#4ecdc4" stroke-width="2.5"/>
+          <text x="220" y="118" fill="#4ecdc4" font-size="11" font-weight="600">Survey line</text>
+          <!-- Above = no undercut -->
+          <text x="140" y="85" text-anchor="middle" fill="#ffe66d" font-size="11">Above = No undercut</text>
+          <text x="140" y="98" text-anchor="middle" fill="#ffe66d" font-size="10">(Reciprocation zone)</text>
+          <!-- Below = undercut -->
+          <text x="140" y="155" text-anchor="middle" fill="#ff6b6b" font-size="11">Below = Undercut</text>
+          <text x="140" y="168" text-anchor="middle" fill="#ff6b6b" font-size="10">(Retention zone)</text>
+          <!-- Clasp -->
+          <path d="M75,95 Q78,100 80,110 Q82,118 84,120 Q86,135 90,155 Q92,165 95,170" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="50" y="90" fill="#a78bfa" font-size="10" font-weight="600">Clasp</text>
+          <!-- Labels -->
+          <text x="140" y="230" text-anchor="middle" fill="#8890a4" font-size="10">⅔ above survey line = reciprocation</text>
+          <text x="140" y="16" text-anchor="middle" fill="#8890a4" font-size="10">Occlusally approaching clasp</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:16px;">CLASP SELECTION RULES</h4>
+      <div class="card" style="margin-bottom:12px;">
+        <h4 style="font-size:14px;">Molars → Occlusally approaching</h4>
+        <p style="font-size:13px;">Large circumference allows flexible clasp arm. ⅔ reciprocates, ⅓ retains.</p>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4 style="font-size:14px;">Premolars & Canines → Gingivally approaching</h4>
+        <p style="font-size:13px;">Small circumference makes occlusally approaching clasps too stiff → fracture risk.</p>
+      </div>
+      <div class="card" style="border-color:rgba(78,205,196,.3);">
+        <h4 style="font-size:14px;">Common Undercut Locations</h4>
+        <p style="font-size:13px;"><strong>Lower molars:</strong> lingual (Curve of Wilson tilt)<br><strong>Upper molars:</strong> mesio-buccal</p>
+      </div>
+      <p style="font-size:13px;margin-top:12px;color:var(--text-dim);">Don't have a surveyor? Get your lab to survey and send photos. Or invest ~£100 (Geodental).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Guide Planes -->
+<div class="slide" data-slide="10">
+  <span class="tag tag-teal">Tip 7 continued</span>
+  <h2>Guide Planes</h2>
+  <div class="two-col">
+    <div>
+      <p>Guide planes create a single path of insertion/removal, increasing friction fit and retention.</p>
+      <div class="highlight-box" style="margin-top:16px;">
+        <h4 style="color:var(--accent);font-size:13px;margin-bottom:8px;">REQUIREMENTS</h4>
+        <ul>
+          <li style="font-size:14px;">Minimum 2mm long vertically</li>
+          <li style="font-size:14px;">Must engage slightly into buccal AND palatal aspects</li>
+          <li style="font-size:14px;">Best bur: tungsten carbide shoulder bur (easy to keep parallel)</li>
+          <li style="font-size:14px;">Bilateral saddles: get as parallel as possible on both sides</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin-top:12px;">
+        <h4 style="color:var(--accent3);font-size:13px;margin-bottom:8px;">IN-MOUTH TECHNIQUE</h4>
+        <p style="font-size:14px;">Position patient, retract with mirror, sight both tooth surfaces (e.g. 4 and 7 in a bounded saddle). Hold bur against one tooth, move across to the other, lock your wrist, then cut.</p>
+      </div>
+    </div>
+    <div class="diagram-container">
+      <svg viewBox="0 0 320 300" width="300">
+        <rect x="0" y="0" width="320" height="300" rx="12" fill="#1a1f2a"/>
+        <!-- Two teeth with gap -->
+        <path d="M50,260 Q45,180 55,140 Q65,100 95,80 Q110,75 120,80 Q135,100 130,140" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+        <path d="M190,140 Q185,100 200,80 Q215,75 230,80 Q255,100 265,140 Q270,180 270,260" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+        <!-- Gap -->
+        <rect x="132" y="140" width="56" height="120" fill="rgba(78,205,196,.05)" stroke="none"/>
+        <text x="160" y="200" text-anchor="middle" fill="#8890a4" font-size="10">Saddle</text>
+        <!-- Guide planes marked in green -->
+        <line x1="128" y1="140" x2="128" y2="180" stroke="#4ecdc4" stroke-width="3" stroke-linecap="round"/>
+        <line x1="192" y1="140" x2="192" y2="180" stroke="#4ecdc4" stroke-width="3" stroke-linecap="round"/>
+        <text x="128" y="195" text-anchor="middle" fill="#4ecdc4" font-size="10">Guide</text>
+        <text x="128" y="207" text-anchor="middle" fill="#4ecdc4" font-size="10">plane</text>
+        <text x="192" y="195" text-anchor="middle" fill="#4ecdc4" font-size="10">Guide</text>
+        <text x="192" y="207" text-anchor="middle" fill="#4ecdc4" font-size="10">plane</text>
+        <!-- 2mm marker -->
+        <line x1="115" y1="140" x2="115" y2="180" stroke="#ffe66d" stroke-width="1" stroke-dasharray="3"/>
+        <text x="105" y="163" fill="#ffe66d" font-size="9" text-anchor="end">≥2mm</text>
+        <!-- Path of insertion arrow -->
+        <line x1="160" y1="30" x2="160" y2="130" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="160" y="22" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">Path of insertion (90°)</text>
+        <!-- Labels -->
+        <text x="90" y="275" text-anchor="middle" fill="#8890a4" font-size="10">Tooth</text>
+        <text x="230" y="275" text-anchor="middle" fill="#8890a4" font-size="10">Tooth</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Adjusting Survey Lines -->
+<div class="slide" data-slide="11">
+  <span class="tag tag-yellow">Adjusting Survey Lines</span>
+  <h2>Moving the Survey Line</h2>
+  <div class="two-col">
+    <div class="card">
+      <h4 style="color:var(--accent2);">Survey Line Too Low (Gingival)</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Clasp would sit near gingival margin → plaque trap, trauma, perio problems.</p>
+      <div style="text-align:center;padding:16px;">
+        <svg viewBox="0 0 200 100" width="180">
+          <path d="M40,80 Q40,40 100,25 Q160,40 160,80" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+          <path d="M38,70 Q60,68 100,66 Q140,68 162,70" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="4"/>
+          <circle cx="100" cy="50" r="18" fill="rgba(78,205,196,.2)" stroke="#4ecdc4" stroke-width="1.5"/>
+          <text x="100" y="54" text-anchor="middle" fill="#4ecdc4" font-size="9" font-weight="600">Add</text>
+          <text x="100" y="63" text-anchor="middle" fill="#4ecdc4" font-size="8">composite</text>
+          <text x="100" y="95" text-anchor="middle" fill="#8890a4" font-size="9">→ Moves survey line up</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;"><strong>Solution:</strong> Add flowable composite (e.g. SDR) to the mid-third, distal-buccal aspect. This raises the maximum bulbosity and hides the clasp.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent3);">Survey Line Too High (Coronal)</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Reciprocating clasp arm sits too high → occlusal interference.</p>
+      <div style="text-align:center;padding:16px;">
+        <svg viewBox="0 0 200 100" width="180">
+          <path d="M40,80 Q40,40 100,25 Q160,40 160,80" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+          <path d="M38,40 Q60,38 100,36 Q140,38 162,40" fill="none" stroke="#ffe66d" stroke-width="2" stroke-dasharray="4"/>
+          <rect x="70" y="30" width="60" height="14" rx="4" fill="rgba(255,107,107,.2)" stroke="#ff6b6b" stroke-width="1"/>
+          <text x="100" y="40" text-anchor="middle" fill="#ff6b6b" font-size="8" font-weight="600">Trim with bur</text>
+          <text x="100" y="95" text-anchor="middle" fill="#8890a4" font-size="9">→ Moves survey line down</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;"><strong>Solution:</strong> Use a bur to reduce the bulbosity and move the survey line down the tooth.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: Rest Seats -->
+<div class="slide" data-slide="12">
+  <span class="tag tag-teal">Tip 8</span>
+  <h2>Cutting Rest Seats Properly</h2>
+  <div class="two-col">
+    <div>
+      <p>Rest seats transmit forces down the long axis of the tooth. They're often cut too shallow or too small.</p>
+      <div class="diagram-container" style="margin:16px 0;">
+        <svg viewBox="0 0 300 200" width="280">
+          <rect x="0" y="0" width="300" height="200" rx="12" fill="#1a1f2a"/>
+          <!-- Tooth occlusal view -->
+          <ellipse cx="150" cy="100" rx="80" ry="55" fill="rgba(255,255,255,.06)" stroke="#8890a4" stroke-width="1.5"/>
+          <!-- Rest seat triangle -->
+          <path d="M150,50 L110,80 Q130,95 150,90 Q170,95 190,80 Z" fill="rgba(78,205,196,.15)" stroke="#4ecdc4" stroke-width="2"/>
+          <!-- Dimension labels -->
+          <line x1="108" y1="52" x2="108" y2="80" stroke="#ffe66d" stroke-width="1" stroke-dasharray="3"/>
+          <text x="95" y="70" fill="#ffe66d" font-size="9" text-anchor="end">½ MD</text>
+          <line x1="110" y1="82" x2="190" y2="82" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3"/>
+          <text x="150" y="78" text-anchor="middle" fill="#a78bfa" font-size="9">½ BP width at ridge</text>
+          <!-- Depth labels -->
+          <text x="155" y="58" fill="#4ecdc4" font-size="9">1mm deep</text>
+          <text x="160" y="92" fill="#4ecdc4" font-size="8">0.5mm deep</text>
+          <!-- Marginal ridge label -->
+          <text x="150" y="45" text-anchor="middle" fill="#ff6b6b" font-size="10">Marginal ridge (widest)</text>
+          <text x="150" y="185" text-anchor="middle" fill="#8890a4" font-size="10">Occlusal view — rounded triangular form</text>
+          <text x="150" y="170" text-anchor="middle" fill="#8890a4" font-size="9">Bur: medium round, high-speed</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">KEY DIMENSIONS</h4>
+      <div class="card" style="margin-bottom:10px;">
+        <p style="font-size:13px;"><strong>Width at marginal ridge:</strong> ½ the bucco-palatal width (~3mm on a molar)</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <p style="font-size:13px;"><strong>Length (MD):</strong> ⅓ to ½ the tooth length (~4–5mm on a molar)</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <p style="font-size:13px;"><strong>Depth at marginal ridge:</strong> 1mm (deepest part)</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <p style="font-size:13px;"><strong>Depth at centre:</strong> 0.5mm (shallowest, follows tooth contour)</p>
+      </div>
+      <div class="highlight-box" style="margin-top:12px;">
+        <p style="font-size:13px;">With two adjacent teeth: take preparation more lingually for the minor connector. Don't cross the transverse ridge. Always apply fluoride after preparation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Reciprocation -->
+<div class="slide" data-slide="13">
+  <span class="tag tag-purple">Biomechanics</span>
+  <h2>Reciprocation</h2>
+  <div class="two-col">
+    <div>
+      <p>Reciprocation prevents orthodontic tooth movement caused by clasps engaging undercuts. Every retentive clasp needs a reciprocating element.</p>
+      <div class="card" style="margin-top:16px;border-color:rgba(78,205,196,.3);">
+        <h4 style="font-size:14px;color:var(--accent);">Metal Dentures (CoCr)</h4>
+        <ul>
+          <li style="font-size:13px;">Occlusally approaching: ⅔ of clasp arm above survey line provides reciprocation</li>
+          <li style="font-size:13px;">Three-arm clasps: one side reciprocates, one side retains</li>
+          <li style="font-size:13px;">Rests on opposing surfaces of the tooth</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(255,107,107,.3);">
+        <h4 style="font-size:14px;color:var(--accent2);">Acrylic Dentures</h4>
+        <ul>
+          <li style="font-size:13px;">Stainless steel clasps deform easily → quickly lose reciprocation</li>
+          <li style="font-size:13px;">MUST have acrylic plate sitting above the survey line on the opposing side</li>
+          <li style="font-size:13px;">Never rely on the other clasp arm for reciprocation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:16px;font-size:14px;color:var(--accent);">QUIZ: Reciprocation</h4>
+      <p style="font-size:14px;margin-bottom:16px;">In an acrylic denture with stainless steel clasps, what provides reciprocation?</p>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','recipQuiz')">The other half of the stainless steel clasp arm</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'correct','recipQuiz')">The acrylic plate sitting above the survey line on the opposing side</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','recipQuiz')">The guide plane alone</button>
+      <div class="quiz-feedback" id="recipQuiz"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Free-End Saddles -->
+<div class="slide" data-slide="14">
+  <span class="tag tag-teal">Tips 9 & 10</span>
+  <h2>Free-End Saddles: The Special Case</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">Free-end saddles need special attention because the mucosa posteriorly is compressible (spongy), while the teeth anteriorly are rigid.</p>
+      <div class="diagram-container">
+        <svg viewBox="0 0 300 160" width="280">
+          <rect x="0" y="0" width="300" height="160" rx="12" fill="#1a1f2a"/>
+          <!-- Ridge -->
+          <path d="M20,100 Q50,95 100,90 Q200,80 280,75" fill="none" stroke="#8890a4" stroke-width="1.5"/>
+          <!-- Teeth anterior -->
+          <rect x="30" y="55" width="15" height="35" rx="3" fill="rgba(255,255,255,.08)" stroke="#8890a4" stroke-width="1"/>
+          <rect x="50" y="50" width="15" height="40" rx="3" fill="rgba(255,255,255,.08)" stroke="#8890a4" stroke-width="1"/>
+          <rect x="70" y="50" width="15" height="40" rx="3" fill="rgba(255,255,255,.08)" stroke="#8890a4" stroke-width="1"/>
+          <text x="55" y="45" text-anchor="middle" fill="#8890a4" font-size="9">Rigid</text>
+          <!-- Denture saddle -->
+          <rect x="100" y="70" width="170" height="20" rx="6" fill="rgba(167,139,250,.15)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="185" y="84" text-anchor="middle" fill="#a78bfa" font-size="10">Denture saddle</text>
+          <!-- Spongy mucosa -->
+          <text x="200" y="110" text-anchor="middle" fill="#ff6b6b" font-size="9">Compressible mucosa</text>
+          <!-- Flip arrow -->
+          <path d="M95,75 Q120,50 150,70" fill="none" stroke="#ffe66d" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="120" y="52" fill="#ffe66d" font-size="9">Flips down</text>
+          <!-- Clasp pull -->
+          <path d="M80,65 Q75,50 72,42" fill="none" stroke="#ff6b6b" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="60" y="37" fill="#ff6b6b" font-size="9">Pulls up</text>
+        </svg>
+      </div>
+      <p style="font-size:14px;margin-top:8px;">When biting, the denture sinks posteriorly. Clasps lift off the anterior teeth. <strong>Indirect retention</strong> is essential to counteract this.</p>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">TISSUE STOPS: The Game Changer</h4>
+      <div class="card" style="margin-bottom:12px;">
+        <p style="font-size:14px;">Tissue stops are blocks of tray material on non-compressible tissue (ridge crest, hard palate). They create a tripod so the tray sits at one precise level.</p>
+      </div>
+      <ul>
+        <li style="font-size:14px;">Even impression material thickness throughout</li>
+        <li style="font-size:14px;">Same tray position for border moulding and impression</li>
+        <li style="font-size:14px;">Can check tray extension accurately</li>
+        <li style="font-size:14px;">Free — lab just cuts holes in the spacer</li>
+      </ul>
+      <div class="highlight-box" style="margin-top:16px;">
+        <p style="font-size:13px;"><strong style="color:var(--accent);">Without tissue stops:</strong> You push the unspaced tray to the ridge → can't check for overextension → inaccurate impression.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Border Moulding -->
+<div class="slide" data-slide="15">
+  <span class="tag tag-teal">Tip 11</span>
+  <h2>Border Moulding with Pink Stick</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">Treat free-end saddle areas like a complete denture — border mould them.</p>
+      <div class="card" style="margin-bottom:12px;border-color:rgba(255,107,107,.3);">
+        <h4 style="font-size:14px;color:var(--accent2);">Green Stick (Traditional)</h4>
+        <p style="font-size:13px;">Messy, cools quickly, doesn't flow well. Needs a Bunsen burner or hot air blower. Apply small increments along the tray border, manipulate cheeks/lips.</p>
+      </div>
+      <div class="card" style="border-color:rgba(78,205,196,.3);">
+        <h4 style="font-size:14px;color:var(--accent);">Pink Stick (Recommended) ✓</h4>
+        <p style="font-size:13px;">Lower melting temperature. Warm in hot water (~45°C). Place in the centre of the tray over the ridge crest, seat tray until tissue stops touch. It flows buccally and lingually. Patient swallows, moves tongue L/R — done.</p>
+      </div>
+    </div>
+    <div class="interactive-zone">
+      <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">STEP-BY-STEP PROTOCOL</h4>
+      <div id="borderSteps">
+        <div class="card" style="margin-bottom:8px;cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">1. Check tray extensions ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">Trim if overextended. Tray should be 2–3mm short of the sulcus depth.</p>
+        </div>
+        <div class="card" style="margin-bottom:8px;cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">2. Warm pink stick in hot water ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">~45°C from the tap is fine. Much easier than heating green stick over a flame.</p>
+        </div>
+        <div class="card" style="margin-bottom:8px;cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">3. Place on crest of ridge ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">Only on the free-end saddle area. Alginate handles other areas.</p>
+        </div>
+        <div class="card" style="margin-bottom:8px;cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">4. Seat until tissue stops touch ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">Push down until you can't go further. Pink stick flows B/L automatically.</p>
+        </div>
+        <div class="card" style="margin-bottom:8px;cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">5. Functional movements ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">Patient swallows, moves tongue left and right. Pink stick records the functional border.</p>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="this.querySelector('.step-detail').style.display=this.querySelector('.step-detail').style.display==='block'?'none':'block'">
+          <p style="font-size:14px;font-weight:600;">6. Take impression with alginate ▾</p>
+          <p class="step-detail" style="display:none;font-size:13px;margin-top:8px;color:var(--text-dim);">Border moulding is preserved. Alginate fills the remaining space for the secondary impression.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17: Shimstock Foil -->
+<div class="slide" data-slide="16">
+  <span class="tag tag-teal">Tip 12</span>
+  <h2>Shimstock Foil: Track Your Bite</h2>
+  <div class="two-col">
+    <div>
+      <p>Shimstock foil is ~8 microns thick. If it holds between teeth when the patient bites, you know within 8μm that there's contact. Use it at every stage.</p>
+      <div class="diagram-container" style="margin:20px 0;">
+        <svg viewBox="0 0 320 180" width="300">
+          <rect x="0" y="0" width="320" height="180" rx="12" fill="#1a1f2a"/>
+          <!-- Timeline -->
+          <line x1="40" y1="90" x2="280" y2="90" stroke="#2a3040" stroke-width="2"/>
+          <!-- Stage dots -->
+          <circle cx="60" cy="90" r="8" fill="#4ecdc4"/>
+          <text x="60" y="75" text-anchor="middle" fill="#4ecdc4" font-size="9" font-weight="600">Start</text>
+          <text x="60" y="115" text-anchor="middle" fill="#8890a4" font-size="8">ID reference</text>
+          <text x="60" y="125" text-anchor="middle" fill="#8890a4" font-size="8">teeth</text>
+          
+          <circle cx="120" cy="90" r="8" fill="#ffe66d"/>
+          <text x="120" y="75" text-anchor="middle" fill="#ffe66d" font-size="9" font-weight="600">Bite reg</text>
+          <text x="120" y="115" text-anchor="middle" fill="#8890a4" font-size="8">Check holds</text>
+          <text x="120" y="125" text-anchor="middle" fill="#8890a4" font-size="8">same teeth</text>
+          
+          <circle cx="180" cy="90" r="8" fill="#a78bfa"/>
+          <text x="180" y="75" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600">Models</text>
+          <text x="180" y="115" text-anchor="middle" fill="#8890a4" font-size="8">Verify on</text>
+          <text x="180" y="125" text-anchor="middle" fill="#8890a4" font-size="8">articulator</text>
+          
+          <circle cx="225" cy="90" r="8" fill="#ff6b6b"/>
+          <text x="225" y="75" text-anchor="middle" fill="#ff6b6b" font-size="9" font-weight="600">Try-in</text>
+          <text x="225" y="115" text-anchor="middle" fill="#8890a4" font-size="8">Still holding?</text>
+          
+          <circle cx="270" cy="90" r="8" fill="url(#g1)"/>
+          <text x="270" y="75" text-anchor="middle" fill="#4ecdc4" font-size="9" font-weight="600">Fit</text>
+          <text x="270" y="115" text-anchor="middle" fill="#8890a4" font-size="8">Final check</text>
+          
+          <text x="160" y="165" text-anchor="middle" fill="#8890a4" font-size="10">Shimstock must hold on the same reference teeth at every stage</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div class="highlight-box red">
+        <h4 style="color:var(--accent2);font-size:14px;margin-bottom:8px;">COMMON MISTAKE</h4>
+        <p style="font-size:14px;">Putting too much silicone bite registration material between the blocks. This props open the casts beyond the true bite. Only place silicone where teeth are MISSING, not all the way around.</p>
+      </div>
+      <div class="interactive-zone" style="margin-top:16px;">
+        <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">QUIZ</h4>
+        <p style="font-size:14px;margin-bottom:12px;">After fitting a crown, the shimstock no longer holds on reference teeth elsewhere in the mouth. What happened?</p>
+        <button class="quiz-btn" onclick="checkQuiz(this,'correct','shimQuiz')">The crown is high — it's propping the bite open</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','shimQuiz')">The shimstock foil is damaged</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','shimQuiz')">The reference teeth have moved</button>
+        <div class="quiz-feedback" id="shimQuiz"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18: Summary -->
+<div class="slide" data-slide="17">
+  <span class="tag tag-teal">Summary</span>
+  <h2>The 13 Tips at a Glance</h2>
+  <div class="three-col" style="margin-top:16px;">
+    <div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent);">1.</strong> Be holistic — treat the patient, not just the teeth</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent);">2.</strong> Use immediate dentures to sculpt tissues</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent);">3.</strong> Plan for tooth loss in the next 5 years</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent);">4.</strong> Consider overdenture abutments</p></div>
+      <div class="card"><p style="font-size:13px;"><strong style="color:var(--accent);">5.</strong> Decide: conform or reorganise</p></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">6.</strong> Choose acrylic vs metal wisely (avoid Valplast)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">7.</strong> Get models surveyed + cut guide planes</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">8.</strong> Cut rest seats properly (1mm deep at ridge)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">9.</strong> Always consider indirect retention</p></div>
+      <div class="card"><p style="font-size:13px;"><strong style="color:var(--accent3);">10.</strong> Use tissue stops on special trays</p></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent4);">11.</strong> Border mould free-end saddles (pink stick)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent4);">12.</strong> Use shimstock foil at every stage</p></div>
+      <div class="card"><p style="font-size:13px;"><strong style="color:var(--accent4);">13.</strong> Don't guess — use pressure indicators for adjustments</p></div>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:24px;font-size:16px;color:var(--text-dim);">End of Lecture 1 — Proceed to Lecture 2: Resin Bonded Bridges →</p>
+</div>
+
+</div>
+
+<div class="slide-number" id="slideNum">01 / 18</div>
+<div class="nav">
+  <button onclick="prevSlide()">←</button>
+  <button onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function showSlide(n) {
+  slides.forEach(s => s.classList.remove('active'));
+  slides[n].classList.add('active');
+  document.getElementById('slideNum').textContent = String(n+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+  document.getElementById('progressBar').style.width = ((n+1)/total*100)+'%';
+}
+
+function nextSlide() { if(current<total-1){current++;showSlide(current);} }
+function prevSlide() { if(current>0){current--;showSlide(current);} }
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); nextSlide(); }
+  if(e.key==='ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const parent = el.closest('.slide');
+  const checked = parent.querySelectorAll('.checklist li.checked').length;
+  const totalItems = parent.querySelectorAll('.checklist li').length;
+  const resultEl = parent.querySelector('[id$="Result"]');
+  if(resultEl) {
+    if(checked >= 4) resultEl.innerHTML = '<span style="color:#4ecdc4;">✓ Good candidate for tooth replacement now.</span>';
+    else if(checked >= 2) resultEl.innerHTML = '<span style="color:#ffe66d;">⚠ Consider stabilisation phase first, then reassess.</span>';
+    else resultEl.innerHTML = '<span style="color:#ff6b6b;">✗ Focus on oral health optimisation before replacement.</span>';
+  }
+}
+
+function checkQuiz(btn, result, feedbackId) {
+  const parent = btn.parentElement;
+  const buttons = parent.querySelectorAll('.quiz-btn');
+  buttons.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+  btn.style.opacity = '1';
+  btn.classList.add(result);
+  const fb = document.getElementById(feedbackId);
+  fb.style.display = 'block';
+  if(result === 'correct') {
+    fb.style.background = 'rgba(78,205,196,.1)';
+    fb.style.color = '#4ecdc4';
+    fb.textContent = '✓ Correct!';
+  } else {
+    fb.style.background = 'rgba(255,107,107,.1)';
+    fb.style.color = '#ff6b6b';
+    fb.textContent = '✗ Not quite. The correct answer is highlighted in teal.';
+    buttons.forEach(b => { if(b.getAttribute('onclick')?.includes("'correct'")) b.classList.add('correct'); });
+  }
+}
+
+// Touch support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchStartX;
+  if(diff < -50) nextSlide();
+  if(diff > 50) prevSlide();
+});
+
+showSlide(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 1 · Quiz 1 — Patient Selection & Planning</title>
+<style>
+:root{
+  --bg:#0b1120;--panel:#152038;--panel2:#1c2a47;--border:#2a3a5e;
+  --text:#e6ecf7;--muted:#9aa8c4;
+  --accent:#5ee0c1;--accent2:#7ab8ff;
+  --good:#5ee0c1;--bad:#ff7a9c;--warn:#ffb86b;
+  --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,#0b1120 0%,#0f1830 100%);
+  color:var(--text);min-height:100vh;line-height:1.6;
+}
+.header{
+  position:sticky;top:0;z-index:100;background:rgba(11,17,32,.95);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+  padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.title{font-size:15px;font-weight:600;color:var(--accent)}
+.title span{color:var(--muted);font-weight:400}
+.score-pill{
+  background:var(--panel);border:1px solid var(--border);
+  padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;
+}
+.progress-bar{
+  height:4px;background:var(--panel);position:relative;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  width:0%;transition:width .4s ease;
+}
+.container{
+  max-width:820px;margin:0 auto;padding:40px 24px;
+}
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;padding:36px;box-shadow:var(--shadow);
+  animation:fadeIn .4s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.q-num{
+  color:var(--accent);font-size:13px;font-weight:600;
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;
+}
+.q-text{font-size:19px;font-weight:500;margin-bottom:24px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{
+  background:var(--panel2);border:2px solid var(--border);
+  border-radius:10px;padding:16px 20px;cursor:pointer;
+  transition:all .2s;font-size:15px;text-align:left;color:var(--text);
+  font-family:inherit;display:flex;align-items:center;gap:12px;
+}
+.option:hover:not(:disabled){border-color:var(--accent);background:#22325a}
+.option:disabled{cursor:default}
+.option .letter{
+  width:28px;height:28px;border-radius:50%;background:var(--border);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;flex-shrink:0;
+}
+.option.correct{border-color:var(--good);background:rgba(94,224,193,.12)}
+.option.correct .letter{background:var(--good);color:#0b1120}
+.option.incorrect{border-color:var(--bad);background:rgba(255,122,156,.12)}
+.option.incorrect .letter{background:var(--bad);color:#0b1120}
+.feedback{
+  margin-top:20px;padding:16px 20px;border-radius:10px;
+  background:var(--panel2);border-left:4px solid var(--accent);
+  font-size:14px;line-height:1.6;display:none;
+}
+.feedback.show{display:block;animation:fadeIn .3s}
+.feedback.right{border-left-color:var(--good)}
+.feedback.wrong{border-left-color:var(--bad)}
+.feedback strong{color:var(--accent)}
+.feedback.right strong{color:var(--good)}
+.feedback.wrong strong{color:var(--bad)}
+.controls{
+  margin-top:24px;display:flex;justify-content:space-between;gap:12px;
+}
+.btn{
+  background:var(--accent);color:#0b1120;border:none;
+  padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(94,224,193,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn.ghost:hover{color:var(--text);border-color:var(--accent)}
+.results{text-align:center;padding:20px}
+.results h1{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.results .score{font-size:64px;font-weight:700;margin:24px 0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.results .pct{font-size:18px;color:var(--muted);margin-bottom:24px}
+.results .verdict{font-size:16px;margin-bottom:32px;padding:16px;
+  background:var(--panel2);border-radius:10px;border-left:4px solid var(--accent)}
+.review-list{text-align:left;margin-top:24px}
+.review-item{
+  padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:10px;
+  border-left:3px solid var(--good);font-size:13px;
+}
+.review-item.wrong{border-left-color:var(--bad)}
+.review-item .qt{font-weight:600;margin-bottom:6px}
+.review-item .at{color:var(--muted);font-size:12px}
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:40px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">Module 2 · Day 1 · Quiz 1 <span>— Patient Selection & Planning</span></div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="score-pill" id="scorePill">Q <span id="qNum">1</span>/30 · Score <span id="scoreNum">0</span></div>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="container" id="quizArea"></div>
+
+<div class="footer">Educational use only. Based on Dr Sarah Jawad lecture content.</div>
+
+<script>
+const questions = [
+  {q:"What proportion of removable prostheses are reportedly never worn by patients?",o:["5–10%","10–20%","30–50%","60–70%"],a:2,e:"Studies suggest 30–50% of removable prostheses end up unused, a key driver for considering implants when restoring edentulous spaces."},
+  {q:"Which factor is the strongest predictor of long-term implant success in patient selection?",o:["Bone quality alone","Patient compliance and oral hygiene","Implant brand","Surgeon experience only"],a:1,e:"Patient compliance and meticulous oral hygiene outweigh almost every other factor over the long term."},
+  {q:"For NHS-funded implant treatment in the UK, which patient group is NOT routinely eligible?",o:["Cleft lip/palate","Head & neck cancer","Hypodontia","Single missing tooth from caries"],a:3,e:"NHS eligibility is restricted to cleft, oncology, hypodontia, and major trauma — routine tooth loss does not qualify."},
+  {q:"What smoking-related implant failure rate was cited for patients smoking >20 cigarettes/day?",o:["10.2%","15.8%","23.4%","30.8%"],a:3,e:"Heavy smokers (>20/day) showed approximately 30.8% failure compared with 15.8% overall in smokers."},
+  {q:"How long should a patient ideally stop smoking before implant placement (NHS recommendation)?",o:["2 weeks","6 weeks","3 months","6 months"],a:3,e:"A 6-month cessation period is the NHS-recommended benchmark before implant surgery."},
+  {q:"By how much does heavy alcohol consumption increase late implant failures?",o:["50%","100%","200%","400%"],a:2,e:"Heavy alcohol intake is associated with roughly a 200% increase in late implant failures."},
+  {q:"In the ASA classification, which category represents a patient with severe systemic disease that is a constant threat to life?",o:["ASA II","ASA III","ASA IV","ASA V"],a:2,e:"ASA IV = severe systemic disease that is a constant threat to life. ASA V = moribund."},
+  {q:"What is the 'flange-off try-in' test designed to assess?",o:["Occlusal vertical dimension","Whether the patient needs labial support from the prosthesis","Bone density","Saliva flow"],a:1,e:"Removing the flange at try-in shows whether the patient needs labial flange support — if the lip collapses, an implant-supported fixed bridge alone may not satisfy aesthetics."},
+  {q:"Which principle should govern implant positioning in edentulous planning?",o:["Bone-driven","Teeth-driven (prosthetically driven)","Surgeon-driven","Cost-driven"],a:1,e:"Implants should be teeth-driven: the desired tooth position dictates implant placement, not available bone alone."},
+  {q:"A patient asks for 'movie-star teeth'. What is the most appropriate first response?",o:["Agree and proceed","Refuse treatment","Explore expectations and discuss what is realistic","Refer to orthodontist"],a:2,e:"Unrealistic expectations are a major medico-legal risk. Calibrating expectations early is essential before any treatment decision."},
+  {q:"Which is a recognised marker of perceived value in dental treatment?",o:["The cheapest option offered","Time spent listening to the patient","Quickest appointment","Speed of treatment delivery"],a:1,e:"Patients perceive value largely through time, attention and communication — not just clinical output."},
+  {q:"When taking a social history, which factor most predicts compliance with peri-implant maintenance?",o:["Income level","Attendance pattern with previous dental care","Job type","Marital status"],a:1,e:"Past attendance behaviour is one of the most reliable predictors of future compliance with maintenance recall."},
+  {q:"Bisphosphonate use is most relevant to which implant complication?",o:["Peri-implantitis","Medication-related osteonecrosis of the jaw (MRONJ)","Sinusitis","Nerve injury"],a:1,e:"Bisphosphonates (and other antiresorptives) carry MRONJ risk, which must be discussed and documented prior to surgery."},
+  {q:"What is the typical purpose of a diagnostic wax-up before implant placement?",o:["Aesthetic preview only","To determine if implants can be placed prosthetically driven","Cost calculation","Insurance approval"],a:1,e:"The wax-up communicates the planned tooth position, which then guides the surgical position of the implant."},
+  {q:"Which statement best describes 'expectations management' in implant consultations?",o:["Promise the best outcome","Underpromise and overdeliver","Tell the patient what they want to hear","Avoid discussing risks"],a:1,e:"Underpromise and overdeliver — patients judge success against the expectations you set, not against an absolute outcome."},
+  {q:"In the patient outcome hierarchy, which is the highest level of success measurement?",o:["Implant survival","Implant success criteria","Patient-reported quality of life","Radiographic bone level"],a:2,e:"Patient-reported quality of life sits at the top — survival and bone levels matter only insofar as they translate to patient-perceived benefit."},
+  {q:"Which medication class is increasingly recognised as a risk factor for implant failure?",o:["Beta-blockers","SSRIs","Statins","Antihistamines"],a:1,e:"SSRIs are linked with reduced bone density and impaired osseointegration — covered in more depth in Lecture 3."},
+  {q:"Why is documenting medical history changes at every visit important?",o:["Insurance requirement only","New medications and conditions can alter risk profile","To fill the chart","Legal admin"],a:1,e:"Risk factors evolve — a patient who was low-risk at consult may have started bisphosphonates or chemotherapy by the time of placement."},
+  {q:"What should you discuss when consenting a smoker for implants?",o:["Just the cost","Risk of failure, increased peri-implantitis, healing complications","Only aesthetics","Nothing — it's their choice"],a:1,e:"Smoking-specific risks must be explicitly discussed and documented — failure rates, healing, peri-implantitis susceptibility."},
+  {q:"For an edentulous mandible, which prosthetic option typically provides the best balance of cost, comfort and function?",o:["Conventional complete denture","Two-implant overdenture","Single implant","All-on-six fixed bridge"],a:1,e:"The McGill Consensus recommends a two-implant overdenture as the minimum standard of care for the edentulous mandible."},
+  {q:"What does a 'high lip line' (gummy smile) imply for implant aesthetics?",o:["Easier case","Higher aesthetic risk","No effect","Lower cost"],a:1,e:"High lip lines display the gingival margin and any soft-tissue defects — a major aesthetic risk factor."},
+  {q:"When a patient says 'just do whatever you think is best', the clinician should:",o:["Proceed with their preferred plan","Document carefully and still walk through options and risks","Skip consent","Choose the cheapest option"],a:1,e:"Informed consent requires options and risks to be discussed regardless of patient deference. Document everything."},
+  {q:"Which is the most reliable predictor of poor implant outcomes in social history?",o:["Coffee consumption","Smoking","Tea drinking","Vegetarian diet"],a:1,e:"Smoking remains the single most consistent modifiable social-history risk factor for implant failure."},
+  {q:"What is the chief reason to assess a patient's manual dexterity before implant treatment?",o:["To predict compliance with oral hygiene around implants","Cost calculation","Aesthetic planning","Sedation planning"],a:0,e:"Implants demand meticulous home care — poor dexterity (e.g. arthritis, neurological conditions) predicts hygiene problems."},
+  {q:"Regarding the 'value equation' in dentistry, value = ?",o:["Quality ÷ Cost","Outcome × Time","Quality × Service ÷ Cost","Speed ÷ Price"],a:2,e:"Value is broadly conceptualised as (Quality × Service) ÷ Cost — patients weigh communication and experience as part of the equation."},
+  {q:"Which patient profile is generally considered higher risk for implant failure?",o:["Healthy non-smoker, well-maintained perio","Heavy smoker with treated periodontitis","Hypertensive controlled with medication","Patient with mild GORD"],a:1,e:"Heavy smoker + perio history is a well-established high-risk combination."},
+  {q:"In edentulous planning, what does the 'lip support test' help determine?",o:["Whether to use a flange or fixed prosthesis","Bone density","Implant length","Sinus position"],a:0,e:"It helps decide between a flanged removable/overdenture solution versus a fixed implant bridge."},
+  {q:"Which is a key reason patients drop out of implant treatment after consultation?",o:["Distance to clinic","Cost shock when not addressed early","Poor parking","Receptionist tone"],a:1,e:"Failure to discuss cost transparently early on is a major reason patients disengage from treatment plans."},
+  {q:"Why is it important to ask about previous denture experience?",o:["Curiosity","It predicts how the patient may tolerate or reject removable prosthetics","Insurance","Aesthetics only"],a:1,e:"Past denture intolerance is one of the strongest indicators that a patient will need an implant-retained or fixed solution."},
+  {q:"Which statement best summarises Dr Jawad's overall philosophy in patient selection?",o:["Place implants whenever bone allows","Restoratively driven, patient-centred, evidence-based selection","Cheapest acceptable option","Surgeon decides"],a:1,e:"The lecture's central thesis: planning is restoratively driven, centred on the individual patient, and grounded in evidence."}
+];
+
+let currentQ = 0, score = 0, answered = false, userAnswers = [];
+
+function render(){
+  const qa = document.getElementById('quizArea');
+  if(currentQ >= questions.length){
+    showResults();return;
+  }
+  const q = questions[currentQ];
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('progress').style.width = ((currentQ)/questions.length*100) + '%';
+
+  const letters = ['A','B','C','D'];
+  qa.innerHTML = `
+    <div class="card">
+      <div class="q-num">Question ${currentQ+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.o.map((opt,i)=>`<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${opt}</span></button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn ghost" onclick="restart()">Restart</button>
+        <button class="btn" id="nextBtn" disabled onclick="next()">Next →</button>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>pick(parseInt(b.dataset.i))));
+  answered = false;
+}
+
+function pick(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o=>o.disabled=true);
+  const correct = i === q.a;
+  if(correct){score++; opts[i].classList.add('correct');}
+  else{opts[i].classList.add('incorrect'); opts[q.a].classList.add('correct');}
+  userAnswers.push({q:q.q,user:q.o[i],correct:q.o[q.a],right:correct});
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct?'right':'wrong');
+  fb.innerHTML = `<strong>${correct?'✓ Correct':'✗ Incorrect'}</strong> — ${q.e}`;
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('scoreNum').textContent = score;
+}
+
+function next(){currentQ++; render();}
+function restart(){currentQ=0;score=0;userAnswers=[];render();}
+
+function showResults(){
+  const pct = Math.round(score/questions.length*100);
+  let verdict = '';
+  if(pct>=85) verdict='Excellent — you have strong command of patient selection and treatment planning principles.';
+  else if(pct>=70) verdict='Solid performance. Review the topics you missed and revisit the lecture for those areas.';
+  else if(pct>=50) verdict='A reasonable foundation. Re-watch the lecture and revisit your weak areas before the quiz again.';
+  else verdict='Recommend re-reviewing Lecture 1 in full and re-attempting this quiz.';
+  document.getElementById('progress').style.width='100%';
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card results">
+      <h1>Quiz Complete</h1>
+      <div class="score">${score}/${questions.length}</div>
+      <div class="pct">${pct}%</div>
+      <div class="verdict">${verdict}</div>
+      <button class="btn" onclick="restart()">Try Again</button>
+      <div class="review-list">
+        <h3 style="margin:24px 0 12px;color:var(--accent)">Review</h3>
+        ${userAnswers.map((a,i)=>`
+          <div class="review-item ${a.right?'':'wrong'}">
+            <div class="qt">Q${i+1}. ${a.q}</div>
+            <div class="at">Your answer: ${a.user} ${a.right?'✓':'✗'}${a.right?'':' &nbsp;|&nbsp; Correct: '+a.correct}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>

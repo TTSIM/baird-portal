@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3: Drilling Sequence & Implant Placement</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f14;--surface:#111a24;--surface2:#182230;--card:#14202d;--accent:#0ea5e9;--accent2:#38bdf8;--green:#10b981;--red:#ef4444;--warm:#f59e0b;--purple:#8b5cf6;--text:#e2e8f0;--dim:#94a3b8;--bright:#f8fafc;--border:#1e293b}
+html{height:100%}body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+.topbar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--bright)}
+.progress-track{height:3px;background:var(--border);width:100%;position:sticky;top:55px;z-index:9}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;border-radius:0 2px 2px 0}
+.stats{display:flex;gap:16px;font-size:13px;color:var(--dim)}
+.stats .g{color:var(--green)}.stats .r{color:var(--red)}
+.container{max-width:780px;margin:0 auto;padding:32px 20px 80px}
+.score-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.score-big{font-family:'DM Serif Display',serif;font-size:36px;color:var(--accent2)}
+.score-label{font-size:13px;color:var(--dim)}
+.score-pct{font-size:14px;font-weight:600}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:all .3s}
+.q-card.answered{opacity:.85}
+.q-card.answered.correct-card{border-color:rgba(16,185,129,.3)}
+.q-card.answered.wrong-card{border-color:rgba(239,68,68,.2)}
+.q-num{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.q-topic{font-size:11px;color:var(--dim);margin-bottom:12px;padding:3px 8px;background:var(--surface2);border-radius:6px;display:inline-block}
+.q-text{font-size:16px;font-weight:600;color:var(--bright);line-height:1.5;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .25s;display:flex;align-items:center;gap:12px;line-height:1.5}
+.opt:hover:not(.locked){border-color:var(--accent);background:rgba(14,165,233,.06)}
+.opt.locked{cursor:default}
+.opt .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;transition:all .25s}
+.opt.correct{border-color:var(--green);background:rgba(16,185,129,.08)}.opt.correct .letter{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.06)}.opt.wrong .letter{background:var(--red);color:#fff}
+.opt.dimmed{opacity:.4}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.feedback.show{display:block}
+.feedback.fb-correct{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.feedback.fb-wrong{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.result-box{background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(14,165,233,.03));border:2px solid rgba(14,165,233,.3);border-radius:20px;padding:36px;text-align:center;margin-top:32px;display:none}
+.result-box.show{display:block}
+.result-box h2{font-family:'DM Serif Display',serif;font-size:32px;color:var(--bright);margin-bottom:8px}
+.result-box .pct{font-size:64px;font-weight:700;color:var(--accent2);font-family:'DM Serif Display',serif}
+.result-box .msg{font-size:15px;color:var(--dim);margin-top:12px;line-height:1.6}
+.retry-btn{margin-top:20px;background:var(--accent);border:none;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.retry-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(14,165,233,.3)}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.portal-back:hover{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left"><a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a><span class="badge">Quiz 3</span><h1>Drilling Sequence & Implant Placement</h1></div>
+  <div class="stats" id="stats"><span class="g" id="cStat">✓ 0</span><span class="r" id="wStat">✗ 0</span><span id="aStat">0/30</span></div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+<div class="container" id="container"></div>
+<script>
+const Q=[
+{t:"Lance Drill",q:"The lance drill has three names. Which of the following is NOT one of them?",o:["Needle drill","Marking drill","Flattening drill","Lance drill"],a:2,f:"The three names are: lance drill, needle drill, and marking drill. The flattening drill is a separate instrument used to flatten uneven ridges for stopper drills."},
+{t:"Lance Drill",q:"How deep should the lance drill penetrate into the bone?",o:["To the full implant length","5–7 mm","1–2 mm only","3–4 mm"],a:2,f:"Just 1–2 mm — enough to penetrate cortical bone and create a visible divot. If you can't see the mark, go again. This divot prevents subsequent drills from skidding."},
+{t:"Lance Drill",q:"What is the recommended RPM for the lance drill?",o:["200–400 RPM","400–600 RPM","800–1,000 RPM","1,500 RPM"],a:2,f:"800–1,000 RPM. This is the fastest drill in the sequence because you're cutting through dense cortical bone, which requires higher speed."},
+{t:"Lance Drill",q:"Why was the lance drill adopted instead of the older round (rosette) bur method?",o:["Round burs were too expensive","The lance drill is more precise — round burs wobbled and overexpanded the initial preparation","Round burs couldn't cut cortical bone","The lance drill is cheaper to manufacture"],a:1,f:"Round burs, once sunk in, could wobble and overexpand the initial preparation. The sharp, pointed lance drill grips immediately without wandering, giving more precise entry points."},
+{t:"Pilot Drill",q:"What is the most important drill in the entire sequence?",o:["The lance drill","The pilot drill","The cortical drill","The shaping drill"],a:1,f:"The pilot drill is the most critical — it creates the full-depth path that all subsequent drills follow. Get this wrong and everything after is compromised."},
+{t:"Pilot Drill",q:"If placing a 10 mm implant, to what depth does the pilot drill prepare?",o:["7 mm — leave room for the implant to self-tap","8 mm — slightly short of full depth","10 mm — full depth of the planned implant","12 mm — slightly deeper for safety"],a:2,f:"The pilot drill prepares to the full implant length — 10 mm for a 10 mm implant. It establishes the complete depth of the osteotomy."},
+{t:"Pilot Drill",q:"What is the approximate diameter of a pilot drill?",o:["1.0–1.5 mm","2.0–2.5 mm","3.0–3.5 mm","4.0 mm"],a:1,f:"Pilot drills are typically 2.0–2.5 mm — narrow but with thick cutting edges that cut on all sides. This is the drill you'll wear down the most over time."},
+{t:"RPM",q:"As you progress from cortical to cancellous bone, what happens to the recommended RPM?",o:["It increases — deeper bone is harder","It stays the same throughout","It decreases — cancellous bone is more vulnerable to heat","It doubles for each subsequent drill"],a:2,f:"RPM decreases as you go deeper. Cancellous bone is heat-sensitive and at higher risk of thermal necrosis. The first 2–3 mm (cortical) needs higher speed; everything deeper needs progressively lower speed."},
+{t:"RPM",q:"What RPM range is used for shaping/template drills in cancellous bone?",o:["800–1,000 RPM","600–800 RPM","200–600 RPM","100 RPM"],a:2,f:"200–600 RPM for shaping/template drilling. Lower speed reduces heat generation in heat-sensitive cancellous bone. The deeper you go, the less speed you want."},
+{t:"Drill Sequence",q:"For a 4.1 mm implant, what is the standard final shaping drill diameter?",o:["3.3 mm","3.6 mm","4.0 mm","4.1 mm"],a:1,f:"3.6 mm is the final shaping drill for a 4.1 mm implant. The 0.5 mm gap creates the friction needed for primary stability as the implant engages into the remaining bone."},
+{t:"Drill Sequence",q:"What is the correct drilling sequence order for a 4.1 × 10 mm implant?",o:["Lance → 3.6 → 3.3 → 2.9 → 2.5 (widest first)","Lance → 2.5 → 2.9 → 3.3 → 3.6 (progressive widening)","2.5 → Lance → 2.9 → 3.6 (lance second)","Lance → 2.9 → 3.6 (skip sizes)"],a:1,f:"Always progressively expand: Lance (1–2mm) → 2.5 × 10 → 2.9 × 10 → 3.3 × 10 → 3.6 × 10. Never skip sizes — gradual expansion protects the bone."},
+{t:"Direction Indicator",q:"When should you first use the direction indicator during the drilling sequence?",o:["Before any drilling begins","After the lance drill","After the pilot drill reaches full depth","After the final shaping drill"],a:2,f:"Use the direction indicator after the pilot drill reaches full depth — this is your first real checkpoint for mesio-distal positioning, angulation, and proximity to adjacent roots."},
+{t:"Direction Indicator",q:"How reliable is the direction indicator for assessing position?",o:["100% reliable","About 90% reliable","About 50% reliable","Not reliable at all"],a:1,f:"About 90% reliable. If the osteotomy is slightly oval or kidney-shaped from a wobble, the pin won't fit as snugly. Check direction EARLY rather than when it's too late to correct."},
+{t:"Bone Density",q:"In the Lekholm & Zarb classification, which type is the HARDEST bone?",o:["D4","D3","D2","D1"],a:3,f:"D1 is the hardest/densest — rarely encountered, hopefully never. D1 bone is most likely found in lower anteriors (thin, sharp ridge with dense cortical bone)."},
+{t:"Bone Density",q:"Where is D4 (softest) bone most commonly found?",o:["Lower anterior mandible","Lower posterior mandible","Posterior maxilla / tuberosity area","Upper anterior region"],a:2,f:"D4 bone is typically found in the posterior maxilla and tuberosity area — very little cortical bone with fine, sparse trabeculae. Like soft butter."},
+{t:"Bone Density",q:"In D4 bone, what drilling modification is recommended?",o:["Use all drills plus cortical and tapping drills","Underprepare — stop one or more drill sizes early","Use the Lindemann drill to compact the bone","Drill to a wider diameter than the implant"],a:1,f:"Underprepare in D4 bone to maintain friction. You might stop 1–2 drill sizes early, or in extreme cases, place the implant after only the pilot drill. The cortical drill would remove the only dense bone giving you stability."},
+{t:"Bone Density",q:"Which bone densities require the cortical drill?",o:["D3 and D4 only","D2 and D1 (harder bone types)","All bone types require it","D4 only"],a:1,f:"The cortical drill is used in D2 and D1 bone where dense cortical bone puts excessive compression on the implant collar. In D3/D4, it would remove the limited cortical bone providing stability."},
+{t:"Cortical Drill",q:"What is unique about the cortical drill compared to all other drills in the kit?",o:["It's the longest drill","It's the only drill that matches the implant diameter exactly","It drills in reverse","It has no flutes"],a:1,f:"The cortical drill is the ONLY drill that matches the implant diameter exactly. All other drills are narrower than the implant to create friction for primary stability."},
+{t:"Cortical Drill",q:"To what depth does the cortical drill prepare?",o:["Full implant length","Half the implant length","Only the coronal 1–2 mm","5 mm"],a:2,f:"Only 1–2 mm — it addresses only the cortical crest. Its purpose is to relieve compression on cortical bone at the coronal portion of the osteotomy."},
+{t:"Lindemann Drill",q:"Why is the Lindemann drill described as 'the most dangerous drill in the kit'?",o:["It generates the most heat","It can turn a circular osteotomy into an ellipse, making implant seating impossible","It's the sharpest","It can break during drilling"],a:1,f:"The Lindemann is a side-cutting drill that's so sharp and fast it can elongate your circular osteotomy into an ellipse. If this happens late in the sequence, there's no way to seat an implant."},
+{t:"Stopper vs Laser",q:"What is the maximum length available for stopper drills?",o:["8.5 mm","10 mm","11.5 mm","15 mm"],a:2,f:"Stopper drills are available up to 11.5 mm maximum. For longer implants (13, 15, 18 mm), you must use laser-banded drills."},
+{t:"Stopper vs Laser",q:"When might you switch from a stopper drill to a laser-banded drill of the same diameter?",o:["When the stopper reaches maximum depth but you need 1 mm more for subcrestal placement","When changing to a different implant brand","When the bone is very soft","When using the motor instead of the torque wrench"],a:0,f:"If the stopper stops at crestal level but you need subcrestal placement (1 mm deeper), switch to the corresponding laser-banded drill to fine-tune the depth."},
+{t:"Implant Handling",q:"What is the correct order when placing an implant with the handpiece?",o:["Open implant → connect to ratchet → place","Connect adapter to handpiece → open implant → pick up and place","Open implant → show patient → connect → place","Open implant → connect adapter → then handpiece"],a:1,f:"Always: adapter → handpiece FIRST, then open the implant package, pick up, and place immediately. Minimise air exposure time to prevent cross-contamination."},
+{t:"Implant Handling",q:"Why should you NEVER show the patient their implant before placement?",o:["It's against regulations","Every second of air exposure risks bacterial contamination of the implant surface","The patient might refuse treatment","It slows down the procedure too much"],a:1,f:"The moment the implant is unsealed, it's exposed to a non-sterile environment. Every second increases contamination risk. Open → place → done. No showing off."},
+{t:"Torque Values",q:"What is the ideal insertion torque for an implant?",o:["15–20 Ncm","25–30 Ncm","35 Ncm","60 Ncm"],a:2,f:"35 Ncm is the ideal insertion torque — sufficient for primary stability while not over-compressing the surrounding bone."},
+{t:"Torque Values",q:"If insertion torque reaches 50 Ncm while the implant is still supracrestal, what should you do?",o:["Keep pushing — it will settle","Take it out and drill the osteotomy wider","Add more irrigation and continue","Switch to a smaller implant"],a:1,f:"50 Ncm supracrestal means the osteotomy is too tight. Either back off, wait, and retry (the implant self-taps), or remove and drill wider. Never force past 60 Ncm."},
+{t:"Post-Placement",q:"An implant placed at 20–25 Ncm torque — what healing approach is recommended?",o:["Transmucosal healing with healing abutment","Submerged healing (bury the implant)","Immediate loading","It should be removed and replaced"],a:1,f:"Low torque (20–25 Ncm) means limited primary stability. Submerge the implant under mucosa for protected healing. It will need a second-stage exposure surgery later."},
+{t:"Post-Placement",q:"At what torque value can you consider transmucosal healing?",o:["Any torque value","15+ Ncm","25+ Ncm","35+ Ncm"],a:3,f:"35+ Ncm allows transmucosal healing — place a healing abutment through the mucosa. No need for a second exposure surgery. Good primary stability."},
+{t:"Healing Abutment",q:"What is the formula for calculating healing abutment height?",o:["Implant length ÷ 2","Implant depth + mucosa thickness + 1–2 mm","Crown height – implant platform depth","Fixed 4 mm for all cases"],a:1,f:"Height = implant depth below crest + thickness of keratinised mucosa + 1–2 mm safety margin. Example: 2 mm depth + 3 mm mucosa + 1 mm = 6 mm abutment."},
+{t:"Stability",q:"What provides PRIMARY stability immediately at placement, and from which part of the implant?",o:["Biological retention from the coronal third","Mechanical friction from the apical third","Osseointegration from the entire surface","Chemical bonding from the implant coating"],a:1,f:"Primary stability = mechanical friction at the moment of placement, primarily from the APICAL third engaging in bone. This decreases over weeks. Secondary stability (biological/osseointegration) develops from the coronal third over time."}
+];
+let correct=0,wrong=0,answered=0;
+const con=document.getElementById('container');
+function render(){
+  let h='<div class="score-bar"><div><div class="score-label">Score</div><div class="score-big" id="scoreBig">0/30</div></div><div><div class="score-label">Percentage</div><div class="score-pct" id="scorePct">—</div></div></div>';
+  Q.forEach((q,i)=>{
+    h+=`<div class="q-card" id="qc${i}"><div class="q-num">Question ${i+1}</div><div class="q-topic">${q.t}</div><div class="q-text">${q.q}</div><div class="opts" id="opts${i}">`;
+    'ABCD'.split('').forEach((l,j)=>{h+=`<div class="opt" data-q="${i}" data-o="${j}" onclick="pick(${i},${j})"><span class="letter">${l}</span><span>${q.o[j]}</span></div>`});
+    h+=`</div><div class="feedback fb-correct" id="fb${i}c">✓ Correct! ${q.f}</div><div class="feedback fb-wrong" id="fb${i}w">✗ Incorrect. ${q.f}</div></div>`;
+  });
+  h+=`<div class="result-box" id="result"><h2>Quiz Complete!</h2><div class="pct" id="finalPct"></div><div class="msg" id="finalMsg"></div><button class="retry-btn" onclick="location.reload()">Retry Quiz</button></div>`;
+  con.innerHTML=h;
+}
+function pick(qi,oi){
+  const card=document.getElementById('qc'+qi);if(card.classList.contains('answered'))return;card.classList.add('answered');
+  const ok=oi===Q[qi].a;
+  document.querySelectorAll(`[data-q="${qi}"]`).forEach(o=>{o.classList.add('locked');const idx=+o.dataset.o;if(idx===Q[qi].a)o.classList.add('correct');else if(idx===oi&&!ok)o.classList.add('wrong');if(idx!==Q[qi].a&&idx!==oi)o.classList.add('dimmed')});
+  if(ok){correct++;card.classList.add('correct-card');document.getElementById('fb'+qi+'c').classList.add('show')}
+  else{wrong++;card.classList.add('wrong-card');document.getElementById('fb'+qi+'w').classList.add('show')}
+  answered++;
+  document.getElementById('scoreBig').textContent=correct+'/30';
+  document.getElementById('scorePct').textContent=Math.round(correct/answered*100)+'%';
+  document.getElementById('cStat').textContent='✓ '+correct;
+  document.getElementById('wStat').textContent='✗ '+wrong;
+  document.getElementById('aStat').textContent=answered+'/30';
+  document.getElementById('progress').style.width=(answered/30*100)+'%';
+  if(answered===30){document.getElementById('result').classList.add('show');const p=Math.round(correct/30*100);document.getElementById('finalPct').textContent=p+'%';document.getElementById('finalMsg').textContent=(p>=90?'Outstanding! You\'ve mastered the drilling sequence and placement protocol.':p>=70?'Good work! Review the missed topics and you\'ll be ready for your first case.':p>=50?'Decent foundation. Revisit Lecture 3 for the areas that tripped you up.':'Keep studying! Go through the drilling sequence slides again carefully.')+` You got ${correct} out of 30 correct.`}
+}
+render();
+</script>
+</body>
+</html>

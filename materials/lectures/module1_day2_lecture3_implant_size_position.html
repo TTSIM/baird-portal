@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3: Implant Size & Position</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090e;--surface:#10131a;--surface2:#181c26;--border:#242a38;--text:#e8eaf0;--text-dim:#8890a4;--accent:#6c9fff;--accent2:#ff7070;--accent3:#70e0c0;--accent4:#c090ff;--gradient1:linear-gradient(135deg,#6c9fff,#5080e0);--gradient2:linear-gradient(135deg,#70e0c0,#50c0a0);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:translateY(20px);}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0);}
+.slide-number{position:fixed;bottom:24px;left:80px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);z-index:100;letter-spacing:1px;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gradient1);z-index:100;transition:width .4s;}
+.nav{position:fixed;bottom:24px;right:40px;display:flex;gap:12px;z-index:100;}
+.nav button{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.nav button:hover{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,64px);line-height:1.1;margin-bottom:24px;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(26px,3.2vw,44px);line-height:1.15;margin-bottom:20px;}
+p,li{font-size:17px;line-height:1.7;color:var(--text-dim);max-width:800px;}
+.tag{display:inline-block;padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
+.tag-b{background:rgba(108,159,255,.12);color:var(--accent);border:1px solid rgba(108,159,255,.25);}
+.tag-g{background:rgba(112,224,192,.12);color:var(--accent3);border:1px solid rgba(112,224,192,.25);}
+.tag-r{background:rgba(255,112,112,.12);color:var(--accent2);border:1px solid rgba(255,112,112,.25);}
+.tag-p{background:rgba(192,144,255,.12);color:var(--accent4);border:1px solid rgba(192,144,255,.25);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;}
+.card h4{font-size:15px;font-weight:600;margin-bottom:6px;}
+.card p{font-size:14px;}
+.hbox{border-radius:16px;padding:22px;margin:10px 0;}
+.hbox.blue{background:linear-gradient(135deg,rgba(108,159,255,.08),rgba(108,159,255,.02));border:1px solid rgba(108,159,255,.2);}
+.hbox.green{background:linear-gradient(135deg,rgba(112,224,192,.08),rgba(112,224,192,.02));border:1px solid rgba(112,224,192,.2);}
+.hbox.red{background:linear-gradient(135deg,rgba(255,112,112,.08),rgba(255,112,112,.02));border:1px solid rgba(255,112,112,.2);}
+.stat{text-align:center;}
+.stat .num{font-family:'DM Serif Display',serif;font-size:48px;background:var(--gradient1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat .label{font-size:12px;color:var(--text-dim);margin-top:6px;}
+.izone{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;}
+.quiz-btn{padding:12px 18px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;cursor:pointer;transition:.25s;font-family:'DM Sans',sans-serif;display:block;width:100%;text-align:left;margin-bottom:7px;}
+.quiz-btn:hover{border-color:var(--accent);background:rgba(108,159,255,.06);}
+.quiz-btn.correct{border-color:#70e0c0;background:rgba(112,224,192,.15);color:#70e0c0;}
+.quiz-btn.wrong{border-color:#ff7070;background:rgba(255,112,112,.1);color:#ff7070;}
+.quiz-feedback{margin-top:10px;padding:14px;border-radius:12px;font-size:14px;display:none;}
+.title-slide{text-align:center;align-items:center;}
+.glow-line{width:80px;height:3px;background:var(--gradient1);border-radius:2px;margin:0 auto 24px;}
+.slide ul{list-style:none;padding:0;}
+.slide ul li{padding:5px 0;padding-left:18px;position:relative;font-size:15px;color:var(--text-dim);line-height:1.5;}
+.slide ul li::before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.dc{display:flex;justify-content:center;margin:12px 0;}
+.slider-row{display:flex;align-items:center;gap:12px;margin:10px 0;}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent);}
+.slider-row .val{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);min-width:50px;text-align:right;}
+.slider-row .lbl{font-size:13px;color:var(--text-dim);min-width:100px;}
+.bar-chart{display:flex;align-items:flex-end;gap:16px;height:140px;margin:16px 0;}
+.bar-chart .bar-col{display:flex;flex-direction:column;align-items:center;flex:1;}
+.bar-chart .bar{width:100%;border-radius:8px 8px 0 0;transition:height .8s ease;min-height:4px;}
+.bar-chart .bar-label{font-size:11px;color:var(--text-dim);margin-top:6px;text-align:center;}
+.bar-chart .bar-val{font-size:13px;font-weight:600;margin-bottom:4px;}
+@media(max-width:900px){.slide{padding:28px 20px;}.two-col,.three-col,.four-col{grid-template-columns:1fr;}.nav{right:16px;}.slide-number{left:20px;}}
+.portal-back{position:fixed;top:20px;left:20px;z-index:120;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(16,19,26,.92);border:1px solid rgba(108,159,255,.25);padding:10px 16px;border-radius:999px;font-size:12px;font-weight:600;}
+.portal-back:hover{background:var(--accent);color:var(--bg);}
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+<div class="presentation" id="pres">
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1 -->
+<div class="slide title-slide active" data-slide="0">
+  <div class="glow-line"></div>
+  <span class="tag tag-b">Lecture 3 of 3</span>
+  <h1>Implant Size & Position</h1>
+  <p style="font-size:20px;color:var(--text-dim);margin-bottom:32px;">Biomechanics, the T Concept, and placing implants in the prosthetic envelope</p>
+  <p style="font-size:14px;color:var(--text-dim);">Arrow keys or swipe to navigate</p>
+</div>
+
+<!-- SLIDE 2: Short vs Long -->
+<div class="slide" data-slide="1">
+  <span class="tag tag-b">Paradigm Shift</span>
+  <h2>Short Implants: The Evidence</h2>
+  <p style="margin-bottom:20px;">The old thinking was "longer = better." The evidence says otherwise.</p>
+  <div class="two-col">
+    <div>
+      <div class="bar-chart" id="survivalChart">
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent);">98.3%</div><div class="bar" style="height:132px;background:var(--gradient1);"></div><div class="bar-label">Short</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent3);">97.7%</div><div class="bar" style="height:130px;background:var(--gradient2);"></div><div class="bar-label">Long</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent4);">97%</div><div class="bar" style="height:128px;background:linear-gradient(135deg,#c090ff,#a070e0);"></div><div class="bar-label">Mandible 10yr</div></div>
+      </div>
+      <p style="font-size:13px;text-align:center;">5-year cumulative survival rates are comparable</p>
+    </div>
+    <div>
+      <div class="hbox blue">
+        <p style="font-size:14px;"><strong style="color:var(--accent);">70% of short implant failures occurred BEFORE loading</strong> — suggesting failures were surgical (poor primary stability, over-prepping), not biomechanical.</p>
+      </div>
+      <div class="hbox green">
+        <p style="font-size:14px;"><strong style="color:var(--accent3);">Cochrane review (Esposito):</strong> Short implants in 4–6mm bone below the sinus work without augmentation. Less cost, less trauma, comparable results.</p>
+      </div>
+      <div class="hbox red">
+        <p style="font-size:14px;"><strong style="color:var(--accent2);">Key insight:</strong> 95% of occlusal load is on the coronal 5mm. Going from 8mm to 19mm only reduces peri-implant stress by 6–8%. Not worth the risk.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Recommended Lengths -->
+<div class="slide" data-slide="2">
+  <span class="tag tag-b">Length Selection</span>
+  <h2>The Plan A / Plan B Philosophy</h2>
+  <div class="two-col">
+    <div>
+      <div class="card" style="border-left:4px solid var(--accent);margin-bottom:12px;">
+        <h4 style="color:var(--accent);">Plan A: 8mm (Healed Sites)</h4>
+        <p>As good as 9, 10, 12, or 15mm. Standard choice. Maximises success without unnecessary drilling depth, heat generation, or proximity to vital structures.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--accent3);margin-bottom:12px;">
+        <h4 style="color:var(--accent3);">Anatomical Constraints: 6–7mm</h4>
+        <p>ID nerve or sinus proximity. Slightly lower success rate but still viable. Consider splinting two implants together.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--accent4);margin-bottom:12px;">
+        <h4 style="color:var(--accent4);">Plan B Backup: 10–12mm</h4>
+        <p>Reserve longer implants for backup if you over-prep and need more stability. Never use your longest option first.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--accent2);">
+        <h4 style="color:var(--accent2);">Ultra-Short: &lt;6mm</h4>
+        <p>Possible but more biomechanical considerations. Below 5mm of bone: consider sinus lift.</p>
+      </div>
+    </div>
+    <div class="izone">
+      <h4 style="margin-bottom:16px;font-size:14px;color:var(--accent);">INTERACTIVE: Implant Length Decision</h4>
+      <div class="slider-row">
+        <span class="lbl">Available bone:</span>
+        <input type="range" min="3" max="15" value="8" id="boneSlider" oninput="updateLengthDecision()">
+        <span class="val" id="boneVal">8mm</span>
+      </div>
+      <div id="lengthDecision" style="margin-top:16px;padding:16px;background:var(--surface2);border-radius:12px;">
+        <p style="font-size:14px;color:var(--accent);">✓ 8mm — Plan A. Ideal length for a healed site.</p>
+      </div>
+      <div class="hbox blue" style="margin-top:12px;">
+        <p style="font-size:13px;"><strong style="color:var(--accent);">Why 8mm?</strong> Increasing from 8 to 19mm only reduces stress by 6–8%. Not worth the drilling depth, heat risk, and proximity to nerves/sinuses.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Diameter Selection -->
+<div class="slide" data-slide="3">
+  <span class="tag tag-g">Diameter Selection</span>
+  <h2>Recommended Implant Diameters</h2>
+  <div class="four-col" style="margin-top:16px;">
+    <div class="card" style="text-align:center;border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);font-size:32px;">3.3</h4>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px;">mm</p>
+      <p style="font-size:12px;">Lower incisors<br>Upper lateral incisors (alternative)</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--accent3);">
+      <h4 style="color:var(--accent3);font-size:32px;">3.7</h4>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px;">mm</p>
+      <p style="font-size:12px;">Upper laterals (1st choice)<br>Premolars (alternative if tight)</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--accent4);">
+      <h4 style="color:var(--accent4);font-size:32px;">4.1</h4>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px;">mm</p>
+      <p style="font-size:12px;">Premolars (1st choice)<br>Canines (1st choice)</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--accent2);">
+      <h4 style="color:var(--accent2);font-size:32px;">4.4</h4>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px;">mm</p>
+      <p style="font-size:12px;">Molars (1st choice)<br>4.8mm for extra support</p>
+    </div>
+  </div>
+  <div class="hbox red" style="margin-top:20px;">
+    <p style="font-size:14px;"><strong style="color:var(--accent2);">Avoid the "lollipop stick":</strong> A too-narrow implant under a wide molar creates a bulbous, ridge-lap crown that's nearly impossible to clean → high peri-implantitis risk.</p>
+  </div>
+  <div class="hbox blue" style="margin-top:8px;">
+    <p style="font-size:14px;"><strong style="color:var(--accent);">Spacing rules:</strong> Implant to tooth ≥1.5mm • Implant to implant ≥3mm (4mm better) • Buccal bone ≥1.8mm • Lingual bone ≥1–1.5mm</p>
+  </div>
+</div>
+
+<!-- SLIDE 5: Crown Height -->
+<div class="slide" data-slide="4">
+  <span class="tag tag-r">Biomechanics</span>
+  <h2>Crown Height Matters More Than Crown:Root Ratio</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">Crown-to-root ratio doesn't cause implant fracture. But crown HEIGHT drives prosthetic complications.</p>
+      <div class="dc">
+        <svg viewBox="0 0 360 240" width="340">
+          <rect x="0" y="0" width="360" height="240" rx="12" fill="#10131a"/>
+          <!-- Scenario 1: Short implant, long crown -->
+          <rect x="30" y="160" width="50" height="40" rx="4" fill="rgba(108,159,255,.2)" stroke="#6c9fff" stroke-width="1.5"/>
+          <text x="55" y="183" text-anchor="middle" fill="#6c9fff" font-size="9">Short</text>
+          <rect x="30" y="40" width="50" height="118" rx="4" fill="rgba(255,112,112,.15)" stroke="#ff7070" stroke-width="1.5"/>
+          <text x="55" y="100" text-anchor="middle" fill="#ff7070" font-size="9">15mm</text>
+          <text x="55" y="28" text-anchor="middle" fill="#ff7070" font-size="10" font-weight="600">3:1 ratio</text>
+          <!-- Scenario 2: Long implant, same crown -->
+          <rect x="140" y="120" width="50" height="80" rx="4" fill="rgba(108,159,255,.2)" stroke="#6c9fff" stroke-width="1.5"/>
+          <text x="165" y="165" text-anchor="middle" fill="#6c9fff" font-size="9">Long</text>
+          <rect x="140" y="40" width="50" height="78" rx="4" fill="rgba(255,112,112,.15)" stroke="#ff7070" stroke-width="1.5"/>
+          <text x="165" y="82" text-anchor="middle" fill="#ff7070" font-size="9">Still 15mm!</text>
+          <text x="165" y="28" text-anchor="middle" fill="#c090ff" font-size="10" font-weight="600">1:1 ratio</text>
+          <!-- Scenario 3: Vertical augmentation -->
+          <rect x="250" y="130" width="50" height="50" rx="4" fill="rgba(108,159,255,.2)" stroke="#6c9fff" stroke-width="1.5"/>
+          <rect x="250" y="110" width="50" height="20" rx="0" fill="rgba(112,224,192,.15)" stroke="#70e0c0" stroke-width="1" stroke-dasharray="3"/>
+          <text x="275" y="145" text-anchor="middle" fill="#6c9fff" font-size="8">Implant</text>
+          <rect x="250" y="60" width="50" height="48" rx="4" fill="rgba(112,224,192,.2)" stroke="#70e0c0" stroke-width="1.5"/>
+          <text x="275" y="88" text-anchor="middle" fill="#70e0c0" font-size="9">&lt;15mm ✓</text>
+          <text x="275" y="28" text-anchor="middle" fill="#70e0c0" font-size="10" font-weight="600">Solved!</text>
+          <!-- Ground line -->
+          <line x1="20" y1="202" x2="340" y2="202" stroke="#242a38" stroke-width="1"/>
+          <text x="180" y="228" text-anchor="middle" fill="#8890a4" font-size="10">Only vertical bone augmentation reduces crown height</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div class="hbox red">
+        <p style="font-size:14px;"><strong style="color:var(--accent2);">≥15mm crown height</strong> = higher risk of screw loosening, screw fracture, crown fracture. This is the threshold.</p>
+      </div>
+      <div class="hbox blue">
+        <p style="font-size:14px;"><strong style="color:var(--accent);">A longer implant (sinus lift) does NOT help</strong> if the bone level and therefore the crown height remain unchanged. The "lamppost" is still the same height.</p>
+      </div>
+      <div class="hbox green">
+        <p style="font-size:14px;"><strong style="color:var(--accent3);">Solutions:</strong> Vertical bone augmentation (reduces crown height), or splint multiple implants together (shares the load).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: The T Concept -->
+<div class="slide" data-slide="5">
+  <span class="tag tag-b">The T Concept</span>
+  <h2>How Deep to Place Your Implant</h2>
+  <p style="margin-bottom:16px;">The most important concept: place the implant 3–4mm apical to the future gingival margin (zenith).</p>
+  <div class="two-col">
+    <div class="dc">
+      <svg viewBox="0 0 320 300" width="300">
+        <rect x="0" y="0" width="320" height="300" rx="12" fill="#10131a"/>
+        <!-- Crown outline -->
+        <path d="M110,40 Q120,30 160,25 Q200,30 210,40 L215,140 Q215,155 160,160 Q105,155 105,140 Z" fill="rgba(255,255,255,.04)" stroke="#8890a4" stroke-width="1.5"/>
+        <text x="160" y="90" text-anchor="middle" fill="#8890a4" font-size="11">Future crown</text>
+        <!-- Gingival margin = zenith -->
+        <line x1="60" y1="155" x2="260" y2="155" stroke="#70e0c0" stroke-width="2"/>
+        <text x="265" y="158" fill="#70e0c0" font-size="10" font-weight="600">Zenith</text>
+        <!-- 3-4mm measurement -->
+        <line x1="80" y1="155" x2="80" y2="205" stroke="#6c9fff" stroke-width="1.5" stroke-dasharray="4"/>
+        <text x="68" y="183" text-anchor="end" fill="#6c9fff" font-size="11" font-weight="600">3–4mm</text>
+        <!-- T line = implant platform -->
+        <line x1="60" y1="205" x2="260" y2="205" stroke="#6c9fff" stroke-width="2.5"/>
+        <text x="265" y="208" fill="#6c9fff" font-size="10" font-weight="700">T line</text>
+        <!-- Implant -->
+        <rect x="130" y="205" width="60" height="60" rx="4" fill="rgba(108,159,255,.15)" stroke="#6c9fff" stroke-width="2"/>
+        <text x="160" y="240" text-anchor="middle" fill="#6c9fff" font-size="11" font-weight="600">Implant</text>
+        <!-- Bone peaks -->
+        <path d="M100,200 L105,195 L110,200" fill="none" stroke="#c090ff" stroke-width="2"/>
+        <text x="105" y="190" text-anchor="middle" fill="#c090ff" font-size="8">M peak</text>
+        <path d="M210,200 L215,195 L220,200" fill="none" stroke="#c090ff" stroke-width="2"/>
+        <text x="215" y="190" text-anchor="middle" fill="#c090ff" font-size="8">D peak</text>
+        <!-- Biological width label -->
+        <rect x="230" y="155" width="4" height="50" rx="2" fill="rgba(112,224,192,.3)"/>
+        <text x="240" y="175" fill="#70e0c0" font-size="8">Biological</text>
+        <text x="240" y="185" fill="#70e0c0" font-size="8">width</text>
+        <text x="160" y="290" text-anchor="middle" fill="#8890a4" font-size="10">T Concept: zenith → 3–4mm → implant platform</text>
+      </svg>
+    </div>
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">THE TWO RULES</h4>
+      <div class="card" style="margin-bottom:10px;border-left:3px solid var(--accent);">
+        <h4 style="font-size:14px;">Rule 1: Biological Width</h4>
+        <p>Mucosa needs 3–4mm of undisturbed space. Bone remodels to the first micro-rough surface (implant platform). Polished surfaces (healing abutments) cause bone to recede.</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;border-left:3px solid var(--accent4);">
+        <h4 style="font-size:14px;">Rule 2: Mesial & Distal Peaks</h4>
+        <p>Check if mesial and distal bone peaks exist at the T-line level. If yes → graft buccal/lingual between them. If not → go deeper and accept longer crown, or do staged bone grafting.</p>
+      </div>
+      <div class="hbox green">
+        <p style="font-size:13px;"><strong style="color:var(--accent3);">Thick phenotype → 4mm.</strong> Thin phenotype → 3mm. The thicker the mucosa, the more resistance to recession.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Bucco-Lingual Position -->
+<div class="slide" data-slide="6">
+  <span class="tag tag-g">Position</span>
+  <h2>Bucco-Lingual: Follow the Prosthetic Envelope</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">ITI guidelines: implant shoulder 2mm palatal to the future labial line (level with the cingulum of the adjacent tooth).</p>
+      <div class="dc">
+        <svg viewBox="0 0 300 240" width="280">
+          <rect x="0" y="0" width="300" height="240" rx="12" fill="#10131a"/>
+          <!-- Bone cross-section -->
+          <path d="M60,200 Q60,120 90,80 Q110,60 150,55 Q190,60 210,80 Q240,120 240,200" fill="rgba(255,255,255,.03)" stroke="#8890a4" stroke-width="1.5"/>
+          <text x="150" y="220" text-anchor="middle" fill="#8890a4" font-size="10">Cross-section (bucco-lingual)</text>
+          <!-- Labial line -->
+          <line x1="90" y1="40" x2="90" y2="200" stroke="#ff7070" stroke-width="1.5" stroke-dasharray="4"/>
+          <text x="85" y="35" text-anchor="end" fill="#ff7070" font-size="10">Labial line</text>
+          <!-- 2mm palatal -->
+          <line x1="90" y1="100" x2="120" y2="100" stroke="#6c9fff" stroke-width="1.5"/>
+          <text x="105" y="95" text-anchor="middle" fill="#6c9fff" font-size="9">2mm</text>
+          <!-- Correct implant position -->
+          <rect x="115" y="90" width="30" height="70" rx="4" fill="rgba(112,224,192,.15)" stroke="#70e0c0" stroke-width="2"/>
+          <text x="130" y="130" text-anchor="middle" fill="#70e0c0" font-size="9" font-weight="600">✓</text>
+          <!-- Wrong position - too labial -->
+          <rect x="75" y="80" width="20" height="50" rx="3" fill="rgba(255,112,112,.1)" stroke="#ff7070" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="85" y="145" text-anchor="middle" fill="#ff7070" font-size="8">✗ labial</text>
+          <!-- Buccal plate -->
+          <text x="65" y="160" fill="#8890a4" font-size="9">Buccal</text>
+          <text x="220" y="160" fill="#8890a4" font-size="9">Palatal</text>
+          <!-- 1.8mm buccal bone -->
+          <line x1="90" y1="115" x2="115" y2="115" stroke="#c090ff" stroke-width="1" stroke-dasharray="3"/>
+          <text x="103" y="112" text-anchor="middle" fill="#c090ff" font-size="8">≥1.8mm</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div class="hbox red">
+        <h4 style="color:var(--accent2);font-size:13px;margin-bottom:6px;">TOO LABIAL</h4>
+        <p style="font-size:14px;">Puts pressure on the cortical plate → it disappears → mid-labial recession. The "primary school teacher" scenario.</p>
+      </div>
+      <div class="hbox red" style="margin-top:8px;">
+        <h4 style="color:var(--accent2);font-size:13px;margin-bottom:6px;">TOO PALATAL</h4>
+        <p style="font-size:14px;">Ridge-lap crown, phonetics issues, harder to clean. Avoid the "palatal approach" trend — peri-implantitis doesn't differentiate between buccal and palatal exposed threads.</p>
+      </div>
+      <div class="hbox green" style="margin-top:8px;">
+        <h4 style="color:var(--accent3);font-size:13px;margin-bottom:6px;">GOLDEN RULE</h4>
+        <p style="font-size:14px;"><strong>Never compromise implant position.</strong> If bone is insufficient, graft it. Don't chase primary stability at the expense of the prosthetic envelope.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Angulation -->
+<div class="slide" data-slide="7">
+  <span class="tag tag-p">The 4th Dimension</span>
+  <h2>Angulation: Two Schools of Thought</h2>
+  <div class="two-col">
+    <div class="card" style="border-top:3px solid var(--accent2);">
+      <h4 style="color:var(--accent2);">School 1: Chase Primary Stability</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Angle implant into solid palatal bone for maximum torque. Sleep well tonight — but compromise the prosthetic envelope.</p>
+      <ul>
+        <li style="font-size:13px;">High primary stability today</li>
+        <li style="font-size:13px;color:var(--accent2);">Outside prosthetic envelope</li>
+        <li style="font-size:13px;color:var(--accent2);">Apex pushes into labial plate</li>
+        <li style="font-size:13px;color:var(--accent2);">Cement-retained or angled screw needed</li>
+        <li style="font-size:13px;color:var(--accent2);">More prosthetic complications</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent3);">
+      <h4 style="color:var(--accent3);">School 2: Follow the Prosthetic Envelope ✓</h4>
+      <p style="font-size:14px;margin-bottom:12px;">Place within the prosthetic envelope even if primary stability is lower. Easy to restore in 12–24 weeks.</p>
+      <ul>
+        <li style="font-size:13px;">Correct position for the restoration</li>
+        <li style="font-size:13px;color:var(--accent3);">Naturally further from labial plate (bonus!)</li>
+        <li style="font-size:13px;color:var(--accent3);">Screw-retained access possible</li>
+        <li style="font-size:13px;color:var(--accent3);">If apical fenestration → GBR</li>
+        <li style="font-size:13px;color:var(--accent3);">Better long-term biology</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hbox blue" style="margin-top:16px;">
+    <p style="font-size:15px;text-align:center;"><strong style="color:var(--accent);">The most important conclusion: Follow the prosthetic envelope. Never compromise position for stability.</strong></p>
+  </div>
+</div>
+
+<!-- SLIDE 9: Angled Screws -->
+<div class="slide" data-slide="8">
+  <span class="tag tag-r">Limitations</span>
+  <h2>Angled Correction Screws: Not a Free Pass</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">Angled screws seem like a solution for mal-positioned implants, but they come with trade-offs.</p>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent2);">Extra cost:</strong> £75+ lab fee per unit</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent2);">Lower PES:</strong> Poor implant position → thin bone/mucosa → reduced pink aesthetics (7.9 vs 9.0)</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent2);">Larger access hole:</strong> Oval not round → bigger composite filling → more likely to debond</p></div>
+      <div class="card" style="margin-bottom:8px;"><p style="font-size:13px;"><strong style="color:var(--accent2);">More screw loosening:</strong> Ball-in-socket instead of hex-in-hex → slipping → less true torque</p></div>
+      <div class="card"><p style="font-size:13px;"><strong style="color:var(--accent2);">C-shape abutment:</strong> Not a full circle → less retention → crown can debond</p></div>
+    </div>
+    <div class="izone">
+      <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">QUIZ: Implant Position</h4>
+      <p style="font-size:14px;margin-bottom:12px;">You can't get enough primary stability in the ideal prosthetic position. What should you do?</p>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','angQ')">Angle the implant into solid palatal bone for better torque</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'correct','angQ')">Place in the correct position, accept lower stability, GBR any fenestration</button>
+      <button class="quiz-btn" onclick="checkQuiz(this,'wrong','angQ')">Use an angled correction screw to compensate</button>
+      <div class="quiz-feedback" id="angQ"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Papilla -->
+<div class="slide" data-slide="9">
+  <span class="tag tag-g">Soft Tissue</span>
+  <h2>Papilla Management</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">PAPILLA GROWTH EXPECTATIONS</h4>
+      <div class="bar-chart" style="height:160px;">
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent3);">6.5</div><div class="bar" style="height:130px;background:var(--gradient2);"></div><div class="bar-label">Tooth–<br>Pontic</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent3);">6.0</div><div class="bar" style="height:120px;background:rgba(112,224,192,.6);"></div><div class="bar-label">Pontic–<br>Pontic</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent);">5.0</div><div class="bar" style="height:100px;background:var(--gradient1);"></div><div class="bar-label">Tooth–<br>Tooth</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent4);">4.5</div><div class="bar" style="height:90px;background:linear-gradient(135deg,#c090ff,#a070e0);"></div><div class="bar-label">Tooth–<br>Implant</div></div>
+        <div class="bar-col"><div class="bar-val" style="color:var(--accent2);">3.5</div><div class="bar" style="height:70px;background:linear-gradient(135deg,#ff7070,#e05050);"></div><div class="bar-label">Implant–<br>Implant</div></div>
+      </div>
+      <p style="font-size:12px;text-align:center;">Vertical growth from bone crest to contact point (mm)</p>
+    </div>
+    <div>
+      <h4 style="color:var(--accent3);font-size:14px;margin-bottom:12px;">5 FACTORS CONTROLLING PAPILLA</h4>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">1. Soft tissue thickness</strong> — thicker = better. Use connective tissue grafts.</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">2. Bone peak stability</strong> — controlled by neighbouring tooth health or inter-implant distance.</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">3. Contact point</strong> — no contact = no papilla. Diastema = papilla will never grow.</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">4. Clean embrasure</strong> — rough surfaces or poor hygiene prevents growth.</p></div>
+      <div class="card"><p style="font-size:13px;"><strong style="color:var(--accent3);">5. Blood supply</strong> — smokers and diabetics get black triangles. Period.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Micro-Gap & Biology -->
+<div class="slide" data-slide="10">
+  <span class="tag tag-p">Biology</span>
+  <h2>The Micro-Gap: Why Connection Design Matters</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">The implant-abutment junction creates a micro-gap that allows bacterial ingress. This is the main driver of early bone loss.</p>
+      <div class="dc">
+        <svg viewBox="0 0 280 240" width="260">
+          <rect x="0" y="0" width="280" height="240" rx="12" fill="#10131a"/>
+          <!-- Implant body -->
+          <rect x="100" y="100" width="80" height="100" rx="4" fill="rgba(108,159,255,.15)" stroke="#6c9fff" stroke-width="2"/>
+          <text x="140" y="155" text-anchor="middle" fill="#6c9fff" font-size="10">Implant</text>
+          <!-- Abutment -->
+          <rect x="110" y="50" width="60" height="48" rx="4" fill="rgba(192,144,255,.15)" stroke="#c090ff" stroke-width="2"/>
+          <text x="140" y="78" text-anchor="middle" fill="#c090ff" font-size="10">Abutment</text>
+          <!-- Micro gap -->
+          <line x1="100" y1="100" x2="180" y2="100" stroke="#ff7070" stroke-width="3"/>
+          <text x="195" y="103" fill="#ff7070" font-size="10" font-weight="600">Micro-gap</text>
+          <!-- Bacteria arrows -->
+          <path d="M90,85 Q95,95 100,100" fill="none" stroke="#ff7070" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="78" y="82" fill="#ff7070" font-size="9">Bacteria</text>
+          <!-- Inflammatory zone -->
+          <circle cx="95" cy="115" r="18" fill="rgba(255,112,112,.08)" stroke="#ff7070" stroke-width="1" stroke-dasharray="3"/>
+          <circle cx="185" cy="115" r="18" fill="rgba(255,112,112,.08)" stroke="#ff7070" stroke-width="1" stroke-dasharray="3"/>
+          <text x="140" y="145" text-anchor="middle" fill="#ff7070" font-size="8">Inflammatory cells</text>
+          <!-- Bone -->
+          <rect x="60" y="120" width="35" height="70" rx="4" fill="rgba(255,255,255,.03)" stroke="#8890a4" stroke-width="1"/>
+          <rect x="185" y="120" width="35" height="70" rx="4" fill="rgba(255,255,255,.03)" stroke="#8890a4" stroke-width="1"/>
+          <text x="77" y="200" text-anchor="middle" fill="#8890a4" font-size="8">Bone</text>
+          <text x="202" y="200" text-anchor="middle" fill="#8890a4" font-size="8">Bone</text>
+          <text x="140" y="230" text-anchor="middle" fill="#8890a4" font-size="9">Leaky connection → bone loss</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div class="hbox blue">
+        <p style="font-size:14px;"><strong style="color:var(--accent);">"What really matters is how rigid and tight my seal is."</strong> You either have a leaking implant or a non-leaking implant. Osteointegration is easy — the real challenge is zero bone loss after years.</p>
+      </div>
+      <h4 style="color:var(--accent3);font-size:14px;margin-top:16px;margin-bottom:12px;">IMPLICATIONS</h4>
+      <ul>
+        <li style="font-size:14px;">Use premium implant systems with tight connections</li>
+        <li style="font-size:14px;">Two implants close together → inflammatory zones overlap → more vertical bone loss</li>
+        <li style="font-size:14px;">Wider spacing (≥3mm between implants) prevents overlap</li>
+        <li style="font-size:14px;">This is why distance rules exist — not just blood supply, but bacterial leakage too</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Cantilever Rules -->
+<div class="slide" data-slide="11">
+  <span class="tag tag-b">Restorative</span>
+  <h2>Cantilever Rules in Implant Dentistry</h2>
+  <div class="two-col">
+    <div>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:16px;">5 RULES FOR CANTILEVERED IMPLANT CROWNS</h4>
+      <div class="card" style="margin-bottom:8px;border-left:3px solid var(--accent);"><p style="font-size:14px;"><strong>1.</strong> Regular connection only (4.1, 4.4, 4.8mm) — no narrow</p></div>
+      <div class="card" style="margin-bottom:8px;border-left:3px solid var(--accent);"><p style="font-size:14px;"><strong>2.</strong> Pontic must be SMALLER than abutment tooth (e.g. lateral off central ✓, not central off lateral ✗)</p></div>
+      <div class="card" style="margin-bottom:8px;border-left:3px solid var(--accent);"><p style="font-size:14px;"><strong>3.</strong> Posterior: pontic should be MESIAL (forces increase distally)</p></div>
+      <div class="card" style="margin-bottom:8px;border-left:3px solid var(--accent);"><p style="font-size:14px;"><strong>4.</strong> Reduced occlusion on the pontic</p></div>
+      <div class="card" style="border-left:3px solid var(--accent);"><p style="font-size:14px;"><strong>5.</strong> Anti-rotational feature on the abutment base</p></div>
+    </div>
+    <div>
+      <div class="hbox green">
+        <h4 style="color:var(--accent3);font-size:14px;margin-bottom:8px;">2 IMPLANTS + 3 UNIT BRIDGE: THE DEFAULT</h4>
+        <p style="font-size:14px;">Study of 145 three-unit prostheses: two implants with a bridge had 100% survival, lowest peri-implantitis, and fewest prosthetic complications. Three implants with non-splinted crowns had the worst outcomes.</p>
+      </div>
+      <div class="izone" style="margin-top:12px;">
+        <h4 style="margin-bottom:12px;font-size:14px;color:var(--accent);">QUIZ</h4>
+        <p style="font-size:14px;margin-bottom:12px;">Patient missing upper 4, 5, 6 with history of periodontitis. Best option?</p>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','cantQ')">3 implants, 3 individual crowns</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'correct','cantQ')">2 implants, 3-unit bridge</button>
+        <button class="quiz-btn" onclick="checkQuiz(this,'wrong','cantQ')">3 implants, splinted crowns</button>
+        <div class="quiz-feedback" id="cantQ"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: CBCT & Vital Structures -->
+<div class="slide" data-slide="12">
+  <span class="tag tag-r">Safety</span>
+  <h2>CBCT: What to Look For</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">CBCT is standard protocol. You'll never regret taking one — you will regret not taking one if things go wrong.</p>
+      <h4 style="color:var(--accent);font-size:14px;margin-bottom:12px;">CHECKLIST FOR EVERY CBCT</h4>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent);">1. Nerve position</strong> — ID nerve, mental foramen. ≥2mm safety (UK trend: 4mm).</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent3);">2. Bone width</strong> — enough for implant + 1.8mm buccal + 1.5mm lingual?</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent4);">3. Bone height</strong> — distance to sinus floor or ID nerve.</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:var(--accent2);">4. Bone density</strong> — white (dense) vs grey (medium) vs black (soft/void). Anticipate where you'll feel resistance vs drop.</p></div>
+      <div class="card" style="margin-bottom:6px;"><p style="font-size:13px;"><strong style="color:#ff7070;">5. Lingual undercut & arteries</strong> — sublingual (branch of lingual) above mylohyoid. Submental (branch of facial) below mylohyoid.</p></div>
+      <div class="card"><p style="font-size:13px;"><strong>6. Adjacent roots</strong> — proximity, dilaceration, path of root canal.</p></div>
+    </div>
+    <div>
+      <div class="hbox red">
+        <h4 style="color:var(--accent2);font-size:14px;margin-bottom:8px;">ARTERIAL DANGER</h4>
+        <p style="font-size:14px;">Hitting an artery can be fatal. Arteries have elastic fibres — when cut, they shrink and retract, making the bleeding source impossible to locate. Blood outside vessels triggers foreign body response → massive swelling → potential airway obstruction.</p>
+      </div>
+      <div class="hbox blue" style="margin-top:8px;">
+        <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px;">WHY 2mm ISN'T ENOUGH</h4>
+        <p style="font-size:14px;">Human error (hand can slip). Vibration travels through cancellous bone. Implant placement crushes bone — pressure/bleeding can affect the nerve even without direct contact. <strong>4mm safety zone is the emerging UK standard.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Internal Sinus Lift -->
+<div class="slide" data-slide="13">
+  <span class="tag tag-g">Technique</span>
+  <h2>Internal Sinus Lift</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">A minimally invasive alternative to the lateral window sinus lift. Done through the osteotomy hole simultaneously with implant placement.</p>
+      <div class="dc">
+        <svg viewBox="0 0 280 220" width="260">
+          <rect x="0" y="0" width="280" height="220" rx="12" fill="#10131a"/>
+          <!-- Sinus -->
+          <path d="M40,50 Q140,20 240,50 L240,80 Q140,50 40,80 Z" fill="rgba(108,159,255,.06)" stroke="#6c9fff" stroke-width="1" stroke-dasharray="4"/>
+          <text x="140" y="42" text-anchor="middle" fill="#6c9fff" font-size="10">Sinus cavity</text>
+          <!-- Membrane pushed up -->
+          <path d="M110,80 Q140,55 170,80" fill="rgba(112,224,192,.1)" stroke="#70e0c0" stroke-width="2"/>
+          <text x="140" y="62" text-anchor="middle" fill="#70e0c0" font-size="9" font-weight="600">Membrane ↑</text>
+          <!-- Bone graft material -->
+          <path d="M118,80 Q140,65 162,80 L162,95 Q140,105 118,95 Z" fill="rgba(192,144,255,.15)" stroke="#c090ff" stroke-width="1.5"/>
+          <text x="140" y="92" text-anchor="middle" fill="#c090ff" font-size="8">Graft</text>
+          <!-- Alveolar bone -->
+          <rect x="60" y="80" width="160" height="40" rx="0" fill="rgba(255,255,255,.03)" stroke="#8890a4" stroke-width="1"/>
+          <text x="140" y="103" text-anchor="middle" fill="#8890a4" font-size="9">Alveolar bone</text>
+          <!-- Osteotomy -->
+          <rect x="125" y="95" width="30" height="80" rx="4" fill="rgba(108,159,255,.15)" stroke="#6c9fff" stroke-width="1.5"/>
+          <text x="140" y="140" text-anchor="middle" fill="#6c9fff" font-size="9">Implant</text>
+          <!-- Arrow up -->
+          <path d="M140,115 L140,68" fill="none" stroke="#70e0c0" stroke-width="1.5" marker-end="url(#arrowG)"/>
+          <defs><marker id="arrowG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#70e0c0"/></marker></defs>
+          <text x="140" y="200" text-anchor="middle" fill="#8890a4" font-size="10">Hydrodynamic pressure pushes membrane up</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h4 style="color:var(--accent3);font-size:14px;margin-bottom:12px;">KEY POINTS</h4>
+      <ul>
+        <li style="font-size:14px;">Special burs cut anti-clockwise</li>
+        <li style="font-size:14px;">Irrigation pressure lifts the Schneiderian membrane</li>
+        <li style="font-size:14px;">No extra incisions needed</li>
+        <li style="font-size:14px;">Better healing than lateral window approach</li>
+        <li style="font-size:14px;">Done simultaneously with implant placement</li>
+        <li style="font-size:14px;">Use aggressive threads (e.g. Straumann BLX) in soft maxillary bone</li>
+      </ul>
+      <div class="hbox green" style="margin-top:16px;">
+        <p style="font-size:14px;"><strong style="color:var(--accent3);">When to use:</strong> Need ≥6mm implant but have &lt;6mm of bone below the sinus. The internal lift gets you the extra 2–3mm. Much less invasive than a lateral window approach.</p>
+      </div>
+      <div class="hbox blue" style="margin-top:8px;">
+        <p style="font-size:14px;">Still follow all protocols: place platform 3–4mm below planned gingival zenith. Don't place too high just to avoid the sinus.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Wax-Up & Digital Planning -->
+<div class="slide" data-slide="14">
+  <span class="tag tag-b">Planning</span>
+  <h2>Start with the Wax-Up, End with the Implant</h2>
+  <div class="two-col">
+    <div>
+      <p style="margin-bottom:16px;">The prosthetic envelope drives everything. The wax-up shows the zenith, the size, and where the implant needs to go.</p>
+      <div class="dc">
+        <svg viewBox="0 0 300 140" width="290">
+          <rect x="0" y="0" width="300" height="140" rx="12" fill="#10131a"/>
+          <rect x="10" y="30" width="80" height="50" rx="8" fill="rgba(192,144,255,.1)" stroke="#c090ff" stroke-width="1.5"/>
+          <text x="50" y="58" text-anchor="middle" fill="#c090ff" font-size="10" font-weight="600">Wax-up</text>
+          <line x1="95" y1="55" x2="115" y2="55" stroke="#242a38" stroke-width="1.5" marker-end="url(#arrowB)"/>
+          <defs><marker id="arrowB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6c9fff"/></marker></defs>
+          <rect x="118" y="30" width="60" height="50" rx="8" fill="rgba(108,159,255,.1)" stroke="#6c9fff" stroke-width="1.5"/>
+          <text x="148" y="52" text-anchor="middle" fill="#6c9fff" font-size="9" font-weight="600">CBCT</text>
+          <text x="148" y="64" text-anchor="middle" fill="#6c9fff" font-size="8">+ T Concept</text>
+          <line x1="183" y1="55" x2="203" y2="55" stroke="#242a38" stroke-width="1.5" marker-end="url(#arrowB)"/>
+          <rect x="206" y="30" width="80" height="50" rx="8" fill="rgba(112,224,192,.1)" stroke="#70e0c0" stroke-width="1.5"/>
+          <text x="246" y="52" text-anchor="middle" fill="#70e0c0" font-size="9" font-weight="600">Digital</text>
+          <text x="246" y="64" text-anchor="middle" fill="#70e0c0" font-size="8">Guide</text>
+          <text x="150" y="110" text-anchor="middle" fill="#8890a4" font-size="10">Prosthetic envelope → CBCT analysis → Guided surgery</text>
+          <text x="150" y="126" text-anchor="middle" fill="#6c9fff" font-size="10" font-weight="600">"All thinking happens on the computer, not during surgery"</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div class="hbox green">
+        <h4 style="color:var(--accent3);font-size:14px;margin-bottom:8px;">WAXUP AS CONSENT</h4>
+        <p style="font-size:14px;">A patient can claim they didn't understand the consent form. They can't claim they didn't understand a wax-up showing them exactly what their tooth will look like. Integrate the wax-up into your consent process.</p>
+      </div>
+      <div class="hbox blue" style="margin-top:8px;">
+        <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px;">DIGITAL WORKFLOW</h4>
+        <ul>
+          <li style="font-size:13px;">Digital wax-up → patient approves</li>
+          <li style="font-size:13px;">Digital planning on CBCT with wax-up overlay</li>
+          <li style="font-size:13px;">Guided surgical stent manufactured</li>
+          <li style="font-size:13px;">Surgery: no thinking, just execution</li>
+          <li style="font-size:13px;">100% of cases now done digitally</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Summary -->
+<div class="slide title-slide" data-slide="15">
+  <div class="glow-line"></div>
+  <span class="tag tag-b">Summary</span>
+  <h2>Key Takeaways — All 3 Lectures</h2>
+  <div style="max-width:700px;margin:0 auto;text-align:left;">
+    <div class="three-col" style="margin-top:16px;">
+      <div>
+        <h4 style="color:var(--accent3);font-size:13px;margin-bottom:8px;">DENTURES</h4>
+        <ul>
+          <li style="font-size:13px;">Be holistic — stabilise first</li>
+          <li style="font-size:13px;">Conform (80%) vs Reorganise (20%)</li>
+          <li style="font-size:13px;">Survey models, cut guide planes</li>
+          <li style="font-size:13px;">Tissue stops + pink stick</li>
+          <li style="font-size:13px;">Shimstock at every stage</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--accent);font-size:13px;margin-bottom:8px;">BRIDGES</h4>
+        <ul>
+          <li style="font-size:13px;">Cantilever > fixed-fixed</li>
+          <li style="font-size:13px;">Don't prep (evidence)</li>
+          <li style="font-size:13px;">APC concept for zirconia</li>
+          <li style="font-size:13px;">Natural tooth pontics work</li>
+          <li style="font-size:13px;">Always have Essex backup</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--accent4);font-size:13px;margin-bottom:8px;">IMPLANTS</h4>
+        <ul>
+          <li style="font-size:13px;">8mm standard, Plan B longer</li>
+          <li style="font-size:13px;">T Concept: 3–4mm from zenith</li>
+          <li style="font-size:13px;">Follow prosthetic envelope</li>
+          <li style="font-size:13px;">Never compromise position</li>
+          <li style="font-size:13px;">Crown height > crown:root ratio</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:16px;color:var(--text-dim);margin-top:32px;">Course complete. Review the cleaned transcript document for full details.</p>
+</div>
+
+</div>
+
+<div class="slide-number" id="slideNum">01 / 16</div>
+<div class="nav">
+  <button onclick="prevSlide()">←</button>
+  <button onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current=0;const slides=document.querySelectorAll('.slide');const total=slides.length;
+function showSlide(n){slides.forEach(s=>s.classList.remove('active'));slides[n].classList.add('active');document.getElementById('slideNum').textContent=String(n+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');document.getElementById('progressBar').style.width=((n+1)/total*100)+'%';}
+function nextSlide(){if(current<total-1){current++;showSlide(current);}}
+function prevSlide(){if(current>0){current--;showSlide(current);}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();}if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}});
+
+function updateLengthDecision(){
+  const v=document.getElementById('boneSlider').value;
+  document.getElementById('boneVal').textContent=v+'mm';
+  const d=document.getElementById('lengthDecision');
+  if(v>=8) d.innerHTML='<p style="font-size:14px;color:var(--accent3);">✓ <strong>8mm Plan A.</strong> Ideal. No need to go longer — 8mm performs as well as 10, 12, or 15mm.</p>';
+  else if(v>=6) d.innerHTML='<p style="font-size:14px;color:var(--accent);">⚠ <strong>'+v+'mm possible.</strong> Consider internal sinus lift to reach 6mm. Splint if placing two. Slightly lower success rate.</p>';
+  else if(v>=4) d.innerHTML='<p style="font-size:14px;color:var(--accent4);">⚠ <strong>Ultra-short territory.</strong> Cochrane review supports 4–6mm in maxilla without augmentation, but consider splinting and aggressive threads.</p>';
+  else d.innerHTML='<p style="font-size:14px;color:var(--accent2);">✗ <strong>Insufficient bone.</strong> Staged bone grafting or lateral window sinus lift required before implant placement.</p>';
+}
+
+function checkQuiz(btn,result,fid){const p=btn.parentElement;p.querySelectorAll('.quiz-btn').forEach(b=>{b.disabled=true;b.style.opacity='.6';});btn.style.opacity='1';btn.classList.add(result);const fb=document.getElementById(fid);fb.style.display='block';if(result==='correct'){fb.style.background='rgba(112,224,192,.1)';fb.style.color='#70e0c0';fb.textContent='✓ Correct!';}else{fb.style.background='rgba(255,112,112,.1)';fb.style.color='#ff7070';fb.textContent='✗ Not quite — see the highlighted answer.';p.querySelectorAll('.quiz-btn').forEach(b=>{if(b.getAttribute('onclick')?.includes("'correct'"))b.classList.add('correct');});}}
+
+let tX=0;document.addEventListener('touchstart',e=>{tX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{const d=e.changedTouches[0].screenX-tX;if(d<-50)nextSlide();if(d>50)prevSlide();});
+showSlide(0);
+</script>
+</body>
+</html>

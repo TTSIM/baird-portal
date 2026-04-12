@@ -252,6 +252,96 @@
     gap: 10px;
   }
 
+  .day-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .day-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(79, 156, 247, 0.05);
+    overflow: hidden;
+  }
+
+  .day-toggle {
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .day-toggle:hover {
+    background: rgba(79, 156, 247, 0.05);
+  }
+
+  .day-title {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+
+  .day-copy {
+    color: var(--muted);
+  }
+
+  .day-icon {
+    color: var(--accent);
+    font-size: 1rem;
+    transition: transform 0.18s ease;
+  }
+
+  .day-card.open .day-icon {
+    transform: rotate(45deg);
+  }
+
+  .day-content {
+    display: none;
+    padding: 0 14px 14px;
+  }
+
+  .day-card.open .day-content {
+    display: block;
+  }
+
+  .lecture-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .lecture-card {
+    padding: 12px;
+    border: 1px solid rgba(79, 156, 247, 0.16);
+    border-radius: 12px;
+    background: rgba(19, 25, 34, 0.34);
+  }
+
+  .lecture-title {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .lecture-copy {
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
   .resource-link {
     display: inline-flex;
     align-items: center;
@@ -371,7 +461,6 @@
   }
 
   .module-card {
-    padding: 18px 18px 18px 20px;
     position: relative;
     overflow: hidden;
   }
@@ -387,10 +476,21 @@
   }
 
   .module-header {
+    width: 100%;
+    padding: 18px 18px 18px 20px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: start;
     gap: 16px;
+    text-align: left;
+  }
+
+  .module-header:hover {
+    background: rgba(79, 156, 247, 0.04);
   }
 
   .module-index {
@@ -413,6 +513,26 @@
   .module-topics {
     margin-top: 10px;
     color: var(--muted);
+  }
+
+  .module-icon {
+    color: var(--accent);
+    font-size: 1rem;
+    transition: transform 0.18s ease;
+    margin-left: 12px;
+  }
+
+  .module-card.open .module-icon {
+    transform: rotate(45deg);
+  }
+
+  .module-content {
+    display: none;
+    padding: 0 18px 18px 20px;
+  }
+
+  .module-card.open .module-content {
+    display: block;
   }
 
   @media (max-width: 980px) {
@@ -599,16 +719,214 @@
         title: "Module 1",
         date: "13-15 March 2026",
         topics: "Introduction into Implant Dentistry, Success Criteria, Pink aesthetics and Treatment Planning.",
-        materials: [
+        days: [
           {
-            type: "Lecture",
-            label: "Lecture 1: Foundations, History and Bone Biology",
-            file: "materials/lectures/lecture_1_foundations_history_bone_biology.html"
+            title: "Day 1",
+            copy: "Uploaded materials from the first weekend.",
+            lectures: [
+              {
+                title: "Lecture 1",
+                copy: "Foundations, history and bone biology.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Foundations, History and Bone Biology",
+                    file: "materials/lectures/lecture_1_foundations_history_bone_biology.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 1: Foundations, History and Bone Biology",
+                    file: "materials/quizzes/quiz_1_foundations_history_bone_biology.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "Surgical principles and biomechanics.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: Surgical Principles and Biomechanics",
+                    file: "materials/lectures/lecture_2_surgical_principles_and_biomechanics.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 2: Surgical Principles and Biomechanics",
+                    file: "materials/quizzes/quiz_2_surgical_principles_biomechanics.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Restoration, complications and clinical excellence.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Restoration, Complications and Clinical Excellence",
+                    file: "materials/lectures/lecture_3_restoration_complications_and_clinical_excellence.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 3: Restoration, Complications and Clinical Excellence",
+                    file: "materials/quizzes/quiz_3_restoration_complications_excellence.html"
+                  }
+                ]
+              }
+            ]
           },
           {
-            type: "Quiz",
-            label: "Quiz 1: Foundations, History and Bone Biology",
-            file: "materials/quizzes/quiz_1_foundations_history_bone_biology.html"
+            title: "Day 2",
+            copy: "Uploaded materials for the second day of Module 1.",
+            lectures: [
+              {
+                title: "Lecture 1",
+                copy: "Mastering partial dentures.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Mastering Partial Dentures",
+                    file: "materials/lectures/module1_day2_lecture1_partial_dentures.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 1: Partial Dentures",
+                    file: "materials/quizzes/module1_day2_quiz1_partial_dentures.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "Resin bonded bridges.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: Resin Bonded Bridges",
+                    file: "materials/lectures/module1_day2_lecture2_resin_bonded_bridges.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 2: Resin Bonded Bridges",
+                    file: "materials/quizzes/module1_day2_quiz2_resin_bonded_bridges.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Implant size and position.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Implant Size and Position",
+                    file: "materials/lectures/module1_day2_lecture3_implant_size_position.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 3: Implant Size and Position",
+                    file: "materials/quizzes/module1_day2_quiz3_implant_size_position.html"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Uploaded materials for the third day of Module 1.",
+            lectures: [
+              {
+                title: "Lecture 1",
+                copy: "Local anaesthesia and patient preparation.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Local Anaesthesia and Patient Preparation",
+                    file: "materials/lectures/module1_day3_lecture1_local_anaesthesia_patient_preparation.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 1: Anaesthesia, Preparation and Team",
+                    file: "materials/quizzes/module1_day3_quiz1_anaesthesia_preparation_team.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "Instruments and surgical motor.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: Instruments and Surgical Motor",
+                    file: "materials/lectures/module1_day3_lecture2_instruments_surgical_motor.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 2: Instruments and Surgical Motor",
+                    file: "materials/quizzes/module1_day3_quiz2_instruments_surgical_motor.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Drilling sequence and implant placement.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Drilling Sequence and Implant Placement",
+                    file: "materials/lectures/module1_day3_lecture3_drilling_sequence_implant_placement.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 3: Drilling Sequence and Implant Placement",
+                    file: "materials/quizzes/module1_day3_quiz3_drilling_sequence_implant_placement.html"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        title: "Oral Surgery Mastery",
+        date: "21 March 2026",
+        topics: "Special oral surgery course day covering foundations of oral surgery, local anaesthetic mastery and wisdom teeth complications.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Standalone oral surgery course day.",
+            lectures: [
+              {
+                title: "Lecture 1",
+                copy: "Foundations of oral surgery.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Foundations of Oral Surgery",
+                    file: "materials/lectures/oral_surgery_day_lecture_1_foundations_of_oral_surgery.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "Local anaesthetic mastery.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: Local Anaesthetic Mastery",
+                    file: "materials/lectures/oral_surgery_day_lecture_2_local_anaesthetic_mastery.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Wisdom teeth and complications.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Wisdom Teeth and Complications",
+                    file: "materials/lectures/oral_surgery_day_lecture_3_wisdom_teeth_complications.html"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -616,16 +934,78 @@
         title: "Module 2",
         date: "10-12 April 2026",
         topics: "Cone Beam CT Scan Training, Surgical Planning for Implant Cases and Surgical Principles in Implant Dentistry.",
-        materials: [
+        days: [
           {
-            type: "Lecture",
-            label: "Lecture 2: Surgical Principles and Biomechanics",
-            file: "materials/lectures/lecture_2_surgical_principles_and_biomechanics.html"
+            title: "Day 1",
+            copy: "Uploaded materials from the second module weekend.",
+            lectures: [
+              {
+                title: "Lecture 1",
+                copy: "Patient selection and treatment planning foundations.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 1: Patient Selection and Treatment Planning Foundations",
+                    file: "materials/lectures/module2_day1_lecture1.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 1: Patient Selection and Planning",
+                    file: "materials/quizzes/module2_day1_quiz1.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 2",
+                copy: "PECOFA stabilisation framework.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 2: PECOFA Stabilisation Framework",
+                    file: "materials/lectures/module2_day1_lecture2.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 2: PECOFA Stabilisation Framework",
+                    file: "materials/quizzes/module2_day1_quiz2.html"
+                  }
+                ]
+              },
+              {
+                title: "Lecture 3",
+                copy: "Whole-case planning and high-risk patients.",
+                materials: [
+                  {
+                    type: "Lecture",
+                    label: "Lecture 3: Whole-Case Planning and High-Risk Patients",
+                    file: "materials/lectures/module2_day1_lecture3.html"
+                  },
+                  {
+                    type: "Quiz",
+                    label: "Quiz 3: Whole-Case Planning, Risk and Litigation",
+                    file: "materials/quizzes/module2_day1_quiz3.html"
+                  }
+                ]
+              }
+            ]
           },
           {
-            type: "Quiz",
-            label: "Quiz 2: Surgical Principles and Biomechanics",
-            file: "materials/quizzes/quiz_2_surgical_principles_biomechanics.html"
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
           }
         ]
       },
@@ -633,53 +1013,248 @@
         title: "Module 3",
         date: "15-17 May 2026",
         topics: "Risk Analysis, Periodontal Management, Bone Grafting Principles, Socket Grafting and Patient Selection in Implant Dentistry.",
-        materials: [
+        days: [
           {
-            type: "Lecture",
-            label: "Lecture 3: Restoration, Complications and Clinical Excellence",
-            file: "materials/lectures/lecture_3_restoration_complications_and_clinical_excellence.html"
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
           },
           {
-            type: "Quiz",
-            label: "Quiz 3: Restoration, Complications and Clinical Excellence",
-            file: "materials/quizzes/quiz_3_restoration_complications_excellence.html"
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
           }
         ]
       },
       {
         title: "Module 4",
         date: "12-14 June 2026",
-        topics: "Bone and Soft Tissue Healing Principles in Implant Dentistry, Medical Problems in Dentistry and Dental Implant Photography."
+        topics: "Bone and Soft Tissue Healing Principles in Implant Dentistry, Medical Problems in Dentistry and Dental Implant Photography.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       },
       {
         title: "Module 5",
         date: "10-12 July 2026 and 17-19 July 2026",
-        topics: "Live Implant Surgery, Case Planning and Clinical Training on Course Patients."
+        topics: "Live Implant Surgery, Case Planning and Clinical Training on Course Patients.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       },
       {
         title: "Module 6",
         date: "11-13 September 2026",
-        topics: "Medico-legal Considerations, Prosthetic Principles in Implant Dentistry, Impressions and Temporisation in Implant Dentistry."
+        topics: "Medico-legal Considerations, Prosthetic Principles in Implant Dentistry, Impressions and Temporisation in Implant Dentistry.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       },
       {
         title: "Module 7",
         date: "23-25 October 2026",
-        topics: "Advanced Prosthetic Principles and Impressions in Implant Dentistry, and Occlusion in Implant Dentistry."
+        topics: "Advanced Prosthetic Principles and Impressions in Implant Dentistry, and Occlusion in Implant Dentistry.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       },
       {
         title: "Module 8",
         date: "4-6 December 2026",
-        topics: "Digital Workflow in Implant Dentistry, Soft Tissue Grafting (FGG, CTG) and Fitting Final Restorations for Course Implant Patients."
+        topics: "Digital Workflow in Implant Dentistry, Soft Tissue Grafting (FGG, CTG) and Fitting Final Restorations for Course Implant Patients.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       },
       {
         title: "Module 9",
         date: "8-10 January 2027",
-        topics: "Course Revision and Exam Module."
+        topics: "Course Revision and Exam Module.",
+        days: [
+          {
+            title: "Day 1",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 2",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          },
+          {
+            title: "Day 3",
+            copy: "Lecture slots ready for upload.",
+            lectures: [
+              { title: "Lecture 1", copy: "To be added." },
+              { title: "Lecture 2", copy: "To be added." },
+              { title: "Lecture 3", copy: "To be added." }
+            ]
+          }
+        ]
       }
     ]
   };
 
-  const allResources = COURSE.modules.flatMap((module) => module.materials || []);
+  const allResources = COURSE.modules.flatMap((module) =>
+    (module.days || []).flatMap((day) =>
+      (day.lectures || []).flatMap((lecture) => lecture.materials || [])
+    )
+  );
 
   function setActiveTab(tabName) {
     document.querySelectorAll(".tab-btn").forEach((button) => {
@@ -723,23 +1298,53 @@
 
   document.getElementById("module-list").innerHTML = COURSE.modules
     .map((module, index) => `
-      <article class="module-card">
-        <div class="module-header">
+      <article class="module-card" id="module-${index + 1}">
+        <button class="module-header" type="button" onclick="toggleModule('module-${index + 1}')">
           <div>
             <div class="module-index">Module ${String(index + 1).padStart(2, "0")}</div>
             <h3>${module.title}</h3>
+            <p class="module-topics">${module.topics}</p>
           </div>
-          <div class="module-date">${module.date}</div>
-        </div>
-        <p class="module-topics">${module.topics}</p>
-        ${module.materials && module.materials.length ? `
-          <div class="resource-list">
-            ${module.materials.map((resource) => `
-              <a class="resource-link" href="${resource.file}">
-                <span class="resource-type">${resource.type}</span>
-                <span>${resource.label}</span>
-              </a>
+          <div>
+            <div class="module-date">${module.date}</div>
+            <span class="module-icon">+</span>
+          </div>
+        </button>
+        ${module.days && module.days.length ? `
+          <div class="module-content">
+            <div class="day-list">
+            ${module.days.map((day, dayIndex) => `
+              <div class="day-card" id="module-${index + 1}-day-${dayIndex + 1}">
+                <button class="day-toggle" type="button" onclick="toggleDay('module-${index + 1}-day-${dayIndex + 1}')">
+                  <div>
+                    <div class="day-title">${day.title}</div>
+                    <p class="day-copy">${day.copy}</p>
+                  </div>
+                  <span class="day-icon">+</span>
+                </button>
+                <div class="day-content">
+                  <div class="lecture-list">
+                    ${day.lectures.map((lecture) => `
+                      <div class="lecture-card">
+                        <div class="lecture-title">${lecture.title}</div>
+                        <p class="lecture-copy">${lecture.copy}</p>
+                        ${lecture.materials && lecture.materials.length ? `
+                          <div class="resource-list">
+                            ${lecture.materials.map((resource) => `
+                              <a class="resource-link" href="${resource.file}">
+                                <span class="resource-type">${resource.type}</span>
+                                <span>${resource.label}</span>
+                              </a>
+                            `).join("")}
+                          </div>
+                        ` : ""}
+                      </div>
+                    `).join("")}
+                  </div>
+                </div>
+              </div>
             `).join("")}
+            </div>
           </div>
         ` : ""}
       </article>
@@ -749,6 +1354,18 @@
   document.querySelectorAll(".tab-btn").forEach((button) => {
     button.addEventListener("click", () => setActiveTab(button.dataset.tab));
   });
+
+  function toggleDay(dayId) {
+    const dayCard = document.getElementById(dayId);
+    if (!dayCard) return;
+    dayCard.classList.toggle("open");
+  }
+
+  function toggleModule(moduleId) {
+    const moduleCard = document.getElementById(moduleId);
+    if (!moduleCard) return;
+    moduleCard.classList.toggle("open");
+  }
 </script>
 </body>
 </html>

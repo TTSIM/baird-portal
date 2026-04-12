@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3: Wisdom Teeth & Complications</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0a14;--surface:#17132a;--surface2:#211c35;--accent:#f59e0b;--accent2:#ef4444;--accent3:#8b5cf6;--green:#10b981;--cyan:#06b6d4;--text:#e2e8f0;--text2:#94a3b8;--font-display:'DM Serif Display',serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.7}
+.slide{min-height:100vh;display:none;flex-direction:column;justify-content:center;padding:60px 80px;position:relative;overflow:hidden;animation:slideIn .5s ease}
+.slide.active{display:flex}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(13,10,20,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(245,158,11,.15);padding:12px 30px;display:flex;align-items:center;justify-content:space-between;z-index:100}
+.nav-bar .progress-track{flex:1;height:4px;background:var(--surface2);border-radius:4px;margin:0 20px;overflow:hidden}
+.nav-bar .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease}
+.nav-btn{background:var(--surface2);border:1px solid rgba(245,158,11,.2);color:var(--text);padding:8px 20px;border-radius:8px;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:500;transition:all .2s}
+.nav-btn:hover{background:var(--accent);border-color:var(--accent);color:#000}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.slide-counter{font-family:var(--font-mono);font-size:13px;color:var(--text2);min-width:80px;text-align:center}
+.slide-title{background:linear-gradient(135deg,#0d0a14 0%,#17132a 40%,#2a1520 100%)}
+.slide-title::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.06) 0%,transparent 70%);border-radius:50%}
+.slide-title h1{font-family:var(--font-display);font-size:clamp(36px,5vw,64px);line-height:1.15;background:linear-gradient(135deg,#e2e8f0,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1}
+.slide-title .subtitle{font-size:20px;color:var(--text2);margin-top:16px;font-weight:300;position:relative;z-index:1}
+.slide-title .lecture-num{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;position:relative;z-index:1}
+.slide-content h2{font-family:var(--font-display);font-size:clamp(28px,3.5vw,42px);margin-bottom:30px}
+.slide-content h2::after{content:'';display:block;width:60px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-top:12px;border-radius:2px}
+.slide-content h3{font-size:22px;color:var(--cyan);margin:20px 0 12px;font-weight:600}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:20px}
+.card{background:var(--surface);border:1px solid rgba(245,158,11,.1);border-radius:16px;padding:28px;transition:all .3s;overflow:hidden}
+.card:hover{border-color:rgba(245,158,11,.3);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.card .card-icon{font-size:32px;margin-bottom:12px;display:block}
+.card h4{font-size:17px;font-weight:600;margin-bottom:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.key-point{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.04));border-left:3px solid var(--accent);padding:20px 24px;border-radius:0 12px 12px 0;margin:16px 0;font-size:15px}
+.key-point strong{color:var(--accent)}
+.quote-box{background:var(--surface);border-radius:16px;padding:30px 36px;margin:20px 0;position:relative;border:1px solid rgba(245,158,11,.15)}
+.quote-box::before{content:'\201C';font-family:var(--font-display);font-size:80px;color:var(--accent);opacity:.3;position:absolute;top:-10px;left:16px;line-height:1}
+.quote-box p{font-size:18px;font-style:italic;line-height:1.7;padding-left:20px}
+.quote-box .attribution{font-size:13px;color:var(--accent);margin-top:12px;font-style:normal;padding-left:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:20px 0}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}.slide{padding:30px 24px}}
+.steps{counter-reset:step;margin:16px 0}
+.step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.step::before{counter-increment:step;content:counter(step);font-family:var(--font-mono);font-size:14px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;min-width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text{font-size:15px;color:var(--text2);padding-top:6px}
+.step-text strong{color:var(--text)}
+.bullet-list{list-style:none;margin:12px 0}
+.bullet-list li{padding:8px 0 8px 24px;position:relative;font-size:15px;color:var(--text2)}
+.bullet-list li::before{content:'';position:absolute;left:0;top:16px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.bullet-list li strong{color:var(--text)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:20px 0;border-radius:16px;overflow:hidden}
+.compare-side{padding:24px}
+.compare-do{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15)}
+.compare-dont{background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.1)}
+.compare-do h4{color:var(--green)}
+.compare-dont h4{color:var(--accent2)}
+.compare-side h4{font-size:15px;font-weight:700;margin-bottom:12px}
+.compare-side ul{list-style:none}
+.compare-side li{font-size:14px;padding:6px 0;color:var(--text2)}
+.interactive-zone{background:var(--surface2);border-radius:16px;padding:30px;margin:20px 0;border:1px solid rgba(139,92,246,.15)}
+.interactive-zone h4{color:var(--accent3);font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.interactive-zone h4::before{content:'⚡'}
+.quiz-container{margin:16px 0}.quiz-q{font-size:16px;font-weight:600;margin-bottom:14px}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 18px;cursor:pointer;transition:all .2s;font-size:14px;color:var(--text2)}
+.quiz-opt:hover{border-color:var(--accent);color:var(--text)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--accent2);background:rgba(239,68,68,.08);color:var(--accent2)}
+.quiz-opt .letter{font-family:var(--font-mono);font-weight:600;margin-right:10px;color:var(--accent)}
+.quiz-feedback{margin-top:12px;padding:14px 18px;border-radius:10px;font-size:14px;display:none;line-height:1.6}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--green)}
+.quiz-feedback.wrong-fb{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:var(--accent2)}
+.reveal-box{background:var(--surface);border:1px dashed rgba(245,158,11,.2);border-radius:12px;padding:16px 20px;margin:8px 0;cursor:pointer;transition:all .3s}
+.reveal-box:hover{border-color:var(--accent)}
+.reveal-box .reveal-header{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:500}
+.reveal-box .reveal-arrow{transition:transform .3s;color:var(--accent)}
+.reveal-box.open .reveal-arrow{transform:rotate(180deg)}
+.reveal-box .reveal-content{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:14px;color:var(--text2);line-height:1.7}
+.reveal-box.open .reveal-content{max-height:500px;padding-top:12px}
+.svg-diagram{background:var(--surface);border-radius:16px;padding:24px;margin:20px 0;text-align:center;border:1px solid rgba(245,158,11,.1)}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin:2px}
+.tag-green{background:rgba(16,185,129,.15);color:var(--green)}.tag-red{background:rgba(239,68,68,.12);color:var(--accent2)}
+.tag-gold{background:rgba(245,158,11,.15);color:var(--accent)}.tag-purple{background:rgba(139,92,246,.15);color:var(--accent3)}
+.tag-cyan{background:rgba(6,182,212,.15);color:var(--cyan)}
+/* Timeline */
+.timeline{margin:20px 0;position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:rgba(245,158,11,.2)}
+.timeline-item{margin-bottom:20px;position:relative}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.timeline-item h4{font-size:15px;font-weight:600;color:var(--text)}
+.timeline-item p{font-size:14px;color:var(--text2);margin-top:4px}
+.portal-back{position:fixed;top:20px;left:20px;z-index:140;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(23,19,42,.92);border:1px solid rgba(245,158,11,.25);padding:10px 16px;border-radius:999px;font-size:13px;font-weight:600;backdrop-filter:blur(12px)}
+.portal-back:hover{background:var(--accent);border-color:var(--accent);color:#0d0a14}
+</style>
+</head>
+<body>
+<a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+
+<!-- SLIDE 1 -->
+<div class="slide slide-title active" data-slide="1">
+  <div class="lecture-num">Lecture 03 of 03</div>
+  <h1>Wisdom Teeth<br>& Complications</h1>
+  <p class="subtitle">Classification, Surgical Approach, Coronectomy, Nerve Injury, Bleeding & OAF Management</p>
+  <p style="margin-top:40px;font-size:14px;color:var(--text2)">Based on the oral surgery masterclass by <strong style="color:var(--accent)">Mr Shankar</strong></p>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide slide-content" data-slide="2">
+  <h2>Winter's Classification</h2>
+  <div class="svg-diagram">
+    <svg width="650" height="280" viewBox="0 0 650 280">
+      <text x="325" y="25" fill="var(--text)" font-family="DM Serif Display" font-size="16" text-anchor="middle">Four Types of Impaction</text>
+      <!-- Vertical -->
+      <rect x="20" y="45" width="140" height="190" rx="12" fill="rgba(16,185,129,.06)" stroke="rgba(16,185,129,.3)" stroke-width="1.5"/>
+      <text x="90" y="70" fill="var(--green)" font-family="DM Sans" font-size="13" font-weight="700" text-anchor="middle">Vertical</text>
+      <rect x="60" y="85" width="15" height="40" rx="2" fill="rgba(148,163,184,.3)" stroke="#94a3b8"/>
+      <rect x="85" y="85" width="15" height="40" rx="2" fill="rgba(16,185,129,.3)" stroke="var(--green)"/>
+      <line x1="92" y1="85" x2="92" y2="125" stroke="var(--green)" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="67" y1="85" x2="67" y2="125" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="90" y="155" fill="var(--text2)" font-family="DM Sans" font-size="10" text-anchor="middle">Parallel long axes</text>
+      <text x="90" y="170" fill="var(--green)" font-family="DM Sans" font-size="11" text-anchor="middle">Often easiest</text>
+      <text x="90" y="195" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">⚠️ Can be misleading</text>
+      <text x="90" y="210" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">(may actually be disto-</text>
+      <text x="90" y="225" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">angular in disguise)</text>
+
+      <!-- Mesioangular -->
+      <rect x="175" y="45" width="140" height="190" rx="12" fill="rgba(6,182,212,.06)" stroke="rgba(6,182,212,.3)" stroke-width="1.5"/>
+      <text x="245" y="70" fill="var(--cyan)" font-family="DM Sans" font-size="13" font-weight="700" text-anchor="middle">Mesioangular</text>
+      <rect x="215" y="85" width="15" height="40" rx="2" fill="rgba(148,163,184,.3)" stroke="#94a3b8"/>
+      <rect x="233" y="90" width="15" height="40" rx="2" fill="rgba(6,182,212,.3)" stroke="var(--cyan)" transform="rotate(-30,240,110)"/>
+      <text x="245" y="155" fill="var(--text2)" font-family="DM Sans" font-size="10" text-anchor="middle">Acute angle to 7</text>
+      <text x="245" y="170" fill="var(--cyan)" font-family="DM Sans" font-size="11" text-anchor="middle">Common type</text>
+      <text x="245" y="195" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">May have bone loss</text>
+      <text x="245" y="210" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">mesially → easier</text>
+
+      <!-- Horizontal -->
+      <rect x="330" y="45" width="140" height="190" rx="12" fill="rgba(139,92,246,.06)" stroke="rgba(139,92,246,.3)" stroke-width="1.5"/>
+      <text x="400" y="70" fill="var(--accent3)" font-family="DM Sans" font-size="13" font-weight="700" text-anchor="middle">Horizontal</text>
+      <rect x="370" y="85" width="15" height="40" rx="2" fill="rgba(148,163,184,.3)" stroke="#94a3b8"/>
+      <rect x="380" y="110" width="40" height="15" rx="2" fill="rgba(139,92,246,.3)" stroke="var(--accent3)"/>
+      <text x="400" y="155" fill="var(--text2)" font-family="DM Sans" font-size="10" text-anchor="middle">90° to long axis</text>
+      <text x="400" y="170" fill="var(--accent3)" font-family="DM Sans" font-size="11" text-anchor="middle">Predictable plan</text>
+      <text x="400" y="195" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">Always needs sectioning</text>
+      <text x="400" y="210" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">→ Only one way out</text>
+
+      <!-- Distoangular -->
+      <rect x="485" y="45" width="145" height="190" rx="12" fill="rgba(239,68,68,.06)" stroke="rgba(239,68,68,.3)" stroke-width="1.5"/>
+      <text x="557" y="70" fill="var(--accent2)" font-family="DM Sans" font-size="13" font-weight="700" text-anchor="middle">Distoangular</text>
+      <rect x="525" y="85" width="15" height="40" rx="2" fill="rgba(148,163,184,.3)" stroke="#94a3b8"/>
+      <rect x="545" y="90" width="15" height="40" rx="2" fill="rgba(239,68,68,.3)" stroke="var(--accent2)" transform="rotate(25,552,110)"/>
+      <text x="557" y="155" fill="var(--text2)" font-family="DM Sans" font-size="10" text-anchor="middle">Obtuse angle (tilted back)</text>
+      <text x="557" y="170" fill="var(--accent2)" font-family="DM Sans" font-size="11" font-weight="700" text-anchor="middle">MOST DIFFICULT</text>
+      <text x="557" y="195" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">Point of application behind</text>
+      <text x="557" y="210" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">Bone covering access</text>
+      <text x="557" y="225" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">Avoid sectioning if possible</text>
+    </svg>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide slide-content" data-slide="3">
+  <h2>Point of Application — The Key</h2>
+  <div class="key-point"><strong>Universal rule:</strong> All impaction types → point of application is <strong>MESIAL</strong>… except distoangular, where it's <strong>DISTOBUCCAL</strong>. This is why differentiating vertical from distoangular matters.</div>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green)"><h4>Vertical</h4><p>Mesial point of application. Use Coupland's or straight elevator. Twist distally and lingually. Sometimes forceps work.</p><span class="tag tag-green">Easiest</span></div>
+    <div class="card" style="border-left:3px solid var(--cyan)"><h4>Mesioangular</h4><p>Mesial application. If bone loss mesially → may elevate without sectioning. If tooth impaction against 7 → must section.</p><span class="tag tag-cyan">Check for bone loss</span></div>
+    <div class="card" style="border-left:3px solid var(--accent3)"><h4>Horizontal</h4><p>Always section. Split between crown and root (horizontal cut) or vertical cut. Crown out first, then roots.</p><span class="tag tag-purple">Always section</span></div>
+    <div class="card" style="border-left:3px solid var(--accent2)"><h4>Distoangular</h4><p>Distobuccal application. Remove bone behind tooth. Try to keep tooth whole — sectioning makes it harder. Deliver distally and lingually.</p><span class="tag tag-red">Hardest</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Horizontal approach -->
+<div class="slide slide-content" data-slide="4">
+  <h2>Surgical Approach — Horizontal Impaction</h2>
+  <div class="svg-diagram">
+    <svg width="600" height="250" viewBox="0 0 600 250">
+      <!-- 7 tooth -->
+      <rect x="100" y="40" width="50" height="70" rx="4" fill="rgba(148,163,184,.2)" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="125" y="80" fill="var(--text2)" font-family="DM Sans" font-size="12" text-anchor="middle">7</text>
+      <!-- 8 tooth horizontal -->
+      <rect x="160" y="65" width="70" height="30" rx="4" fill="rgba(245,158,11,.15)" stroke="var(--accent)" stroke-width="2"/>
+      <text x="195" y="84" fill="var(--accent)" font-family="DM Sans" font-size="11" text-anchor="middle">8 (horizontal)</text>
+      <!-- Bone line -->
+      <path d="M60,40 L80,35 L260,35 L280,50 L290,80" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="280" y="30" fill="var(--text2)" font-family="DM Sans" font-size="10">Oblique ridge</text>
+      <!-- Crown-root split line -->
+      <line x1="195" y1="55" x2="195" y2="105" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="5 3"/>
+      <text x="195" y="120" fill="var(--accent2)" font-family="DM Sans" font-size="10" text-anchor="middle">Horizontal split</text>
+      <text x="195" y="135" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">(crown from root)</text>
+      <!-- OR -->
+      <text x="340" y="80" fill="var(--accent3)" font-family="DM Sans" font-size="14" font-weight="700">OR</text>
+      <!-- Vertical split option -->
+      <rect x="400" y="65" width="70" height="30" rx="4" fill="rgba(245,158,11,.15)" stroke="var(--accent)" stroke-width="2"/>
+      <line x1="435" y1="60" x2="435" y2="100" stroke="var(--green)" stroke-width="2" stroke-dasharray="5 3"/>
+      <text x="435" y="120" fill="var(--green)" font-family="DM Sans" font-size="10" text-anchor="middle">Vertical split</text>
+      <text x="435" y="135" fill="var(--text2)" font-family="DM Sans" font-size="9" text-anchor="middle">(mesial from distal)</text>
+
+      <!-- Shankar's preference -->
+      <rect x="100" y="160" width="400" height="60" rx="10" fill="rgba(245,158,11,.06)" stroke="rgba(245,158,11,.2)"/>
+      <text x="300" y="185" fill="var(--accent)" font-family="DM Sans" font-size="13" font-weight="600" text-anchor="middle">Shankar's preference: Horizontal split → crown out first → roots follow</text>
+      <text x="300" y="205" fill="var(--text2)" font-family="DM Sans" font-size="11" text-anchor="middle">Problem: crown may hit the 7 when elevating. Either approach is acceptable.</text>
+    </svg>
+  </div>
+</div>
+
+<!-- SLIDE 5: WHARFE -->
+<div class="slide slide-content" data-slide="5">
+  <h2>WHARFE Assessment</h2>
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--accent)"><h4>W — Winter's</h4><p>Classification type (vertical, horizontal, mesio, disto). Determines surgical approach and difficulty.</p><span class="tag tag-gold">Essential</span></div>
+    <div class="card" style="border-top:3px solid var(--text2)"><h4>H — Height of Mandible</h4><p>0–30mm acceptable, 30–50mm harder. Shankar: "I don't believe it's worthwhile knowing."</p><span class="tag tag-purple">Skip</span></div>
+    <div class="card" style="border-top:3px solid var(--accent3)"><h4>A — Angulation</h4><p>Redundant with Winter's classification.</p><span class="tag tag-purple">Skip</span></div>
+    <div class="card" style="border-top:3px solid var(--accent)"><h4>R — Root Morphology</h4><p>Favourable curve = comes with elevation path. Unfavourable curve = root will break. Critical to assess.</p><span class="tag tag-gold">Essential</span></div>
+    <div class="card" style="border-top:3px solid var(--green)"><h4>F — Follicle</h4><p>If follicle present → space around tooth → advantageous for elevation. Cyst = even more space.</p><span class="tag tag-green">Helpful</span></div>
+    <div class="card" style="border-top:3px solid var(--green)"><h4>E — Exit Point</h4><p>Lingual = least resistance. Buccal = thick bone, more resistance. Most teeth delivered lingually.</p><span class="tag tag-green">Helpful</span></div>
+  </div>
+  <div class="key-point"><strong>Shankar's summary:</strong> Focus on <strong>W</strong> (type), <strong>R</strong> (roots), <strong>F</strong> (follicle space), and <strong>E</strong> (exit path). Skip H and A — they add little practical value.</div>
+</div>
+
+<!-- SLIDE 6: Quiz -->
+<div class="slide slide-content" data-slide="6">
+  <h2>Check Your Understanding</h2>
+  <div class="interactive-zone">
+    <h4>Interactive Quiz — Classification</h4>
+    <div class="quiz-container" id="quiz1">
+      <div class="quiz-q">You assess a lower 8 on OPG. The long axis of the 8 is tilted backwards (obtuse angle to the 7). Bone covers the distal aspect. Where is the point of application?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz('quiz1',this,false)"><span class="letter">A</span> Mesial — same as all other impactions</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz1',this,true)"><span class="letter">B</span> Distobuccal — this is a distoangular impaction, the only type with a different approach point</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz1',this,false)"><span class="letter">C</span> Lingual — the path of least resistance</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz1',this,false)"><span class="letter">D</span> Directly occlusal — use forceps from above</div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Coronectomy -->
+<div class="slide slide-content" data-slide="7">
+  <h2>Coronectomy</h2>
+  <div class="two-col">
+    <div>
+      <h3>When to Consider</h3>
+      <ul class="bullet-list">
+        <li>ID nerve running <strong>through</strong> the tooth → extraction = anaesthesia (nerve severed)</li>
+        <li>Nerve beside or below → extraction = paraesthesia risk</li>
+        <li>Patient informed and chooses reduced risk option</li>
+        <li>CBCT shows intimate nerve relationship</li>
+      </ul>
+      <h3 style="margin-top:20px">The Root Migration Phenomenon</h3>
+      <div class="card" style="margin:0;border-left:3px solid var(--green)">
+        <p>After coronectomy, roots tend to <strong>migrate away from the nerve</strong> over time, as if there's some eruptive force. This makes a second procedure safer if ever needed.</p>
+      </div>
+    </div>
+    <div>
+      <h3>Important Caveats</h3>
+      <ul class="bullet-list">
+        <li><strong>Doesn't eliminate risk</strong> — drill vibration at 40,000 rpm still affects the nerve</li>
+        <li><strong>Reduces</strong> risk significantly but paraesthesia still possible</li>
+        <li>Roots may need removal later if they become symptomatic</li>
+        <li>Tell patients: possible need for a second surgery</li>
+        <li>If roots become loose during coronectomy → you may have to remove them</li>
+      </ul>
+      <div class="key-point"><strong>Consent clearly:</strong> "I'm removing the top of the tooth and leaving the roots. This reduces the nerve risk but doesn't eliminate it. You may need another procedure later."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: CBCT Controversy -->
+<div class="slide slide-content" data-slide="8">
+  <h2>The CBCT Dilemma</h2>
+  <div class="quote-box">
+    <p>The more cone beam CTs you do, the more you'll find the ID nerve is close to teeth. Cone beam CT is more for the patient to understand risks and for defensive practice — it's not changing what I do to that tooth.</p>
+    <div class="attribution">— Shankar</div>
+  </div>
+  <div class="card-grid" style="margin-top:20px">
+    <div class="card" style="border-left:3px solid var(--accent2)">
+      <h4>⚠️ The Precedent</h4>
+      <p>A speech therapist received £250,000 for lingual paraesthesia. The expert witness asked: "Why wasn't a CBCT done?" — for a <strong>lingual</strong> nerve injury. You can't see the lingual nerve on CBCT. But the precedent is now set.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent3)">
+      <h4>7 OPG Signs</h4>
+      <p>Look for signs of nerve proximity on OPG: darkening of root, deflection of canal, narrowing of canal, interruption of white line, diversion of canal, superimposition, narrowing of root. If any present → consider CBCT.</p>
+    </div>
+  </div>
+  <div class="key-point"><strong>Tier 2 practitioners:</strong> "For £85–140, is it worth taking the risk? Oral surgery is not a practice builder. Don't take the hassle. If you feel it's not safe for your environment and skills — refer."</div>
+</div>
+
+<!-- SLIDE 9: Upper 8s -->
+<div class="slide slide-content" data-slide="9">
+  <h2>Upper Eights — Special Considerations</h2>
+  <div class="card-grid">
+    <div class="card"><span class="card-icon">🪟</span><h4>Laster's Retractor</h4><p>Goes behind the upper 8 to prevent it escaping distally and upward. Reflects light for visibility. Retracts the cheek. Essential instrument.</p></div>
+    <div class="card"><span class="card-icon">🦷</span><h4>Mouth Position</h4><p><strong>Don't open wide!</strong> When the mouth is wide open, the coronoid process moves forward and blocks the tooth's path. Ask patient to half-close or move jaw to the same side.</p></div>
+    <div class="card"><span class="card-icon">⚠️</span><h4>Tuberosity Risk</h4><p>Upper 8 extractions can fracture the tuberosity. Isolated tuberosity fragment → bin it and suture. Segment with 6/7 moving → splint and plan surgically.</p></div>
+    <div class="card"><span class="card-icon">🩸</span><h4>Haematoma</h4><p>You can't see an upper 8 haematoma because of the loose pterygoid plexus. Can cause trismus lasting 4–6 weeks.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 10: When NOT to extract -->
+<div class="slide slide-content" data-slide="10">
+  <h2>When NOT to Extract a Wisdom Tooth</h2>
+  <div class="quote-box">
+    <p>Just because there's a tooth that is deeply impacted doesn't mean it needs removing. If it's down there, keep it there. Don't go disturbing it if it's not giving symptoms.</p>
+    <div class="attribution">— Shankar</div>
+  </div>
+  <div class="two-col" style="margin-top:20px">
+    <div>
+      <h3>Don't Extract If:</h3>
+      <ul class="bullet-list">
+        <li>Deep vertical impaction, <strong>asymptomatic</strong></li>
+        <li>No caries, no pericoronitis, no pathology</li>
+        <li>Extraction risk outweighs benefit (nerve proximity)</li>
+        <li>The cost of retrieval (bone, nerve) exceeds the gain</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Watch Out For:</h3>
+      <ul class="bullet-list">
+        <li><strong>TMJ pain in 20-somethings</strong> being blamed on wisdom teeth — explore other causes first</li>
+        <li>Unerupted wisdom teeth <strong>normally don't cause pain</strong></li>
+        <li>Orthodontists pushing for wisdom tooth removal — question the indication</li>
+        <li>Private orthodontics driving unnecessary referrals</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Complications Timeline -->
+<div class="slide slide-content" data-slide="11">
+  <h2>Complications — By Timing</h2>
+  <div class="timeline">
+    <div class="timeline-item"><h4>⏱️ Intraoperative</h4><p>Vasovagal, panic attacks, LA failure, tooth/root fracture, adjacent tooth damage, tuberosity fracture, mandible fracture, root into sinus, bleeding</p></div>
+    <div class="timeline-item"><h4>📅 Immediate Post-Op (same day)</h4><p>Emotional response (crying), pain, wrong extraction realisation, reactionary bleeding (LA wears off)</p></div>
+    <div class="timeline-item"><h4>📅 Intermediate (days)</h4><p>Swelling, bruising, dry socket, trismus, infection → cervicofacial abscess</p></div>
+    <div class="timeline-item"><h4>📅 Late (weeks–months)</h4><p>Paraesthesia/anaesthesia, chronic infection (osteomyelitis), oroantral fistula, bisphosphonate-related issues</p></div>
+  </div>
+  <div class="key-point"><strong>Shankar's approach:</strong> "All of us are going to get complications. Recognise it, act on it, own it. Patients are grateful when you say 'I'm sorry this happened, but here's what we're going to do about it.'"</div>
+</div>
+
+<!-- SLIDE 12: Nerve Injury -->
+<div class="slide slide-content" data-slide="12">
+  <h2>Nerve Injury — Anaesthesia vs Paraesthesia</h2>
+  <div class="compare">
+    <div class="compare-dont">
+      <h4>Anaesthesia (Total Numbness)</h4>
+      <ul>
+        <li><strong>Nerve is severed</strong> — will NOT recover on its own</li>
+        <li>Needs URGENT referral for nerve repair</li>
+        <li>Window: <strong>4–6 weeks</strong> for best outcomes</li>
+        <li>Sheffield = gold standard for nerve repair</li>
+        <li>"It's better to have anaesthesia — at least you know exactly what to do"</li>
+      </ul>
+    </div>
+    <div class="compare-side" style="background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15)">
+      <h4 style="color:var(--accent)">Paraesthesia (Altered Sensation)</h4>
+      <ul>
+        <li><strong>Usually recovers</strong> — nerve is bruised, not severed</li>
+        <li>Map it: test <strong>pain, touch, temperature, 2-point discrimination</strong></li>
+        <li>Re-map at follow-up to track improvement</li>
+        <li>May be from canal roof disruption or local inflammation</li>
+        <li>"The problem with paraesthesia is everybody's got their own idea about it"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="key-point"><strong>Resource:</strong> Sheffield University has a nerve injury department website with a flow chart for managing altered sensations. Bookmark it.</div>
+</div>
+
+<!-- SLIDE 13: Nerve Mapping -->
+<div class="slide slide-content" data-slide="13">
+  <h2>Nerve Injury Assessment</h2>
+  <div class="interactive-zone">
+    <h4>The Four Tests — Click to Learn</h4>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">1. Pain Sensation <span class="tag tag-gold">Pin prick</span><span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">Use a dental probe or pin. Test affected area vs normal side. Does the patient feel sharp? Dull? Nothing? Map the boundary where sensation changes.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">2. Light Touch <span class="tag tag-cyan">Cotton wool</span><span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">Gently brush with cotton wool. Can they feel it? Is it the same as the other side? This tests A-beta fibres — the first to recover.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">3. Temperature <span class="tag tag-purple">Ethyl chloride</span><span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">Use ethyl chloride spray or warm/cold instrument. Tests C-fibres and A-delta fibres. Temperature discrimination recovers later than touch.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">4. Two-Point Discrimination <span class="tag tag-green">Callipers</span><span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">How close can two points be before they feel like one? Normal lip: ~5mm. Increased distance = nerve damage. This is the finest test and last to recover.</div>
+    </div>
+  </div>
+  <div class="key-point"><strong>Document everything:</strong> Map the affected area on a diagram. Date it. Repeat at follow-up. Photographic documentation is valuable. Improvement over time → reassuring. No improvement → refer to Sheffield.</div>
+</div>
+
+<!-- SLIDE 14: Quiz -->
+<div class="slide slide-content" data-slide="14">
+  <h2>Check Your Understanding</h2>
+  <div class="interactive-zone">
+    <h4>Interactive Quiz — Nerve Injury</h4>
+    <div class="quiz-container" id="quiz2">
+      <div class="quiz-q">A patient reports complete numbness of the lower lip immediately after a lower 8 extraction. There is zero sensation to any stimulus. What is the priority?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz('quiz2',this,false)"><span class="letter">A</span> Reassure and review in 3 months — most cases resolve</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz2',this,false)"><span class="letter">B</span> Prescribe vitamin B12 and dexamethasone</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz2',this,true)"><span class="letter">C</span> Urgent referral to a nerve specialist — anaesthesia means the nerve is severed and repair within 4–6 weeks gives best outcomes</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz2',this,false)"><span class="letter">D</span> Map the area and wait — this is paraesthesia and will recover</div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Bleeding -->
+<div class="slide slide-content" data-slide="15">
+  <h2>Bleeding Management</h2>
+  <div class="quote-box">
+    <p>My professor used to say: three P's for bleeding — back Pressure, Prayer, and Patience. Take your swab, put it where it's bleeding, sit tight for 3 to 4 minutes.</p>
+    <div class="attribution">— Shankar</div>
+  </div>
+  <div class="two-col" style="margin-top:20px">
+    <div>
+      <h3>Soft Tissue Bleeding</h3>
+      <ul class="bullet-list">
+        <li><strong>Suture it</strong> — pulls tissue onto bone, compresses, stops bleeding</li>
+        <li>X-suture over Surgicel holds the pack in place</li>
+        <li>Buccal advancement flap for socket closure if needed</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Bony Bleeding</h3>
+      <ul class="bullet-list">
+        <li><strong>Crush it</strong> — take a Coupland's or Warwick James, press and crush the bleeding point on bone</li>
+        <li><strong>Bone wax</strong> — works but contains beeswax → wax granuloma risk. <strong>Avoid at implant sites</strong></li>
+        <li><strong>Bipolar cautery</strong> — hospital luxury. A £80 pen cautery with disposable copper tip is a practice alternative</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: OAC/OAF -->
+<div class="slide slide-content" data-slide="16">
+  <h2>Oroantral Communication & Fistula</h2>
+  <div class="two-col">
+    <div>
+      <h3>OAC (Communication)</h3>
+      <ul class="bullet-list">
+        <li>Fresh opening between mouth and sinus</li>
+        <li><strong>Will heal on its own</strong> if contamination is stopped</li>
+        <li>No epithelial lining yet</li>
+      </ul>
+      <h3>OAF (Fistula)</h3>
+      <ul class="bullet-list">
+        <li>Epithelialised tract — will <strong>NOT heal</strong> spontaneously</li>
+        <li>Needs formal closure: excise the fistula, advance tissue</li>
+        <li>Develops weeks after an untreated OAC</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What Causes Problems</h3>
+      <div class="card" style="margin:0;border-left:3px solid var(--accent2)">
+        <p>Oral bacteria + respiratory bacteria don't like each other. When they mix through an OAC → <strong>infection</strong>. The key is stopping the contamination pathway as fast as possible.</p>
+      </div>
+      <h3 style="margin-top:16px">Emergency Management</h3>
+      <div class="steps">
+        <div class="step"><div class="step-text"><strong>Try suction</strong> — if visible, use suction tip to retrieve the root</div></div>
+        <div class="step"><div class="step-text"><strong>If not visible → close</strong> — buccal advancement flap or cross suture</div></div>
+        <div class="step"><div class="step-text"><strong>Splint option</strong> — vacuum-formed splint worn 3 weeks. Place gauze over socket BEFORE taking impression!</div></div>
+        <div class="step"><div class="step-text"><strong>Antibiotics + refer</strong></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17: Root in Sinus -->
+<div class="slide slide-content" data-slide="17">
+  <h2>Root Displaced into Sinus</h2>
+  <div class="steps">
+    <div class="step"><div class="step-text"><strong>Why it happens:</strong> Broken root + apical pressure from elevator = root pushed upward through thin antral floor. Upper 6s and 7s most at risk.</div></div>
+    <div class="step"><div class="step-text"><strong>If visible and accessible:</strong> Attempt retrieval with suction. Don't push further.</div></div>
+    <div class="step"><div class="step-text"><strong>If lost:</strong> Close the socket (buccal advancement flap or splint). Take post-op X-ray to locate the root.</div></div>
+    <div class="step"><div class="step-text"><strong>Not every root needs removal:</strong> If you seal off the contamination pathway, it may remain asymptomatic. Monitor.</div></div>
+    <div class="step"><div class="step-text"><strong>If it gets infected:</strong> CT sinus → ENT involvement → FESS → root retrieval. This process takes well over a year.</div></div>
+    <div class="step"><div class="step-text"><strong>Document & refer:</strong> Record everything. Make the patient aware. Urgent referral (though hospital will call it routine).</div></div>
+  </div>
+  <div class="key-point"><strong>Prevention:</strong> When elevating upper posterior roots, avoid apical pressure. Come from above and push down, or use an H-file screwed into the root canal. Be aware that the sinus floor may be paper-thin or absent.</div>
+</div>
+
+<!-- SLIDE 18: Quiz -->
+<div class="slide slide-content" data-slide="18">
+  <h2>Check Your Understanding</h2>
+  <div class="interactive-zone">
+    <h4>Interactive Quiz — OAC Management</h4>
+    <div class="quiz-container" id="quiz3">
+      <div class="quiz-q">You've displaced a palatal root into the maxillary sinus during an upper 6 extraction. You can't see or retrieve it. What do you do?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz('quiz3',this,false)"><span class="letter">A</span> Widen the socket and attempt to retrieve it with a large elevator</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz3',this,false)"><span class="letter">B</span> Leave the socket open to drain and prescribe antibiotics</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz3',this,true)"><span class="letter">C</span> Close the socket with a buccal advancement flap or splint, take a PA, prescribe antibiotics, document and refer</div>
+        <div class="quiz-opt" onclick="checkQuiz('quiz3',this,false)"><span class="letter">D</span> Take an impression immediately for a denture to cover the gap</div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: Tuberosity -->
+<div class="slide slide-content" data-slide="19">
+  <h2>Tuberosity Fracture</h2>
+  <div class="compare">
+    <div class="compare-do">
+      <h4>✅ No Problem (isolated)</h4>
+      <ul>
+        <li>Tuberosity has <strong>no function</strong></li>
+        <li>Fragment completely detached → remove and bin</li>
+        <li>Fragment attached to tooth → comes off with it</li>
+        <li>Just need good soft tissue closure (buccal advancement flap)</li>
+        <li>"Everybody gets excited about tuberosity fracture. Don't."</li>
+      </ul>
+    </div>
+    <div class="compare-dont">
+      <h4>❌ Big Problem (segment)</h4>
+      <ul>
+        <li>If 6, 7, or adjacent teeth are <strong>moving with the segment</strong> → dentoalveolar fracture</li>
+        <li><strong>Stop.</strong> Don't complete the extraction.</li>
+        <li>Splint: vacuum-formed or figure-of-eight wire</li>
+        <li>Hold for <strong>4 weeks</strong> to allow healing</li>
+        <li>Then plan surgical removal of the 8</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20: Mandible Fracture -->
+<div class="slide slide-content" data-slide="20">
+  <h2>Mandible Fracture</h2>
+  <div class="card" style="border-left:3px solid var(--accent2);margin:20px 0">
+    <h4>⚠️ Very Uncommon — But It Happens</h4>
+    <p>Shankar's department had <strong>two mandible fractures in one year</strong> — the first he'd seen in his career. "It all comes down to sussing how much pressure you're able to put."</p>
+  </div>
+  <div class="card-grid">
+    <div class="card"><span class="card-icon">🦴</span><h4>Bone Density Varies</h4><p><strong>African heritage:</strong> Very dense bone, harder to extract. <strong>Osteoporotic elderly:</strong> Fragile bone, may fracture with normal force. Know your patient's bone.</p></div>
+    <div class="card"><span class="card-icon">🔧</span><h4>Rake Retractor</h4><p>Support the mandible during lower extractions. Hold retractor with 2 fingers, other 3 under the jaw. Counter-pressure prevents excessive force transmission.</p></div>
+    <div class="card"><span class="card-icon">📋</span><h4>Management</h4><p>Recognised intraoperatively → immediate referral to OMFS. May need IMF (intermaxillary fixation) or ORIF (open reduction internal fixation).</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 21: Wrong Extraction -->
+<div class="slide slide-content" data-slide="21">
+  <h2>Wrong Extraction — More Common Than You Think</h2>
+  <div class="steps">
+    <div class="step"><div class="step-text"><strong>Don't be led by patients:</strong> "Take this one out" is not your diagnosis. Confirm the source of pain yourself.</div></div>
+    <div class="step"><div class="step-text"><strong>Radiographic evidence:</strong> Always have an X-ray that confirms pathology in the tooth you're extracting.</div></div>
+    <div class="step"><div class="step-text"><strong>Mixed dentition danger:</strong> The most common mistake is confusing 4s and 5s, or deciduous and permanent canines in orthodontic cases.</div></div>
+    <div class="step"><div class="step-text"><strong>Referred pain:</strong> A patient may come back 2 days later saying the pain is still there. If your assessment was wrong, this is a wrong extraction.</div></div>
+    <div class="step"><div class="step-text"><strong>Orthodontic cases:</strong> Be extremely careful. Orthodontists will create havoc if you extract the wrong tooth — and rightly so.</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 22: Dry Socket & Infection -->
+<div class="slide slide-content" data-slide="22">
+  <h2>Post-Operative Complications</h2>
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--accent)"><span class="card-icon">🔥</span><h4>Dry Socket</h4><p>Blood clot lost or doesn't form. Exposed bone = intense pain 2–5 days post-op. Pack with Alvogyl or similar. Will resolve but miserable for patients.</p></div>
+    <div class="card" style="border-top:3px solid var(--accent2)"><span class="card-icon">🦠</span><h4>Infection → Abscess</h4><p>Simple extraction can brew into cervicofacial infection. Rare but serious. "The patient had a tooth removed, now they've got a neck abscess. It happens."</p></div>
+    <div class="card" style="border-top:3px solid var(--accent3)"><span class="card-icon">😬</span><h4>Trismus</h4><p>Three causes: muscle irritation from injection, haematoma organising, or infection. Takes 4–8 weeks. Mouth exercises essential.</p></div>
+    <div class="card" style="border-top:3px solid var(--cyan)"><span class="card-icon">🩸</span><h4>Reactionary Bleeding</h4><p>Occurs when LA vasoconstriction wears off. Patient gets home and starts bleeding. Usually controlled with pressure + bite on gauze 30 mins.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 23: Bisphosphonates -->
+<div class="slide slide-content" data-slide="23">
+  <h2>Bisphosphonates & Biologic Agents</h2>
+  <div class="quote-box">
+    <p>Every other patient over the age of 60 will soon be on some biologic agent of some kind. It is such a nuisance. We do not have nationalised guidelines.</p>
+    <div class="attribution">— Shankar</div>
+  </div>
+  <div class="card-grid" style="margin-top:20px">
+    <div class="card" style="border-left:3px solid var(--accent2)"><h4>The Problem</h4><p>Rheumatologists say one thing, oncologists say another — for the same drug. GPS have enough to manage. There's no consensus.</p></div>
+    <div class="card" style="border-left:3px solid var(--green)"><h4>The Solution</h4><p>Write directly to the <strong>prescribing consultant</strong> (not the GP). Ask: "I need to do an extraction. What do you want me to do?" This is the safest approach.</p></div>
+    <div class="card" style="border-left:3px solid var(--accent3)"><h4>Risk Patients</h4><p>Immunosuppressed, uncontrolled diabetics, chemotherapy patients, those on RANK-L inhibitors or bisphosphonates → risk of osteomyelitis and MRONJ.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 24: Complications Philosophy -->
+<div class="slide slide-content" data-slide="24">
+  <h2>Handling Complications — The Mindset</h2>
+  <div class="steps">
+    <div class="step"><div class="step-text"><strong>Recognise it</strong> — don't deny or minimise. The sooner you identify a complication, the sooner you can manage it.</div></div>
+    <div class="step"><div class="step-text"><strong>Own it</strong> — "I'm sorry this has happened." Patients respect honesty. Nobody goes to work planning to harm patients.</div></div>
+    <div class="step"><div class="step-text"><strong>Manage it</strong> — "Here's what we're going to do about it." Have a plan. Patients want to know you're in control.</div></div>
+    <div class="step"><div class="step-text"><strong>Reflect on it</strong> — What happened? Why? Could it have been prevented? What will you do differently?</div></div>
+    <div class="step"><div class="step-text"><strong>Learn from it</strong> — Some things will happen regardless. But put measures in place to minimise the risk next time.</div></div>
+  </div>
+  <div class="key-point"><strong>Resilience matters:</strong> "Dentistry is probably one of the hardest fields to manage patients. You're isolated, everyone chases you for money, and patient expectations are mismatched. Build support systems around you."</div>
+</div>
+
+<!-- SLIDE 25: Metronidazole -->
+<div class="slide slide-content" data-slide="25">
+  <h2>Antibiotics — Shankar's Approach</h2>
+  <div class="card" style="border-left:3px solid var(--accent);margin:20px 0">
+    <h4>Metronidazole for 3 days</h4>
+    <p>When antibiotics are indicated, Shankar's preference is <strong>metronidazole for 3 days</strong>. Effective against anaerobic oral pathogens. Caveat: some patients get nausea and stomach cramps — warn them. No alcohol.</p>
+  </div>
+  <div class="key-point"><strong>Not every extraction needs antibiotics.</strong> Use clinical judgement. Antibiotics are for infection, not prevention. If there's acute infection, give pre-operatively. Don't prescribe "just in case."</div>
+</div>
+
+<!-- SLIDE 26: Wisdom Tooth in Practice -->
+<div class="slide slide-content" data-slide="26">
+  <h2>Wisdom Teeth — Decision Framework</h2>
+  <div class="interactive-zone">
+    <h4>Click through the decision points</h4>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">Is the tooth symptomatic? <span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content"><strong>No symptoms + deep impaction</strong> → leave it alone. Monitor. Don't extract teeth that aren't causing problems, especially if there's nerve risk. <strong>Symptomatic</strong> → continue assessment.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">What classification is it? <span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content"><strong>Vertical:</strong> Often straightforward — elevator, twist, deliver. <strong>Mesioangular:</strong> Check for bone loss mesially; may section if impacted against 7. <strong>Horizontal:</strong> Will need sectioning — plan for it. <strong>Distoangular:</strong> Most difficult — try to keep whole, deliver distally/lingually.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">What does the OPG show about the nerve? <span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">Look for the 7 radiographic signs of proximity. If concerning → consider CBCT. If CBCT confirms intimate relationship → discuss coronectomy vs extraction with patient. Document the consent conversation thoroughly.</div>
+    </div>
+    <div class="reveal-box" onclick="toggleReveal(this)">
+      <div class="reveal-header">Can I manage this in practice? <span class="reveal-arrow">▼</span></div>
+      <div class="reveal-content">Assess your: <strong>skills</strong> (are you trained and confident?), <strong>environment</strong> (do you have the instruments, lighting, suction, assistance?), <strong>risk tolerance</strong> (for £85–140 tier 2 payment, is the risk worth it?). If any doubt → refer. "Oral surgery is not a practice builder. Don't take the hassle."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 27: Displaced Tooth -->
+<div class="slide slide-content" data-slide="27">
+  <h2>Tooth Displaced Into Tissue Spaces</h2>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--accent2)">
+      <h4>Sublingual Space</h4>
+      <p>Root or tooth pushed lingually during lower extraction. Dentist feels sudden loss of pressure — tooth has gone backwards and downwards into the sublingual space. <strong>Cannot be retrieved in practice.</strong></p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent)">
+      <h4>What To Do</h4>
+      <p>Own up. Explain to the patient. Close the socket. Take an X-ray to document the position. Refer urgently to OMFS for retrieval under GA.</p>
+    </div>
+  </div>
+  <div class="key-point"><strong>Prevention:</strong> Support the mandible with your other hand (rake retractor + fingers underneath). Control the force direction. Be aware that excessive lingual pressure can push fragments into tissue spaces.</div>
+</div>
+
+<!-- SLIDE 28: Disinfected vs Sterile -->
+<div class="slide slide-content" data-slide="28">
+  <h2>Disinfected vs Sterile — Know the Difference</h2>
+  <div class="compare">
+    <div class="compare-side" style="background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15)">
+      <h4 style="color:var(--accent)">Disinfected (Standard Dental)</h4>
+      <ul>
+        <li>Reduces microorganisms — doesn't eliminate all</li>
+        <li>Adequate for routine extractions</li>
+        <li>Examination gloves (not sterile)</li>
+        <li>Decontaminated instruments</li>
+        <li>Dental nurses trained in this level</li>
+      </ul>
+    </div>
+    <div class="compare-side compare-do">
+      <h4>✅ Sterile (Implant Level)</h4>
+      <ul>
+        <li>Free from all viable microorganisms</li>
+        <li><strong>Required for implant placement</strong></li>
+        <li>Sterile gloves, sterile drapes</li>
+        <li>Autoclave-sterilised instruments</li>
+        <li>Nurses need <strong>upskilling</strong> for this level</li>
+      </ul>
+    </div>
+  </div>
+  <div class="key-point"><strong>Critical for implant surgeons:</strong> When you ask a dental nurse for a forceps from a decontaminated tray, she'll hand it to you. For implant work, you need her to open the sterile pack and present the instrument without contaminating it. This is a different skill set.</div>
+</div>
+
+<!-- SLIDE 29: Summary -->
+<div class="slide slide-content" data-slide="29">
+  <h2>Lecture 3 — Key Takeaways</h2>
+  <div class="steps">
+    <div class="step"><div class="step-text"><strong>Winter's classification</strong> determines your surgical approach. Distoangular = hardest. Horizontal = always section.</div></div>
+    <div class="step"><div class="step-text"><strong>Point of application is mesial</strong> for everything except distoangular (distobuccal).</div></div>
+    <div class="step"><div class="step-text"><strong>WHARFE:</strong> Focus on W, R, F, and E. Root morphology and follicle space are the most useful predictors.</div></div>
+    <div class="step"><div class="step-text"><strong>Coronectomy</strong> reduces nerve risk but doesn't eliminate it. Roots migrate away over time.</div></div>
+    <div class="step"><div class="step-text"><strong>Anaesthesia = urgent referral</strong> for nerve repair (4–6 weeks window). Paraesthesia = map, monitor, usually recovers.</div></div>
+    <div class="step"><div class="step-text"><strong>OAC: close + seal + antibiotics + refer.</strong> Not every sinus root needs retrieval — seal the contamination path.</div></div>
+    <div class="step"><div class="step-text"><strong>Complications will happen.</strong> Recognise, own, manage, reflect, learn. Build resilience and support systems.</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 30 -->
+<div class="slide slide-title" data-slide="30">
+  <div class="lecture-num">End of Course</div>
+  <h1>36 Years of<br>Experience</h1>
+  <p class="subtitle">"All that I've told you today is what I've done for 36 years. Take it away, see if it works for you. If it does, well and good. If it doesn't, so be it."</p>
+  <p style="margin-top:40px;font-size:14px;color:var(--text2)">Course by <strong style="color:var(--accent)">Mr Shankar</strong> — Consultant OMFS, Queen Elizabeth Hospital, King's Lynn</p>
+  <p style="margin-top:10px;font-size:13px;color:var(--text2)">Lectures created from transcribed voice notes</p>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="slide-counter" id="slideCounter">1 / 30</span>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+let currentSlide=1;const totalSlides=30;
+function showSlide(n){document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));const t=document.querySelector(`[data-slide="${n}"]`);if(t)t.classList.add('active');document.getElementById('slideCounter').textContent=`${n} / ${totalSlides}`;document.getElementById('progressFill').style.width=`${(n/totalSlides)*100}%`;document.getElementById('prevBtn').disabled=n===1;document.getElementById('nextBtn').disabled=n===totalSlides;currentSlide=n}
+function changeSlide(d){showSlide(currentSlide+d);window.scrollTo(0,0)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')changeSlide(1);if(e.key==='ArrowLeft')changeSlide(-1)});
+function checkQuiz(id,el,correct){const c=document.getElementById(id);if(c.dataset.answered)return;c.dataset.answered='true';const fb=document.getElementById(id+'-fb');c.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');if(correct){el.classList.add('correct');fb.className='quiz-feedback show correct-fb';fb.textContent='✅ Correct! Excellent clinical reasoning.'}else{el.classList.add('wrong');c.querySelectorAll('.quiz-opt').forEach(o=>{if(o.onclick.toString().includes('true'))o.classList.add('correct')});fb.className='quiz-feedback show wrong-fb';fb.textContent='❌ Review the highlighted correct answer.'}}
+function toggleReveal(el){el.classList.toggle('open')}
+showSlide(1);
+</script>
+</body>
+</html>

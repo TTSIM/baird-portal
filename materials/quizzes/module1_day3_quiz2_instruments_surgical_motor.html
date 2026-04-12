@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2: Instruments & Surgical Motor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c1118;--surface:#131b27;--surface2:#1a2438;--card:#16202f;--accent:#8b5cf6;--accent2:#a78bfa;--green:#10b981;--red:#ef4444;--warm:#f59e0b;--text:#e2e8f0;--dim:#94a3b8;--bright:#f8fafc;--border:#1e293b}
+html{height:100%}body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+.topbar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--bright)}
+.progress-track{height:3px;background:var(--border);width:100%;position:sticky;top:55px;z-index:9}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;border-radius:0 2px 2px 0}
+.stats{display:flex;gap:16px;font-size:13px;color:var(--dim)}
+.stats .g{color:var(--green)}.stats .r{color:var(--red)}
+.container{max-width:780px;margin:0 auto;padding:32px 20px 80px}
+.score-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.score-big{font-family:'DM Serif Display',serif;font-size:36px;color:var(--accent2)}
+.score-label{font-size:13px;color:var(--dim)}
+.score-pct{font-size:14px;font-weight:600}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:all .3s}
+.q-card.answered{opacity:.85}
+.q-card.answered.correct-card{border-color:rgba(16,185,129,.3)}
+.q-card.answered.wrong-card{border-color:rgba(239,68,68,.2)}
+.q-num{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.q-topic{font-size:11px;color:var(--dim);margin-bottom:12px;padding:3px 8px;background:var(--surface2);border-radius:6px;display:inline-block}
+.q-text{font-size:16px;font-weight:600;color:var(--bright);line-height:1.5;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .25s;display:flex;align-items:center;gap:12px;line-height:1.5}
+.opt:hover:not(.locked){border-color:var(--accent);background:rgba(139,92,246,.06)}
+.opt.locked{cursor:default}
+.opt .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;transition:all .25s}
+.opt.correct{border-color:var(--green);background:rgba(16,185,129,.08)}.opt.correct .letter{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.06)}.opt.wrong .letter{background:var(--red);color:#fff}
+.opt.dimmed{opacity:.4}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.feedback.show{display:block}
+.feedback.fb-correct{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.feedback.fb-wrong{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.result-box{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(139,92,246,.03));border:2px solid rgba(139,92,246,.3);border-radius:20px;padding:36px;text-align:center;margin-top:32px;display:none}
+.result-box.show{display:block}
+.result-box h2{font-family:'DM Serif Display',serif;font-size:32px;color:var(--bright);margin-bottom:8px}
+.result-box .pct{font-size:64px;font-weight:700;color:var(--accent2);font-family:'DM Serif Display',serif}
+.result-box .msg{font-size:15px;color:var(--dim);margin-top:12px;line-height:1.6}
+.retry-btn{margin-top:20px;background:var(--accent);border:none;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.retry-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,92,246,.3)}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.portal-back:hover{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left"><a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a><span class="badge">Quiz 2</span><h1>Instruments & Surgical Motor</h1></div>
+  <div class="stats" id="stats"><span class="g" id="cStat">✓ 0</span><span class="r" id="wStat">✗ 0</span><span id="aStat">0/30</span></div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+<div class="container" id="container"></div>
+<script>
+const Q=[
+{t:"Hu-Friedy",q:"What makes Hu-Friedy instruments lightweight yet durable?",o:["Carbon fibre core with titanium coating","Strong stainless steel on the outside, hollow inside","Solid titanium construction","Aluminium alloy with ceramic tips"],a:1,f:"Hu-Friedy's design uses strong stainless steel on the exterior while keeping the instruments hollow inside — lightweight for long procedures but extremely durable."},
+{t:"Elevator Rule",q:"When using ANY periosteal elevator, the polished surface should face which direction?",o:["Towards the bone","Towards the gum/soft tissue","It doesn't matter — alternate between uses","Away from the surgical field"],a:1,f:"Universal rule: polished surface → gum. Sharp surface → bone. This applies to every elevator including the Buser, Mini Me, and all periosteal elevators."},
+{t:"Buser Elevator",q:"What is the distinguishing feature of the Buser elevator's tip?",o:["Blunt and ovate","Pointed and sharp","Flat and wide","Serrated edge"],a:1,f:"The Buser has a pointed, sharp tip designed for the delicate initial elevation of the mucoperiosteal flap."},
+{t:"Buser Elevator",q:"When using the Buser elevator, what simultaneous action should the other hand perform?",o:["Hold the suction","Pull the mucosa with tweezers while the elevator pushes","Retract the cheek with a Minnesota","Support the patient's jaw"],a:1,f:"Flap elevation is a two-hand job: one hand pushes the mucosa away with the elevator, while the other hand holds tweezers to pull the mucosa in the opposite direction."},
+{t:"Mini Me",q:"Who designed the Mini Me (Urban tunnelling instrument)?",o:["Hu-Friedy engineering team","Istvan Urban, based in Budapest","A German dental manufacturer","Carl Buser"],a:1,f:"Istvan Urban, a renowned specialist in vertical augmentation based in Budapest, designed the instrument and named it the 'Mini Me' himself."},
+{t:"Mini Me",q:"What is the key design difference of the Mini Me compared to the Buser elevator?",o:["It's longer","It has blunt, ovate tips with no sharp corners","It has a serrated edge","It's made of plastic"],a:1,f:"The Mini Me has blunt ovate shapes on both sides — no sharp corners. This allows gentle blunt dissection that causes significantly less swelling, bruising, and bleeding."},
+{t:"Mini Me",q:"What major clinical advantage does the Mini Me provide over blade-based periosteal release?",o:["Faster procedure time","Dramatically reduced post-operative swelling","Better bone collection","Sharper incision lines"],a:1,f:"Urban found that blunt dissection with the Mini Me caused significantly less swelling, bruising, and bleeding compared to repeated blade scraping for periosteal release."},
+{t:"Periosteal Release",q:"At what point during surgery should periosteal release be performed?",o:["At the very beginning, before any drilling","Halfway through, after the pilot drill","At the end, after grafting is complete","Before flap elevation"],a:2,f:"Do it at the END — after grafting. You can't predict how much closure you'll need until after the graft is in place. Also avoids prolonged nerve retraction risk."},
+{t:"Periosteal Release",q:"Periosteal release is needed for which types of GBR?",o:["Only vertical augmentation","Only horizontal augmentation","All types — any GBR increases volume requiring flap adaptation","Only when using titanium mesh"],a:2,f:"ALL GBR requires periosteal release. Any bone grafting increases volume, meaning the flap must close over more material — the 'shirt analogy.'"},
+{t:"Prichard Curette",q:"What is the Prichard curette primarily used for in implant surgery?",o:["Measuring bone depth","Debridement and cleaning granulation tissue from defects","Cutting bone","Placing sutures"],a:1,f:"The Prichard curette is a sharp, curved instrument that works in almost all types of defects for cleaning granulation tissue and debriding surgical sites."},
+{t:"Probes",q:"Why are plastic probes recommended over metal probes for surgery?",o:["They're cheaper","No reflection under bright lights, markings are clearer, and they don't bend over time","They're more accurate","They can measure deeper pockets"],a:1,f:"Under surgical lights (especially with loupes/headlights), metal probes create reflections that obscure markings. Plastic probes have clear markings, no reflection, and don't bend or break."},
+{t:"Saline Pot",q:"What is the PRIMARY purpose of the saline pot/measuring cup during surgery?",o:["Mixing bone graft material","Storing extracted teeth","Cleaning burs during the procedure to prevent dried blood","Holding suture material"],a:2,f:"First and foremost: cleaning burs. Dip used burs in saline immediately after use. In a 2+ hour procedure, dried blood on burs is extremely difficult to clean afterwards."},
+{t:"Minnesota Retractor",q:"The Minnesota retractor has two ends. Which end is used for cheek/mobile mucosa retraction?",o:["The sharp pointy end","The cheek contour end (smooth, rounded)","Either end works the same","The serrated end"],a:1,f:"The smooth cheek contour end is used for mobile mucosa/cheek retraction (during LA, periosteal release). The sharp end is for retracting flaps against bone."},
+{t:"Minnesota Retractor",q:"When retracting a flap with the Minnesota's sharp end, which direction should you push?",o:["Pull back towards yourself with your shoulder","Push down towards the bone","Push upwards away from the bone","Pull laterally"],a:1,f:"Push DOWN towards the bone rather than pulling back with your shoulder. This gives better ergonomics, less shoulder strain, and more stable retraction over long procedures."},
+{t:"Surgical Motor",q:"What type of handpiece does the surgical motor use?",o:["1:1 straight handpiece","1:5 speed-increasing","20:1 contra-angle handpiece","High-speed turbine"],a:2,f:"The surgical motor uses a 20:1 contra-angle reduction handpiece for controlled, low-speed drilling with high torque and built-in irrigation."},
+{t:"Surgical Motor",q:"Why must you NEVER let the clinic mix their slow-speed handpieces with your implant handpiece?",o:["Different thread patterns","Implant handpieces have internal optics, light, and irrigation — they're precision equipment","They use different bur sizes","The motor won't recognise them"],a:1,f:"Implant handpieces contain internal optics, a light source, and an irrigation system. They are precision instruments — using them for general dentistry damages these components."},
+{t:"Handpiece Care",q:"How many handpieces should you have available in the clinic?",o:["One is sufficient","At least two","Three minimum","Four — one for each drill size"],a:1,f:"Always have at least two handpieces available. If one isn't sterilised, breaks, or you have back-to-back surgeries, you need a backup ready."},
+{t:"Handpiece Care",q:"After 3–4 years, what is the recommended approach to handpiece maintenance?",o:["Send for expensive manufacturer repair","Replace with a new cheaper handpiece","Only oil it more frequently","Replace the motor instead"],a:1,f:"A cheaper handpiece you can replace every 3–4 years costs less than repairing an expensive one. Optics, light, and fibres degrade over time — replacement is more practical."},
+{t:"Cable Care",q:"Why should you NOT sterilise the surgical motor cable in a vacuum autoclave?",o:["The heat melts the plastic coating","Water from the autoclave can destroy the electrical cable (£600–700 replacement)","It voids the warranty","The cable is too long to fit"],a:1,f:"Electricity runs through the cable. Vacuum autoclaves use water/steam. Water ingress destroys the cable — replacement costs £600–700. Use an alcohol wipe instead."},
+{t:"Cable Care",q:"How should the surgical motor cable be cleaned between procedures?",o:["Through the autoclave","With an ultrasonic cleaner","With a good alcohol wipe","It doesn't need cleaning"],a:2,f:"A good alcohol wipe after each use is all that's needed. The handpiece is dressed in a sterile long sleeve during surgery, so the cable stays outside the sterile field."},
+{t:"Foot Pedal",q:"How many control buttons does the foot pedal have (including the main pedal)?",o:["2 — go/stop and irrigation","3 — go/stop, irrigation, program","4 — go/stop, irrigation, program, and reverse","5 — plus an emergency stop"],a:2,f:"Four controls: main pedal (go/stop), irrigation (on/off only), program switcher (P), and reverse. Reverse is a safety measure — only used for implant removal or special drills."},
+{t:"Foot Pedal",q:"If the motor beeps during surgery indicating reverse mode was activated, what should you do?",o:["Ignore it and continue","Check your foot pedal immediately — you may have accidentally pressed reverse","Turn off the motor","Remove the drill"],a:1,f:"If the motor alerts you about reverse, check your foot pedal immediately. Accidental reverse during implant placement could loosen or unscrew what you've just placed."},
+{t:"Motor Choice",q:"What is the approximate cost of the Woodpecker DT surgical motor?",o:["£500 + VAT","£1,550 + VAT","£3,000 + VAT","£5,000 + VAT"],a:1,f:"The Woodpecker DT costs approximately £1,550 + VAT. It's described as the cheapest high-quality option on the market, proven reliable over 5+ years of use."},
+{t:"Torque Wrench",q:"When inserting an implant, which direction should the torque wrench arrow point?",o:["Away from the lever (upward)","Towards the lever (downward)","It doesn't matter","Towards the patient"],a:1,f:"Arrow towards the lever = clockwise = insertion. Arrow away from the lever = counter-clockwise = removal. Always verify it's fully clicked when changing direction."},
+{t:"Torque Wrench",q:"Why should you NEVER grab the torque wrench at the top and yank it?",o:["It damages the wrench mechanism","You'll have no gauge of torque — easily exceeding 100 Ncm","It's poor ergonomics","The wrench will slip off"],a:1,f:"Grabbing the top bypasses the torque control entirely. You could easily exceed 100 Ncm — risking fracture of the connector or damage to the implant's internal connection. Always use the lever."},
+{t:"Torque Wrench",q:"How should the torque wrench be sterilised?",o:["As one complete unit","Disassembled into two pieces","Cable detached only","It doesn't need sterilisation"],a:1,f:"The arrow is attached to a cog that separates from the wrench body. Sterilise in two pieces, then reassemble on the sterile field by the sterile nurse."},
+{t:"Connectors",q:"At what torque value does a ratchet connector's built-in fail-safe fracture?",o:["100 Ncm","150 Ncm","190 Ncm","250 Ncm"],a:2,f:"Ratchet connectors fracture at ~190 Ncm — a fail-safe designed to break before the implant's internal connection is permanently damaged at 200 Ncm."},
+{t:"Fixture Drivers",q:"How do fixture drivers differ from ratchet connectors?",o:["They're smaller","They have no fracture point (fail-safe) — they don't snap","They can only insert, not remove","They only work with narrow connections"],a:1,f:"Fixture drivers have NO fracture point. They're for emergencies — when a connector has snapped or an implant is stuck and needs higher torque to reverse out."},
+{t:"Hex Drivers",q:"The 1.2 mm hex drivers connect to which components?",o:["Only cover screws","Only healing abutments","Cover screws, healing abutments, prosthetic screws, scan copings, and impression copings","Only the implant body"],a:2,f:"The 1.2 hex drivers connect to everything prosthetic: cover screws, healing abutments, prosthetic screws, scan abutment screws, and impression coping screws. They're friction-fit."}
+];
+let correct=0,wrong=0,answered=0;
+const con=document.getElementById('container');
+function render(){
+  let h='<div class="score-bar"><div><div class="score-label">Score</div><div class="score-big" id="scoreBig">0/30</div></div><div><div class="score-label">Percentage</div><div class="score-pct" id="scorePct">—</div></div></div>';
+  Q.forEach((q,i)=>{
+    h+=`<div class="q-card" id="qc${i}"><div class="q-num">Question ${i+1}</div><div class="q-topic">${q.t}</div><div class="q-text">${q.q}</div><div class="opts" id="opts${i}">`;
+    'ABCD'.split('').forEach((l,j)=>{h+=`<div class="opt" data-q="${i}" data-o="${j}" onclick="pick(${i},${j})"><span class="letter">${l}</span><span>${q.o[j]}</span></div>`});
+    h+=`</div><div class="feedback fb-correct" id="fb${i}c">✓ Correct! ${q.f}</div><div class="feedback fb-wrong" id="fb${i}w">✗ Incorrect. ${q.f}</div></div>`;
+  });
+  h+=`<div class="result-box" id="result"><h2>Quiz Complete!</h2><div class="pct" id="finalPct"></div><div class="msg" id="finalMsg"></div><button class="retry-btn" onclick="location.reload()">Retry Quiz</button></div>`;
+  con.innerHTML=h;
+}
+function pick(qi,oi){
+  const card=document.getElementById('qc'+qi);if(card.classList.contains('answered'))return;card.classList.add('answered');
+  const ok=oi===Q[qi].a;
+  document.querySelectorAll(`[data-q="${qi}"]`).forEach(o=>{o.classList.add('locked');const idx=+o.dataset.o;if(idx===Q[qi].a)o.classList.add('correct');else if(idx===oi&&!ok)o.classList.add('wrong');if(idx!==Q[qi].a&&idx!==oi)o.classList.add('dimmed')});
+  if(ok){correct++;card.classList.add('correct-card');document.getElementById('fb'+qi+'c').classList.add('show')}
+  else{wrong++;card.classList.add('wrong-card');document.getElementById('fb'+qi+'w').classList.add('show')}
+  answered++;
+  document.getElementById('scoreBig').textContent=correct+'/30';
+  document.getElementById('scorePct').textContent=Math.round(correct/answered*100)+'%';
+  document.getElementById('cStat').textContent='✓ '+correct;
+  document.getElementById('wStat').textContent='✗ '+wrong;
+  document.getElementById('aStat').textContent=answered+'/30';
+  document.getElementById('progress').style.width=(answered/30*100)+'%';
+  if(answered===30){document.getElementById('result').classList.add('show');const p=Math.round(correct/30*100);document.getElementById('finalPct').textContent=p+'%';document.getElementById('finalMsg').textContent=(p>=90?'Outstanding! You know your instruments and motor setup inside out.':p>=70?'Good work! Review the areas you missed for complete mastery.':p>=50?'Decent foundation. Revisit Lecture 2 slides on the topics you struggled with.':'Keep studying! Go through Lecture 2 again carefully.')+` You got ${correct} out of 30 correct.`}
+}
+render();
+</script>
+</body>
+</html>

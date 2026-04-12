@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2: Resin Bonded Bridges</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d12;--surface:#12161e;--surface2:#1a1f2a;--border:#252c3a;--text:#e8eaf0;--text-dim:#8890a4;--accent:#f0a050;--accent2:#e86060;--green:#60c8b0;--red:#e86060;--gradient1:linear-gradient(135deg,#f0a050,#e88040);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:820px;margin:0 auto;padding:32px 24px 80px;}
+header{text-align:center;margin-bottom:40px;padding:40px 0 32px;border-bottom:1px solid var(--border);}
+header .tag{display:inline-block;padding:6px 18px;border-radius:100px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;background:rgba(240,160,80,.12);color:var(--accent);border:1px solid rgba(240,160,80,.25);margin-bottom:16px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,48px);margin-bottom:8px;}
+header p{color:var(--text-dim);font-size:16px;}
+.progress-wrap{position:sticky;top:0;z-index:50;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);}
+.progress-bar-bg{width:100%;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--gradient1);border-radius:3px;transition:width .4s;width:0%;}
+.progress-text{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;transition:border-color .3s;}
+.question-card.answered-correct{border-color:rgba(96,200,176,.4);}
+.question-card.answered-wrong{border-color:rgba(232,96,96,.4);}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:1px;margin-bottom:8px;}
+.q-topic{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:inline-block;padding:3px 10px;background:var(--surface2);border-radius:6px;}
+.q-text{font-size:18px;font-weight:500;line-height:1.6;margin-bottom:20px;}
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{padding:16px 20px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif;text-align:left;line-height:1.5;display:flex;gap:12px;align-items:flex-start;}
+.opt-btn:hover:not(.disabled){border-color:var(--accent);background:rgba(240,160,80,.06);}
+.opt-btn .opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;transition:all .25s;}
+.opt-btn.selected .opt-letter{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.opt-btn.correct{border-color:var(--green);background:rgba(96,200,176,.08);}
+.opt-btn.correct .opt-letter{background:var(--green);color:var(--bg);border-color:var(--green);}
+.opt-btn.wrong{border-color:var(--red);background:rgba(232,96,96,.06);}
+.opt-btn.wrong .opt-letter{background:var(--red);color:var(--bg);border-color:var(--red);}
+.opt-btn.disabled{cursor:default;opacity:.7;}
+.opt-btn.disabled.correct{opacity:1;}
+.explanation{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:14px;line-height:1.6;display:none;}
+.explanation.show{display:block;}
+.explanation.correct-exp{background:rgba(96,200,176,.08);border:1px solid rgba(96,200,176,.2);color:var(--green);}
+.explanation.wrong-exp{background:rgba(232,96,96,.06);border:1px solid rgba(232,96,96,.2);color:var(--red);}
+.results-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;text-align:center;margin-top:32px;}
+.results-panel.show{display:block;}
+.results-panel h2{font-family:'DM Serif Display',serif;font-size:36px;margin-bottom:8px;}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:24px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+.score-circle .score-num{font-family:'DM Serif Display',serif;font-size:48px;line-height:1;}
+.score-circle .score-label{font-size:13px;color:var(--text-dim);margin-top:4px;}
+.score-circle svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.score-circle circle{fill:none;stroke-width:6;stroke-linecap:round;}
+.score-circle .track{stroke:var(--border);}
+.score-circle .fill{stroke:var(--accent);transition:stroke-dashoffset 1.5s ease;}
+.stats-row{display:flex;justify-content:center;gap:40px;margin:24px 0;}
+.stat-item{text-align:center;}
+.stat-item .stat-num{font-family:'DM Serif Display',serif;font-size:28px;}
+.stat-item .stat-lab{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.grade-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-weight:600;font-size:14px;letter-spacing:1px;margin-top:16px;}
+.btn-restart{margin-top:24px;padding:14px 32px;border-radius:14px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-restart:hover{background:var(--accent);color:var(--bg);}
+.btn-submit{display:none;margin:32px auto 0;padding:16px 48px;border-radius:16px;border:none;background:var(--gradient1);color:var(--bg);font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 24px rgba(240,160,80,.25);}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(240,160,80,.35);}
+.btn-submit.show{display:block;}
+.review-filter{display:none;margin:24px 0;text-align:center;}
+.review-filter.show{display:flex;justify-content:center;gap:8px;}
+.filter-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(240,160,80,.08);}
+@media(max-width:600px){.container{padding:20px 16px 60px;}.question-card{padding:24px 18px;}.q-text{font-size:16px;}.opt-btn{font-size:14px;padding:14px 16px;}}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(240,160,80,.12);border:1px solid rgba(240,160,80,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:18px;}
+.portal-back:hover{background:var(--accent);color:var(--bg);}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+  <div class="tag">Quiz 2 of 3</div>
+  <h1>Resin Bonded Bridges</h1>
+  <p>30 questions covering design, abutment selection, cementation & clinical cases</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progFill"></div></div>
+  <div class="progress-text"><span id="progText">0 of 30 answered</span><span id="progPct">0%</span></div>
+</div>
+<div id="questionsContainer"></div>
+<button class="btn-submit" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+<div class="review-filter" id="reviewFilter">
+  <button class="filter-btn active" onclick="filterQuestions('all',this)">All</button>
+  <button class="filter-btn" onclick="filterQuestions('wrong',this)">Incorrect Only</button>
+  <button class="filter-btn" onclick="filterQuestions('correct',this)">Correct Only</button>
+</div>
+<div class="results-panel" id="resultsPanel"></div>
+</div>
+<script>
+const questions = [
+  {q:"Why are implants contraindicated in young patients who haven't finished growing?",opts:["The bone is too soft","Implants are ankylosed and become infra-occluded as growth continues","Young patients can't maintain implants","Insurance doesn't cover them"],ans:1,topic:"Young Patients",exp:"Implants have no PDL and are ankylosed. As facial growth continues, surrounding teeth erupt while the implant stays fixed, causing infra-occlusion and aesthetic discrepancy."},
+  {q:"At what minimum age would the lecturer generally place implants in males?",opts:["16","18","21","25"],ans:2,topic:"Age Guidelines",exp:"Most implant dentists recommend waiting until at least 21 for males. For females, sometimes even 25, as growth can continue longer."},
+  {q:"What is the approximate survival rate of resin bonded bridges at 4–10 years?",opts:["60%","70%","80%","95%"],ans:2,topic:"Survival Rate",exp:"Resin bonded bridges have approximately 80% survival at 4–10 years according to the evidence."},
+  {q:"According to King's Bristol study, which bridge design has a higher success rate?",opts:["Fixed-fixed","Cantilever","Both are equal","Maryland bridge"],ans:1,topic:"Evidence: Design",exp:"The study of 800 bridges at Bristol found that cantilever designs had higher success rates than fixed-fixed designs."},
+  {q:"According to the evidence, which performs better — prepped or non-prepped bridges?",opts:["Prepped bridges","Non-prepped bridges","They perform equally","It depends on the cement used"],ans:1,topic:"Evidence: Preparation",exp:"Non-prepped bridges had higher success rates than prepped bridges. The only recommended prep is a minimal guide plane."},
+  {q:"Which is NOT listed as a relative contraindication for dental implants?",opts:["Uncontrolled diabetes","Controlled hypertension","Head and neck radiotherapy >50 Gray","IV bisphosphonate therapy"],ans:1,topic:"Implant Contraindications",exp:"Controlled hypertension is not a contraindication. Uncontrolled diabetes, radiotherapy >50Gy, and IV bisphosphonates are relative contraindications."},
+  {q:"What is the most important factor when choosing between two adjacent teeth as the abutment?",opts:["Which tooth is more visible","Which has more enamel surface area and connector height","Which tooth is easiest to access","Which is closest to the missing tooth"],ans:1,topic:"Abutment Selection",exp:"Enamel availability for bonding and connector height (to prevent fracture) are the primary factors determining abutment choice."},
+  {q:"Using endodontically treated teeth as bridge abutments has what effect?",opts:["Improves retention","Reduces survival of the bridge","Has no effect","Improves aesthetics"],ans:1,topic:"Endodontic Status",exp:"Studies show that using endodontically treated teeth as bridge abutments reduces the survival of those bridges."},
+  {q:"What is the minimum crown-to-root ratio for an abutment tooth?",opts:["2:1","1.5:1","1:1","1:2"],ans:2,topic:"Root Length",exp:"At least a 1:1 crown-to-root ratio is recommended for the abutment tooth to ensure adequate support."},
+  {q:"What is the minimum connector height for a metal resin bonded bridge?",opts:["1mm","2mm","4mm","5mm"],ans:1,topic:"Connector: Metal",exp:"Metal connectors need a minimum of 2mm height (2×2mm cross-section). This is smaller than zirconia, meaning you have more flexibility with abutment choice."},
+  {q:"What is the recommended connector dimension for a zirconia resin bonded bridge?",opts:["2×2mm (4mm²)","3×3mm (9mm²)","4–5mm height × 2mm width (~9–11mm²)","6×3mm (18mm²)"],ans:2,topic:"Connector: Zirconia",exp:"Zirconia connectors require approximately 11mm² — typically 4–5mm height × 2mm width. The Eastman recommends 11mm²; manufacturers suggest 9mm²."},
+  {q:"How can you increase the connector height between the pontic and abutment?",opts:["Use a thicker cement","Prepare a minimal guide plane to reduce bulbosity","Add composite to the connector area","Use a wider retainer wing"],ans:1,topic:"Connector Height",exp:"Preparing a minimal guide plane removes the bulbosity between pontic and abutment, allowing a taller connector without altering the occlusion."},
+  {q:"What is the minimum retainer wing thickness for a metal bridge?",opts:["0.3mm","0.5mm","0.7mm","1.0mm"],ans:2,topic:"Retainer Wing",exp:"Metal retainer wings should be a minimum of 0.7mm thick. Zirconia retainer wings need at least 0.5mm."},
+  {q:"What pontic design is considered the most aesthetic and natural-looking?",opts:["Saddle","Modified ridge lap","Ovate","Bullet-shaped"],ans:2,topic:"Pontic Design",exp:"Ovate pontics create the most natural emergence profile. Modified ridge lap is the minimum acceptable. Saddle designs are uncleansable and should be avoided."},
+  {q:"Why should a saddle pontic design be avoided?",opts:["It's too expensive","It's uncleansable and leads to plaque accumulation","It doesn't look natural","It requires more tooth preparation"],ans:1,topic:"Pontic Design",exp:"Saddle pontics wrap around the ridge creating an uncleansable area that accumulates plaque, leading to inflammation and tissue breakdown."},
+  {q:"For a transitional RBB during implant treatment, which design is preferred?",opts:["Cantilever with resin cement","Fixed-fixed with resin-modified GIC","Cantilever with Panavia","Fixed-fixed with Panavia"],ans:1,topic:"Transitional Design",exp:"For transitional bridges, a fixed-fixed design stays in better short-term, cemented with resin-modified GIC for easy removal when the implant is ready."},
+  {q:"What type of metal retainer design is recommended for easy removal of transitional bridges?",opts:["Smooth wing design","Rochette (perforated) design","Cast-on design","Laser-sintered design"],ans:1,topic:"Transitional Removal",exp:"A Rochette design with perforations allows you to get a scaler tip between the holes to remove the cement, then tap off with a crown removal tool."},
+  {q:"What does the 'A' stand for in the APC concept for bonding zirconia?",opts:["Adhesive application","Air particle abrasion","Acid etching","Alumina coating"],ans:1,topic:"APC: Abrasion",exp:"A = Air particle abrasion (sandblasting the wings with 30-micron particles at low pressure to create micro-mechanical retention)."},
+  {q:"What particle size should be used when sandblasting zirconia bridges?",opts:["10 microns","30 microns","50 microns","110 microns"],ans:1,topic:"APC: Sandblasting",exp:"Use 30-micron aluminium oxide particles at low pressure for zirconia. This is finer than what you might use for metal."},
+  {q:"What does the zirconia primer must contain for effective bonding?",opts:["Silane","MDP (methacryloyloxydecyl dihydrogen phosphate)","BisGMA","HEMA"],ans:1,topic:"APC: Primer",exp:"The zirconia primer must contain MDP (e.g. MKZ primer from Bredent). MDP chemically bonds to the zirconia oxide surface."},
+  {q:"When using the Calibra protocol for zirconia, what is substituted?",opts:["The adhesive for a stronger adhesive","The silane for the MDP zirconia primer","The resin cement for GIC","The etchant for a stronger acid"],ans:1,topic:"APC: Cement",exp:"In the standard Calibra protocol, silane is used for E.max/ceramics. For zirconia, replace the silane with the MDP zirconia primer. The rest of the protocol stays the same."},
+  {q:"What minimum zirconia grade is recommended for anterior resin bonded bridges?",opts:["3Y","4Y","5Y","6Y"],ans:1,topic:"Zirconia Selection",exp:"Use minimum 4Y zirconia anteriorly — it's slightly more opaque but strong enough for bridge connectors. 3Y for posterior. 5Y is too weak for bridges (single crowns only)."},
+  {q:"Why is 5Y zirconia unsuitable for resin bonded bridge connectors?",opts:["It's too opaque","It's too translucent to hide the gap","It's not strong enough for connectors","It can't be sandblasted"],ans:2,topic:"Zirconia Strength",exp:"5Y zirconia has more cubic content making it translucent and aesthetic but weaker. It's only suitable for single-unit crowns, not bridge connectors that need strength."},
+  {q:"Should rubber dam be used when cementing resin bonded bridges?",opts:["Always — moisture control is critical","No — it gets in the way; use cotton rolls and suction instead","Only for zirconia bridges","Only for posterior bridges"],ans:1,topic:"Cementation Protocol",exp:"For resin bonded bridges, rubber dam is not recommended as it gets in the way. Adequate moisture control with cotton rolls and suction is sufficient."},
+  {q:"After applying the tooth surface gel (Panavia protocol), what is the next step?",opts:["Light cure for 20 seconds","Wash with water thoroughly","Gently air dry — do NOT light cure","Apply more gel to ensure coverage"],ans:2,topic:"Panavia Protocol",exp:"After applying the gel for 30 seconds, gently air dry only. Do NOT light cure at this stage — this would prevent proper chemical bonding."},
+  {q:"What is the main risk of a fixed-fixed resin bonded bridge that cantilever designs avoid?",opts:["Higher cost","Silent debond — one wing debonds while the other holds, allowing hidden caries","Greater tooth preparation","Worse aesthetics"],ans:1,topic:"Silent Debond",exp:"In fixed-fixed designs, one wing can debond undetected while the other holds. Caries develops underneath the debonded wing without the patient knowing. This is why cantilever designs are preferred."},
+  {q:"What backup prosthesis should always be provided with a resin bonded bridge?",opts:["A spare bridge","An Essex retainer with pontic/teeth","A partial denture","A flipper"],ans:1,topic:"Emergency Backup",exp:"Always make an Essex retainer with teeth or pontic paint as backup. If the bridge debonds on a weekend, the patient has something for emergencies."},
+  {q:"In the natural tooth pontic case, why was composite placed into the extracted tooth's root canal?",opts:["To strengthen the tooth","To prevent discolouration of the pontic over time","To bond it to the framework","To fill the socket"],ans:1,topic:"Natural Tooth Pontic",exp:"Composite was placed into the root canal of the extracted tooth to prevent it from discolouring over time, which would show through the translucent natural tooth structure."},
+  {q:"What shape should the cervical area of a natural tooth pontic be rebuilt to?",opts:["Flat for maximum contact with the ridge","Concave for easy cleaning","Ovate bullet/egg shape for soft tissue shaping","Pointed for insertion into the socket"],ans:2,topic:"Natural Tooth Pontic",exp:"The cervical area is rebuilt into an ovate bullet/egg shape using composite. This sculpts the soft tissues and promotes excellent soft tissue healing around the pontic."},
+  {q:"How was moisture control achieved when cementing the natural tooth pontic bridge?",opts:["Rubber dam","Collagen sponge in the socket + PTFE tape over it","Dry field system (Isolite)","Gauze packing only"],ans:1,topic:"Natural Tooth Pontic",exp:"A collagen sponge was placed into the extraction socket, covered with PTFE tape to control bleeding and moisture, then the bridge was cemented with resin-modified GIC and held until set."}
+];
+
+let answered=0,correct=0,userAnswers=new Array(questions.length).fill(-1);
+const container=document.getElementById('questionsContainer');
+function renderQuestions(){container.innerHTML='';questions.forEach((q,i)=>{const L=['A','B','C','D'];let o=q.opts.map((t,j)=>`<button class="opt-btn" data-qi="${i}" data-oi="${j}" onclick="selectAnswer(${i},${j})"><span class="opt-letter">${L[j]}</span><span>${t}</span></button>`).join('');container.innerHTML+=`<div class="question-card" id="qcard${i}"><div class="q-number">QUESTION ${i+1}</div><div class="q-topic">${q.topic}</div><div class="q-text">${q.q}</div><div class="options">${o}</div><div class="explanation" id="exp${i}"></div></div>`;});}
+function selectAnswer(qi,oi){const c=document.getElementById('qcard'+qi);if(c.classList.contains('answered-correct')||c.classList.contains('answered-wrong'))return;c.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));c.querySelector(`[data-oi="${oi}"]`).classList.add('selected');if(userAnswers[qi]===-1)answered++;userAnswers[qi]=oi;updateProgress();}
+function updateProgress(){const p=Math.round(answered/questions.length*100);document.getElementById('progFill').style.width=p+'%';document.getElementById('progText').textContent=answered+' of '+questions.length+' answered';document.getElementById('progPct').textContent=p+'%';document.getElementById('submitBtn').classList.toggle('show',answered===questions.length);}
+function submitQuiz(){correct=0;questions.forEach((q,i)=>{const c=document.getElementById('qcard'+i),btns=c.querySelectorAll('.opt-btn');btns.forEach(b=>b.classList.add('disabled'));const ch=userAnswers[i];if(ch===q.ans){correct++;c.classList.add('answered-correct');btns[ch].classList.add('correct');}else{c.classList.add('answered-wrong');btns[ch].classList.add('wrong');btns[q.ans].classList.add('correct');}const e=document.getElementById('exp'+i);e.classList.add('show',ch===q.ans?'correct-exp':'wrong-exp');e.textContent=(ch===q.ans?'✓ ':'✗ ')+q.exp;});document.getElementById('submitBtn').style.display='none';showResults();document.getElementById('reviewFilter').classList.add('show');window.scrollTo({top:document.getElementById('resultsPanel').offsetTop-100,behavior:'smooth'});}
+function showResults(){const p=Math.round(correct/questions.length*100);let g,gc;if(p>=90){g='Excellent';gc='#60c8b0';}else if(p>=75){g='Good';gc='#f0a050';}else if(p>=60){g='Pass';gc='#e8c040';}else{g='Needs Review';gc='#e86060';}const ci=2*Math.PI*72,of=ci-(p/100)*ci;const pn=document.getElementById('resultsPanel');pn.classList.add('show');pn.innerHTML=`<h2>Quiz Complete!</h2><div class="score-circle"><svg viewBox="0 0 160 160"><circle class="track" cx="80" cy="80" r="72"/><circle class="fill" cx="80" cy="80" r="72" stroke-dasharray="${ci}" stroke-dashoffset="${ci}" style="stroke:${gc};"/></svg><div class="score-num">${p}%</div><div class="score-label">${correct} / ${questions.length}</div></div><div class="stats-row"><div class="stat-item"><div class="stat-num" style="color:var(--green)">${correct}</div><div class="stat-lab">Correct</div></div><div class="stat-item"><div class="stat-num" style="color:var(--red)">${questions.length-correct}</div><div class="stat-lab">Incorrect</div></div></div><div class="grade-badge" style="background:${gc}22;color:${gc};border:1px solid ${gc}44;">${g}</div><br><button class="btn-restart" onclick="location.reload()">Retake Quiz</button>`;setTimeout(()=>{pn.querySelector('.fill').style.strokeDashoffset=of;},100);}
+function filterQuestions(t,btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');questions.forEach((_,i)=>{const c=document.getElementById('qcard'+i);if(t==='all')c.style.display='';else if(t==='wrong')c.style.display=c.classList.contains('answered-wrong')?'':'none';else c.style.display=c.classList.contains('answered-correct')?'':'none';});}
+renderQuestions();
+</script>
+</body>
+</html>

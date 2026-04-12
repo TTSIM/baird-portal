@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module 2 · Day 1 · Lecture 2 — Stabilisation Framework (PECOFA)</title>
+<style>
+:root{--bg:#0b1120;--bg2:#111a2e;--panel:#152038;--panel2:#1c2a48;--ink:#e6edf7;--muted:#9fb1cf;--accent:#5ee0c1;--accent2:#7ab8ff;--warn:#ffb86b;--bad:#ff6b8a;--good:#5ee0c1;--border:#26365a}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;line-height:1.55}
+header.bar{position:sticky;top:0;z-index:50;background:rgba(11,17,32,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.bar h1{font-size:14px;margin:0;font-weight:600;color:var(--accent)}
+.bar h1 span{color:var(--muted);font-weight:400}
+.controls{display:flex;gap:8px;align-items:center}
+.btn{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+.btn:hover{background:var(--accent);color:#0b1120}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.counter{color:var(--muted);font-size:13px;min-width:70px;text-align:center}
+.progress{height:3px;background:var(--panel);overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+main{max-width:1100px;margin:0 auto;padding:30px 24px 80px}
+.slide{display:none;animation:fade .35s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide h2{font-size:30px;margin:0 0 6px;color:var(--accent)}
+.slide .num{color:var(--muted);font-size:13px;margin-bottom:18px;text-transform:uppercase;letter-spacing:1.5px}
+.slide h3{color:var(--accent2);margin-top:24px;font-size:18px}
+.card{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:14px;padding:24px;margin:18px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.pill{display:inline-block;background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--border);margin:2px}
+.tag-good{background:#0e3a2e;color:var(--good);border-color:#1f6b54}
+.tag-warn{background:#3a2a0e;color:var(--warn);border-color:#6b531f}
+.tag-bad{background:#3a0e1c;color:var(--bad);border-color:#6b1f33}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:10px 14px;border-left:3px solid var(--accent);background:var(--panel);margin:8px 0;border-radius:6px}
+.stat{font-size:42px;font-weight:700;color:var(--accent);line-height:1}
+.stat-label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.flip{perspective:1000px;height:180px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--border)}
+.flip-front{background:linear-gradient(135deg,var(--panel2),var(--panel));text-align:center}
+.flip-front .icon{font-size:34px;margin-bottom:8px}
+.flip-front .label{font-weight:600;color:var(--accent2)}
+.flip-front .hint{font-size:11px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+.flip-back{background:linear-gradient(135deg,#13384a,#0e2233);transform:rotateY(180deg);font-size:13px}
+svg.diag{width:100%;height:auto;background:#0a1426;border-radius:10px;border:1px solid var(--border)}
+.callout{background:#13384a;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;margin:14px 0}
+.callout strong{color:var(--accent)}
+.warn-call{background:#3a2a0e;border-left-color:var(--warn)}
+.warn-call strong{color:var(--warn)}
+.bad-call{background:#3a0e1c;border-left-color:var(--bad)}
+.bad-call strong{color:var(--bad)}
+.click-reveal{background:var(--panel);padding:14px;border-radius:8px;cursor:pointer;border:1px dashed var(--border);margin:8px 0;transition:.2s}
+.click-reveal:hover{border-color:var(--accent)}
+.click-reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--accent)}
+.click-reveal.open .answer{display:block}
+.click-reveal .q{font-weight:600;color:var(--accent2)}
+.click-reveal .q::before{content:"❓ "}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+th{background:var(--panel2);color:var(--accent2)}
+footer.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px;border-top:1px solid var(--border);margin-top:40px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:20px}
+.toc-item{background:var(--panel);padding:14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:.2s}
+.toc-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.toc-item .n{color:var(--accent);font-weight:700;font-size:13px}
+.toc-item .t{display:block;margin-top:4px;color:var(--ink);font-size:14px}
+.acronym{display:inline-flex;flex-direction:column;align-items:center;background:var(--panel2);border:1px solid var(--accent);border-radius:8px;padding:14px 12px;margin:6px;min-width:90px}
+.acronym .l{font-size:32px;font-weight:700;color:var(--accent)}
+.acronym .w{font-size:11px;color:var(--muted);margin-top:4px;text-align:center;text-transform:uppercase;letter-spacing:.5px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Module 2 · Day 1 · Lecture 2 <span>— PECOFA Stabilisation Framework</span></h1>
+  <div class="controls">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <button class="btn" id="prev">← Prev</button>
+    <span class="counter" id="counter">1 / 1</span>
+    <button class="btn" id="next">Next →</button>
+  </div>
+</header>
+<div class="progress"><div class="progress-bar" id="pbar" style="width:0"></div></div>
+
+<main id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide active">
+  <div class="num">Slide 1 · Welcome back</div>
+  <h2>Stabilising the Patient Before Implant Therapy</h2>
+  <div class="card">
+    <p style="font-size:18px;color:var(--accent2)">Lecturer: <strong>Dr Sarah Jawad</strong> — Consultant in Restorative Dentistry, Guy's &amp; St Thomas' / King's College London</p>
+    <p>This second lecture takes the patient from the consultation chair to the start of definitive implant treatment. The vehicle is a simple acronym: <strong>PECOFA</strong> — the order in which we stabilise a mouth before any implant is placed.</p>
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:14px">
+      <div class="acronym"><span class="l">P</span><span class="w">Periodontal</span></div>
+      <div class="acronym"><span class="l">E</span><span class="w">Endodontic</span></div>
+      <div class="acronym"><span class="l">C</span><span class="w">Coronal</span></div>
+      <div class="acronym"><span class="l">O</span><span class="w">Occlusal</span></div>
+      <div class="acronym"><span class="l">F</span><span class="w">Functional</span></div>
+      <div class="acronym"><span class="l">A</span><span class="w">Aesthetic</span></div>
+    </div>
+  </div>
+  <h3>Lecture roadmap</h3>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="goto(2)"><span class="n">02</span><span class="t">PECOFA: stabilise vs plan</span></div>
+    <div class="toc-item" onclick="goto(3)"><span class="n">03</span><span class="t">Why perio is the foundation</span></div>
+    <div class="toc-item" onclick="goto(4)"><span class="n">04</span><span class="t">Perio history → implant outcome</span></div>
+    <div class="toc-item" onclick="goto(5)"><span class="n">05</span><span class="t">Plaque &amp; bleeding scoring</span></div>
+    <div class="toc-item" onclick="goto(6)"><span class="n">06</span><span class="t">Modern OHI as coaching</span></div>
+    <div class="toc-item" onclick="goto(7)"><span class="n">07</span><span class="t">PMPR not "scale &amp; polish"</span></div>
+    <div class="toc-item" onclick="goto(8)"><span class="n">08</span><span class="t">BPE-driven perio pathway</span></div>
+    <div class="toc-item" onclick="goto(9)"><span class="n">09</span><span class="t">Staging perio bone loss</span></div>
+    <div class="toc-item" onclick="goto(10)"><span class="n">10</span><span class="t">Stability, remission, instability</span></div>
+    <div class="toc-item" onclick="goto(11)"><span class="n">11</span><span class="t">Unresponsive sites — 4 options</span></div>
+    <div class="toc-item" onclick="goto(12)"><span class="n">12</span><span class="t">Endodontic diagnosis</span></div>
+    <div class="toc-item" onclick="goto(13)"><span class="n">13</span><span class="t">Endo prognostic factors</span></div>
+    <div class="toc-item" onclick="goto(14)"><span class="n">14</span><span class="t">Irrigants &amp; rubber dam</span></div>
+    <div class="toc-item" onclick="goto(15)"><span class="n">15</span><span class="t">Re-endo decision</span></div>
+    <div class="toc-item" onclick="goto(16)"><span class="n">16</span><span class="t">Endo-implant interactions</span></div>
+    <div class="toc-item" onclick="goto(17)"><span class="n">17</span><span class="t">Coronal seal</span></div>
+    <div class="toc-item" onclick="goto(18)"><span class="n">18</span><span class="t">Do RCT teeth need crowns?</span></div>
+    <div class="toc-item" onclick="goto(19)"><span class="n">19</span><span class="t">Restorability &amp; ferrule</span></div>
+    <div class="toc-item" onclick="goto(20)"><span class="n">20</span><span class="t">Posts: last chance saloon</span></div>
+    <div class="toc-item" onclick="goto(21)"><span class="n">21</span><span class="t">Occlusion: conform or reorganise</span></div>
+    <div class="toc-item" onclick="goto(22)"><span class="n">22</span><span class="t">Tooth wear cases</span></div>
+    <div class="toc-item" onclick="goto(23)"><span class="n">23</span><span class="t">Smile line &amp; aesthetics</span></div>
+    <div class="toc-item" onclick="goto(24)"><span class="n">24</span><span class="t">Resin-bonded bridges 1</span></div>
+    <div class="toc-item" onclick="goto(25)"><span class="n">25</span><span class="t">Resin-bonded bridges 2</span></div>
+    <div class="toc-item" onclick="goto(26)"><span class="n">26</span><span class="t">Where they work, where not</span></div>
+    <div class="toc-item" onclick="goto(27)"><span class="n">27</span><span class="t">Cementation tips</span></div>
+    <div class="toc-item" onclick="goto(28)"><span class="n">28</span><span class="t">Knowledge check</span></div>
+    <div class="toc-item" onclick="goto(29)"><span class="n">29</span><span class="t">Take-home messages</span></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="num">Slide 2 · The PECOFA framework</div>
+  <h2>Stabilise in one direction — plan in the other</h2>
+  <svg class="diag" viewBox="0 0 720 280">
+    <text x="360" y="22" fill="#9fb1cf" font-size="13" text-anchor="middle">PECOFA — stabilise this way ▶</text>
+    <g font-family="sans-serif" font-size="14" fill="#0b1120" font-weight="700">
+      <rect x="40" y="50" width="100" height="60" rx="8" fill="#5ee0c1"/><text x="90" y="80" text-anchor="middle">PERIO</text><text x="90" y="98" text-anchor="middle" font-size="10" fill="#0b1120">Foundation</text>
+      <rect x="150" y="50" width="100" height="60" rx="8" fill="#5ee0c1" opacity=".88"/><text x="200" y="80" text-anchor="middle">ENDO</text><text x="200" y="98" text-anchor="middle" font-size="10">Localised</text>
+      <rect x="260" y="50" width="100" height="60" rx="8" fill="#5ee0c1" opacity=".76"/><text x="310" y="80" text-anchor="middle">CORONAL</text><text x="310" y="98" text-anchor="middle" font-size="10">Restorability</text>
+      <rect x="370" y="50" width="100" height="60" rx="8" fill="#5ee0c1" opacity=".64"/><text x="420" y="80" text-anchor="middle">OCCLUSAL</text><text x="420" y="98" text-anchor="middle" font-size="10">Space &amp; bite</text>
+      <rect x="480" y="50" width="100" height="60" rx="8" fill="#5ee0c1" opacity=".52"/><text x="530" y="80" text-anchor="middle">FUNCTION</text><text x="530" y="98" text-anchor="middle" font-size="10">SDA, parafunc.</text>
+      <rect x="590" y="50" width="100" height="60" rx="8" fill="#5ee0c1" opacity=".40"/><text x="640" y="80" text-anchor="middle">AESTHETIC</text><text x="640" y="98" text-anchor="middle" font-size="10">Final layer</text>
+    </g>
+    <text x="60" y="155" fill="#7ab8ff" font-size="13">◀ Plan from aesthetics back to perio</text>
+    <g font-family="sans-serif" font-size="13" fill="#e6edf7">
+      <text x="40" y="195">⬆ Stabilisation order: perio first because nothing else works on a flooded foundation.</text>
+      <text x="40" y="220">⬆ Planning order: start with where the teeth need to be (aesthetics, function), then work backwards.</text>
+      <text x="40" y="245">⬆ The same letters — different direction. Practice both.</text>
+    </g>
+  </svg>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="num">Slide 3 · The foundation</div>
+  <h2>Periodontal stabilisation comes first</h2>
+  <div class="card">
+    <p>You cannot place implants in an actively inflamed mouth — and you should not try. The analogy patients understand instantly is <em>building a house on poor foundations.</em> Picking curtains in the front room makes no sense if the walls are crumbling.</p>
+    <div class="callout"><strong>Bleeding</strong> is the marker. <strong>Absence of bleeding</strong> is one of the best indicators of gingival health we have. Patients with active perio are not implant patients — they are perio patients first.</div>
+  </div>
+  <h3>The four reasons perio comes first</h3>
+  <div class="grid2">
+    <div class="card"><strong>1. Bacterial reservoirs.</strong> Periodontal pockets harbour exactly the species that drive peri-implantitis. Until they are reduced, every implant placement contaminates the new site.</div>
+    <div class="card"><strong>2. Behaviour test.</strong> If a patient cannot brush their teeth properly under your supervision over six weeks, they will not maintain implants over twenty years.</div>
+    <div class="card"><strong>3. Honest restorability.</strong> Inflammation distorts pocket depths and hides true clinical attachment loss. Once tissues calm down, you see what you actually have to work with.</div>
+    <div class="card"><strong>4. Prosthetic certainty.</strong> Loose grade-3 mobile teeth that resolve to grade 1 after stabilisation may now be saveable — and may change your whole plan.</div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="num">Slide 4 · The numbers</div>
+  <h2>Periodontal history changes implant outcomes — at 10 years</h2>
+  <div class="grid3">
+    <div class="card" style="text-align:center"><div class="stat">90%</div><div class="stat-label">10-yr survival in perio patients</div></div>
+    <div class="card" style="text-align:center"><div class="stat">97%</div><div class="stat-label">10-yr survival in non-perio</div></div>
+    <div class="card" style="text-align:center"><div class="stat">29%</div><div class="stat-label">Peri-implantitis in perio history</div></div>
+    <div class="card" style="text-align:center"><div class="stat">6%</div><div class="stat-label">Peri-implantitis in non-perio</div></div>
+    <div class="card" style="text-align:center"><div class="stat">52%</div><div class="stat-label">"Success" rate in perio group</div></div>
+    <div class="card" style="text-align:center"><div class="stat">79%</div><div class="stat-label">"Success" in non-perio group</div></div>
+  </div>
+  <div class="callout">Defining "success" strictly (pocket &lt; 5 mm, no bleeding on probing, &lt; 0.2 mm bone loss/year), the gap between perio and non-perio patients is dramatic. Patients with a history of periodontitis must understand they are signing up for life-long maintenance — not a one-off procedure.</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="num">Slide 5 · Measuring what matters</div>
+  <h2>Plaque &amp; bleeding indices — the basics</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Modified plaque score</h3>
+      <p>Six index teeth, four sites each (mesial / distal / buccal / palatal) → 24 sites scored 0 (no plaque) or 1 (plaque). Add and express as a percentage. Repeat blind at each visit — do not look at the previous score first. Aim for &lt;20%.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Bleeding score</h3>
+      <p>Same six teeth, same four sites, same binary scoring of bleeding on gentle probing. Less than 10% bleeding on probing is the threshold for periodontal stability.</p>
+    </div>
+  </div>
+  <div class="callout">Practical tip: most dental software has no built-in module for these. A simple Word or PDF template the nurse can fill in works fine. The point is the <em>numerical baseline</em> — patients respond powerfully to seeing a score drop.</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="num">Slide 6 · Coaching, not lecturing</div>
+  <h2>Oral hygiene instruction is coaching</h2>
+  <div class="card">
+    <p>"You need to brush your teeth a bit better" is not OHI. Real OHI is patient-specific coaching — a skill rarely taught at dental school but central to perio outcomes.</p>
+    <h3>The principles</h3>
+    <ul class="clean">
+      <li><strong>Bring your tools.</strong> Ask the patient to bring everything they use to brush with — toothbrush, paste, floss, interdental brushes, mouthwash.</li>
+      <li><strong>Watch them do it.</strong> "Show me how you brush right now." Telling vs showing reveals enormous gaps.</li>
+      <li><strong>Sit them up.</strong> Eye-to-eye, not lying back in the chair. This is an adult-to-adult conversation.</li>
+      <li><strong>Promote in stages.</strong> Master modified Bass first → then floss/interdental → then vertical/sub-gingival cleaning. Don't dump everything on visit one.</li>
+      <li><strong>Bespoke solutions.</strong> The American-shift worker who falls asleep at her laptop needs to brush <em>before</em> the meeting, not at 2 AM. Adapt to the patient's life.</li>
+      <li><strong>No fixed time limit.</strong> Brush until clean — for some perio patients that is 15 minutes. Book it into the diary.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="num">Slide 7 · Terminology matters</div>
+  <h2>Drop "scale and polish" — adopt PMPR</h2>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">Why "scale and polish" is a problem</h3>
+        <ul class="clean">
+          <li>It sounds like a beauty treatment — like waxing the car.</li>
+          <li>Polishing has no real periodontal benefit.</li>
+          <li>It conditions patients to expect a six-month "spa" appointment.</li>
+          <li>Six-month recall has <strong>no clinical evidence base</strong> — it comes from a toothpaste advert.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">PMPR — the modern term</h3>
+        <p><strong>Professional Mechanical Plaque Removal.</strong> It positions the appointment as disease control rather than cosmetics. Recall intervals are based on disease activity, not the calendar — anywhere from 3 to 12 months depending on risk.</p>
+        <span class="pill tag-good">Use the right words with patients</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="num">Slide 8 · BPE-driven pathway</div>
+  <h2>From BPE to treatment plan</h2>
+  <table>
+    <tr><th>BPE</th><th>What it means</th><th>What you do</th></tr>
+    <tr><td><strong>0</strong></td><td>Healthy</td><td>Recall, reinforce</td></tr>
+    <tr><td><strong>1</strong></td><td>Bleeding only</td><td>Plaque + bleeding scores · OHI · supragingival PMPR</td></tr>
+    <tr><td><strong>2</strong></td><td>Calculus / plaque-retentive factors</td><td>As BPE 1 + remove all plaque-retentive factors · supragingival PMPR · review</td></tr>
+    <tr><td><strong>3</strong></td><td>Pocket 4–5 mm</td><td>Radiographs · 6PPC after initial therapy · subgingival PMPR under LA · re-evaluate at 6 weeks</td></tr>
+    <tr><td><strong>4</strong></td><td>Pocket ≥ 6 mm</td><td>Radiographs · 6PPC · structured stepped therapy · consider perio referral</td></tr>
+    <tr><td><strong>*</strong></td><td>Furcation or recession ≥ 7 mm</td><td>Same as score · plus furcation management strategy</td></tr>
+  </table>
+  <div class="callout">If a patient has not engaged with OHI between visits, you do <strong>not</strong> pass go to subgingival therapy. Repeat OHI. There is no point cleaning subgingivally if they cannot maintain the supragingival environment.</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="num">Slide 9 · Staging by bone loss</div>
+  <h2>Reading bone loss off a radiograph</h2>
+  <div class="card">
+    <p>The current classification stages perio by extent of bone loss and grades by rate of progression (using the bone loss / age ratio).</p>
+    <table>
+      <tr><th>Stage</th><th>Approximate bone loss</th></tr>
+      <tr><td>Stage I</td><td>&lt; 15% (coronal third only)</td></tr>
+      <tr><td>Stage II</td><td>15–33% (coronal third)</td></tr>
+      <tr><td>Stage III</td><td>Mid-third — extending to apical third</td></tr>
+      <tr><td>Stage IV</td><td>Apical third — tooth loss likely or already occurring</td></tr>
+    </table>
+    <h3>Grading: bone loss ÷ age</h3>
+    <ul class="clean">
+      <li><strong>Grade A</strong> — slow progression (BL/age &lt; 0.5)</li>
+      <li><strong>Grade B</strong> — moderate (0.5–1.0)</li>
+      <li><strong>Grade C</strong> — rapid (&gt;1.0) — for example, 50% bone loss in a 40-year-old.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="num">Slide 10 · Three states</div>
+  <h2>Stable, remission, unstable — and what each means for implants</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3 style="margin-top:0">✅ Stable</h3>
+      <ul class="clean">
+        <li>Pockets ≤ 4 mm</li>
+        <li>BoP &lt; 10%</li>
+        <li>No 4 mm sites bleeding</li>
+      </ul>
+      <span class="pill tag-good">Proceed with implants</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">⚠️ Remission</h3>
+      <ul class="clean">
+        <li>Pockets ≤ 4 mm</li>
+        <li>BoP &gt; 10%</li>
+        <li>Need ongoing monitoring</li>
+      </ul>
+      <span class="pill tag-warn">Cautious — case by case</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">❌ Unstable</h3>
+      <ul class="clean">
+        <li>Pockets ≥ 5 mm</li>
+        <li>Bleeding on probing</li>
+        <li>Active disease</li>
+      </ul>
+      <span class="pill tag-bad">Do NOT place implants</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="num">Slide 11 · Unresponsive sites</div>
+  <h2>What to do with the site that won't heal</h2>
+  <div class="card">
+    <p>You have done everything right — OHI is good, you have done full subgingival PMPR — and at re-evaluation there is still a 5 mm bleeding pocket. There are <strong>four</strong> options:</p>
+    <ol style="line-height:1.9">
+      <li><strong>Re-instrument</strong> that specific site. Often local re-PMPR under LA is enough.</li>
+      <li><strong>Periodontal surgery</strong> — for residual pockets &gt; 6 mm. Usually means specialist referral.</li>
+      <li><strong>Adjunctive antibiotics</strong> — local or systemic. Limited role and not first-line.</li>
+      <li><strong>Extraction</strong> — when the tooth is hopeless and other teeth or implants are at risk.</li>
+    </ol>
+    <div class="callout">Refer to a perio specialist <em>after</em> you have done your job — not before. Specialist surgery on a patient who cannot brush properly is a waste of everyone's time and money.</div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="num">Slide 12 · Endodontic diagnosis</div>
+  <h2>Pulpal &amp; apical diagnoses (AAE)</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Pulp diagnoses</h3>
+      <ul class="clean">
+        <li><strong>Normal pulp</strong> — symptomless, responds normally to testing.</li>
+        <li><strong>Reversible pulpitis</strong> — short, sharp pain to stimulus, no lingering.</li>
+        <li><strong>Symptomatic irreversible pulpitis</strong> — lingering, spontaneous pain.</li>
+        <li><strong>Asymptomatic irreversible pulpitis</strong> — no symptoms but caries to pulp.</li>
+        <li><strong>Pulp necrosis</strong> — non-vital, no response to testing.</li>
+        <li><strong>Previously treated</strong> — root-filled tooth.</li>
+        <li><strong>Previously initiated therapy</strong> — access opened, treatment incomplete.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Apical diagnoses</h3>
+      <ul class="clean">
+        <li><strong>Normal apical tissues</strong></li>
+        <li><strong>Symptomatic apical periodontitis</strong> — TTP positive, often widened PDL.</li>
+        <li><strong>Asymptomatic apical periodontitis</strong> — radiolucency without symptoms.</li>
+        <li><strong>Acute apical abscess</strong> — pus, swelling, systemic signs possible.</li>
+        <li><strong>Chronic apical abscess</strong> — sinus tract, low-grade.</li>
+        <li><strong>Condensing osteitis</strong> — radio-opaque rather than lucent.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <div class="num">Slide 13 · Endo prognosis</div>
+  <h2>The Eastman 11 prognostic factors — what really predicts success</h2>
+  <div class="card">
+    <p>The single biggest predictor of endodontic success — surprisingly to many — is <strong>the absence of a periapical lesion</strong>. A vital, symptomatic, irreversible-pulpitis tooth treated <em>before</em> a lesion has formed has an excellent prognosis.</p>
+    <h3>Top factors</h3>
+    <table>
+      <tr><th>Factor</th><th>Effect</th></tr>
+      <tr><td>No periapical lesion at start</td><td>Best predictor of success</td></tr>
+      <tr><td>Presence of a sinus tract</td><td>Reduces success by ≈ 48%</td></tr>
+      <tr><td>Filling within 2 mm of apex</td><td>Optimal — every 1 mm short = ≈12% drop in success</td></tr>
+      <tr><td>Overfill / through the apex</td><td>≈ 52% reduction in success</td></tr>
+      <tr><td>Inter-appointment pain</td><td>Reduces success — implies incomplete disinfection</td></tr>
+      <tr><td>Use of EDTA</td><td>Improves success (smear layer removal)</td></tr>
+      <tr><td>Use of chlorhexidine as irrigant</td><td>Worse — reaction with hypochlorite forms parachloroaniline</td></tr>
+      <tr><td>Coronal seal</td><td>≈ 11× improvement in success</td></tr>
+      <tr><td>Perforation</td><td>Generally bad — depends on level &amp; repairability</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <div class="num">Slide 14 · Irrigants &amp; rubber dam</div>
+  <h2>Two non-negotiables for endo</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">🧪 Irrigation strategy</h3>
+      <ul class="clean">
+        <li><strong>Sodium hypochlorite</strong> — primary disinfectant.</li>
+        <li><strong>EDTA</strong> — removes the smear layer, allows hypochlorite to penetrate.</li>
+        <li><strong>Avoid chlorhexidine</strong> — reacts with hypochlorite to form parachloroaniline (carcinogenic precipitate).</li>
+        <li>Saline and lidocaine are not effective irrigants — do not use them as a shortcut.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🛡 Rubber dam</h3>
+      <p>If you cannot get a rubber dam on, you cannot do the endo. Without rubber dam you cannot use sodium hypochlorite, which means you cannot disinfect properly. Refer the case rather than compromise.</p>
+      <div class="callout warn-call"><strong>No dam = no endo.</strong> If you genuinely cannot isolate, send it to someone who can.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <div class="num">Slide 15 · Re-treatment</div>
+  <h2>Should you re-do this root filling?</h2>
+  <div class="card">
+    <p>The single most useful question is: <em>"Can I do this any better than the person who did it before me?"</em></p>
+    <div class="grid2">
+      <div class="callout"><strong>Re-do indicated:</strong> Visible technical problems — short fill, voids, single cone, missed canals, poor coronal seal, inadequate length. There is room for improvement.</div>
+      <div class="callout warn-call"><strong>Re-do unlikely to help:</strong> Good length, good taper, good condensation, good coronal seal — but still an apical lesion. You will not improve on it. Consider apical surgery, monitoring, or extraction.</div>
+    </div>
+    <div class="callout bad-call"><strong>Reality check:</strong> Re-endodontic treatment generally has a <em>lower</em> success rate than primary endo. Refer to a specialist when in doubt.</div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <div class="num">Slide 16 · Endo–implant interactions</div>
+  <h2>Retrograde peri-implantitis (RPI) classification</h2>
+  <div class="card">
+    <p>Endodontic lesions on adjacent natural teeth <em>can</em> affect implants placed nearby — and increasingly we are seeing apical lesions on implants themselves. A proposed classification:</p>
+    <table>
+      <tr><th>Class</th><th>Mechanism</th><th>Management</th></tr>
+      <tr><td><strong>Class I</strong></td><td>Implant placement devitalised an adjacent vital tooth</td><td>RCT of the affected tooth ± consider implant removal if damage is severe</td></tr>
+      <tr><td><strong>Class II</strong></td><td>Implant apex infected by a persistent periapical lesion on adjacent tooth</td><td>Antibiotics, RCT or re-RCT of the tooth, surgical debridement of the implant ± grafting</td></tr>
+      <tr><td><strong>Class III</strong></td><td>Implant apex placed outside the bone envelope (labial / lingual perforation)</td><td>Surgical access, graft, ± remove and replace the implant</td></tr>
+    </table>
+    <div class="callout">Lesson: don't place implants adjacent to active periapical pathology. Stabilise the endo first — antibiotic cover at placement is a useful adjunct in borderline cases.</div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <div class="num">Slide 17 · Coronal seal</div>
+  <h2>The coronal seal is worth more than the endo itself</h2>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">The data</h3>
+        <p>A good coronal seal increases endodontic success approximately <strong>11-fold</strong>. Studies disagree about whether the seal or the endo matters more — but the consensus is that <em>good coronal restoration with mediocre endo</em> generally outperforms <em>good endo with mediocre coronal restoration</em>.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Practical points</h3>
+        <ul class="clean">
+          <li>Get composite as far down into the pulp chamber as possible.</li>
+          <li>Cuspal coverage on posterior teeth dramatically improves longevity.</li>
+          <li>Aquilino &amp; Caplan: crowned RCT teeth had a <strong>6× higher likelihood of survival</strong>.</li>
+          <li>Second molars and carious teeth fail at higher rates.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <div class="num">Slide 18 · RCT teeth and crowns</div>
+  <h2>Do all root-filled teeth need a crown?</h2>
+  <div class="card">
+    <p><strong>No</strong> — but most posterior ones do, and almost any tooth that has lost a marginal ridge needs cuspal coverage.</p>
+    <div class="grid2">
+      <div>
+        <h3>Anteriors</h3>
+        <ul class="clean">
+          <li>Light loads, mostly tensile rather than compressive.</li>
+          <li>Often a well-sealed direct restoration is enough.</li>
+          <li>Crown only if structurally compromised or aesthetic need.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Posteriors</h3>
+        <ul class="clean">
+          <li>Heavy compressive loads.</li>
+          <li>Loss of one or more marginal ridges → cuspal coverage essential.</li>
+          <li>Onlay vs full crown: increasingly minimal-prep onlays driven by adhesive cementation.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">Modern adhesion has shifted the balance: we used to need full coverage for retention/resistance form. Now we glue. A 0.5 mm e-max or gold onlay often does the job with minimal tooth removal.</div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <div class="num">Slide 19 · Restorability</div>
+  <h2>Restorability indices &amp; the ferrule</h2>
+  <div class="card">
+    <p>Restorability is partly intuition — you can usually eyeball a tooth and know — but indices give you a defensible framework. Two are commonly cited:</p>
+    <ul class="clean">
+      <li><strong>Tooth Restorability Index (TRI)</strong> — sextant scoring of remaining coronal dentine height/thickness/distribution.</li>
+      <li><strong>Dental Practicality Index (DPI)</strong> — combines structural, periodontal, endodontic and contextual factors.</li>
+    </ul>
+    <h3>The ferrule rule</h3>
+    <table>
+      <tr><th>Site</th><th>Minimum height</th></tr>
+      <tr><td>Anterior teeth</td><td>2–3 mm</td></tr>
+      <tr><td>Posterior teeth</td><td>≥ 4 mm</td></tr>
+    </table>
+    <p>You also need <strong>width</strong>, not just height. No ferrule = high failure risk. Crown lengthening or extraction may be the honest answer.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide">
+  <div class="num">Slide 20 · Posts</div>
+  <h2>Posts — the last chance saloon</h2>
+  <div class="card">
+    <p>If a tooth has a post in it, that means there was not enough coronal dentine to hold a core. If there had been enough dentine, you would not have needed a post in the first place. So a post by definition marks the last attempt to save a tooth.</p>
+    <div class="grid2">
+      <div class="callout">
+        <strong>Survival data:</strong> Post-restored teeth have around <strong>72% success at 5 years</strong>. They tend to last when they last — but when they fail, they fail catastrophically (root fracture or extraction).
+      </div>
+      <div class="callout">
+        <strong>Removal myth:</strong> The Abbott paper (1,600 posts removed, 1 fracture = 0.06%) shows that ultrasonic post removal is far safer than its reputation. Most luted posts come out cleanly when the cement lute is shattered.
+      </div>
+    </div>
+    <div class="callout warn-call"><strong>Threshold for extraction:</strong> A post-crowned tooth <em>plus</em> an apical lesion is a very low threshold for extraction. Include it in the implant plan from the start.</div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide">
+  <div class="num">Slide 21 · Occlusion</div>
+  <h2>Conform to ICP — or reorganise to RCP?</h2>
+  <div class="card">
+    <p>This is a whole course in itself. Two questions structure the decision:</p>
+    <h3>1. Is there enough prosthetic space?</h3>
+    <p>If you do not have room to build the planned restoration in the patient's existing intercuspal position (ICP), you must reorganise. Tooth wear cases are the classic example.</p>
+    <h3>2. Are you maintaining the existing guidance?</h3>
+    <p>Anterior guidance? Canine guidance? Group function? Whatever scheme is in place, your new restorations must respect it — or you have to plan a whole-mouth reorganisation around centric relation (RCP).</p>
+    <div class="callout"><strong>Practical sequence:</strong> Provisionalise first. Confirm the new occlusion is comfortable and stable in temporaries before committing to definitive implant placement. The temporaries are your insurance policy.</div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section class="slide">
+  <div class="num">Slide 22 · Tooth wear</div>
+  <h2>Tooth wear cases — the classic reorganisation</h2>
+  <div class="card">
+    <p>Tooth wear is the most common reason to reorganise the bite. The clinical workflow:</p>
+    <ol style="line-height:1.9">
+      <li><strong>Identify the cause</strong> — erosion, attrition, abrasion, parafunction. Treat the cause or you will rebuild and watch it wear again.</li>
+      <li><strong>Wax up the final result</strong> at the new vertical dimension.</li>
+      <li><strong>Trial it as temporaries</strong> — direct composite build-ups or milled provisionals.</li>
+      <li><strong>Live with it</strong> for several months. Adjust as needed. Confirm phonetics, comfort and aesthetics.</li>
+      <li><strong>Convert to definitive</strong> — only once the bite is stable and tolerated.</li>
+    </ol>
+    <div class="callout">Increasing the OVD often creates posterior space that previously did not exist for implant restorations. The plan you could not see in ICP becomes possible at the new vertical.</div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section class="slide">
+  <div class="num">Slide 23 · Aesthetics &amp; smile line</div>
+  <h2>Where the lower lip dictates incisal edge position</h2>
+  <div class="card">
+    <p>Aesthetic planning is personal — patient values trump clinician preference. But there is a clinical anchor: the smile line is determined by the <strong>lower lip</strong>, not just the upper.</p>
+    <ul class="clean">
+      <li>If the existing teeth sit <em>above</em> the lower lip line, you can lengthen them and they will still show.</li>
+      <li>If they already sit <em>at</em> the lower lip line, lengthening them creates a "lip trap" — they hide rather than display.</li>
+      <li>Always assess at the smile, the speech "F/V" line and rest position.</li>
+    </ul>
+    <div class="callout"><strong>Daughter test:</strong> Some clinicians use "would you do this on your daughter?" — but be careful. Your daughter has your values; the patient has theirs. Don't impose preferences. A patient who wants a gold incisor can have a gold incisor.</div>
+  </div>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <div class="num">Slide 24 · Resin-bonded bridges (1)</div>
+  <h2>Resin-bonded bridges — the conservative alternative</h2>
+  <div class="card">
+    <p>Modern enamel adhesion is so reliable that resin-bonded bridges have become a credible — sometimes preferable — alternative to single implant crowns, especially for missing anteriors and where future implant placement is being considered.</p>
+    <h3>Key principles</h3>
+    <ul class="clean">
+      <li><strong>Cantilever (one wing)</strong> beats fixed (two wings) for survival. Differential movement of two abutments dislodges fixed designs.</li>
+      <li><strong>Minimally restored abutments</strong> with sufficient enamel for adhesion.</li>
+      <li><strong>No prep / minimal prep</strong> — especially if a future implant is planned.</li>
+      <li><strong>Use the right cement</strong> — a resin cement containing 10-MDP (e.g. Panavia).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <div class="num">Slide 25 · Resin-bonded bridges (2)</div>
+  <h2>Survival vs retrievability</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Survival rates</h3>
+      <ul class="clean">
+        <li>King paper: <strong>81% at 5 years, 80% at 10 years</strong> for resin-bonded bridges.</li>
+        <li>Single implant crowns have higher raw survival.</li>
+        <li>Old composite restorations on the abutment = <strong>3× higher failure</strong> — replace or polish before bonding.</li>
+        <li>Patient satisfaction with RBBs is consistently high (~91% would recommend).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">The retrievability advantage</h3>
+      <p>When an RBB fails, it just falls off — <strong>no biological damage</strong>. You re-cement and you are back to baseline.</p>
+      <p>When an implant fails, you may face screw loosening, peri-implantitis, porcelain fracture, or full implant loss with grafting needed.</p>
+      <span class="pill tag-good">Lower survival, but lower consequence</span>
+    </div>
+  </div>
+</section>
+
+<!-- 26 -->
+<section class="slide">
+  <div class="num">Slide 26 · Where they work</div>
+  <h2>Where RBBs work — and where they don't</h2>
+  <table>
+    <tr><th>Site</th><th>Suitability</th><th>Notes</th></tr>
+    <tr><td>Upper / lower incisors</td><td><span class="pill tag-good">Excellent</span></td><td>Light loads, primarily aesthetic</td></tr>
+    <tr><td>3-3 anterior bridge</td><td><span class="pill tag-good">Good</span></td><td>Use a fixed (2-wing) design here</td></tr>
+    <tr><td>Premolars</td><td><span class="pill tag-warn">Use with care</span></td><td>Consider partial-coverage facing rather than load-bearing pontic</td></tr>
+    <tr><td>Molars (6, 7)</td><td><span class="pill tag-bad">Avoid</span></td><td>Loads too high — place an implant</td></tr>
+    <tr><td>Perio splinting</td><td><span class="pill tag-good">Useful</span></td><td>Fixed (2-wing) design for stability</td></tr>
+  </table>
+  <div class="callout">The hammer-and-nail rule: if RBBs are your only tool, every gap looks like a candidate. Match the tool to the load — a drawing pin holds a nursery painting; a marble mirror needs a proper bracket.</div>
+</section>
+
+<!-- 27 -->
+<section class="slide">
+  <div class="num">Slide 27 · Cementation tips</div>
+  <h2>Bonding protocol — small details, big difference</h2>
+  <div class="card">
+    <ul class="clean">
+      <li><strong>Sandblast</strong> the metal or zirconia wing intaglio surface.</li>
+      <li><strong>10-MDP primer</strong> on metal/zirconia (built into Panavia).</li>
+      <li><strong>Etch enamel</strong> 30s phosphoric acid, rinse, dry.</li>
+      <li><strong>Bonding agent</strong> on enamel as per manufacturer's IFU.</li>
+      <li><strong>Resin cement</strong> — never zinc phosphate or GIC.</li>
+      <li><strong>Use a location hook or singulum rest</strong> — ensures full seating during cementation; trim afterwards.</li>
+      <li>Read the laminated instruction card every time. The biggest evolution in dental cements has been those instruction cards.</li>
+    </ul>
+    <h3>Avoiding the grey-out</h3>
+    <p>Metal wings can show through translucent incisal enamel. Three solutions:</p>
+    <ul class="clean">
+      <li>Use a thicker tooth (canine to replace lateral) so the wing doesn't reach incisal enamel.</li>
+      <li>Score a line on the palatal surface — tell the lab to finish short of that line.</li>
+      <li>Trial the grey-out using <strong>green stick compound</strong> behind the tooth before final fabrication.</li>
+      <li>Consider zirconia bridges as an alternative.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 28 -->
+<section class="slide">
+  <div class="num">Slide 28 · Knowledge check</div>
+  <h2>Quick self-check</h2>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Spell out PECOFA. In which direction do you stabilise, and in which direction do you plan?</div>
+    <div class="answer"><strong>Periodontal → Endodontic → Coronal → Occlusal → Functional → Aesthetic.</strong> Stabilise <em>P → A</em> (perio first). Plan <em>A → P</em> (start with where the teeth need to be aesthetically and work backward).</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">What is the threshold for periodontal stability?</div>
+    <div class="answer">Pocket depths ≤ 4 mm, BoP &lt; 10%, no bleeding at 4 mm sites. Above 10% BoP with shallow pockets = remission. Pockets ≥ 5 mm or active bleeding = unstable — do not place implants.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Why must you not use chlorhexidine as an endodontic irrigant when also using sodium hypochlorite?</div>
+    <div class="answer">They react to form parachloroaniline — a precipitate with carcinogenic potential. EDTA is the correct adjunct to NaOCl (smear layer removal).</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Approximately how much does a good coronal seal improve endodontic success?</div>
+    <div class="answer">About <strong>11×</strong>. Many studies suggest a good coronal restoration with mediocre endo outperforms a perfect endo with poor coronal seal. Aquilino &amp; Caplan: crowned RCT teeth had ~6× higher likelihood of survival.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Why prefer a one-wing cantilever resin-bonded bridge over a two-wing fixed design?</div>
+    <div class="answer">Differential movement of the two abutments stresses the bond and dislodges one wing. The remaining wing then traps caries. Cantilevers move with their single abutment and survive longer in most anterior situations.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">What is the minimum ferrule height for a posterior tooth?</div>
+    <div class="answer">Approximately <strong>4 mm</strong>. Anteriors can sometimes manage with 2–3 mm. Width matters as well as height — and no ferrule should always prompt re-evaluation of restorability.</div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section class="slide">
+  <div class="num">Slide 29 · Take-home messages</div>
+  <h2>Take-home messages from Lecture 2</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">🎯 The big ideas</h3>
+      <ul class="clean">
+        <li><strong>PECOFA</strong> — stabilise in this order, plan in reverse.</li>
+        <li>Perio is the foundation — non-negotiable.</li>
+        <li>The <strong>coronal seal</strong> matters more than the endo.</li>
+        <li>A post on a tooth = last chance saloon.</li>
+        <li>Resin-bonded bridges trade survival for retrievability.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🛠 The clinical habits</h3>
+      <ul class="clean">
+        <li>Plaque + bleeding scores at <em>every</em> visit.</li>
+        <li>OHI is coaching — bring your tools, sit upright, eye-to-eye.</li>
+        <li>No rubber dam = no endo.</li>
+        <li>Provisionalise before reorganising occlusion.</li>
+        <li>Cantilever, not fixed, for most RBBs.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="text-align:center;margin-top:30px">
+    <strong>Coming up in Lecture 3:</strong> Whole-case planning — risk factors that have changed in the last 25 years, how patients sue you (and how to avoid it), the problem-list method of treatment planning, and aesthetic risk assessment.
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">Module 2 · Day 1 · Lecture 2 — based on the lecture by Dr Sarah Jawad. For educational use only. Not a substitute for clinical judgement or current guidelines.</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+function show(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=(((i+1)/slides.length)*100)+'%';
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goto(n){show(n-1)}
+document.getElementById('prev').onclick=()=>show(i-1);
+document.getElementById('next').onclick=()=>show(i+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')show(i+1);
+  if(e.key==='ArrowLeft')show(i-1);
+});
+show(0);
+</script>
+</body>
+</html>

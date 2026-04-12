@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1: Anaesthesia, Preparation & Team</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e17;--surface:#111827;--surface2:#1a2236;--card:#151d2e;--accent:#3b82f6;--accent2:#60a5fa;--green:#10b981;--red:#ef4444;--warm:#f59e0b;--text:#e2e8f0;--dim:#94a3b8;--bright:#f8fafc;--border:#1e293b}
+html{height:100%}body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+.topbar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--bright)}
+.progress-track{height:3px;background:var(--border);width:100%;position:sticky;top:55px;z-index:9}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;border-radius:0 2px 2px 0}
+.stats{display:flex;gap:16px;font-size:13px;color:var(--dim)}
+.stats span{display:flex;align-items:center;gap:4px}
+.stats .g{color:var(--green)}.stats .r{color:var(--red)}
+.container{max-width:780px;margin:0 auto;padding:32px 20px 80px}
+.score-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.score-big{font-family:'DM Serif Display',serif;font-size:36px;color:var(--accent2)}
+.score-label{font-size:13px;color:var(--dim)}
+.score-pct{font-size:14px;font-weight:600}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:all .3s}
+.q-card.answered{opacity:.85}
+.q-card.answered.correct-card{border-color:rgba(16,185,129,.3)}
+.q-card.answered.wrong-card{border-color:rgba(239,68,68,.2)}
+.q-num{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.q-topic{font-size:11px;color:var(--dim);margin-bottom:12px;padding:3px 8px;background:var(--surface2);border-radius:6px;display:inline-block}
+.q-text{font-size:16px;font-weight:600;color:var(--bright);line-height:1.5;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .25s;display:flex;align-items:center;gap:12px;line-height:1.5}
+.opt:hover:not(.locked){border-color:var(--accent);background:rgba(59,130,246,.06)}
+.opt.locked{cursor:default}
+.opt .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;transition:all .25s}
+.opt.correct{border-color:var(--green);background:rgba(16,185,129,.08)}
+.opt.correct .letter{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.06)}
+.opt.wrong .letter{background:var(--red);color:#fff}
+.opt.dimmed{opacity:.4}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.feedback.show{display:block}
+.feedback.fb-correct{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.feedback.fb-wrong{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.result-box{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.03));border:2px solid rgba(59,130,246,.3);border-radius:20px;padding:36px;text-align:center;margin-top:32px;display:none}
+.result-box.show{display:block}
+.result-box h2{font-family:'DM Serif Display',serif;font-size:32px;color:var(--bright);margin-bottom:8px}
+.result-box .pct{font-size:64px;font-weight:700;color:var(--accent2);font-family:'DM Serif Display',serif}
+.result-box .msg{font-size:15px;color:var(--dim);margin-top:12px;line-height:1.6}
+.retry-btn{margin-top:20px;background:var(--accent);border:none;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.retry-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.3)}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.portal-back:hover{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <span class="badge">Quiz 1</span>
+    <h1>Anaesthesia, Preparation & Team</h1>
+  </div>
+  <div class="stats" id="stats"><span class="g" id="cStat">✓ 0</span><span class="r" id="wStat">✗ 0</span><span id="aStat">0/30</span></div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+<div class="container" id="container"></div>
+
+<script>
+const Q=[
+{t:"Dosage",q:"What is the general formula for calculating maximum anaesthetic cartridges?",o:["1 cartridge per 5 kg body weight","1 cartridge per 10 kg body weight","1 cartridge per 15 kg body weight","1 cartridge per 20 kg body weight"],a:1,f:"The rule is 1 cartridge per 10 kg. For a 70 kg patient, that's 7 cartridges maximum. Each cartridge is approximately 2 ml."},
+{t:"Dosage",q:"For a 90 kg patient, what is the maximum number of anaesthetic cartridges?",o:["6 cartridges","7 cartridges","9 cartridges","12 cartridges"],a:2,f:"90 ÷ 10 = 9 cartridges maximum. Remember this is the ceiling — not the target for a single implant."},
+{t:"Starting Dose",q:"How many cartridges are recommended as a starting dose for a single implant surgery?",o:["1 cartridge","2–3 cartridges","5 cartridges","7 cartridges"],a:1,f:"Start with 2–3 cartridges (~4–6 ml) and top up every 45 minutes as needed."},
+{t:"Pharmacology",q:"Which anaesthetic agent has superior bone penetration and diffuses through cortical bone?",o:["Mepivacaine","Lidocaine","Articaine","Prilocaine"],a:2,f:"Articaine is the gold standard for implant surgery because it diffuses through cortical bone more effectively than other agents."},
+{t:"Pharmacology",q:"Why is a mixture of articaine and mepivacaine recommended?",o:["To save money on cartridges","To reduce the number of injections needed","To avoid dosing with adrenaline immediately while still needing vasoconstriction later","They have the same onset time"],a:2,f:"Mepivacaine (plain) allows initial numbing without heavy adrenaline. Articaine (with adrenaline) is then used for its vasoconstricting effect to reduce bleeding and prolong anaesthesia."},
+{t:"Top-Up Protocol",q:"How often should anaesthesia be topped up during implant surgery?",o:["Every 20 minutes","Every 30 minutes","Every 45 minutes","Every 60 minutes"],a:2,f:"Set a 45-minute alarm. Top up BEFORE the patient reports pain — a proactive approach prevents mid-procedure disruption."},
+{t:"Top-Up Protocol",q:"Why should the top-up be given BEFORE the patient feels pain?",o:["To reduce total anaesthetic usage","Because mid-procedure complaints disrupt delicate work like placing graft particles","Because it's required by medical guidelines","To reduce the number of cartridges needed"],a:1,f:"If the patient starts twitching or complaining while you're placing bone particles or doing fine work, it disrupts your workflow significantly. Pre-emptive top-ups prevent this."},
+{t:"Injection Zone",q:"How many teeth on either side of the implant site should be numbed?",o:["1 tooth on each side","2–3 teeth on each side","Only the two adjacent teeth","The entire quadrant"],a:1,f:"Numb at least 2–3 teeth either side. The flap extends nerve endings, so pain and bleeding can originate from a distance."},
+{t:"Palatal Numbing",q:"How much anaesthetic should be deposited into the palate for implant surgery?",o:["A couple of drops until blanching appears","At least 0.5–1 ml (about half a cartridge)","A full cartridge","No palatal numbing is needed"],a:1,f:"The palatal mucosa is extremely thick and well-vascularised. Two drops aren't enough for surgery — at least half a cartridge is needed, injected slowly and progressively."},
+{t:"Palatal Numbing",q:"What complication can result from aggressive palatal injection technique?",o:["Permanent numbness","Soft tissue necrosis from excessive compression","Bone resorption","Allergic reaction"],a:1,f:"The compression put into the palatal surface can cause degradation and even necrosis of the soft tissue. Always inject slowly, step by step."},
+{t:"Palatal Numbing",q:"Why does extra palatal numbing also help control bleeding during surgery?",o:["It thickens the palatal mucosa","The vasoconstriction from adrenaline buys time if a palatal artery is nicked","It reduces blood flow to the entire maxilla","It prevents blood clot formation"],a:1,f:"The palate is extremely well-vascularised. Extra numbing with adrenaline-containing solution provides vasoconstriction that helps control bleeding if you nick a palatal artery."},
+{t:"Cleaning Solutions",q:"What concentration of chlorhexidine does Clinisept contain?",o:["0.02%","0.2%","2.0%","0.5%"],a:1,f:"Clinisept contains approximately 0.2% chlorhexidine and is proven safe for facial use, even for people with minor allergies."},
+{t:"Cleaning Solutions",q:"What should you do if a patient reports a chlorhexidine allergy?",o:["Use a lower concentration of chlorhexidine","Use an alternative antiseptic solution","Proceed without any antiseptic","Cancel the surgery"],a:1,f:"You must source an alternative cleaning solution. Always check allergies in the medical history before surgery."},
+{t:"Cleaning Solutions",q:"What is the primary purpose of the cleaning solution during implant surgery?",o:["Removing dental plaque","Disinfecting cartridges and the patient's face","Irrigating the osteotomy","Cleaning instruments"],a:1,f:"The solution is used for disinfecting anaesthetic cartridges before use and for antiseptic preparation of the patient's facial area."},
+{t:"Team Setup",q:"What is the minimum number of team members required for implant surgery (excluding the patient)?",o:["2 — surgeon and nurse","3 — surgeon, sterile nurse, non-sterile assistant","4 — surgeon, two nurses, receptionist","1 — just the surgeon"],a:1,f:"Minimum: surgeon + sterile nurse + non-sterile assistant. Each has a critical, non-overlapping role."},
+{t:"Team Setup",q:"The sterile nurse should retract for whose benefit?",o:["Their own — so they can see what's happening","The patient's — for their comfort","The surgeon's — so the surgeon can see","The non-sterile assistant's viewing angle"],a:2,f:"The sterile nurse retracts for the SURGEON's visualisation, not their own. If they retract for their own view, it can compromise the surgeon's field — a crucial distinction that must be trained."},
+{t:"Team Setup",q:"Why must the non-sterile assistant stay in the room at all times?",o:["They handle scheduling","They open supplies, take photos, record notes, and provide 360° eyes","They monitor the patient's vital signs","They control the surgical motor"],a:1,f:"The non-sterile assistant opens supplies, takes clinical photos, records measurements, and serves as extra eyes from angles the surgeon can't see. Don't let them leave!"},
+{t:"Photography",q:"What is the minimum number of photographs recommended per implant surgery?",o:["1–2 photos","3–6 photos","10–15 photos","No standard exists"],a:1,f:"Minimum 3–6 photos per surgery covering key stages: flap, bone exposure, osteotomy, placement, grafting, closure. More is always better."},
+{t:"Photography",q:"What are the THREE purposes of surgical photography?",o:["Marketing, social media, patient records","Medico-legal documentation, self-improvement, patient communication","Insurance claims, publication, teaching","Before/after only for the patient file"],a:1,f:"(1) Medico-legal — implant cases are first scrutinised. (2) Self-improvement — see what you did right and wrong. (3) Patient communication — patients increasingly want to see what was done."},
+{t:"TM Value",q:"What does 'TM' stand for in the context of implant company support?",o:["Technical Manual","Territory Manager","Treatment Moderator","Tissue Management"],a:1,f:"The Territory Manager from your implant company provides expert support, guidance with the system, and adds credibility especially in your first few cases."},
+{t:"Bone Sounding",q:"Bone sounding measures the distance between which two landmarks?",o:["Bone crest and adjacent tooth","Mucosal margin and the level of the bone","Implant platform and opposing tooth","CEJ and bone crest"],a:1,f:"Bone sounding measures from the mucosal margin to the bone level — this tells you soft tissue thickness and its relationship to bony support."},
+{t:"Bone Sounding",q:"What bone sounding measurement indicates sufficient blood supply for tissue reattachment?",o:["1 mm","2 mm","3 mm","5 mm"],a:2,f:"≈3 mm means sufficient blood supply from the periosteum for the soft tissue to reattach after flap elevation. ≥4 mm suggests a pseudo-connection with risk of biological width re-establishment."},
+{t:"Bone Sounding",q:"How many measurements should be recorded per tooth site?",o:["1 — mid-crestal only","2 — mesial and distal","3 — mesial, mid-crestal, and distal","4 — mesial, mid-buccal, distal, mid-palatal"],a:2,f:"Record three measurements per site: mesial, mid-crestal, and distal. The non-sterile assistant should write these immediately."},
+{t:"Bone Sounding",q:"What famous saying summarises the relationship between bone and soft tissue?",o:["Bone is king, soft tissue follows","The bone sets the tone, the soft tissue is the issue","Hard tissue leads, soft tissue follows","Where bone goes, gum flows"],a:1,f:"'The bone sets the tone, the soft tissue is the issue.' Soft tissue behaviour follows bone architecture — respect and preserve bone at every stage."},
+{t:"Flap Design",q:"What happens if you don't extend a full envelope flap to one extra tooth unit?",o:["The flap will be too thick to suture","The incision won't reach the bone","The flap will tear as soon as you begin reflecting","There will be excessive bleeding"],a:2,f:"If you stop the flap incision right at the boundary teeth, the flap will tear upon reflection. Always extend to one extra unit for safety."},
+{t:"Flap Design",q:"What is a semi-envelope flap?",o:["A flap with two vertical releasing incisions","An intrasulcular incision without a vertical releasing incision","A flap that only covers half the surgical site","A palatal-only flap design"],a:1,f:"A semi-envelope goes intrasulcular around adjacent teeth but does not involve a vertical releasing incision. It provides access with less invasiveness."},
+{t:"T Concept",q:"The T concept determines which aspect of implant positioning?",o:["Bucco-lingual angulation only","Mesio-distal width only","Corono-apical position based on the future CEJ","The drilling sequence order"],a:2,f:"The T concept uses the future cemento-enamel junction to establish the corono-apical depth (horizontal line at CEJ−3mm) and the midline of the future tooth (vertical line)."},
+{t:"T Concept",q:"How far below the future CEJ should the horizontal line of the T be placed?",o:["1 mm","2 mm","3 mm (up to 4 mm)","5 mm"],a:2,f:"According to biological width principles, the horizontal line is placed approximately 3 mm (up to 4 mm) below where the future CEJ will be."},
+{t:"Pilot/Co-Pilot",q:"In the pilot/co-pilot system, the surgeon (pilot) controls which dimension?",o:["Bucco-lingual angulation","Corono-apical depth","Mesio-distal positioning","All three dimensions simultaneously"],a:2,f:"The pilot (surgeon) controls mesio-distal positioning from their top-down view. The co-pilot (assistant) controls bucco-lingual angulation from their lateral vantage point."},
+{t:"Pilot/Co-Pilot",q:"Why can't the surgeon adequately assess bucco-lingual angulation alone?",o:["The surgical drapes block the view","The surgeon looks from above — they can't see the tilt towards cheek or tongue","The lights create shadows","The suction tube is in the way"],a:1,f:"Looking from above, the surgeon can see left-right (mesio-distal) but cannot see the tilt towards cheek or tongue (bucco-lingual). The co-pilot has a lateral view and provides real-time feedback."}
+];
+let correct=0,wrong=0,answered=0;
+const con=document.getElementById('container');
+function render(){
+  let h='<div class="score-bar"><div><div class="score-label">Score</div><div class="score-big" id="scoreBig">0/30</div></div><div><div class="score-label">Percentage</div><div class="score-pct" id="scorePct">—</div></div></div>';
+  Q.forEach((q,i)=>{
+    h+=`<div class="q-card" id="qc${i}"><div class="q-num">Question ${i+1}</div><div class="q-topic">${q.t}</div><div class="q-text">${q.q}</div><div class="opts" id="opts${i}">`;
+    const letters='ABCD';
+    q.o.forEach((o,j)=>{h+=`<div class="opt" data-q="${i}" data-o="${j}" onclick="pick(${i},${j})"><span class="letter">${letters[j]}</span><span>${o}</span></div>`});
+    h+=`</div><div class="feedback fb-correct" id="fb${i}c">✓ Correct! ${q.f}</div><div class="feedback fb-wrong" id="fb${i}w">✗ Incorrect. ${q.f}</div></div>`;
+  });
+  h+=`<div class="result-box" id="result"><h2>Quiz Complete!</h2><div class="pct" id="finalPct"></div><div class="msg" id="finalMsg"></div><button class="retry-btn" onclick="location.reload()">Retry Quiz</button></div>`;
+  con.innerHTML=h;
+}
+function pick(qi,oi){
+  const card=document.getElementById('qc'+qi);
+  if(card.classList.contains('answered'))return;
+  card.classList.add('answered');
+  const isCorrect=oi===Q[qi].a;
+  const opts=document.querySelectorAll(`[data-q="${qi}"]`);
+  opts.forEach(o=>{
+    o.classList.add('locked');
+    const idx=parseInt(o.dataset.o);
+    if(idx===Q[qi].a)o.classList.add('correct');
+    else if(idx===oi&&!isCorrect)o.classList.add('wrong');
+    if(idx!==Q[qi].a&&idx!==oi)o.classList.add('dimmed');
+  });
+  if(isCorrect){correct++;card.classList.add('correct-card');document.getElementById('fb'+qi+'c').classList.add('show')}
+  else{wrong++;card.classList.add('wrong-card');document.getElementById('fb'+qi+'w').classList.add('show')}
+  answered++;
+  document.getElementById('scoreBig').textContent=correct+'/30';
+  document.getElementById('scorePct').textContent=Math.round(correct/answered*100)+'%';
+  document.getElementById('cStat').textContent='✓ '+correct;
+  document.getElementById('wStat').textContent='✗ '+wrong;
+  document.getElementById('aStat').textContent=answered+'/30';
+  document.getElementById('progress').style.width=(answered/30*100)+'%';
+  if(answered===30){
+    const r=document.getElementById('result');r.classList.add('show');
+    const pct=Math.round(correct/30*100);
+    document.getElementById('finalPct').textContent=pct+'%';
+    let msg=pct>=90?'Outstanding! You have an excellent grasp of anaesthesia and patient preparation.':pct>=70?'Good work! Review the topics you missed and you\'ll be ready for clinical practice.':pct>=50?'Decent foundation. Revisit the lecture slides on the topics you found challenging.':'Keep studying! Go through Lecture 1 again and focus on the areas you struggled with.';
+    document.getElementById('finalMsg').textContent=msg+` You got ${correct} out of 30 correct.`;
+  }
+}
+render();
+</script>
+</body>
+</html>

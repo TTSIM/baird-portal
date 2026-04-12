@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module 2 · Day 1 · Lecture 1 — Patient Selection &amp; Stabilisation (Part 1)</title>
+<style>
+:root{
+  --bg:#0b1120; --bg2:#111a2e; --panel:#152038; --panel2:#1c2a48;
+  --ink:#e6edf7; --muted:#9fb1cf; --accent:#5ee0c1; --accent2:#7ab8ff;
+  --warn:#ffb86b; --bad:#ff6b8a; --good:#5ee0c1;
+  --border:#26365a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;line-height:1.55}
+header.bar{position:sticky;top:0;z-index:50;background:rgba(11,17,32,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.bar h1{font-size:14px;margin:0;font-weight:600;color:var(--accent)}
+.bar h1 span{color:var(--muted);font-weight:400}
+.controls{display:flex;gap:8px;align-items:center}
+.btn{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+.btn:hover{background:var(--accent);color:#0b1120}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.counter{color:var(--muted);font-size:13px;min-width:70px;text-align:center}
+.progress{height:3px;background:var(--panel);overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+main{max-width:1100px;margin:0 auto;padding:30px 24px 80px}
+.slide{display:none;animation:fade .35s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide h2{font-size:30px;margin:0 0 6px;color:var(--accent);letter-spacing:.2px}
+.slide .num{color:var(--muted);font-size:13px;margin-bottom:18px;text-transform:uppercase;letter-spacing:1.5px}
+.slide h3{color:var(--accent2);margin-top:24px;font-size:18px}
+.slide p{color:var(--ink);font-size:16px}
+.card{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:14px;padding:24px;margin:18px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.pill{display:inline-block;background:var(--panel2);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--border);margin:2px}
+.tag-good{background:#0e3a2e;color:var(--good);border-color:#1f6b54}
+.tag-warn{background:#3a2a0e;color:var(--warn);border-color:#6b531f}
+.tag-bad{background:#3a0e1c;color:var(--bad);border-color:#6b1f33}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:10px 14px;border-left:3px solid var(--accent);background:var(--panel);margin:8px 0;border-radius:6px}
+.stat{font-size:42px;font-weight:700;color:var(--accent);line-height:1}
+.stat-label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.flip{perspective:1000px;height:170px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--border)}
+.flip-front{background:linear-gradient(135deg,var(--panel2),var(--panel));text-align:center}
+.flip-front .icon{font-size:34px;margin-bottom:8px}
+.flip-front .label{font-weight:600;color:var(--accent2)}
+.flip-front .hint{font-size:11px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+.flip-back{background:linear-gradient(135deg,#13384a,#0e2233);transform:rotateY(180deg);font-size:14px;color:var(--ink)}
+svg.diag{width:100%;height:auto;background:#0a1426;border-radius:10px;border:1px solid var(--border)}
+.callout{background:#13384a;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;margin:14px 0}
+.callout strong{color:var(--accent)}
+.warn-call{background:#3a2a0e;border-left-color:var(--warn)}
+.warn-call strong{color:var(--warn)}
+.click-reveal{background:var(--panel);padding:14px;border-radius:8px;cursor:pointer;border:1px dashed var(--border);margin:8px 0;transition:.2s}
+.click-reveal:hover{border-color:var(--accent)}
+.click-reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--accent)}
+.click-reveal.open .answer{display:block}
+.click-reveal .q{font-weight:600;color:var(--accent2)}
+.click-reveal .q::before{content:"❓ "}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+th{background:var(--panel2);color:var(--accent2)}
+.kbd{background:var(--panel2);border:1px solid var(--border);padding:1px 7px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--accent)}
+footer.foot{text-align:center;color:var(--muted);font-size:12px;padding:20px;border-top:1px solid var(--border);margin-top:40px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:20px}
+.toc-item{background:var(--panel);padding:14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:.2s}
+.toc-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.toc-item .n{color:var(--accent);font-weight:700;font-size:13px}
+.toc-item .t{display:block;margin-top:4px;color:var(--ink);font-size:14px}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--panel2);border:1px solid var(--border);padding:6px 14px;border-radius:999px;font-size:13px}
+.portal-back:hover{background:var(--accent);color:#0b1120}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Module 2 · Day 1 · Lecture 1 <span>— Patient Selection &amp; Treatment Planning Foundations</span></h1>
+  <div class="controls">
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <button class="btn" id="prev">← Prev</button>
+    <span class="counter" id="counter">1 / 1</span>
+    <button class="btn" id="next">Next →</button>
+  </div>
+</header>
+<div class="progress"><div class="progress-bar" id="pbar" style="width:0"></div></div>
+
+<main id="deck">
+
+<!-- SLIDE 1: TITLE -->
+<section class="slide active">
+  <div class="num">Slide 1 · Welcome</div>
+  <h2>Patient Selection &amp; Treatment Planning for Implant Dentistry</h2>
+  <div class="card">
+    <p style="font-size:18px;color:var(--accent2)">Lecturer: <strong>Dr Sarah Jawad</strong> — Consultant in Restorative Dentistry, Guy's &amp; St Thomas' NHS Foundation Trust / King's College London</p>
+    <p>This first lecture lays the strategic foundation for every implant case. Before any drill touches bone, we have to know who the patient is, what they want, what they expect, what they can tolerate medically and behaviourally, and where the teeth ultimately need to be. <em>The teeth drive the implants — never the other way around.</em></p>
+    <div class="grid3" style="margin-top:20px">
+      <div class="pill tag-good">Outcomes &amp; quality of life</div>
+      <div class="pill tag-good">Expectations &amp; communication</div>
+      <div class="pill tag-good">Medical &amp; social history</div>
+      <div class="pill tag-good">Smoking, alcohol, drugs</div>
+      <div class="pill tag-good">The edentulous patient</div>
+      <div class="pill tag-good">Reference points &amp; planning</div>
+    </div>
+  </div>
+  <h3>Lecture roadmap</h3>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="goto(2)"><span class="n">02</span><span class="t">What does "success" actually mean?</span></div>
+    <div class="toc-item" onclick="goto(3)"><span class="n">03</span><span class="t">Five categories of outcome</span></div>
+    <div class="toc-item" onclick="goto(4)"><span class="n">04</span><span class="t">Tooth loss &amp; quality of life</span></div>
+    <div class="toc-item" onclick="goto(5)"><span class="n">05</span><span class="t">Removable vs fixed prosthesis</span></div>
+    <div class="toc-item" onclick="goto(6)"><span class="n">06</span><span class="t">Listening to the complaint</span></div>
+    <div class="toc-item" onclick="goto(7)"><span class="n">07</span><span class="t">Building rapport</span></div>
+    <div class="toc-item" onclick="goto(8)"><span class="n">08</span><span class="t">Setting expectations</span></div>
+    <div class="toc-item" onclick="goto(9)"><span class="n">09</span><span class="t">Perceived value of dentistry</span></div>
+    <div class="toc-item" onclick="goto(10)"><span class="n">10</span><span class="t">Where expectations come from</span></div>
+    <div class="toc-item" onclick="goto(11)"><span class="n">11</span><span class="t">Medical history red flags</span></div>
+    <div class="toc-item" onclick="goto(12)"><span class="n">12</span><span class="t">ASA classification</span></div>
+    <div class="toc-item" onclick="goto(13)"><span class="n">13</span><span class="t">Smoking — the evidence</span></div>
+    <div class="toc-item" onclick="goto(14)"><span class="n">14</span><span class="t">Vaping, shisha &amp; smokeless</span></div>
+    <div class="toc-item" onclick="goto(15)"><span class="n">15</span><span class="t">Alcohol &amp; bone</span></div>
+    <div class="toc-item" onclick="goto(16)"><span class="n">16</span><span class="t">NHS eligibility for implants</span></div>
+    <div class="toc-item" onclick="goto(17)"><span class="n">17</span><span class="t">The three patient archetypes</span></div>
+    <div class="toc-item" onclick="goto(18)"><span class="n">18</span><span class="t">The edentulous patient</span></div>
+    <div class="toc-item" onclick="goto(19)"><span class="n">19</span><span class="t">Why we need a denture first</span></div>
+    <div class="toc-item" onclick="goto(20)"><span class="n">20</span><span class="t">The flange try-in test</span></div>
+    <div class="toc-item" onclick="goto(21)"><span class="n">21</span><span class="t">Fixed vs removable on implants</span></div>
+    <div class="toc-item" onclick="goto(22)"><span class="n">22</span><span class="t">The "stable patient" principle</span></div>
+    <div class="toc-item" onclick="goto(23)"><span class="n">23</span><span class="t">Predicting tooth loss</span></div>
+    <div class="toc-item" onclick="goto(24)"><span class="n">24</span><span class="t">Knowledge check</span></div>
+    <div class="toc-item" onclick="goto(25)"><span class="n">25</span><span class="t">Take-home messages</span></div>
+  </div>
+</section>
+
+<!-- SLIDE 2 -->
+<section class="slide">
+  <div class="num">Slide 2 · Defining success</div>
+  <h2>What does "success" mean in implant dentistry?</h2>
+  <div class="card">
+    <p>Ask three different people — surgeon, restorative dentist, patient — and you will get three different answers. Most academic papers report <em>survival</em>, which simply means the implant is still in the mouth. That is not the same as a happy patient with a working tooth.</p>
+    <div class="callout">
+      <strong>Key insight:</strong> "Survival" includes implants with pus draining around them and bone disappearing. We need a richer language than "still there".
+    </div>
+  </div>
+  <h3>Click each card to flip it</h3>
+  <div class="grid3">
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">🔬</div><div class="label">Cellular</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">Biointegration of the implant with bone at the histological level — osseointegration in the truest sense.</div>
+      </div>
+    </div>
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">🩻</div><div class="label">Radiographic</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">Stable marginal bone levels on serial radiographs — classically less than 0.2 mm bone loss per year after the first year.</div>
+      </div>
+    </div>
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">🦷</div><div class="label">Clinical</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">No mobility, no suppuration, no pain, healthy peri-implant tissues, restoration in function.</div>
+      </div>
+    </div>
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">⚙️</div><div class="label">Prosthesis</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">The crown, bridge or denture is intact — no fractured porcelain, loose screws or worn attachments.</div>
+      </div>
+    </div>
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">😀</div><div class="label">Quality of life</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">The patient can eat, speak, smile and live without the prosthesis being on their mind. <em>This is what patients actually care about.</em></div>
+      </div>
+    </div>
+    <div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-face flip-front"><div class="icon">🔄</div><div class="label">Two viewpoints</div><div class="hint">Tap</div></div>
+        <div class="flip-face flip-back">Clinicians read this list bottom-up (cellular first). Patients read it top-down (quality of life first). Both are valid — we must speak both languages.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 -->
+<section class="slide">
+  <div class="num">Slide 3 · The outcome hierarchy</div>
+  <h2>Five tiers of outcome — and who cares about each</h2>
+  <svg class="diag" viewBox="0 0 700 360">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5ee0c1"/><stop offset="1" stop-color="#7ab8ff"/></linearGradient>
+    </defs>
+    <text x="350" y="28" fill="#9fb1cf" font-size="14" text-anchor="middle">Hierarchy of implant outcomes</text>
+    <g font-family="sans-serif">
+      <rect x="60" y="50" width="580" height="44" rx="6" fill="#152038" stroke="#26365a"/>
+      <text x="80" y="78" fill="#5ee0c1" font-size="16" font-weight="600">😀 Quality of Life</text>
+      <text x="620" y="78" fill="#9fb1cf" font-size="12" text-anchor="end">← Patients care most</text>
+
+      <rect x="60" y="104" width="580" height="44" rx="6" fill="#152038" stroke="#26365a"/>
+      <text x="80" y="132" fill="#7ab8ff" font-size="16" font-weight="600">⚙️ Prosthesis function</text>
+
+      <rect x="60" y="158" width="580" height="44" rx="6" fill="#152038" stroke="#26365a"/>
+      <text x="80" y="186" fill="#7ab8ff" font-size="16" font-weight="600">🦷 Clinical examination</text>
+
+      <rect x="60" y="212" width="580" height="44" rx="6" fill="#152038" stroke="#26365a"/>
+      <text x="80" y="240" fill="#7ab8ff" font-size="16" font-weight="600">🩻 Radiographic stability</text>
+
+      <rect x="60" y="266" width="580" height="44" rx="6" fill="#152038" stroke="#26365a"/>
+      <text x="80" y="294" fill="#5ee0c1" font-size="16" font-weight="600">🔬 Cellular integration</text>
+      <text x="620" y="294" fill="#9fb1cf" font-size="12" text-anchor="end">← Clinicians read here first</text>
+    </g>
+    <line x1="30" y1="50" x2="30" y2="310" stroke="url(#g1)" stroke-width="4" stroke-linecap="round"/>
+    <text x="20" y="180" fill="#9fb1cf" font-size="11" transform="rotate(-90,20,180)" text-anchor="middle">PATIENT-CENTRED ↔ CLINICIAN-CENTRED</text>
+  </svg>
+  <div class="callout">
+    <strong>Lesson:</strong> When we describe results to patients, lead with the top of the pyramid — "you'll be able to chew comfortably and smile confidently." They do not care about peri-implant bone levels until something goes wrong.
+  </div>
+</section>
+
+<!-- SLIDE 4 -->
+<section class="slide">
+  <div class="num">Slide 4 · The human cost of tooth loss</div>
+  <h2>Tooth loss &amp; quality of life</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">What we know</h3>
+      <ul class="clean">
+        <li>Tooth loss is consistently linked to reduced oral health-related quality of life.</li>
+        <li>Impairment <strong>worsens with the extent and severity</strong> of tooth loss.</li>
+        <li>Location matters: losing a wisdom tooth barely registers; losing an upper central incisor is devastating.</li>
+        <li>Patients seeking implants report improved QoL <em>after</em> placement — largely because expectations were met.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">The trauma of extraction</h3>
+      <p>Almost every gap your implant patient presents with represents a previous loss event — and an emotional one. Imagine being told <em>right now</em> that your lower six is coming out. You would be upset before, during and after.</p>
+      <div class="callout warn-call">
+        <strong>Take-home:</strong> If you take only one thing from this lecture: <em>there is no replacement for a natural tooth.</em> An implant comes close — but it is not the same.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 -->
+<section class="slide">
+  <div class="num">Slide 5 · Removable vs fixed</div>
+  <h2>Does our treatment actually restore quality of life?</h2>
+  <div class="card">
+    <svg class="diag" viewBox="0 0 700 280">
+      <text x="350" y="24" fill="#9fb1cf" font-size="13" text-anchor="middle">Quality of life vs prosthetic option (schematic)</text>
+      <line x1="60" y1="240" x2="660" y2="240" stroke="#26365a" stroke-width="2"/>
+      <line x1="60" y1="60" x2="60" y2="240" stroke="#26365a" stroke-width="2"/>
+      <text x="50" y="65" fill="#9fb1cf" font-size="11" text-anchor="end">High</text>
+      <text x="50" y="245" fill="#9fb1cf" font-size="11" text-anchor="end">Low</text>
+      <text x="30" y="150" fill="#9fb1cf" font-size="11" transform="rotate(-90,30,150)" text-anchor="middle">QoL</text>
+
+      <!-- bars -->
+      <rect x="100" y="70" width="80" height="170" fill="#5ee0c1" rx="4"/>
+      <text x="140" y="260" fill="#e6edf7" font-size="12" text-anchor="middle">Natural teeth</text>
+
+      <rect x="200" y="100" width="80" height="140" fill="#7ab8ff" rx="4"/>
+      <text x="240" y="260" fill="#e6edf7" font-size="12" text-anchor="middle">Fixed implant</text>
+
+      <rect x="300" y="120" width="80" height="120" fill="#7ab8ff" opacity=".7" rx="4"/>
+      <text x="340" y="260" fill="#e6edf7" font-size="12" text-anchor="middle">Implant overdenture</text>
+
+      <rect x="400" y="160" width="80" height="80" fill="#ffb86b" rx="4"/>
+      <text x="440" y="260" fill="#e6edf7" font-size="12" text-anchor="middle">Fixed bridge</text>
+
+      <rect x="500" y="190" width="80" height="50" fill="#ff6b8a" opacity=".8" rx="4"/>
+      <text x="540" y="260" fill="#e6edf7" font-size="12" text-anchor="middle">Removable denture</text>
+
+      <text x="350" y="50" fill="#5ee0c1" font-size="11" text-anchor="middle">— You never get back to baseline —</text>
+    </svg>
+  </div>
+  <div class="grid2">
+    <div class="callout">
+      <strong>Removable prostheses:</strong> Around <strong>30–50% are not worn</strong>. They are only worn when they offer a clear aesthetic or functional gain. A poorly tolerated denture can actually <em>worsen</em> QoL.
+    </div>
+    <div class="callout">
+      <strong>Fixed prostheses:</strong> Improve QoL meaningfully — but never return the patient to the level of an intact natural dentition. Acceptance &amp; adaptation are what convert a denture into "theirs".
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 -->
+<section class="slide">
+  <div class="num">Slide 6 · The first conversation</div>
+  <h2>Listen to the complaint — really listen</h2>
+  <div class="card">
+    <p>Nothing has changed since dental school: presenting complaint → history → dental history → motivation → expectations. The structure is the same. The depth is what changes when you are planning implants.</p>
+    <h3>Six questions that change everything</h3>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">Why are you here today, in your own words?</div>
+      <div class="answer">Tells you the patient's chief concern — not the gap you can see, but the problem they feel. A patient who says "I can't smile in photos any more" is a different patient from one who says "I can't chew on the right side."</div>
+    </div>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">Why now? What changed?</div>
+      <div class="answer">Reveals the trigger — a new partner, a job, a wedding, a denture finally giving up. The trigger often dictates the timeline and the emotional stakes.</div>
+    </div>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">What have you been told about implants already?</div>
+      <div class="answer">Surfaces social-media myths, neighbour anecdotes and prior consultations you will have to gently re-set.</div>
+    </div>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">What does success look like to you?</div>
+      <div class="answer">If their answer is "perfect Hollywood teeth in two weeks", you know you have an expectations problem before you have a clinical problem.</div>
+    </div>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">What would make you walk away unhappy?</div>
+      <div class="answer">A more powerful question than the previous one — it surfaces deal-breakers (cost, time, multiple visits, dentures during healing).</div>
+    </div>
+    <div class="click-reveal" onclick="this.classList.toggle('open')">
+      <div class="q">Who else is involved in this decision?</div>
+      <div class="answer">Spouse, parent, employer — the people whose opinions will shape the patient's eventual satisfaction.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 -->
+<section class="slide">
+  <div class="num">Slide 7 · Rapport</div>
+  <h2>Building rapport — the under-rated clinical skill</h2>
+  <div class="card">
+    <p>Rapport is not the same as being friendly. It is the deliberate calibration of how you speak to <em>this</em> particular human in front of you. Two patients with the identical clinical picture may need wildly different communication styles.</p>
+    <div class="grid2">
+      <div>
+        <h3>Calibrating to the person</h3>
+        <ul class="clean">
+          <li>Match their vocabulary — don't say "edentulous" to a builder, don't say "no teeth" to a barrister.</li>
+          <li>Mirror their pace — anxious patients need slower delivery and more checking-in.</li>
+          <li>Use their words back to them: if they call it "the wobbly one", that is what you call it.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Why it matters for outcomes</h3>
+        <ul class="clean">
+          <li>Patients who feel heard accept longer, staged plans.</li>
+          <li>Trust early = fewer complaints late.</li>
+          <li>Rapport is the single biggest predictor of <em>perceived</em> success — independent of the radiographs.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8 -->
+<section class="slide">
+  <div class="num">Slide 8 · Expectations</div>
+  <h2>Setting expectations before any treatment is offered</h2>
+  <div class="card">
+    <p>An expectation, once formed, is very hard to revise downward. If a patient walks in believing implants are quick, painless and permanent, the work of unpicking that belief has to happen at the consultation — not at the cementation.</p>
+    <h3>The spectrum of expectations</h3>
+    <svg class="diag" viewBox="0 0 700 160">
+      <line x1="60" y1="80" x2="640" y2="80" stroke="#26365a" stroke-width="3"/>
+      <circle cx="100" cy="80" r="10" fill="#ff6b8a"/>
+      <text x="100" y="115" fill="#ff6b8a" font-size="12" text-anchor="middle">Unrealistic low</text>
+      <text x="100" y="55" fill="#9fb1cf" font-size="10" text-anchor="middle">"It'll never work"</text>
+
+      <circle cx="350" cy="80" r="14" fill="#5ee0c1"/>
+      <text x="350" y="115" fill="#5ee0c1" font-size="12" text-anchor="middle">Realistic — TREAT</text>
+      <text x="350" y="55" fill="#9fb1cf" font-size="10" text-anchor="middle">"Improvement, not perfection"</text>
+
+      <circle cx="600" cy="80" r="10" fill="#ffb86b"/>
+      <text x="600" y="115" fill="#ffb86b" font-size="12" text-anchor="middle">Unrealistic high</text>
+      <text x="600" y="55" fill="#9fb1cf" font-size="10" text-anchor="middle">"Hollywood smile"</text>
+
+      <text x="350" y="145" fill="#9fb1cf" font-size="11" text-anchor="middle">Treat the middle — refuse or re-educate the extremes</text>
+    </svg>
+    <div class="callout warn-call">
+      <strong>Red flag:</strong> "I just know you can do it" — when the patient is more confident in you than you are in yourself. They will swing 180° when something goes wrong.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9 -->
+<section class="slide">
+  <div class="num">Slide 9 · Perceived value</div>
+  <h2>"Why is dentistry so expensive?"</h2>
+  <div class="card">
+    <p>Patients will spend thousands on cars, holidays, kitchens, glasses and clothes without flinching — but flinch at a four-figure restorative quote. The honest answer is that dentistry suffers from a perception problem, not an actual value problem.</p>
+    <div class="grid2">
+      <div>
+        <h3>What we are actually selling</h3>
+        <ul class="clean">
+          <li>Years of training and ongoing CPD.</li>
+          <li>Strict regulation, GDC oversight and liability.</li>
+          <li>Sterile environments, materials science, lab work.</li>
+          <li>Time, attention and continuity of care.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>How to frame value</h3>
+        <ul class="clean">
+          <li>Compare to other regulated professions, not to entertainment spend.</li>
+          <li>Itemise the plan so the patient sees what each fee buys.</li>
+          <li>Be transparent about why "Turkey teeth" carry hidden costs.</li>
+          <li>Talk about the cost of <em>failure</em> — not just the cost of treatment.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10 -->
+<section class="slide">
+  <div class="num">Slide 10 · Sources of expectation</div>
+  <h2>Where do patients get their ideas from?</h2>
+  <div class="grid3">
+    <div class="card"><h3 style="margin-top:0">📱 Social media</h3><p>TikTok, Instagram and YouTube show finished cases at six weeks — never the failures, never the maintenance. Patients arrive expecting that timeline.</p></div>
+    <div class="card"><h3 style="margin-top:0">👥 Anecdote</h3><p>"My neighbour had hers done in a day." Single-case reports from non-clinicians become the patient's evidence base.</p></div>
+    <div class="card"><h3 style="margin-top:0">✈️ Dental tourism</h3><p>Glossy clinics in Turkey, Hungary and beyond promise full-mouth rehabilitations in a week. The cost is real; so are the failures we see returning.</p></div>
+    <div class="card"><h3 style="margin-top:0">📰 Old textbooks</h3><p>Some patients quote success rates from papers that are 20 years out of date. Numbers without context can be more dangerous than no numbers at all.</p></div>
+    <div class="card"><h3 style="margin-top:0">🏥 Previous clinicians</h3><p>A previous consult may have over-promised or under-delivered. You may be inheriting an expectation you didn't create.</p></div>
+    <div class="card"><h3 style="margin-top:0">🎯 Their own desire</h3><p>The most powerful source of all. Patients hear what they want to hear. Repeat key information back at the next visit.</p></div>
+  </div>
+</section>
+
+<!-- SLIDE 11 -->
+<section class="slide">
+  <div class="num">Slide 11 · Medical history</div>
+  <h2>Red flags &amp; relevant systems review</h2>
+  <div class="card">
+    <p>A useful framework is to ask three questions about every medical condition:</p>
+    <ul class="clean">
+      <li><strong>Will this affect the management of the patient?</strong> (Will they collapse in the chair? Cardiovascular risk, ASA grade.)</li>
+      <li><strong>Will this affect implant placement?</strong> (Bleeding tendency, anticoagulants, immune compromise.)</li>
+      <li><strong>Will this affect implant survival?</strong> (Diabetes, radiotherapy, bisphosphonates, antidepressants, PPIs.)</li>
+    </ul>
+    <div class="callout warn-call">
+      <strong>The red flags paper:</strong> A useful summary exists in the literature listing the conditions clinicians should slow down for. Photograph the abstract — you will refer back to it.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12 -->
+<section class="slide">
+  <div class="num">Slide 12 · ASA classification</div>
+  <h2>Knowing your ASA grades</h2>
+  <table>
+    <tr><th>Grade</th><th>Definition</th><th>Implant suitability</th></tr>
+    <tr><td><strong>ASA I</strong></td><td>A normal healthy patient</td><td><span class="pill tag-good">Routine</span></td></tr>
+    <tr><td><strong>ASA II</strong></td><td>Mild systemic disease (controlled HTN, diabetes, smoker, obesity)</td><td><span class="pill tag-good">Routine with care</span></td></tr>
+    <tr><td><strong>ASA III</strong></td><td>Severe systemic disease that limits activity but is not incapacitating</td><td><span class="pill tag-warn">Case by case — specialist input</span></td></tr>
+    <tr><td><strong>ASA IV</strong></td><td>Severe disease that is a constant threat to life</td><td><span class="pill tag-bad">Generally not suitable</span></td></tr>
+    <tr><td><strong>ASA V</strong></td><td>Moribund — not expected to survive without operation</td><td><span class="pill tag-bad">Not appropriate</span></td></tr>
+  </table>
+  <div class="callout">As a general dental practitioner you will be treating <strong>ASA I and II</strong> with implants. ASA III patients can be considered with caution and clear medical liaison. Beyond that, you are out of your scope.</div>
+</section>
+
+<!-- SLIDE 13 -->
+<section class="slide">
+  <div class="num">Slide 13 · Smoking</div>
+  <h2>Smoking — the dose-dependent killer of implants</h2>
+  <div class="card">
+    <p>Smoking is the most studied — and most under-acted-on — risk factor in implant dentistry. The data is unambiguous and the relationship is dose-dependent.</p>
+    <div class="grid3">
+      <div class="card" style="background:#1c2a48;margin:0">
+        <div class="stat">15.8%</div>
+        <div class="stat-label">Implant failure in smokers (overall)</div>
+      </div>
+      <div class="card" style="background:#1c2a48;margin:0">
+        <div class="stat">10%</div>
+        <div class="stat-label">Failure in light/medium smokers</div>
+      </div>
+      <div class="card" style="background:#1c2a48;margin:0">
+        <div class="stat">30.8%</div>
+        <div class="stat-label">Failure with &gt;20 cigarettes/day</div>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>The NHS rule:</strong> NHS-funded implant treatment requires patients to be <strong>cigarette-free for at least six months</strong>. Limited public resource should not subsidise predictable failure.
+    </div>
+    <div class="callout warn-call">
+      <strong>For private patients:</strong> You cannot refuse, but you must inform. Document the conversation. Document the increased maintenance burden. Document that the patient accepted the risk in writing.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14 -->
+<section class="slide">
+  <div class="num">Slide 14 · Beyond cigarettes</div>
+  <h2>Vaping, shisha, smokeless tobacco — what we know and don't</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">💨 Vaping / e-cigarettes</h3>
+      <p>Increasingly common, especially in younger patients. Periodontal evidence is mounting — vapers respond less well to non-surgical therapy, with more sites &gt;5 mm and more need for surgery. The implant-specific evidence base is still maturing but mechanistic data already shows interleukin patterns similar to tobacco.</p>
+      <span class="pill tag-warn">Treat as smokers until proven otherwise</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🌿 Shisha &amp; hookah</h3>
+      <p>Patients who smoke shisha rarely identify themselves as "smokers". The periodontal harm is well documented; peri-implant data is essentially absent. Ask the question explicitly.</p>
+      <span class="pill tag-warn">Ask, document, counsel</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🚬 Cigars</h3>
+      <p>Less frequent inhalation than cigarettes but high local exposure. Peri-implant data is sparse. Apply the same caution as for cigarettes.</p>
+      <span class="pill tag-warn">Treat as smokers</span>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🟢 Betel quid &amp; gutka</h3>
+      <p>Common in South Asian populations and frequently combined with tobacco. Strong oral cancer association; peri-implant evidence is essentially absent. Counsel and screen.</p>
+      <span class="pill tag-warn">Counsel + cancer screening</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 15 -->
+<section class="slide">
+  <div class="num">Slide 15 · Alcohol</div>
+  <h2>Alcohol &amp; bone — what the rabbits taught us</h2>
+  <div class="card">
+    <p>A famous experimental study fed dose-dependent alcohol to rabbits and looked at osseointegration. Two findings stood out:</p>
+    <ul class="clean">
+      <li><strong>Liver impact → bleeding tendency</strong> — indirect surgical risk.</li>
+      <li><strong>Direct bone effect</strong> — significantly less bone density and reduced direct bone-to-implant contact in alcoholic rabbits. Polyfluorochrome-labelled bone areas were significantly reduced in the alcohol group compared to controls.</li>
+    </ul>
+    <div class="grid2">
+      <div class="callout"><strong>Mild consumption:</strong> Some studies suggest a paradoxical protective effect against late failures — possibly anti-inflammatory.</div>
+      <div class="callout warn-call"><strong>Heavy consumption:</strong> A roughly <strong>200% increase in long-term failure</strong>. Ask about units per week; do not rely on the patient's self-perception.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 16 -->
+<section class="slide">
+  <div class="num">Slide 16 · NHS eligibility</div>
+  <h2>Who qualifies for NHS implants in the UK?</h2>
+  <div class="card">
+    <p>NHS-funded dental implants are reserved for specific clinical groups. Eligibility is also a "postcode lottery" — different dental hospitals and commissioning groups have slightly different acceptance criteria.</p>
+    <div class="grid2">
+      <div>
+        <h3>Generally eligible</h3>
+        <ul class="clean">
+          <li><strong>Cleft lip and palate</strong> patients — congenital absence and hard-tissue deficits.</li>
+          <li><strong>Head &amp; neck cancer</strong> patients post-surgery / radiotherapy.</li>
+          <li><strong>Hypodontia</strong> — significant developmental absence of teeth.</li>
+          <li><strong>Major trauma</strong> with hard and soft tissue loss.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Generally not eligible</h3>
+        <ul class="clean">
+          <li>Routine adult tooth loss from caries or periodontal disease.</li>
+          <li>Active smokers (six-month cessation rule applies).</li>
+          <li>Aesthetic-only requests without functional indication.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 17 -->
+<section class="slide">
+  <div class="num">Slide 17 · Three patient archetypes</div>
+  <h2>Three groups you will plan very differently</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3 style="margin-top:0">1️⃣ Fully edentulous</h3>
+      <p>No teeth, possibly an existing denture. The challenge is finding <em>reference points</em> for where the new teeth should go. Quality of life is already low — almost any improvement is welcome.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">2️⃣ Partially dentate with gaps</h3>
+      <p>Some teeth, some spaces. The decision is whether to fill the gaps, take more teeth out, or restore existing teeth before filling gaps. Treatment plan is genuinely a choice between several valid options.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">3️⃣ Dentate but failing</h3>
+      <p>All teeth still present, but the dentition is deteriorating — caries, perio, fractures. Stabilisation comes first; restoration comes later. The hardest group to plan because the trajectory is uncertain.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>The unifying principle:</strong> <em>The best implant patient is a stable implant patient.</em> Whichever group your patient is in, the first job is to stabilise — not to drill.
+  </div>
+</section>
+
+<!-- SLIDE 18 -->
+<section class="slide">
+  <div class="num">Slide 18 · The edentulous patient</div>
+  <h2>Planning when there are no teeth left</h2>
+  <div class="card">
+    <p>The fundamental problem with the fully edentulous patient is that there is no anatomical reference for where the new teeth should sit. Without a denture, the bone is <em>not</em> a reliable guide. Drill where the bone is best and you may end up with teeth in the wrong place — facially unsupported, prosthetically uncleansable, phonetically distorted.</p>
+    <svg class="diag" viewBox="0 0 700 240">
+      <text x="350" y="22" fill="#9fb1cf" font-size="13" text-anchor="middle">Teeth-driven vs bone-driven planning</text>
+      <!-- bad -->
+      <g transform="translate(40,50)">
+        <text x="140" y="0" fill="#ff6b8a" font-size="13" text-anchor="middle">❌ Bone-driven</text>
+        <ellipse cx="140" cy="100" rx="120" ry="35" fill="#152038" stroke="#26365a"/>
+        <rect x="80" y="55" width="12" height="35" fill="#ff6b8a"/>
+        <rect x="100" y="55" width="12" height="35" fill="#ff6b8a"/>
+        <rect x="170" y="55" width="12" height="35" fill="#ff6b8a"/>
+        <rect x="190" y="55" width="12" height="35" fill="#ff6b8a"/>
+        <text x="140" y="160" fill="#9fb1cf" font-size="11" text-anchor="middle">Implants placed where bone is — teeth end up unaesthetic, bulky, hard to clean</text>
+      </g>
+      <!-- good -->
+      <g transform="translate(380,50)">
+        <text x="140" y="0" fill="#5ee0c1" font-size="13" text-anchor="middle">✅ Teeth-driven</text>
+        <ellipse cx="140" cy="100" rx="120" ry="35" fill="#152038" stroke="#26365a"/>
+        <rect x="60" y="55" width="14" height="38" fill="#5ee0c1"/>
+        <rect x="100" y="55" width="14" height="38" fill="#5ee0c1"/>
+        <rect x="170" y="55" width="14" height="38" fill="#5ee0c1"/>
+        <rect x="210" y="55" width="14" height="38" fill="#5ee0c1"/>
+        <text x="140" y="160" fill="#9fb1cf" font-size="11" text-anchor="middle">Tooth position planned first — implants placed where they support the prosthesis</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- SLIDE 19 -->
+<section class="slide">
+  <div class="num">Slide 19 · Why we need a denture first</div>
+  <h2>"I'm not here for a denture" — but we need to make one anyway</h2>
+  <div class="card">
+    <p>Patients arriving for implants often resist the idea of a removable temporary stage. The job at consultation is to explain <em>why</em> the denture is not the destination — it is the planning tool.</p>
+    <h3>What the denture gives you</h3>
+    <ul class="clean">
+      <li><strong>AP (antero-posterior) tooth position</strong> — where the incisal edge sits relative to the lip.</li>
+      <li><strong>Vertical dimension</strong> — the OVD that will support the new prosthesis.</li>
+      <li><strong>Horizontal arch form</strong> — symmetry and curvature.</li>
+      <li><strong>Lip support</strong> — how much pink the patient needs underneath the upper lip.</li>
+      <li><strong>Phonetics</strong> — F, V, S sounds depend on incisal edge position and palatal contour.</li>
+      <li><strong>Aesthetic preview</strong> — the patient sees the result before any irreversible step.</li>
+    </ul>
+    <div class="callout"><strong>Practical:</strong> If the patient has an old denture they hate, ask them to bring it. You can either copy it and modify, or rebase the existing one. An old set you no longer wear is gold dust for planning.</div>
+  </div>
+</section>
+
+<!-- SLIDE 20 -->
+<section class="slide">
+  <div class="num">Slide 20 · The flange try-in test</div>
+  <h2>The flange-off try-in — preventing aesthetic disaster</h2>
+  <div class="card">
+    <p>This is one of the most useful clinical tests in edentulous planning. The flange of a denture provides facial support that an implant-borne fixed prosthesis cannot recreate. If the patient has been edentulous for years, removing that flange will cause the lip to sink in and the face to age.</p>
+    <h3>The protocol</h3>
+    <ol style="color:var(--ink);line-height:1.9">
+      <li>Copy or duplicate the existing (or new) denture.</li>
+      <li>Trim the labial flange off completely.</li>
+      <li>Try it in. Show the patient in the mirror.</li>
+      <li>Ask: <em>"This is what your face will look like with fixed teeth on implants. Is that acceptable to you?"</em></li>
+    </ol>
+    <div class="grid2">
+      <div class="callout"><strong>Patient happy:</strong> Proceed with planning a fixed implant restoration. Use the duplicated denture as the radiographic and surgical guide.</div>
+      <div class="callout warn-call"><strong>Patient unhappy:</strong> Discuss an implant-retained <em>removable</em> overdenture instead. Pink acrylic in a removable prosthesis can recreate the lip support a fixed bridge cannot.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 21 -->
+<section class="slide">
+  <div class="num">Slide 21 · Fixed vs removable on implants</div>
+  <h2>Choosing between fixed and removable implant prostheses</h2>
+  <table>
+    <tr><th>Factor</th><th>Fixed (e.g. All-on-X bridge)</th><th>Removable overdenture</th></tr>
+    <tr><td>Lip / facial support</td><td>Limited — no flange</td><td>Excellent — pink acrylic flange</td></tr>
+    <tr><td>Patient cleansibility</td><td>Difficult — fixed beneath</td><td>Easy — patient removes daily</td></tr>
+    <tr><td>Long-term maintenance</td><td>Professional removal needed</td><td>Patient self-managed</td></tr>
+    <tr><td>"Feels like teeth"</td><td>Yes</td><td>Less so, but stable</td></tr>
+    <tr><td>Cost</td><td>Higher</td><td>Lower</td></tr>
+    <tr><td>Number of implants</td><td>4–6+ typically</td><td>2–4 typically</td></tr>
+  </table>
+  <div class="callout"><strong>The flip-flop analogy:</strong> A normal denture is like wearing flip-flops on the beach — they slip. An implant-retained overdenture is like flip-flops with velcro — secured to the foot, you can run on the sand. Patients understand this immediately.</div>
+</section>
+
+<!-- SLIDE 22 -->
+<section class="slide">
+  <div class="num">Slide 22 · Stability first</div>
+  <h2>The "stable patient" principle</h2>
+  <div class="card">
+    <p>Before you place a single implant, the patient should be stable. <em>The best implant patient is a stable implant patient.</em> Stabilisation buys you three things:</p>
+    <div class="grid3">
+      <div><div class="stat">⏱</div><div class="stat-label">Time to observe behaviour change</div></div>
+      <div><div class="stat">🦠</div><div class="stat-label">Reduced bacterial reservoirs</div></div>
+      <div><div class="stat">🎯</div><div class="stat-label">Clearer view of true restorability</div></div>
+    </div>
+    <div class="callout">Patients who do not engage with diet, oral hygiene and basic perio control are not going to engage with implant maintenance either. Use the stabilisation phase as a behavioural test as much as a clinical one.</div>
+  </div>
+</section>
+
+<!-- SLIDE 23 -->
+<section class="slide">
+  <div class="num">Slide 23 · Predicting tooth loss</div>
+  <h2>We are not very good at predicting which teeth will be lost</h2>
+  <div class="card">
+    <p>A long-running observation: dentists asked to predict which teeth would be lost over 20+ years are frequently <em>wrong</em>. Teeth they wrote off are still there; teeth they thought would survive have gone. The dominant variable turns out to be <strong>patient factors</strong>: hygiene, diet, engagement and immune response.</p>
+    <div class="grid2">
+      <div class="callout">
+        <strong>Hirschfeld &amp; Wasserman:</strong> 17% of "questionable" teeth in well-maintained patients were eventually lost. In "extreme downhill" patients, almost <em>all</em> questionable teeth were lost. The patient phenotype matters more than the tooth.
+      </div>
+      <div class="callout warn-call">
+        <strong>Implication:</strong> Don't bet the case on a single tooth's prognosis. Stabilise, observe behaviour, then re-treatment-plan with fresh eyes. The patient at six months is not the same patient as the one who walked in.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 24 -->
+<section class="slide">
+  <div class="num">Slide 24 · Knowledge check</div>
+  <h2>Quick self-check</h2>
+  <p style="color:var(--muted)">Tap each card to reveal the answer.</p>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">A patient who smokes 25 cigarettes a day asks about implants. What is the published failure rate range, and what is your conversation?</div>
+    <div class="answer">Around <strong>30%+ failure</strong> at &gt;20/day — roughly double the rate of light smokers. NHS would refuse until 6 months cigarette-free. Privately, you must inform fully, document, and emphasise increased maintenance and risk of late failure. Offer cessation support; some patients quit purely because the implant gave them a reason.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">An edentulous patient hates her denture and demands "fixed teeth like my friend got". What is the very first clinical step?</div>
+    <div class="answer">Make (or copy) a denture, remove the labial flange, try it in, and let her see in a mirror what her face will look like without flange support. If she rejects the look, switch the conversation to an implant-retained removable overdenture rather than a fixed bridge.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Approximately what proportion of removable prostheses are not actually worn by their owners?</div>
+    <div class="answer"><strong>30–50%.</strong> They are only consistently worn when they offer a clear aesthetic or functional gain. This is part of the reason implant-retained options can dramatically improve acceptance.</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">List the three "lenses" through which to assess every medical condition before implant treatment.</div>
+    <div class="answer">(1) Will it affect <strong>management</strong> of the patient (collapse, cardiovascular event)? (2) Will it affect <strong>implant placement</strong> (bleeding, infection)? (3) Will it affect <strong>implant survival</strong> (diabetes, radiotherapy, bisphosphonates, antidepressants)?</div>
+  </div>
+  <div class="click-reveal" onclick="this.classList.toggle('open')">
+    <div class="q">Which patient groups have NHS eligibility for implants in the UK?</div>
+    <div class="answer">Cleft lip/palate, head &amp; neck cancer, hypodontia and major trauma with hard/soft tissue loss. Subject to a regional postcode lottery and not for routine adult tooth loss.</div>
+  </div>
+</section>
+
+<!-- SLIDE 25 -->
+<section class="slide">
+  <div class="num">Slide 25 · Take-home messages</div>
+  <h2>Key take-home messages from Lecture 1</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">🎯 The big ideas</h3>
+      <ul class="clean">
+        <li>There is <strong>no replacement for a natural tooth</strong>.</li>
+        <li>Patients judge by quality of life — not by radiographs.</li>
+        <li><strong>Teeth drive the implants</strong> — never the other way.</li>
+        <li>The best implant patient is a <strong>stable</strong> patient.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🛠 The clinical habits</h3>
+      <ul class="clean">
+        <li>Always do a <strong>flange-off try-in</strong> before promising fixed.</li>
+        <li>Run every medical condition through the <strong>three-lens test</strong>.</li>
+        <li>Document every smoking conversation in writing.</li>
+        <li>Treat the patient — not the gap.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="text-align:center;margin-top:30px">
+    <strong>Coming up in Lecture 2:</strong> The PECOFA stabilisation framework — Periodontal, Endodontic, Coronal, Occlusal, Functional, Aesthetic — and how to actually deliver each stage before the first implant goes in.
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">Module 2 · Day 1 · Lecture 1 — based on the lecture by Dr Sarah Jawad. For educational use only. Not a substitute for clinical judgement or current guidelines.</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+function show(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  document.getElementById('counter').textContent=(i+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=(((i+1)/slides.length)*100)+'%';
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goto(n){show(n-1)}
+document.getElementById('prev').onclick=()=>show(i-1);
+document.getElementById('next').onclick=()=>show(i+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')show(i+1);
+  if(e.key==='ArrowLeft')show(i-1);
+});
+show(0);
+</script>
+</body>
+</html>

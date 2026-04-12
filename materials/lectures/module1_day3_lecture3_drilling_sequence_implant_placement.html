@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3: Drilling Sequence & Implant Placement</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0f14;--surface:#111a24;--surface2:#182230;--card:#14202d;
+--accent:#0ea5e9;--accent2:#38bdf8;--accent-warm:#f59e0b;--accent-green:#10b981;--accent-red:#ef4444;--accent-purple:#8b5cf6;
+--text:#e2e8f0;--text-dim:#94a3b8;--text-bright:#f8fafc;
+--border:#1e293b;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+.app{height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.lecture-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text-bright)}
+.slide-counter{font-size:13px;color:var(--text-dim);font-weight:500}
+.progress-track{height:3px;background:var(--border);width:100%}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;border-radius:0 2px 2px 0}
+.slide-area{flex:1;overflow:hidden;position:relative}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;pointer-events:none;transition:opacity .45s,transform .45s;transform:translateX(60px)}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide-inner{max-width:960px;width:100%;animation:su .5s ease both}
+@keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.nav-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px;background:var(--surface);border-top:1px solid var(--border)}
+.nav-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 24px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.nav-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+.nav-btn:disabled{opacity:.3;pointer-events:none}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .25s}
+.nav-dot.active{background:var(--accent);transform:scale(1.3)}.nav-dot.visited{background:var(--text-dim)}
+.slide-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,42px);color:var(--text-bright);margin-bottom:8px;line-height:1.2}
+.slide-subtitle{font-size:15px;color:var(--accent2);font-weight:500;margin-bottom:28px;letter-spacing:.5px}
+.slide-text{font-size:16px;line-height:1.75;color:var(--text);max-width:720px}
+.slide-text strong{color:var(--text-bright);font-weight:600}
+.title-slide{text-align:center}
+.title-slide .slide-title{font-size:clamp(36px,5vw,56px);margin-bottom:16px}
+.title-slide .slide-subtitle{font-size:18px;margin-bottom:32px}
+.title-meta{font-size:13px;color:var(--text-dim)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:all .3s}
+.card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 30px rgba(14,165,233,.1)}
+.card h3{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+.card p{font-size:13px;color:var(--text-dim);line-height:1.6}
+.card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.quiz-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:20px}
+.quiz-q{font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:18px}
+.quiz-opts{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;font-size:14px;transition:all .25s;display:flex;align-items:center;gap:12px}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.correct{border-color:var(--accent-green);background:rgba(16,185,129,.1);color:var(--accent-green)}
+.quiz-opt.wrong{border-color:var(--accent-red);background:rgba(239,68,68,.08);color:var(--accent-red)}
+.quiz-opt .letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0}
+.quiz-opt.correct .letter{background:var(--accent-green);color:#fff}
+.quiz-opt.wrong .letter{background:var(--accent-red);color:#fff}
+.quiz-feedback{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.6;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent-green)}
+.quiz-feedback.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--accent-red)}
+.diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:16px;overflow-x:auto}
+.diagram-wrap svg{width:100%;max-width:800px;margin:0 auto;display:block}
+.highlight{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.03));border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:18px 22px;margin-top:16px}
+.highlight-title{font-size:13px;font-weight:700;color:var(--accent-warm);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.highlight p{font-size:14px;color:var(--text);line-height:1.7}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+.key-point{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.key-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.key-content h4{font-size:15px;color:var(--text-bright);font-weight:600;margin-bottom:3px}
+.key-content p{font-size:13px;color:var(--text-dim);line-height:1.6}
+.comp-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+.comp-table th{background:var(--surface2);color:var(--accent2);padding:12px 16px;text-align:left;font-weight:600;border-bottom:2px solid var(--accent)}
+.comp-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+.comp-table tr:hover td{background:rgba(14,165,233,.04)}
+.warn-box{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:18px 22px;margin-top:16px}
+.warn-title{font-size:13px;font-weight:700;color:var(--accent-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.warn-box p{font-size:14px;color:var(--text);line-height:1.7}
+.reveal-list{margin-top:16px}
+.reveal-item{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.reveal-header{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:14px;color:var(--text-bright)}
+.reveal-header:hover{color:var(--accent2)}
+.reveal-arrow{transition:transform .3s;color:var(--text-dim)}
+.reveal-item.open .reveal-arrow{transform:rotate(180deg)}
+.reveal-body{max-height:0;overflow:hidden;transition:max-height .4s}
+.reveal-item.open .reveal-body{max-height:500px}
+.reveal-body-inner{padding:0 18px 16px;font-size:13px;color:var(--text-dim);line-height:1.7}
+/* Sequence stepper */
+.seq-stepper{margin-top:16px}
+.seq-step{display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .3s}
+.seq-step:hover{border-color:var(--accent)}
+.seq-step.active-step{border-color:var(--accent);background:rgba(14,165,233,.06);box-shadow:0 0 20px rgba(14,165,233,.08)}
+.seq-num{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--text-dim);flex-shrink:0;transition:all .3s}
+.seq-step.active-step .seq-num{background:var(--accent);border-color:var(--accent);color:#fff}
+.seq-info h4{font-size:14px;color:var(--text-bright);font-weight:600;margin-bottom:2px}
+.seq-info p{font-size:12px;color:var(--text-dim);line-height:1.5}
+.seq-detail{display:none;margin-top:8px;padding:12px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text);line-height:1.6}
+.seq-step.active-step .seq-detail{display:block}
+/* Bone density interactive */
+.bone-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.bone-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .3s}
+.bone-card:hover{transform:translateY(-2px)}
+.bone-card.sel{border-color:var(--accent);box-shadow:0 0 20px rgba(14,165,233,.12)}
+.bone-card h4{font-size:16px;font-weight:700;margin-bottom:4px}
+.bone-card p{font-size:11px;color:var(--text-dim);line-height:1.5}
+.bone-detail{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:12px;min-height:80px;transition:all .3s}
+@media(max-width:600px){.bone-grid{grid-template-columns:repeat(2,1fr)}}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.portal-back:hover{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+      <span class="lecture-badge">Lecture 3</span>
+      <h1>Drilling Sequence & Implant Placement</h1>
+    </div>
+    <span class="slide-counter" id="counter">1 / 30</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  <div class="slide-area" id="slideArea"></div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" onclick="go(-1)">← Prev</button>
+    <div class="nav-dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="go(1)">Next →</button>
+  </div>
+</div>
+<script>
+const slides=[
+`<div class="title-slide">
+  <div class="slide-subtitle">Dental Implant Course — Lecture 3 of 3</div>
+  <div class="slide-title">Drilling Sequence &<br>Implant Placement</div>
+  <p class="title-meta" style="margin-top:24px;max-width:550px;margin-left:auto;margin-right:auto;line-height:1.7">Covering the complete drill kit, lance/pilot/shaping drills, stopper vs laser-banded systems, bone density classification (Lekholm & Zarb), cortical drills, osteotomy preparation, and step-by-step implant placement.</p>
+  <p class="title-meta" style="margin-top:32px;opacity:.5">Use arrow keys or buttons to navigate • 30 slides</p>
+</div>`,
+
+// 1
+`<div>
+  <div class="slide-subtitle">Overview</div>
+  <div class="slide-title">The Drill Kit — Two Systems in One</div>
+  <div class="slide-text">The Blue Diamond kit gives you <strong>two pathways</strong> to prepare the same osteotomy. You can use either exclusively, or mix and match depending on the situation.</div>
+  <div class="two-col" style="margin-top:20px">
+    <div><div class="card" style="border-color:rgba(14,165,233,.3)">
+      <h3 style="color:var(--accent)">Stopper Drills</h3>
+      <p style="margin-top:8px;line-height:1.8">Built-in physical stop that prevents drilling beyond a set depth. Available up to 11.5 mm. Great for safety near sinuses and nerves. Semi-guided approach.</p>
+    </div></div>
+    <div><div class="card" style="border-color:rgba(139,92,246,.3)">
+      <h3 style="color:var(--accent-purple)">Laser-Banded Drills</h3>
+      <p style="margin-top:8px;line-height:1.8">Conventional drills with laser markings at different depths. You control the depth visually. Available for all lengths including 13, 15, and 18 mm. Full flexibility.</p>
+    </div></div>
+  </div>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">💡 No Rules</div><p>Nobody polices which you use. Stoppers for beginners give more confidence with depth control. Laser-banded gives more flexibility. The kit is designed to give you options, not overwhelm you.</p></div>
+</div>`,
+
+// 2 Lance drill
+`<div>
+  <div class="slide-subtitle">Drill 1</div>
+  <div class="slide-title">Lance Drill (Needle / Marking Drill)</div>
+  <div class="slide-text" style="margin-bottom:16px">The <strong>first drill in every sequence</strong>. Three names for the same instrument — remember all three:</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔹 Lance Drill</h3><p>Named for its lance-like pointed shape.</p></div>
+    <div class="card"><h3>🔹 Needle Drill</h3><p>Named for its needle-thin profile.</p></div>
+    <div class="card"><h3>🔹 Marking Drill</h3><p>Named for its purpose — marking the bone.</p></div>
+  </div>
+  <div class="key-point" style="margin-top:20px"><div class="key-num">!</div><div class="key-content"><h4>Depth: 1–2 mm only</h4><p>Just enough to penetrate the cortical bone and create a visible divot. If you can't see the mark, go again. This divot prevents subsequent drills from skidding across the bone surface.</p></div></div>
+  <div class="key-point"><div class="key-num">!</div><div class="key-content"><h4>RPM: 800–1,000</h4><p>Higher speed because you're drilling through dense cortical bone. This is the fastest drill in the sequence.</p></div></div>
+</div>`,
+
+// 3 Lance technique
+`<div>
+  <div class="slide-subtitle">Technique</div>
+  <div class="slide-title">Lance Drill — Why Not Round Burs?</div>
+  <div class="two-col">
+    <div><div class="card" style="border-color:rgba(239,68,68,.3)">
+      <h3 style="color:var(--accent-red)">❌ Old Method: Round Bur</h3>
+      <p style="margin-top:8px;line-height:1.8">Previously, round (rosette) burs were used. Problems: too aggressive, can wobble once sunk in, overexpands the initial preparation, harder to control direction.</p>
+    </div></div>
+    <div><div class="card" style="border-color:rgba(16,185,129,.3)">
+      <h3 style="color:var(--accent-green)">✓ Modern: Lance Drill</h3>
+      <p style="margin-top:8px;line-height:1.8">Sharp and pointy — much harder to deviate. Can be placed on bone and then activated. Creates precise, predictable entry points. Minimal collateral preparation.</p>
+    </div></div>
+  </div>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">Pro Tip</div><p>You can <strong>place the lance drill against the bone first, then start it</strong>. Because it's so sharp and thin, it grips immediately without wandering. This gives you the most accurate initial position.</p></div>
+</div>`,
+
+// 4 Pilot drill
+`<div>
+  <div class="slide-subtitle">Drill 2</div>
+  <div class="slide-title">The Pilot Drill</div>
+  <div class="slide-text" style="margin-bottom:16px">The pilot drill is the <strong>most important drill in the sequence</strong>. It creates the full-depth path that all subsequent drills will follow.</div>
+  <div class="key-point" style="margin-top:8px"><div class="key-num">1</div><div class="key-content"><h4>Full Depth Preparation</h4><p>If placing a 10 mm implant, the pilot drill goes to 10 mm. It establishes the complete depth of the osteotomy.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Sequential Approach</h4><p>Slowly and step by step. With stoppers, you can go 7 mm → 8.5 mm → 10 mm. With laser-banded, gradually deepen to the target line.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Size: ~2.0–2.5 mm</h4><p>Narrow but strong cutting drill that cuts on all sides. This is the drill you'll wear down the most over time.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Direction Check</h4><p>After the pilot, insert the direction indicator to verify mesio-distal positioning, angulation, and proximity to roots. This is your first real checkpoint.</p></div></div>
+</div>`,
+
+// 5 Shaping drills
+`<div>
+  <div class="slide-subtitle">Drill 3+</div>
+  <div class="slide-title">Shaping / Widening Drills</div>
+  <div class="slide-text" style="margin-bottom:16px">After the pilot establishes the depth, shaping drills <strong>widen the osteotomy</strong> to accommodate the implant diameter. Each drill is progressively wider.</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Drill progression -->
+      <g font-family="Outfit" text-anchor="middle">
+        <!-- 2.5 -->
+        <rect x="80" y="40" width="24" height="100" rx="12" fill="rgba(14,165,233,.2)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="92" y="165" font-size="12" fill="var(--accent)" font-weight="600">2.5</text>
+        <text x="92" y="180" font-size="10" fill="#64748b">Pilot</text>
+        <!-- Arrow -->
+        <text x="140" y="95" font-size="20" fill="#334155">→</text>
+        <!-- 2.9 -->
+        <rect x="170" y="36" width="30" height="108" rx="15" fill="rgba(14,165,233,.2)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="185" y="165" font-size="12" fill="var(--accent)" font-weight="600">2.9</text>
+        <text x="140" y="95" font-size="20" fill="#334155">→</text>
+        <!-- Arrow -->
+        <text x="235" y="95" font-size="20" fill="#334155">→</text>
+        <!-- 3.3 -->
+        <rect x="265" y="32" width="36" height="116" rx="18" fill="rgba(14,165,233,.2)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="283" y="165" font-size="12" fill="var(--accent)" font-weight="600">3.3</text>
+        <!-- Arrow -->
+        <text x="335" y="95" font-size="20" fill="#334155">→</text>
+        <!-- 3.6 -->
+        <rect x="365" y="28" width="42" height="124" rx="21" fill="rgba(14,165,233,.3)" stroke="var(--accent)" stroke-width="2.5"/>
+        <text x="386" y="165" font-size="12" fill="var(--accent2)" font-weight="700">3.6</text>
+        <text x="386" y="180" font-size="10" fill="var(--accent2)">Final for 4.1</text>
+        <!-- Arrow to implant -->
+        <text x="445" y="95" font-size="20" fill="#f59e0b">→</text>
+        <!-- Implant -->
+        <rect x="475" y="24" width="48" height="132" rx="24" fill="rgba(245,158,11,.15)" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="499" y="85" font-size="11" fill="#f59e0b" font-weight="700">4.1</text>
+        <text x="499" y="100" font-size="10" fill="#f59e0b">Implant</text>
+        <text x="499" y="180" font-size="10" fill="#f59e0b" font-weight="600">0.5mm gap</text>
+      </g>
+    </svg>
+  </div>
+  <div class="slide-text" style="margin-top:12px;font-size:14px">The final drill is always <strong>~0.5 mm narrower</strong> than the implant. This creates the friction needed for primary stability. The implant engages into the remaining bone.</div>
+</div>`,
+
+// 6 RPM progression
+`<div>
+  <div class="slide-subtitle">Speed</div>
+  <div class="slide-title">RPM Progression — Slower as You Go Deeper</div>
+  <div class="slide-text" style="margin-bottom:16px">As you move from cortical bone into cancellous bone, <strong>reduce the RPM</strong>. Cancellous bone is more vulnerable to heat damage.</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="heatG" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>
+      <!-- Heat bar -->
+      <rect x="80" y="30" width="540" height="16" rx="8" fill="url(#heatG)" opacity=".3"/>
+      <text x="80" y="22" font-family="Outfit" font-size="11" fill="#ef4444" font-weight="600">HIGH HEAT RISK</text>
+      <text x="580" y="22" font-family="Outfit" font-size="11" fill="#10b981" text-anchor="end" font-weight="600">LOW HEAT RISK</text>
+      <!-- Steps -->
+      <g font-family="Outfit" font-size="13">
+        <rect x="80" y="70" width="150" height="60" rx="10" fill="#14202d" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="155" y="95" text-anchor="middle" fill="#ef4444" font-weight="700">800–1000 RPM</text>
+        <text x="155" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">Lance / Marking</text>
+        <rect x="260" y="70" width="150" height="60" rx="10" fill="#14202d" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="335" y="95" text-anchor="middle" fill="#f59e0b" font-weight="700">400–800 RPM</text>
+        <text x="335" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">Pilot drilling</text>
+        <rect x="440" y="70" width="180" height="60" rx="10" fill="#14202d" stroke="#10b981" stroke-width="1.5"/>
+        <text x="530" y="95" text-anchor="middle" fill="#10b981" font-weight="700">200–600 RPM</text>
+        <text x="530" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">Template / Shaping</text>
+      </g>
+      <!-- Bone layers -->
+      <rect x="80" y="160" width="150" height="40" rx="6" fill="rgba(239,68,68,.1)" stroke="rgba(239,68,68,.3)"/>
+      <text x="155" y="184" font-family="Outfit" font-size="11" fill="#ef4444" text-anchor="middle">Cortical (dense)</text>
+      <rect x="260" y="160" width="360" height="40" rx="6" fill="rgba(16,185,129,.1)" stroke="rgba(16,185,129,.3)"/>
+      <text x="440" y="184" font-family="Outfit" font-size="11" fill="#10b981" text-anchor="middle">Cancellous (spongy — heat-sensitive)</text>
+    </svg>
+  </div>
+  <div class="highlight" style="margin-top:12px"><div class="highlight-title">Key Principle</div><p>The first 2–3 mm (cortical bone) needs higher speed and lots of irrigation. Everything deeper needs progressively <strong>lower speed to prevent overheating</strong>, which causes bone necrosis and implant failure.</p></div>
+</div>`,
+
+// 7 Bone density
+`<div>
+  <div class="slide-subtitle">Classification</div>
+  <div class="slide-title">Bone Density — Lekholm & Zarb</div>
+  <div class="slide-text" style="font-size:14px;margin-bottom:8px">Click each classification to learn more. Think of it as a chocolate density scale:</div>
+  <div class="bone-grid" id="boneGrid">
+    <div class="bone-card sel" onclick="showBone(0,this)" style="border-color:var(--accent-red)"><h4 style="color:var(--accent-red)">D1</h4><p>Hardest</p></div>
+    <div class="bone-card" onclick="showBone(1,this)" style="border-color:var(--accent-warm)"><h4 style="color:var(--accent-warm)">D2</h4><p>Hard</p></div>
+    <div class="bone-card" onclick="showBone(2,this)" style="border-color:var(--accent)"><h4 style="color:var(--accent)">D3</h4><p>Soft</p></div>
+    <div class="bone-card" onclick="showBone(3,this)" style="border-color:var(--accent-green)"><h4 style="color:var(--accent-green)">D4</h4><p>Softest</p></div>
+  </div>
+  <div class="bone-detail" id="boneDetail">
+    <div id="bd0"><strong style="color:var(--accent-red)">D1 — Very Dense Cortical Bone</strong><br><br>Like a hard toffee. Rarely seen — hopefully never. Most likely location: <strong>lower anteriors</strong> (thin, sharp ridge, mostly cortical). Requires the full arsenal: all drills, cortical drill, and potentially tapping drill. Highest risk of overheating.</div>
+    <div id="bd1" style="display:none"><strong style="color:var(--accent-warm)">D2 — Dense Bone with Good Cancellous Core</strong><br><br>The most common type. Thick cortical shell with organised cancellous bone inside. Typical location: <strong>lower mandible, upper premolars</strong>. Good primary stability. May need cortical drill in the coronal portion.</div>
+    <div id="bd2" style="display:none"><strong style="color:var(--accent)">D3 — Softer Bone, Thin Cortical</strong><br><br>Thin cortical plate with fine trabecular bone. Typical location: <strong>upper maxilla, posterior regions</strong>. Offers reasonable stability but may need to underprepare (stop one drill size earlier) for adequate friction.</div>
+    <div id="bd3" style="display:none"><strong style="color:var(--accent-green)">D4 — Very Soft, Minimal Cortical</strong><br><br>Like soft butter. Very little cortical bone, fine sparse trabeculae. Location: <strong>posterior maxilla, tuberosity area</strong>. Challenging — may need significant underpreparation. In extreme cases, only the pilot drill may be needed before placing the implant directly.</div>
+  </div>
+</div>`,
+
+// 8 Density and drilling
+`<div>
+  <div class="slide-subtitle">Protocol</div>
+  <div class="slide-title">How Bone Density Affects Drilling</div>
+  <table class="comp-table">
+    <thead><tr><th>Bone</th><th>Preparation</th><th>Special Drills</th><th>Risk</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--accent-green)">D4</strong></td><td>Underprepare — may stop 1–2 sizes early</td><td>None extra needed</td><td>Low stability</td></tr>
+      <tr><td><strong style="color:var(--accent)">D3</strong></td><td>Standard or slight underprep</td><td>Optional cortical</td><td>Adequate stability</td></tr>
+      <tr><td><strong style="color:var(--accent-warm)">D2</strong></td><td>Full sequence + cortical drill</td><td>Cortical drill recommended</td><td>Over-compression</td></tr>
+      <tr><td><strong style="color:var(--accent-red)">D1</strong></td><td>Full sequence + cortical + tapping</td><td>Cortical + tapping drill</td><td>Overheating, necrosis</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">Paradox</div><p>Softer bone is <strong>harder to achieve stability</strong> but <strong>easier on the bone cells</strong>. Denser bone gives great stability but <strong>higher risk of overheating and failure</strong>. You'll encounter far more soft bone than hard bone in practice.</p></div>
+</div>`,
+
+// 9 Cortical drill
+`<div>
+  <div class="slide-subtitle">Special Drill</div>
+  <div class="slide-title">The Cortical Drill</div>
+  <div class="slide-text" style="margin-bottom:16px">The cortical drill is the <strong>only drill that matches the implant diameter exactly</strong>. All other drills are narrower than the implant.</div>
+  <div class="key-point" style="margin-top:8px"><div class="key-num">1</div><div class="key-content"><h4>Purpose</h4><p>Relieves compression on the cortical bone at the coronal portion of the osteotomy. Without it, dense cortical bone puts excessive pressure on the implant collar.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Depth: Only 1–2 mm</h4><p>Short drill — only addresses the cortical crest. Laser-marked at 6–6.5 mm for reference but you only need the tip portion.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Size = Implant Size</h4><p>Placing a 4.1 mm implant? Use a 4.1 mm cortical drill. The diameter corresponds exactly to the implant you've chosen.</p></div></div>
+  <div class="warn-box" style="margin-top:12px"><div class="warn-title">⚠️ Caution in D4 Bone</div><p>In very soft bone, using the cortical drill removes the only dense bone giving you stability. In D4, you may lose cortical engagement entirely. <strong>Use only in D2/D1 bone</strong> where cortical compression is a real concern.</p></div>
+</div>`,
+
+// 10 Lindemann warning
+`<div>
+  <div class="slide-subtitle">⚠️ Warning</div>
+  <div class="slide-title">The Lindemann Drill — Handle with Extreme Caution</div>
+  <div class="warn-box" style="margin-top:8px"><div class="warn-title">Most Dangerous Drill in the Kit</div><p>The Lindemann is a <strong>side-cutting drill</strong> designed to shift the osteotomy mesially or distally. In 1 out of 10 cases it helps — in the other 9, it misleads. It's so sharp and fast that it can turn a circular osteotomy into an ellipse, making it <strong>impossible to seat an implant</strong>.</p></div>
+  <div class="two-col" style="margin-top:16px">
+    <div><div class="card" style="border-color:rgba(239,68,68,.3)">
+      <h3 style="color:var(--accent-red)">Don't Confuse With the Lance</h3>
+      <p style="margin-top:8px">Names are similar: <strong>Lance</strong> vs <strong>Lindemann</strong>. Place them side by side and learn to tell them apart. You want the lance — not the Lindemann.</p>
+    </div></div>
+    <div><div class="card" style="border-color:rgba(16,185,129,.3)">
+      <h3 style="color:var(--accent-green)">Last Resort Only</h3>
+      <p style="margin-top:8px">Only use if something went dramatically wrong early in the sequence. Never use late in the drilling sequence. Beginners should avoid it entirely until they have significant experience.</p>
+    </div></div>
+  </div>
+</div>`,
+
+// 11 Stopper vs laser
+`<div>
+  <div class="slide-subtitle">Comparison</div>
+  <div class="slide-title">Stopper Drills vs Laser-Banded Drills</div>
+  <table class="comp-table">
+    <thead><tr><th>Feature</th><th>Stopper Drills</th><th>Laser-Banded Drills</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Depth control</strong></td><td>Physical stop — automatic</td><td>Visual — you control by watching markings</td></tr>
+      <tr><td><strong>Max length</strong></td><td>11.5 mm</td><td>Up to 18 mm</td></tr>
+      <tr><td><strong>Ideal for</strong></td><td>Near sinuses/nerves, beginners</td><td>All situations, longer implants</td></tr>
+      <tr><td><strong>Limitation</strong></td><td>If bone isn't flat, stopper may sit above crest</td><td>Harder to see markings with blood/saliva</td></tr>
+      <tr><td><strong>Requires</strong></td><td>Flattening drill for uneven ridges</td><td>Good visualisation and experience</td></tr>
+      <tr><td><strong>Beginner-friendly</strong></td><td>Yes — controls depth for you</td><td>Moderate — requires more multitasking</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">When to Mix</div><p>Use stopper drills for the main sequence, then if you need 1 mm more depth (bone wasn't flat, or need subcrestal placement), switch to the <strong>corresponding laser-banded drill</strong> of the same diameter to fine-tune.</p></div>
+</div>`,
+
+// 12 Quiz 1
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Drills</div>
+  <div class="quiz-box">
+    <div class="quiz-q">What is the primary purpose of the lance (needle/marking) drill?</div>
+    <div class="quiz-opts" id="q1">
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">A</span>To drill the full depth of the osteotomy</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,true)"><span class="letter">B</span>To penetrate cortical bone and create a visible divot (1–2 mm) so subsequent drills don't skid</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">C</span>To widen the osteotomy to match the implant diameter</div>
+      <div class="quiz-opt" onclick="checkQ('q1',this,false)"><span class="letter">D</span>To shift the osteotomy position mesio-distally</div>
+    </div>
+    <div class="quiz-feedback correct" id="q1-correct">✓ Correct! The lance drill creates a 1–2 mm divot in the cortical bone to guide subsequent drills. It's the first drill in every sequence.</div>
+    <div class="quiz-feedback wrong" id="q1-wrong">✗ The lance/needle/marking drill creates a 1–2 mm divot to mark the bone and prevent subsequent drills from skidding. It's always the first step.</div>
+  </div>
+</div>`,
+
+// 13 Full sequence interactive
+`<div>
+  <div class="slide-subtitle">Protocol</div>
+  <div class="slide-title">Complete Drilling Sequence — 4.1 × 10 mm Implant</div>
+  <div class="slide-text" style="font-size:13px;margin-bottom:8px">Click each step to expand details:</div>
+  <div class="seq-stepper">
+    <div class="seq-step active-step" onclick="toggleSeq(this)"><div class="seq-num">1</div><div class="seq-info"><h4>Lance Drill → 1–2 mm</h4><p>800–1000 RPM | Mark the cortical bone</p><div class="seq-detail">Create a visible divot at your T-concept intersection. If you can't see it, go again. This is your anchor point for everything that follows.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">2</div><div class="seq-info"><h4>Pilot Drill 2.5 × 10 mm</h4><p>400–800 RPM | Full depth preparation</p><div class="seq-detail">Slowly, sequentially drill to 10 mm. Use stopper drills (7 → 8.5 → 10) or laser-banded. Peck gently. After this, check with the direction indicator.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">✓</div><div class="seq-info"><h4>Direction Indicator Check</h4><p>Verify mesio-distal, bucco-lingual, angulation</p><div class="seq-detail">Insert the 2.0 mm pin. Check with surgical guide in place. Ask your co-pilot about bucco-lingual. Happy? Continue. Not happy? Correct with the same pilot drill.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">3</div><div class="seq-info"><h4>Shaping Drill 2.9 × 10 mm</h4><p>400–600 RPM | First widening</p><div class="seq-detail">Template drilling mode — lower RPM for cancellous bone. Follow the path already established by the pilot. Use drill extension if handpiece hits adjacent teeth.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">4</div><div class="seq-info"><h4>Shaping Drill 3.3 × 10 mm</h4><p>400–600 RPM | Second widening</p><div class="seq-detail">Continue widening. The osteotomy should feel smoother as you progress through each drill size.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">5</div><div class="seq-info"><h4>Shaping Drill 3.6 × 10 mm</h4><p>400–600 RPM | Final widening for 4.1 implant</p><div class="seq-detail">This is the final drill for D3/D4 bone. The osteotomy is now 0.5 mm narrower than the 4.1 mm implant — providing mechanical retention for primary stability.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">6</div><div class="seq-info"><h4>Cortical Drill 4.1 mm (if D2/D1)</h4><p>Only coronal 1–2 mm</p><div class="seq-detail">Only for harder bone. Widens the cortical crest to match implant diameter, relieving compression. Skip in D3/D4 bone.</div></div></div>
+    <div class="seq-step" onclick="toggleSeq(this)"><div class="seq-num">7</div><div class="seq-info"><h4>Place the 4.1 × 10 mm Implant</h4><p>Target: 35 Ncm insertion torque</p><div class="seq-detail">Connect adapter → handpiece. Pick up implant. Place in osteotomy. Monitor torque. Seat to desired depth (crestal or subcrestal). Verify with probe.</div></div></div>
+  </div>
+</div>`,
+
+// 14 Handpiece technique
+`<div>
+  <div class="slide-subtitle">Technique</div>
+  <div class="slide-title">How to Hold the Handpiece</div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Dominant Hand = Main Grip</h4><p>Holds the handpiece body firmly. This is your control hand.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Non-Dominant Hand = Support</h4><p>Two fingers support the <strong>head</strong> of the handpiece. Not one finger, not sideways — two fingers under the tip.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Movement from Elbows & Shoulders</h4><p>NOT from the wrist. The moment you move your wrist, you change the osteotomy angulation. Think: <strong>wrist is locked, movement comes from above</strong>.</p></div></div>
+  <div class="warn-box" style="margin-top:16px"><div class="warn-title">Buccal Drift Warning</div><p>Humans naturally tend to <strong>pull the drill towards themselves</strong>, causing osteotomies to drift buccally. To compensate, start slightly more palatally. The drilling sequence will naturally bring you towards the correct central position.</p></div>
+</div>`,
+
+// 15 Direction indicator
+`<div>
+  <div class="slide-subtitle">Verification</div>
+  <div class="slide-title">Using the Direction Indicator</div>
+  <div class="slide-text" style="margin-bottom:16px">The direction indicator is your <strong>checkpoint tool</strong>. Use it after the pilot drill and at any point you're uncertain.</div>
+  <div class="two-col">
+    <div><div class="card">
+      <h3>How It Works</h3>
+      <p style="margin-top:8px;line-height:1.8">A cylindrical pin that fits snugly into your osteotomy. It extends above the bone to show the exact path and angle of your preparation. Two sides: 2.0 mm and 2.9 mm — use the one matching your current drill diameter.</p>
+    </div></div>
+    <div><div class="card">
+      <h3>What to Check</h3>
+      <p style="margin-top:8px;line-height:1.8">• Mesio-distal position (with surgical guide)<br>• Bucco-lingual angulation (co-pilot feedback)<br>• Proximity to adjacent roots<br>• Overall path alignment<br>• Can also be used for intra-operative X-rays</p>
+    </div></div>
+  </div>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">Reliability</div><p>About <strong>90% reliable</strong>. If the osteotomy is slightly oval or kidney-shaped (from a wobble), the pin won't fit as snugly. Check direction <strong>early</strong> rather than when it's too late to correct.</p></div>
+</div>`,
+
+// 16 Pathfinders
+`<div>
+  <div class="slide-subtitle">Multi-Implant</div>
+  <div class="slide-title">Pathfinders — Creating Parallelism</div>
+  <div class="slide-text" style="margin-bottom:16px">When placing <strong>multiple implants</strong>, pathfinders ensure they follow the same path of insertion. They screw into an already-placed implant and extend above the tissue.</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="50" y="120" width="600" height="60" rx="6" fill="#1e293b" stroke="#334155"/>
+      <text x="350" y="155" font-family="Outfit" font-size="13" fill="#475569" text-anchor="middle" font-weight="600">BONE</text>
+      <!-- Implant 1 with pathfinder -->
+      <rect x="180" y="60" width="20" height="60" rx="4" fill="rgba(14,165,233,.3)" stroke="var(--accent)" stroke-width="2"/>
+      <rect x="183" y="10" width="14" height="55" rx="3" fill="rgba(245,158,11,.4)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="190" y="195" font-family="Outfit" font-size="11" fill="var(--accent)" text-anchor="middle">Implant 1</text>
+      <text x="190" y="5" font-family="Outfit" font-size="10" fill="#f59e0b" text-anchor="middle" font-weight="600">Pathfinder</text>
+      <!-- Implant 2 being drilled -->
+      <rect x="380" y="70" width="16" height="50" rx="3" fill="rgba(139,92,246,.3)" stroke="var(--accent-purple)" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="388" y="195" font-family="Outfit" font-size="11" fill="var(--accent-purple)" text-anchor="middle">Osteotomy 2</text>
+      <!-- Parallel lines -->
+      <line x1="190" y1="15" x2="190" y2="55" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="388" y1="15" x2="388" y2="65" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- Parallel check -->
+      <text x="290" y="45" font-family="Outfit" font-size="12" fill="#10b981" text-anchor="middle" font-weight="600">∥ Parallel?</text>
+    </svg>
+  </div>
+  <div class="slide-text" style="margin-top:12px;font-size:14px">Colour-coded: <strong style="color:var(--accent-warm)">Yellow</strong> = narrow connection, <strong style="color:var(--accent-red)">Red</strong> = regular connection. Extends ~10 mm above the implant. Also useful for X-rays to visualise full implant length.</div>
+</div>`,
+
+// 17 Drill extension
+`<div>
+  <div class="slide-subtitle">Accessory</div>
+  <div class="slide-title">Drill Extension</div>
+  <div class="slide-text" style="margin-bottom:16px">When the handpiece head collides with adjacent teeth, the drill extension <strong>adds length</strong> between the drill and the handpiece, creating clearance.</div>
+  <div class="key-point" style="margin-top:8px"><div class="key-num">1</div><div class="key-content"><h4>Attach Extension First</h4><p>Connect the extension to the drill, then insert the extension into the handpiece. Not the other way around.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Alternative: Angle the Handpiece</h4><p>If no extension is available, you can angle the handpiece slightly to move it away from adjacent teeth. But this requires more skill to maintain the correct osteotomy angle.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Common in Posterior Sites</h4><p>Especially useful when placing implants in the premolar/molar regions where opening is limited and adjacent teeth are in the way.</p></div></div>
+</div>`,
+
+// 18 Autogenous bone
+`<div>
+  <div class="slide-subtitle">Bonus</div>
+  <div class="slide-title">Collecting Autogenous Bone from Drills</div>
+  <div class="slide-text" style="margin-bottom:16px">You can harvest small amounts of <strong>autogenous bone</strong> from between the flutes of your drills during the osteotomy preparation.</div>
+  <div class="key-point" style="margin-top:8px"><div class="key-num">1</div><div class="key-content"><h4>Drop the RPM</h4><p>Lower the drill speed so bone collects between the flutes rather than being flung away.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Reduce Irrigation</h4><p>Less water means the bone stays on the drill instead of being washed away.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Wash It Off — Don't Pick</h4><p>Turn on a little water and play the drill down. The bone fragments flow off easily into your collection cup. Don't try to fish them out with a probe — it's much harder.</p></div></div>
+  <div class="highlight" style="margin-top:12px"><div class="highlight-title">Why Bother?</div><p>Autogenous bone is the <strong>gold standard for bone grafting</strong> — it contains living bone cells, growth factors, and scaffolding. Even small amounts mixed with particulate graft material improve outcomes.</p></div>
+</div>`,
+
+// 19 Cross contamination
+`<div>
+  <div class="slide-subtitle">Sterility</div>
+  <div class="slide-title">Implant Handling — Cross-Contamination Rules</div>
+  <div class="slide-text" style="margin-bottom:16px">The moment an implant package is opened, a countdown begins. Every second in the open air allows <strong>bacteria, dust, and debris</strong> to contaminate the implant surface.</div>
+  <div class="key-point" style="margin-top:8px"><div class="key-num">1</div><div class="key-content"><h4>Connect Adapter to Handpiece First</h4><p>Get everything ready before you open the implant package. Don't fumble with connections while the implant is exposed.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Open → Pick Up → Place</h4><p>Three steps, no delays. Don't show the patient. Don't admire it. Open, grab, insert.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Never Connect Implant to Ratchet First</h4><p>Always: adapter → handpiece → then pick up implant. Not: implant → ratchet → then try to connect.</p></div></div>
+  <div class="warn-box" style="margin-top:12px"><div class="warn-title">Resist the Urge</div><p>"I used to show patients their implant — 'Look, it's this tiny piece!' They'd get excited, but I realised I was more excited than they were. I no longer do it. <strong>Open, place, done.</strong>"</p></div>
+</div>`,
+
+// 20 Quiz 2
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Drilling Protocol</div>
+  <div class="quiz-box">
+    <div class="quiz-q">For a 4.1 mm implant in D3 bone, what is typically the final drill diameter before placing the implant?</div>
+    <div class="quiz-opts" id="q2">
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">A</span>4.1 mm (same as implant)</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">B</span>3.3 mm</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,true)"><span class="letter">C</span>3.6 mm</div>
+      <div class="quiz-opt" onclick="checkQ('q2',this,false)"><span class="letter">D</span>3.9 mm</div>
+    </div>
+    <div class="quiz-feedback correct" id="q2-correct">✓ Correct! 3.6 mm is the standard final drill for a 4.1 mm implant, leaving 0.5 mm for the implant to engage and create primary stability. The cortical drill (4.1 mm) is only used in D2/D1 bone for the coronal 1–2 mm.</div>
+    <div class="quiz-feedback wrong" id="q2-wrong">✗ For a 4.1 mm implant, the standard final shaping drill is 3.6 mm. The osteotomy is always narrower than the implant to create friction and primary stability. Only the cortical drill matches implant diameter.</div>
+  </div>
+</div>`,
+
+// 21 Implant placement
+`<div>
+  <div class="slide-subtitle">Placement</div>
+  <div class="slide-title">Implant Insertion — Step by Step</div>
+  <div class="key-point" style="margin-top:24px"><div class="key-num">1</div><div class="key-content"><h4>Connect Adapter to Handpiece</h4><p>Verify it's fully seated before opening the implant package.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Open Implant Package</h4><p>Open, pick up with the adapter/driver, and go straight to the osteotomy. Minimal air exposure.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Initial Seating (Handpiece)</h4><p>Use the motor at very low RPM to thread the implant into the osteotomy. Monitor torque on the display. Switch to torque wrench for final seating.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Final Torquing (Wrench)</h4><p>Arrow towards lever. One finger stabilises the top. Thumb supports the front to prevent buccal drift. Read the torque dial.</p></div></div>
+  <div class="key-point"><div class="key-num">5</div><div class="key-content"><h4>Verify Position</h4><p>Use the periodontal probe around the implant. Ensure no bone interference, proper depth, and stable seating. Check with the surgical guide.</p></div></div>
+</div>`,
+
+// 22 Subcrestal placement
+`<div>
+  <div class="slide-subtitle">Depth</div>
+  <div class="slide-title">Subcrestal vs Crestal Placement</div>
+  <div class="two-col">
+    <div><div class="card">
+      <h3>Crestal (Level with Bone)</h3>
+      <p style="margin-top:8px;line-height:1.8">Implant platform sits at the bone crest level. Simpler to achieve. Common approach for most situations. Requires less tissue management.</p>
+    </div></div>
+    <div><div class="card">
+      <h3>Subcrestal (Below Bone)</h3>
+      <p style="margin-top:8px;line-height:1.8">Implant platform sits 1–1.5 mm below the bone crest. Provides full bone coverage of the implant collar. Better for aesthetics in the anterior zone. Requires precise depth control.</p>
+    </div></div>
+  </div>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">How to Go Subcrestal</div><p>If your stopper drill stops at crestal level but you need 1 mm deeper, switch to the <strong>laser-banded drill of the same diameter</strong> and prepare just 1 mm more. Or use the torque wrench to thread the implant down those final turns.</p></div>
+</div>`,
+
+// 23 Tapered implants
+`<div>
+  <div class="slide-subtitle">Design</div>
+  <div class="slide-title">Blue Diamond Tapered Implants</div>
+  <div class="slide-text" style="margin-bottom:16px">All Blue Diamond implants are <strong>tapered</strong> — the coronal third is wider than the apical third.</div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Implant shape -->
+      <path d="M220,30 L280,30 L270,190 Q250,210 250,210 Q250,210 230,190 Z" fill="rgba(14,165,233,.15)" stroke="var(--accent)" stroke-width="2"/>
+      <!-- Labels -->
+      <text x="310" y="55" font-family="Outfit" font-size="12" fill="var(--accent)" font-weight="600">Coronal 1/3 — WIDER</text>
+      <text x="310" y="75" font-family="Outfit" font-size="11" fill="#94a3b8">Secondary stability zone</text>
+      <text x="310" y="95" font-family="Outfit" font-size="11" fill="#94a3b8">Less pressure in cortical bone</text>
+      <text x="310" y="160" font-family="Outfit" font-size="12" fill="var(--accent-warm)" font-weight="600">Apical 1/3 — NARROWER</text>
+      <text x="310" y="180" font-family="Outfit" font-size="11" fill="#94a3b8">Primary stability zone</text>
+      <text x="310" y="200" font-family="Outfit" font-size="11" fill="#94a3b8">Engages into cancellous bone</text>
+      <!-- Zone markers -->
+      <line x1="200" y1="30" x2="200" y2="90" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="200" y1="130" x2="200" y2="210" stroke="var(--accent-warm)" stroke-width="1" stroke-dasharray="3,3"/>
+    </svg>
+  </div>
+  <div class="slide-text" style="margin-top:12px;font-size:14px"><strong>Primary stability = apical third</strong> (engages in cancellous bone). <strong>Secondary stability = coronal third</strong> (osseointegration over time). Tapered implants allow better stability, minimal preparation, and nice emergence profiles.</div>
+</div>`,
+
+// 24 Stability types
+`<div>
+  <div class="slide-subtitle">Principle</div>
+  <div class="slide-title">Primary vs Secondary Stability</div>
+  <div class="two-col">
+    <div><div class="card" style="border-color:rgba(14,165,233,.3)">
+      <h3 style="color:var(--accent)">Primary Stability</h3>
+      <p style="margin-top:8px;line-height:1.8"><strong>Mechanical retention</strong> achieved at the moment of placement. Comes from the friction between implant and bone. Highest at insertion, decreases over weeks as bone remodels. Primarily from the <strong>apical third</strong>.</p>
+    </div></div>
+    <div><div class="card" style="border-color:rgba(139,92,246,.3)">
+      <h3 style="color:var(--accent-purple)">Secondary Stability</h3>
+      <p style="margin-top:8px;line-height:1.8"><strong>Biological retention</strong> achieved through osseointegration. New bone grows onto the implant surface. Starts low, increases over weeks/months. Primarily from the <strong>coronal third</strong>.</p>
+    </div></div>
+  </div>
+  <div class="highlight" style="margin-top:16px"><div class="highlight-title">The Stability Dip</div><p>There's a critical period (~3–4 weeks) where primary stability is decreasing and secondary stability hasn't fully developed. This is when implants are most vulnerable. Protect them during this window.</p></div>
+</div>`,
+
+// 25 Quiz 3
+`<div>
+  <div class="slide-subtitle">Knowledge Check</div>
+  <div class="slide-title">Quiz: Bone Density</div>
+  <div class="quiz-box">
+    <div class="quiz-q">In very soft D4 bone, what might you do differently during the drilling sequence?</div>
+    <div class="quiz-opts" id="q3">
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">A</span>Use the cortical drill to create more space</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">B</span>Drill to a wider diameter than the implant</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,true)"><span class="letter">C</span>Underprepare — stop one or more drill sizes early to maintain friction</div>
+      <div class="quiz-opt" onclick="checkQ('q3',this,false)"><span class="letter">D</span>Use the Lindemann drill to reshape the osteotomy</div>
+    </div>
+    <div class="quiz-feedback correct" id="q3-correct">✓ Correct! In D4 bone, you underprepare to maintain mechanical retention. In extreme cases, you might only use the pilot drill before placing the implant. The cortical drill would remove the only dense bone giving you stability.</div>
+    <div class="quiz-feedback wrong" id="q3-wrong">✗ In D4 (very soft) bone, underprepare — stop 1–2 drill sizes before the standard final drill. You need maximum friction to achieve primary stability. In extreme cases, only the pilot drill may be needed.</div>
+  </div>
+</div>`,
+
+// 26 Positioning reminders
+`<div>
+  <div class="slide-subtitle">Positioning</div>
+  <div class="slide-title">Implant Position — Common Traps</div>
+  <div class="reveal-list">
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">🦷 Don't Follow Adjacent Roots <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner">Adjacent roots can be angled mesially or distally. Your implant should be parallel to the <strong>future restoration</strong>, not the neighbouring roots. A "pretty X-ray" with parallel lines doesn't matter if the crown can't be restored properly.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">🎯 Use the Prosthetic Envelope <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner">The surgical guide shows where the future tooth will be. Without it, you're guessing. Even adjacent teeth can mislead — one might be tipped forward, the other back. Focus on the <strong>future prosthesis</strong>, not the current dentition.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">↔️ Compensate for Buccal Drift <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner">Natural tendency: pulling the drill towards yourself = buccal drift. In live patients, start slightly more <strong>palatal/lingual</strong>. The drilling sequence naturally brings you buccally. In models this is less of an issue, but build the habit now.</div></div>
+    </div>
+    <div class="reveal-item" onclick="toggleR(this)">
+      <div class="reveal-header">📏 Check at Every Stage <span class="reveal-arrow">▾</span></div>
+      <div class="reveal-body"><div class="reveal-body-inner">After every drill, verify position. Use the direction indicator, the surgical guide, and your co-pilot's feedback. Something might drift along the way. Catching it early is correctable; catching it late may not be.</div></div>
+    </div>
+  </div>
+</div>`,
+
+// 27 GBR decision
+`<div>
+  <div class="slide-subtitle">Assessment</div>
+  <div class="slide-title">After Placement — Do You Need GBR?</div>
+  <div class="slide-text" style="margin-bottom:16px">After placing the implant, evaluate the bone around it. In approximately <strong>90% of cases</strong>, some form of bone grafting is needed.</div>
+  <div class="two-col">
+    <div><div class="card">
+      <h3>When to Graft</h3>
+      <p style="margin-top:8px;line-height:1.8">• Exposed implant threads<br>• Thin buccal bone plate<br>• Dehiscence or fenestration<br>• Need for better contour/volume for the prosthesis<br>• <strong>Remember:</strong> GBR isn't just what the implant needs — it's what the prosthesis needs</p>
+    </div></div>
+    <div><div class="card">
+      <h3>ITI Guidelines</h3>
+      <p style="margin-top:8px;line-height:1.8">Minimum <strong>1.5 mm bone</strong> on all surfaces around the implant. If you have less, particularly buccally, augmentation is recommended. Even with adequate bone, volume for prosthetic contour may require grafting.</p>
+    </div></div>
+  </div>
+</div>`,
+
+// 28 Take your time
+`<div>
+  <div class="slide-subtitle">Philosophy</div>
+  <div class="slide-title" style="text-align:center;font-size:clamp(32px,4.5vw,50px);margin-top:30px">"It's not a race.<br><span style="color:var(--accent2)">It's how correctly<br>you do it."</span></div>
+  <div class="slide-text" style="text-align:center;margin:24px auto 0;max-width:600px">The more time you spend preparing the bone, giving it time, being gentle — the more forgiving it will be. There is no prize for the fastest implant placement. There is a prize for the one that lasts 20 years.</div>
+  <div class="highlight" style="margin-top:24px;text-align:center"><div class="highlight-title">Remember</div><p>"I hear a famous surgeon bragging that it only takes him 20 minutes to place an implant. So what? How long it takes doesn't matter. <strong>How correctly you do it — that matters.</strong>"</p></div>
+</div>`,
+
+// 29 Summary
+`<div>
+  <div class="slide-subtitle">Summary</div>
+  <div class="slide-title">Lecture 3 — Key Takeaways</div>
+  <div class="key-point" style="margin-top:20px"><div class="key-num">1</div><div class="key-content"><h4>Three Names, One Drill</h4><p>Lance = Needle = Marking. Always first, 1–2 mm, 800–1000 RPM. Creates the anchor for everything.</p></div></div>
+  <div class="key-point"><div class="key-num">2</div><div class="key-content"><h4>Gradually Expand & Extend</h4><p>Never jump to the widest/deepest drill. Increase width and depth progressively. The bone will thank you.</p></div></div>
+  <div class="key-point"><div class="key-num">3</div><div class="key-content"><h4>Bone Density Drives Protocol</h4><p>D4 = underprepare. D3 = standard. D2 = cortical drill. D1 = cortical + tapping. Know your bone.</p></div></div>
+  <div class="key-point"><div class="key-num">4</div><div class="key-content"><h4>Verify at Every Step</h4><p>Direction indicator, surgical guide, co-pilot feedback. Don't discover you're in the wrong position at the end.</p></div></div>
+  <div class="key-point"><div class="key-num">5</div><div class="key-content"><h4>Open → Place → Done</h4><p>Minimise implant exposure time. Connect adapter first. No showing off. Respect the sterile surface.</p></div></div>
+</div>`,
+
+// 30 End
+`<div class="title-slide">
+  <div class="slide-subtitle">End of Lecture 3 — Course Complete</div>
+  <div class="slide-title">Congratulations! 🎓</div>
+  <p class="title-meta" style="margin-top:24px;max-width:550px;margin-left:auto;margin-right:auto;line-height:1.7">You've completed all three lectures covering local anaesthesia, patient preparation, surgical instruments, the surgical motor, torque wrench, the complete drilling sequence, bone density classification, and implant placement protocol.</p>
+  <p class="title-meta" style="margin-top:20px;max-width:450px;margin-left:auto;margin-right:auto;line-height:1.7;color:var(--accent2)">"The more time you spend preparing, the more forgiving the bone will be. Take your time. Do it right."</p>
+</div>`
+];
+
+let cur=0;const total=slides.length;
+const area=document.getElementById('slideArea'),counter=document.getElementById('counter'),progress=document.getElementById('progress'),dotsC=document.getElementById('dots');
+const visited=new Set([0]);
+function render(){area.innerHTML='';const d=document.createElement('div');d.className='slide active';d.innerHTML=`<div class="slide-inner">${slides[cur]}</div>`;area.appendChild(d);counter.textContent=`${cur+1} / ${total}`;progress.style.width=((cur+1)/total*100)+'%';document.getElementById('prevBtn').disabled=cur===0;document.getElementById('nextBtn').disabled=cur===total-1;visited.add(cur);renderDots()}
+function renderDots(){dotsC.innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='nav-dot'+(i===cur?' active':visited.has(i)?' visited':'');d.onclick=()=>{cur=i;render()};dotsC.appendChild(d)}}
+function go(dir){cur=Math.max(0,Math.min(total-1,cur+dir));render()}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);if(e.key==='ArrowLeft')go(-1)});
+function checkQ(id,el,correct){if(el.closest('.quiz-opts').querySelector('.correct,.wrong'))return;el.classList.add(correct?'correct':'wrong');document.getElementById(id+'-'+(correct?'correct':'wrong')).classList.add('show');if(!correct)el.closest('.quiz-opts').querySelectorAll('.quiz-opt').forEach(o=>{if(o!==el){o.onclick=null;o.style.opacity='.4'}})}
+function toggleR(el){el.classList.toggle('open')}
+function toggleSeq(el){const all=el.parentElement.querySelectorAll('.seq-step');all.forEach(s=>{if(s!==el)s.classList.remove('active-step')});el.classList.toggle('active-step')}
+function showBone(n,el){document.querySelectorAll('.bone-card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');for(let i=0;i<4;i++)document.getElementById('bd'+i).style.display=i===n?'block':'none'}
+render();
+</script>
+</body>
+</html>

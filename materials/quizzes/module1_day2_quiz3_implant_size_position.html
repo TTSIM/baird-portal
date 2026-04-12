@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3: Implant Size & Position</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090e;--surface:#10131a;--surface2:#181c26;--border:#242a38;--text:#e8eaf0;--text-dim:#8890a4;--accent:#6c9fff;--accent2:#ff7070;--green:#70e0c0;--red:#ff7070;--gradient1:linear-gradient(135deg,#6c9fff,#5080e0);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:820px;margin:0 auto;padding:32px 24px 80px;}
+header{text-align:center;margin-bottom:40px;padding:40px 0 32px;border-bottom:1px solid var(--border);}
+header .tag{display:inline-block;padding:6px 18px;border-radius:100px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;background:rgba(108,159,255,.12);color:var(--accent);border:1px solid rgba(108,159,255,.25);margin-bottom:16px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,48px);margin-bottom:8px;}
+header p{color:var(--text-dim);font-size:16px;}
+.progress-wrap{position:sticky;top:0;z-index:50;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);}
+.progress-bar-bg{width:100%;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--gradient1);border-radius:3px;transition:width .4s;width:0%;}
+.progress-text{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;transition:border-color .3s;}
+.question-card.answered-correct{border-color:rgba(112,224,192,.4);}
+.question-card.answered-wrong{border-color:rgba(255,112,112,.4);}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:1px;margin-bottom:8px;}
+.q-topic{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:inline-block;padding:3px 10px;background:var(--surface2);border-radius:6px;}
+.q-text{font-size:18px;font-weight:500;line-height:1.6;margin-bottom:20px;}
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{padding:16px 20px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif;text-align:left;line-height:1.5;display:flex;gap:12px;align-items:flex-start;}
+.opt-btn:hover:not(.disabled){border-color:var(--accent);background:rgba(108,159,255,.06);}
+.opt-btn .opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;transition:all .25s;}
+.opt-btn.selected .opt-letter{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.opt-btn.correct{border-color:var(--green);background:rgba(112,224,192,.08);}
+.opt-btn.correct .opt-letter{background:var(--green);color:var(--bg);border-color:var(--green);}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,112,112,.06);}
+.opt-btn.wrong .opt-letter{background:var(--red);color:var(--bg);border-color:var(--red);}
+.opt-btn.disabled{cursor:default;opacity:.7;}.opt-btn.disabled.correct{opacity:1;}
+.explanation{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:14px;line-height:1.6;display:none;}
+.explanation.show{display:block;}
+.explanation.correct-exp{background:rgba(112,224,192,.08);border:1px solid rgba(112,224,192,.2);color:var(--green);}
+.explanation.wrong-exp{background:rgba(255,112,112,.06);border:1px solid rgba(255,112,112,.2);color:var(--red);}
+.results-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;text-align:center;margin-top:32px;}
+.results-panel.show{display:block;}
+.results-panel h2{font-family:'DM Serif Display',serif;font-size:36px;margin-bottom:8px;}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:24px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+.score-circle .score-num{font-family:'DM Serif Display',serif;font-size:48px;line-height:1;}
+.score-circle .score-label{font-size:13px;color:var(--text-dim);margin-top:4px;}
+.score-circle svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.score-circle circle{fill:none;stroke-width:6;stroke-linecap:round;}
+.score-circle .track{stroke:var(--border);}
+.score-circle .fill{stroke:var(--accent);transition:stroke-dashoffset 1.5s ease;}
+.stats-row{display:flex;justify-content:center;gap:40px;margin:24px 0;}
+.stat-item{text-align:center;}.stat-item .stat-num{font-family:'DM Serif Display',serif;font-size:28px;}.stat-item .stat-lab{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.grade-badge{display:inline-block;padding:8px 24px;border-radius:100px;font-weight:600;font-size:14px;letter-spacing:1px;margin-top:16px;}
+.btn-restart{margin-top:24px;padding:14px 32px;border-radius:14px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-restart:hover{background:var(--accent);color:var(--bg);}
+.btn-submit{display:none;margin:32px auto 0;padding:16px 48px;border-radius:16px;border:none;background:var(--gradient1);color:var(--bg);font-size:17px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 24px rgba(108,159,255,.25);}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,159,255,.35);}
+.btn-submit.show{display:block;}
+.review-filter{display:none;margin:24px 0;text-align:center;}
+.review-filter.show{display:flex;justify-content:center;gap:8px;}
+.filter-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(108,159,255,.08);}
+@media(max-width:600px){.container{padding:20px 16px 60px;}.question-card{padding:24px 18px;}.q-text{font-size:16px;}.opt-btn{font-size:14px;padding:14px 16px;}}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:rgba(108,159,255,.12);border:1px solid rgba(108,159,255,.25);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:18px;}
+.portal-back:hover{background:var(--accent);color:var(--bg);}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+  <div class="tag">Quiz 3 of 3</div>
+  <h1>Implant Size & Position</h1>
+  <p>30 questions on biomechanics, the T Concept, short implants, vital structures & more</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progFill"></div></div>
+  <div class="progress-text"><span id="progText">0 of 30 answered</span><span id="progPct">0%</span></div>
+</div>
+<div id="questionsContainer"></div>
+<button class="btn-submit" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+<div class="review-filter" id="reviewFilter">
+  <button class="filter-btn active" onclick="filterQuestions('all',this)">All</button>
+  <button class="filter-btn" onclick="filterQuestions('wrong',this)">Incorrect Only</button>
+  <button class="filter-btn" onclick="filterQuestions('correct',this)">Correct Only</button>
+</div>
+<div class="results-panel" id="resultsPanel"></div>
+</div>
+<script>
+const questions = [
+  {q:"What percentage of occlusal load is concentrated on the coronal 5mm of a dental implant?",opts:["50%","75%","95%","100%"],ans:2,topic:"Biomechanics",exp:"95% of the load is concentrated on the coronal 5mm. The apical portion takes minimal stress, which is why going longer than 8mm adds little biomechanical benefit."},
+  {q:"Going from an 8mm to a 19mm implant reduces peri-implant bone stress by approximately:",opts:["1–2%","6–8%","15–20%","30–40%"],ans:1,topic:"Implant Length",exp:"Increasing length from 8mm to 19mm only reduces stress by 6–8% — not worth the additional drilling, heat generation, and proximity to vital structures."},
+  {q:"What is the recommended 'Plan A' implant length for a healed site?",opts:["6mm","8mm","10mm","12mm"],ans:1,topic:"Plan A/B Philosophy",exp:"8mm is the standard first choice. It performs as well as 9, 10, 12 or 15mm. Reserve longer implants as Plan B backup."},
+  {q:"What is the five-year cumulative survival rate for short implants?",opts:["92.5%","95.0%","98.3%","99.9%"],ans:2,topic:"Short Implant Survival",exp:"Five-year cumulative survival for short implants is 98.3%, comparable to long implants at 97.7%."},
+  {q:"In the short implant failure data, 70% of failures occurred:",opts:["After 5 years of loading","Within the first year of loading","Before loading (pre-restorative)","Due to peri-implantitis"],ans:2,topic:"Failure Analysis",exp:"70% of short implant failures occurred before loading, suggesting the cause was surgical (poor primary stability, over-prepping) rather than biomechanical overload."},
+  {q:"What is the minimum acceptable implant length before considering a sinus lift?",opts:["4mm","5mm","6mm","8mm"],ans:2,topic:"Short Implants: Threshold",exp:"6mm is generally acceptable. Below 5mm is ultra-short territory where sinus lifts should be considered. The Cochrane review supports 4–6mm in the maxilla without augmentation."},
+  {q:"What implant diameter is recommended as first choice for molars?",opts:["3.3mm","3.7mm","4.1mm","4.4mm"],ans:3,topic:"Diameter: Molars",exp:"4.4mm is the first choice for molars. 4.8mm can be used for additional biomechanical support. Narrower diameters risk the 'lollipop stick' effect."},
+  {q:"What implant diameter is first choice for premolars?",opts:["3.3mm","3.7mm","4.1mm","4.4mm"],ans:2,topic:"Diameter: Premolars",exp:"4.1mm is the first choice for premolars. 3.7mm is an alternative when interdental space is tight."},
+  {q:"What implant diameter would you use for a lower incisor?",opts:["3.3mm","3.7mm","4.1mm","4.4mm"],ans:0,topic:"Diameter: Incisors",exp:"3.3mm fixtures are used for lower incisors and (as an alternative) upper lateral incisors. These are the narrowest sites."},
+  {q:"What is the minimum distance recommended between an implant and an adjacent natural tooth?",opts:["0.5mm","1.0mm","1.5mm","3.0mm"],ans:2,topic:"Spacing: Tooth",exp:"Minimum 1.5mm between an implant and an adjacent natural tooth. This preserves the blood supply to the inter-proximal bone and supports papilla formation."},
+  {q:"What is the minimum recommended distance between two adjacent implants?",opts:["1.5mm","2.0mm","3.0mm","5.0mm"],ans:2,topic:"Spacing: Implant-Implant",exp:"Minimum 3mm between implants. More is better — 4mm gives even less inter-implant bone loss. This distance prevents inflammatory zone overlap from the micro-gaps."},
+  {q:"What minimum thickness of buccal bone is recommended around the implant?",opts:["0.5mm","1.0mm","1.8mm","3.0mm"],ans:2,topic:"Buccal Bone",exp:"At least 1.8mm of buccal bone is recommended (aim for 2mm). If insufficient, augment with GBR. This prevents resorption of the buccal plate."},
+  {q:"What is the minimum palatal/lingual bone thickness recommended?",opts:["0.5mm","1.0–1.5mm","2.0mm","3.0mm"],ans:1,topic:"Lingual Bone",exp:"Minimum 1–1.5mm palatally/lingually. You can get away with 1mm because the soft tissue on the palate is thicker, but ideally aim for 1.5mm."},
+  {q:"If the clinical crown height is 15mm or more, what is the main risk?",opts:["Implant fracture","Bone resorption","Prosthetic complications (screw loosening, fracture)","Nerve damage"],ans:2,topic:"Crown Height",exp:"≥15mm crown height increases prosthetic complications: screw loosening, screw fracture, and crown fracture. This is the threshold. Crown-to-root ratio itself doesn't cause implant fracture."},
+  {q:"Does performing a sinus lift with a longer implant reduce prosthetic complications if the crown height remains the same?",opts:["Yes — the better ratio protects the screw","No — the crown height (the 'lamppost') is unchanged","Yes — the longer implant absorbs more force","Only if the implant is splinted"],ans:1,topic:"Crown Height vs Ratio",exp:"The sinus lift changes the crown-to-root ratio but NOT the crown height. The 'lamppost' is still the same height, so prosthetic complications remain unchanged. Only vertical bone augmentation or splinting helps."},
+  {q:"According to the T Concept, how far below the future gingival zenith should the implant platform be placed?",opts:["1–2mm","2–3mm","3–4mm","5–6mm"],ans:2,topic:"T Concept",exp:"The T Concept: place the implant platform 3–4mm apical to the future gingival margin (zenith). This respects the biological width and allows stable soft tissue."},
+  {q:"In the T Concept, what determines where 3mm vs 4mm depth is used?",opts:["Bone density","Gingival phenotype (thin = 3mm, thick = 4mm)","Tooth position (anterior vs posterior)","Patient age"],ans:1,topic:"T Concept: Phenotype",exp:"Thin phenotype → 3mm (less tissue resistance to recession). Thick phenotype → 4mm (more resistance, so you can go deeper for better aesthetics)."},
+  {q:"Why does bone remodel away from healing abutments and polished surfaces?",opts:["Polished surfaces cause inflammation","Bone doesn't like polished surfaces — it remodels to the first micro-rough surface","The healing abutment is too wide","Polished surfaces attract bacteria"],ans:1,topic:"Biological Width",exp:"Bone cannot survive in contact with polished titanium. It remodels (resorbs) down to the first micro-rough surface, which is the implant platform itself."},
+  {q:"The biological width around implants (from mucosa tip to bone) is approximately:",opts:["1–2mm","2–3mm","3–4mm","5–6mm"],ans:2,topic:"Biological Width",exp:"In implants, the biological width is 3–4mm (from tip of mucosa to bone). This is larger than teeth (2–3mm) because implants lack the circular epithelium that teeth have."},
+  {q:"According to ITI guidelines, the implant shoulder should be placed how far palatal to the future labial line?",opts:["Flush with the labial line","1mm palatal","2mm palatal","4mm palatal"],ans:2,topic:"Bucco-Lingual Position",exp:"The ITI guidelines recommend placing the implant shoulder 2mm palatal to the future labial line, corresponding to the cingulum of the adjacent tooth."},
+  {q:"What is the main problem with placing an implant too far labially?",opts:["The screw access is in the wrong place","It causes pressure on the cortical plate which resorbs, leading to mid-labial recession","The crown is too narrow","It interferes with the occlusion"],ans:1,topic:"Too Labial",exp:"Too labial = pressure on the thin buccal cortical plate → the plate resorbs → mid-labial recession → exposed implant/abutment metal. This is the 'primary school teacher' scenario."},
+  {q:"Why is the 'palatal approach' trend problematic?",opts:["It makes the surgery harder","Peri-implantitis doesn't differentiate between buccal and palatal exposed threads","The crown looks too bulky","The screw access is too palatal"],ans:1,topic:"Palatal Approach",exp:"Exposed threads are exposed threads — bacteria don't care if they're buccal or palatal. The palatal approach risks peri-implantitis from exposed threads, discharge, and potential implant loss."},
+  {q:"When choosing between chasing primary stability vs following the prosthetic envelope, which is preferred?",opts:["Primary stability — sleep well tonight","Prosthetic envelope — correct position, even if stability is lower initially","It depends on the patient's age","Both are equally valid approaches"],ans:1,topic:"Angulation Philosophy",exp:"Following the prosthetic envelope is the smarter approach. Lower primary stability today is acceptable — the implant will osseointegrate. Correct position means easier restoration and better long-term biology."},
+  {q:"What are the two arteries at risk in the posterior mandible lingual undercut?",opts:["Inferior alveolar and mental","Sublingual (branch of lingual) and submental (branch of facial)","Maxillary and facial","Palatine and nasopalatine"],ans:1,topic:"Vital Structures",exp:"The sublingual artery (branch of lingual, above mylohyoid) and submental artery (branch of facial, below mylohyoid) are both in the lingual undercut area of the posterior mandible."},
+  {q:"Why is hitting an artery more dangerous than hitting a vein?",opts:["Arteries carry oxygenated blood","Arteries have elastic walls that shrink when cut, making the bleeding source hard to locate","Arteries bleed faster","Arteries are deeper"],ans:1,topic:"Arterial Danger",exp:"Arterial walls have elastic fibres. When cut, they shrink and retract, so the bleeding source moves away from where you think the injury is. Plus, blood outside vessels triggers foreign body response and swelling that can obstruct the airway."},
+  {q:"What is the emerging UK safety zone from the ID nerve?",opts:["1mm","2mm","4mm","6mm"],ans:2,topic:"Nerve Safety",exp:"While the international minimum is 2mm, Tara Renton and others advocate a 4mm safety zone in the UK, based on her extensive work with nerve repair cases."},
+  {q:"In an internal sinus lift, how is the sinus membrane elevated?",opts:["A window is cut in the lateral wall","Hydrodynamic pressure from irrigation through the osteotomy pushes it up","A balloon catheter is inflated","Manual elevation with a curette through the nostril"],ans:1,topic:"Internal Sinus Lift",exp:"Special burs cutting anti-clockwise engage the sinus floor, and the hydrodynamic pressure from irrigation solution pushes the Schneiderian membrane upward through the osteotomy hole. No lateral window needed."},
+  {q:"For three missing posterior teeth, what is the optimal number of implants according to the evidence?",opts:["One wide implant","Two implants with a three-unit bridge","Three implants with individual crowns","Three implants with splinted crowns"],ans:1,topic:"Implant Number",exp:"The study showed two implants with a three-unit bridge had 100% survival, lowest peri-implantitis, and fewest prosthetic complications — the best outcome across all measures."},
+  {q:"The nasopalatine canal is the only nerve-containing structure in the alveolar ridge that can be:",opts:["Avoided at all times","Removed and grafted, as it re-establishes itself","Compressed without consequence","Used as an implant anchor"],ans:1,topic:"Nasopalatine Canal",exp:"The nasopalatine canal contains end-branches that re-anastomose. You can remove the contents, graft the area with bone, and the nerve supply re-establishes. The patient may have temporary numbness on the palatal roof."},
+  {q:"What controls the amount of bone loss around the implant-abutment micro-gap?",opts:["The length of the implant","The tightness and rigidity of the implant connection seal","The type of bone graft used","The diameter of the implant only"],ans:1,topic:"Micro-Gap Biology",exp:"The rigidity and tightness of the connection determines how much bacteria leaks in and out of the micro-gap. A leaking connection = more inflammatory cells = more bone loss. This is why connection design is the most important feature of an implant system."}
+];
+
+let answered=0,correct=0,userAnswers=new Array(questions.length).fill(-1);
+const container=document.getElementById('questionsContainer');
+function renderQuestions(){container.innerHTML='';questions.forEach((q,i)=>{const L=['A','B','C','D'];let o=q.opts.map((t,j)=>`<button class="opt-btn" data-qi="${i}" data-oi="${j}" onclick="selectAnswer(${i},${j})"><span class="opt-letter">${L[j]}</span><span>${t}</span></button>`).join('');container.innerHTML+=`<div class="question-card" id="qcard${i}"><div class="q-number">QUESTION ${i+1}</div><div class="q-topic">${q.topic}</div><div class="q-text">${q.q}</div><div class="options">${o}</div><div class="explanation" id="exp${i}"></div></div>`;});}
+function selectAnswer(qi,oi){const c=document.getElementById('qcard'+qi);if(c.classList.contains('answered-correct')||c.classList.contains('answered-wrong'))return;c.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));c.querySelector(`[data-oi="${oi}"]`).classList.add('selected');if(userAnswers[qi]===-1)answered++;userAnswers[qi]=oi;updateProgress();}
+function updateProgress(){const p=Math.round(answered/questions.length*100);document.getElementById('progFill').style.width=p+'%';document.getElementById('progText').textContent=answered+' of '+questions.length+' answered';document.getElementById('progPct').textContent=p+'%';document.getElementById('submitBtn').classList.toggle('show',answered===questions.length);}
+function submitQuiz(){correct=0;questions.forEach((q,i)=>{const c=document.getElementById('qcard'+i),btns=c.querySelectorAll('.opt-btn');btns.forEach(b=>b.classList.add('disabled'));const ch=userAnswers[i];if(ch===q.ans){correct++;c.classList.add('answered-correct');btns[ch].classList.add('correct');}else{c.classList.add('answered-wrong');btns[ch].classList.add('wrong');btns[q.ans].classList.add('correct');}const e=document.getElementById('exp'+i);e.classList.add('show',ch===q.ans?'correct-exp':'wrong-exp');e.textContent=(ch===q.ans?'✓ ':'✗ ')+q.exp;});document.getElementById('submitBtn').style.display='none';showResults();document.getElementById('reviewFilter').classList.add('show');window.scrollTo({top:document.getElementById('resultsPanel').offsetTop-100,behavior:'smooth'});}
+function showResults(){const p=Math.round(correct/questions.length*100);let g,gc;if(p>=90){g='Excellent';gc='#70e0c0';}else if(p>=75){g='Good';gc='#6c9fff';}else if(p>=60){g='Pass';gc='#c090ff';}else{g='Needs Review';gc='#ff7070';}const ci=2*Math.PI*72,of=ci-(p/100)*ci;const pn=document.getElementById('resultsPanel');pn.classList.add('show');pn.innerHTML=`<h2>Quiz Complete!</h2><div class="score-circle"><svg viewBox="0 0 160 160"><circle class="track" cx="80" cy="80" r="72"/><circle class="fill" cx="80" cy="80" r="72" stroke-dasharray="${ci}" stroke-dashoffset="${ci}" style="stroke:${gc};"/></svg><div class="score-num">${p}%</div><div class="score-label">${correct} / ${questions.length}</div></div><div class="stats-row"><div class="stat-item"><div class="stat-num" style="color:var(--green)">${correct}</div><div class="stat-lab">Correct</div></div><div class="stat-item"><div class="stat-num" style="color:var(--red)">${questions.length-correct}</div><div class="stat-lab">Incorrect</div></div></div><div class="grade-badge" style="background:${gc}22;color:${gc};border:1px solid ${gc}44;">${g}</div><br><button class="btn-restart" onclick="location.reload()">Retake Quiz</button>`;setTimeout(()=>{pn.querySelector('.fill').style.strokeDashoffset=of;},100);}
+function filterQuestions(t,btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');questions.forEach((_,i)=>{const c=document.getElementById('qcard'+i);if(t==='all')c.style.display='';else if(t==='wrong')c.style.display=c.classList.contains('answered-wrong')?'':'none';else c.style.display=c.classList.contains('answered-correct')?'':'none';});}
+renderQuestions();
+</script>
+</body>
+</html>
