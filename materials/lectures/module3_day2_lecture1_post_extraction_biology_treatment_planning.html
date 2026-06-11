@@ -130,13 +130,33 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s;flex-shrink:0;}
 .dot.active{background:var(--gold);transform:scale(1.3);}
 .dot.visited{background:var(--subtle);}
+@media(max-width:760px){
+  nav{padding:10px 14px;gap:10px;}
+  .nav-left{min-width:0;gap:8px;}
+  .nav-title{font-size:15px;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .nav-badge{display:none;}
+  .slide-counter{flex-shrink:0;}
+  .slide{padding:28px 16px 40px;}
+  .title-slide{min-height:calc(100vh - 150px);padding:32px 0;}
+  .title-slide .slide-title{font-size:38px;}
+  .slide-sub{font-size:14px;margin-bottom:22px;}
+  .content-block,.torque-slider-wrap{padding:18px;}
+  .slide [style*="grid-template-columns:repeat(3,1fr)"],
+  .slide [style*="grid-template-columns:repeat(2,1fr)"],
+  .slide [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+  table{display:block;overflow-x:auto;}
+  .bottom-nav{padding:10px 12px;gap:8px;}
+  .btn{padding:9px 12px;font-size:12px;}
+  .slide-dots{gap:4px;max-width:none;}
+  .dot{width:6px;height:6px;}
+}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-left">
-    <a href="index.html" class="nav-home">← Back</a>
+    <a href="../../baird_implant_portal.html" class="nav-home">← Back</a>
     <div class="nav-title">Post-Extraction Biology & Treatment Planning</div>
     <div class="nav-badge">Lecture 1</div>
   </div>
@@ -1424,9 +1444,9 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   <h1 class="slide-title">Well Done — <em>Lecture 1</em> Finished</h1>
   <p class="slide-sub">You've completed Post-Extraction Biology & Treatment Planning. Take the Quiz 1 to test your knowledge, or continue to Lecture 2.</p>
   <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
-    <a href="quiz1.html" style="background:var(--gold);color:#0a0d14;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:500;font-size:15px;">Take Quiz 1 →</a>
-    <a href="lecture2.html" style="background:transparent;color:var(--text);padding:14px 28px;border-radius:8px;text-decoration:none;border:1px solid var(--border);font-size:15px;">Continue to Lecture 2 →</a>
-    <a href="index.html" style="background:transparent;color:var(--muted);padding:14px 28px;border-radius:8px;text-decoration:none;border:1px solid var(--border);font-size:14px;">← Course Home</a>
+    <a href="../quizzes/module3_day2_quiz1_post_extraction_biology_treatment_planning.html" style="background:var(--gold);color:#0a0d14;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:500;font-size:15px;">Take Quiz 1 →</a>
+    <a href="module3_day2_lecture2_gbr_principles_materials_membranes.html" style="background:transparent;color:var(--text);padding:14px 28px;border-radius:8px;text-decoration:none;border:1px solid var(--border);font-size:15px;">Continue to Lecture 2 →</a>
+    <a href="../../baird_implant_portal.html" style="background:transparent;color:var(--muted);padding:14px 28px;border-radius:8px;text-decoration:none;border:1px solid var(--border);font-size:14px;">← Course Home</a>
   </div>
 </div>
 </div>

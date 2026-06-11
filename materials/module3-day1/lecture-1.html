@@ -931,9 +931,9 @@ function goTo(n) {
   if (n === cur || n < 1 || n > TOTAL) return;
   const prev = document.querySelector('.slide.active');
   const next = document.querySelector('[data-slide="' + n + '"]');
-  if (!next) return;
+  if (!prev || !next) return;
   prev.classList.remove('active');
-  prev.classList.add(n > cur ? 'prev' : '');
+  if (n > cur) prev.classList.add('prev');
   next.classList.remove('prev');
   next.classList.add('active');
   setTimeout(() => prev.classList.remove('prev'), 500);
