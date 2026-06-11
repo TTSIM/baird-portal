@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2 — Soft Tissue Management & Grafting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--bg2:#0d1318;--bg3:#111820;--surface:#141e27;--surface2:#1a2733;--border:#1e3040;--gold:#c9a84c;--gold2:#e8c97a;--teal:#2dd4bf;--teal2:#5eead4;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--accent:#3b82f6;--purple:#a855f7}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow:hidden}
+  #header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,rgba(8,12,16,.98),rgba(8,12,16,.85));border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+  .course-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase}
+  .lecture-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-weight:300;letter-spacing:.05em}
+  .slide-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+  #progress-bar{position:fixed;top:54px;left:0;right:0;z-index:99;height:2px;background:var(--border)}
+  #progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));transition:width .4s ease}
+  #slides-container{position:fixed;top:56px;bottom:56px;left:0;right:0;overflow:hidden}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;pointer-events:none;transform:translateX(60px);transition:all .45s cubic-bezier(.4,0,.2,1);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+  .slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+  .slide.prev{opacity:0;transform:translateX(-60px)}
+  .slide-title-page{justify-content:center;align-items:center;text-align:center;background:radial-gradient(ellipse at 50% 30%,rgba(168,85,247,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(45,212,191,.05) 0%,transparent 50%)}
+  .title-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(168,85,247,.3);padding:4px 16px;display:inline-block}
+  .main-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--text);line-height:1.1;margin-bottom:16px}
+  .main-title em{color:var(--gold);font-style:italic}
+  .subtitle{font-size:16px;color:var(--text2);letter-spacing:.1em;margin-bottom:40px}
+  .title-divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);margin:0 auto 40px}
+  .module-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .slide-heading{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);margin-bottom:6px;line-height:1.2}
+  .slide-subheading{font-size:13px;color:var(--teal);letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px;font-family:'JetBrains Mono',monospace}
+  .slide-body{flex:1;display:flex;gap:32px;align-items:flex-start}
+  .slide-body.col{flex-direction:column}
+  .content-col{flex:1}
+  .diagram-col{flex:0 0 320px}
+  p.lead{font-size:17px;color:var(--text);line-height:1.7;margin-bottom:16px}
+  p.body-text{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+  .bullet-list{list-style:none}
+  .bullet-list li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:16px;color:var(--text);line-height:1.5}
+  .bullet-list li::before{content:'▸';color:var(--teal);margin-top:2px;flex-shrink:0;font-size:12px}
+  .bullet-list li span.hl{color:var(--gold);font-weight:600}
+  .bullet-list li span.em{color:var(--teal2)}
+  .info-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:16px 20px;margin-bottom:14px;border-radius:2px}
+  .info-card .card-title{font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+  .info-card p{font-size:15px;color:var(--text2);line-height:1.6}
+  .info-card.teal{border-left-color:var(--teal)}.info-card.teal .card-title{color:var(--teal)}
+  .info-card.red{border-left-color:var(--red)}.info-card.red .card-title{color:var(--red)}
+  .info-card.green{border-left-color:var(--green)}.info-card.green .card-title{color:var(--green)}
+  .info-card.purple{border-left-color:var(--purple)}.info-card.purple .card-title{color:var(--purple)}
+  .key-rule{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);padding:20px 24px;margin:16px 0;text-align:center}
+  .key-rule .rule-text{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300;font-style:italic}
+  .key-rule .rule-label{font-size:12px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .compare-col{background:var(--surface);border:1px solid var(--border);padding:16px}
+  .compare-col .compare-title{font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;font-family:'JetBrains Mono',monospace}
+  .compare-col.good .compare-title{color:var(--green)}
+  .compare-col.bad .compare-title{color:var(--red)}
+  .compare-col.a .compare-title{color:var(--teal)}
+  .compare-col.b .compare-title{color:var(--purple)}
+  .compare-col ul{list-style:none}
+  .compare-col ul li{font-size:13px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}
+  .compare-col ul li:last-child{border-bottom:none}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+  .stat-box{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+  .stat-box .stat-val{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold);line-height:1}
+  .stat-box .stat-unit{font-size:12px;color:var(--teal)}
+  .stat-box .stat-desc{font-size:12px;color:var(--text3);margin-top:6px;line-height:1.4}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .warning-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);padding:14px 18px;margin:12px 0}
+  .warning-box .w-title{font-size:11px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+  .warning-box p{font-size:14px;color:var(--text2);line-height:1.5}
+  .summary-box{background:linear-gradient(135deg,rgba(45,212,191,.06),rgba(45,212,191,.02));border:1px solid rgba(45,212,191,.2);padding:20px 24px;margin:16px 0}
+  .summary-box .s-title{font-size:11px;color:var(--teal);letter-spacing:.2em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:10px}
+  .obj-list{}
+  .obj-item{display:flex;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .obj-num{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);opacity:.4;flex-shrink:0;line-height:1;margin-top:-2px;min-width:30px}
+  .obj-text{font-size:16px;color:var(--text2);line-height:1.6}
+  .obj-text strong{color:var(--text)}
+  /* Step boxes */
+  .step-flow{display:flex;flex-direction:column;gap:10px}
+  .step-box{display:flex;align-items:flex-start;gap:16px;background:var(--surface);border:1px solid var(--border);padding:14px 16px}
+  .step-num{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--purple);opacity:.7;flex-shrink:0;line-height:1;min-width:28px}
+  .step-text{font-size:14px;color:var(--text2);line-height:1.5}
+  .step-text strong{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+  /* Interactive technique demo */
+  .technique-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .tab-btn{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:8px 16px;cursor:pointer;transition:all .2s}
+  .tab-btn.active,.tab-btn:hover{border-color:var(--teal);color:var(--teal)}
+  .tab-content{display:none;background:var(--surface2);border:1px solid var(--border);padding:18px}
+  .tab-content.show{display:block}
+  /* Nav */
+  #nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,12,16,.95);border-top:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+  .nav-btn{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s}
+  .nav-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+  .nav-btn:disabled{opacity:.2;cursor:default}
+  .slide-dots{display:flex;gap:6px;align-items:center}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+  .dot.active{background:var(--purple);transform:scale(1.4)}
+  .dot:hover{background:var(--text3)}
+  /* highlight */
+  .hl-purple{color:var(--purple);font-weight:600}
+  /* numbered list */
+  .num-list{list-style:none;counter-reset:nl}
+  .num-list li{counter-increment:nl;display:flex;gap:12px;margin-bottom:12px;font-size:15px;color:var(--text2);line-height:1.5}
+  .num-list li::before{content:counter(nl);background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .num-list li strong{color:var(--text)}
+</style>
+</head>
+<body>
+<div id="header">
+  <div>
+    <div class="course-label">Baird Implant Course · Module 2</div>
+    <div class="lecture-title">Lecture 2 — Soft Tissue Management &amp; Grafting</div>
+  </div>
+  <div class="slide-counter">Slide <span id="cur">1</span> / <span id="tot">30</span></div>
+</div>
+<div id="progress-bar"><div id="progress-fill"></div></div>
+<div id="slides-container">
+
+<!-- SLIDE 1 -->
+<div class="slide slide-title-page active" data-slide="1">
+  <div class="title-tag">Baird Implant Course · Lecture Series</div>
+  <div class="main-title">Soft Tissue<br><em>Management</em><br>&amp; Grafting Techniques</div>
+  <div class="title-divider"></div>
+  <div class="subtitle">LECTURE 2 OF 3 · PERIOSTEAL RELEASE · GRAFTING · SUTURING</div>
+  <div class="module-info">Module 2 · Day 2 · Surgical Skills</div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" data-slide="2">
+  <div class="slide-heading">Learning Objectives</div>
+  <div class="slide-subheading">Outcomes for this lecture</div>
+  <div class="obj-list">
+    <div class="obj-item"><div class="obj-num">01</div><div class="obj-text">Describe the <strong>five steps</strong> to achieving ideal peri-implant soft tissue</div></div>
+    <div class="obj-item"><div class="obj-num">02</div><div class="obj-text">Explain the rationale and technique for <strong>periosteal release</strong> — correctly and safely</div></div>
+    <div class="obj-item"><div class="obj-num">03</div><div class="obj-text">Distinguish between <strong>connective tissue graft (CTG)</strong> and <strong>free gingival graft (FGG)</strong> — indications and technique</div></div>
+    <div class="obj-item"><div class="obj-num">04</div><div class="obj-text">Explain the role of <strong>frenectomy</strong> and describe the surgical technique</div></div>
+    <div class="obj-item"><div class="obj-num">05</div><div class="obj-text">Understand <strong>wound dehiscence</strong> — prevention, recognition, and consequences</div></div>
+    <div class="obj-item"><div class="obj-num">06</div><div class="obj-text">Select appropriate <strong>suturing techniques</strong> for implant surgery</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" data-slide="3">
+  <div class="slide-heading">Five Steps to Ideal Soft Tissue</div>
+  <div class="slide-subheading">The complete management toolkit</div>
+  <div class="slide-body col">
+    <p class="body-text">Achieving ideal peri-implant soft tissue is a staged, multifactorial process. These five pillars will be developed throughout the course:</p>
+    <div class="step-flow">
+      <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Flap Design</strong> — The most critical decision. Wrong flap = wrong result regardless of everything else. Covered in Lecture 3.</div></div>
+      <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Tension-Free Closure</strong> — Requires periosteal release. Tension → dehiscence → bacterial contamination → bone loss. This lecture.</div></div>
+      <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Soft Tissue Grafting</strong> — CTG for volume/thickness; FGG for keratinized width. Dedicated day with specialist. Overview this lecture.</div></div>
+      <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Closure Technique</strong> — Vertical/horizontal mattress sutures to maintain papilla. Interrupted sutures flatten papillae. Practice tomorrow.</div></div>
+      <div class="step-box"><div class="step-num">5</div><div class="step-text"><strong>Prosthetic Soft Tissue Sculpting</strong> — Temporary crown contouring to guide and maintain soft tissue emergence profile. Separate module.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" data-slide="4">
+  <div class="slide-heading">Why Tension-Free Closure Matters</div>
+  <div class="slide-subheading">The cascade from wound tension to implant failure</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="lead">Even without bone grafting, closing a flap after implant placement creates tension — and tension causes dehiscence.</p>
+      <div class="info-card red">
+        <div class="card-title">Why Tension Occurs Even Without GBR</div>
+        <p>1. The osteotomy drilled smaller than the implant → implant expands the ridge on placement<br>2. Normal wound contraction during healing pulls margins apart<br>Result: tension is almost always present — release is almost always needed</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">The Tension Cascade</div>
+        <p>Tension → suture weakens → wound pulls open → <strong>dehiscence</strong> → bacteria reach graft/implant → marginal bone loss → exposed threads → peri-implantitis risk</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Scientific Threshold</div>
+        <p>Research shows flap tension &gt;25 Newton centimetres leads to wound dehiscence. While we cannot measure this clinically, the tweezers test and visual blanching assessment are reliable proxies.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 280 300" width="280" height="300">
+        <!-- Bone -->
+        <rect x="20" y="200" width="240" height="30" rx="2" fill="rgba(200,180,130,.1)" stroke="rgba(200,180,130,.25)"/>
+        <text x="140" y="218" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">BONE + IMPLANT</text>
+        <!-- Flap sides -->
+        <rect x="20" y="120" width="80" height="80" fill="rgba(180,120,120,.1)" stroke="rgba(180,150,150,.3)" stroke-width="1.5"/>
+        <rect x="180" y="120" width="80" height="80" fill="rgba(180,120,120,.1)" stroke="rgba(180,150,150,.3)" stroke-width="1.5"/>
+        <!-- Gap / tension -->
+        <rect x="100" y="120" width="80" height="80" fill="rgba(239,68,68,.05)" stroke="rgba(239,68,68,.2)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="140" y="157" fill="#ef4444" font-family="Rajdhani" font-size="11" text-anchor="middle">TENSION</text>
+        <text x="140" y="172" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Gap / Dehiscence</text>
+        <!-- Arrows pulling apart -->
+        <line x1="98" y1="160" x2="75" y2="160" stroke="rgba(239,68,68,.6)" stroke-width="2"/>
+        <polygon points="75,157 68,160 75,163" fill="#ef4444"/>
+        <line x1="182" y1="160" x2="205" y2="160" stroke="rgba(239,68,68,.6)" stroke-width="2"/>
+        <polygon points="205,157 212,160 205,163" fill="#ef4444"/>
+        <!-- Bacteria label -->
+        <text x="140" y="110" fill="#ef4444" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="1">BACTERIA ENTRY</text>
+        <line x1="140" y1="113" x2="140" y2="120" stroke="rgba(239,68,68,.5)" stroke-width="1"/>
+        <!-- GBR material -->
+        <rect x="105" y="170" width="70" height="30" fill="rgba(45,212,191,.08)" stroke="rgba(45,212,191,.2)" stroke-width="1"/>
+        <text x="140" y="189" fill="#2dd4bf" font-family="Rajdhani" font-size="10" text-anchor="middle">Bone graft exposed</text>
+        <!-- Result box -->
+        <rect x="40" y="248" width="200" height="40" fill="rgba(239,68,68,.07)" stroke="rgba(239,68,68,.2)"/>
+        <text x="140" y="263" fill="#ef4444" font-family="Rajdhani" font-size="11" text-anchor="middle" font-weight="600">Result: Marginal Bone Loss</text>
+        <text x="140" y="278" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Exposed threads · Implant failure risk</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" data-slide="5">
+  <div class="slide-heading">The Tweezers Test</div>
+  <div class="slide-subheading">Clinical assessment of flap tension before suturing</div>
+  <div class="slide-body col">
+    <p class="lead">Before placing any suture, you must assess whether the flap can be closed passively. The tweezers test is your primary clinical tool.</p>
+    <div class="compare-grid">
+      <div class="compare-col good">
+        <div class="compare-title">✓ Passive Closure</div>
+        <ul>
+          <li>Grasp flap edge with tissue forceps</li>
+          <li>Bring to desired position</li>
+          <li>Release tweezers</li>
+          <li>Flap stays 3–5 seconds then slowly retracts</li>
+          <li>→ Safe to suture. Tension-free closure.</li>
+        </ul>
+      </div>
+      <div class="compare-col bad">
+        <div class="compare-title">✗ Tension Present</div>
+        <ul>
+          <li>Grasp flap, bring to position</li>
+          <li>Release tweezers</li>
+          <li>Flap springs back immediately</li>
+          <li>→ DO NOT suture yet</li>
+          <li>→ Perform periosteal release first</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-card" style="margin-top:12px">
+      <div class="card-title">Post-Suture Check — White Blanching</div>
+      <p>After suturing, inspect the flap. If you see white blanching at the wound margins — the tissue is under ischaemic pressure from tension. Remove sutures, perform periosteal release, re-suture. Ignoring blanching guarantees dehiscence at 7–10 days.</p>
+    </div>
+    <div class="warning-box">
+      <div class="w-title">Common Mistake</div>
+      <p>Many clinicians suture under tension thinking "it will hold" — the suture holds for days, then loses strength as the material degrades. Combined with wound contraction, the result is predictable dehiscence. Prevention is simple: test before you suture.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" data-slide="6">
+  <div class="slide-heading">Periosteal Release — Anatomy</div>
+  <div class="slide-subheading">Understanding the layers before cutting</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">The flap has two key layers. Understanding their anatomy is the foundation of safe periosteal release:</p>
+      <div class="info-card teal">
+        <div class="card-title">Mucosa (Outer Layer)</div>
+        <p>Stretchable, elastic. Can expand significantly with stretching. Located superficially. Contains nerves and vessels apical to the mucogingival line within the muscle layer.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">Periosteum (Inner Layer)</div>
+        <p>The "glue" — firmly attaches mucosa to bone. Inelastic and rigid. Extends from the crestal bone to the mucogingival line. <strong>Cutting the periosteum releases the glue → the elastic mucosa can then stretch freely.</strong></p>
+      </div>
+      <div class="info-card purple">
+        <div class="card-title">Mucogingival Line (MGJ) — Key Landmark</div>
+        <p>Where periosteum ends. Below the MGJ: muscle layer with nerves and blood vessels. Periosteal release must be performed <strong>at or just coronal to the MGJ</strong> — never apical to it, where muscles, nerves, and vessels lie.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 280 320" width="280" height="320">
+        <!-- Flap cross section -->
+        <text x="140" y="18" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">FLAP LAYERS</text>
+        <!-- Mucosa layer -->
+        <rect x="40" y="25" width="200" height="70" rx="2" fill="rgba(180,120,120,.12)" stroke="rgba(180,150,150,.3)" stroke-width="1.5"/>
+        <text x="140" y="58" fill="#e2eaf0" font-family="Rajdhani" font-size="14" text-anchor="middle" font-weight="600">MUCOSA</text>
+        <text x="140" y="74" fill="#8fa8bc" font-family="Rajdhani" font-size="11" text-anchor="middle">Stretchable · Elastic layer</text>
+        <!-- Periosteum layer -->
+        <rect x="40" y="95" width="200" height="25" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+        <text x="140" y="111" fill="#c9a84c" font-family="Rajdhani" font-size="13" text-anchor="middle" font-weight="600">PERIOSTEUM — The "Glue"</text>
+        <!-- MGJ line -->
+        <line x1="30" y1="120" x2="250" y2="120" stroke="rgba(239,68,68,.7)" stroke-width="1.5"/>
+        <text x="255" y="124" fill="#ef4444" font-family="JetBrains Mono" font-size="7">MGJ</text>
+        <!-- Muscle layer -->
+        <rect x="40" y="120" width="200" height="55" fill="rgba(239,68,68,.06)" stroke="rgba(239,68,68,.15)" stroke-width="1"/>
+        <text x="140" y="143" fill="#ef4444" font-family="Rajdhani" font-size="13" text-anchor="middle">MUSCLE LAYER</text>
+        <text x="140" y="158" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Contains nerves &amp; vessels — DO NOT CUT HERE</text>
+        <!-- Bone -->
+        <rect x="40" y="175" width="200" height="30" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)" stroke-width="1"/>
+        <text x="140" y="194" fill="#8fa8bc" font-family="Rajdhani" font-size="11" text-anchor="middle">BONE</text>
+        <!-- Release arrow -->
+        <text x="140" y="235" fill="#2dd4bf" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="1">CORRECT RELEASE LOCATION</text>
+        <line x1="140" y1="240" x2="140" y2="107" stroke="rgba(45,212,191,.5)" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+        <text x="140" y="255" fill="#4a6a80" font-family="Rajdhani" font-size="11" text-anchor="middle">At or just above MGJ</text>
+        <text x="140" y="270" fill="#4a6a80" font-family="Rajdhani" font-size="11" text-anchor="middle">1mm notch in periosteum only</text>
+        <text x="140" y="300" fill="#ef4444" font-family="Rajdhani" font-size="11" text-anchor="middle">NEVER apical to MGJ</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide" data-slide="7">
+  <div class="slide-heading">Periosteal Release — Technique</div>
+  <div class="slide-subheading">Step-by-step: the correct method to avoid perforation, bleeding, and nerve injury</div>
+  <div class="slide-body col">
+    <p class="body-text">Less than 50% of implantologists perform periosteal release correctly. The key is understanding that <em style="color:var(--gold)">the right hand makes 1mm — the left hand gives the stretch</em>.</p>
+    <div class="step-flow">
+      <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Position</strong> — Stand behind the patient's head (supine). For upper arch: patient head tilted back. Never work from in front of the patient for this manoeuvre.</div></div>
+      <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Left hand — tension</strong> — Use tissue forceps to evert the flap edge, pulling it posteriorly to create tension. Cutting in a stretched, taut structure is far more controlled than loose tissue.</div></div>
+      <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Blade selection</strong> — Use a <strong>fresh blade</strong> (not the same blade used for the initial incision — it is blunt after contacting bone). Blade 15c is preferred for its fine tip.</div></div>
+      <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Blade position</strong> — Blade tip points <em>toward bone</em>, not toward the flap surface. Lay the blade nearly parallel to the flap, resting the tip on it. Then rotate upright by just <strong>5 degrees</strong>. Not 45° — only 5°.</div></div>
+      <div class="step-box"><div class="step-num">5</div><div class="step-text"><strong>The cut</strong> — Dig blade tip <strong>1mm only</strong> into the periosteum at the MGJ. One millimetre. Then run that 1mm notch edge-to-edge across the full width of the flap.</div></div>
+      <div class="step-box"><div class="step-num">6</div><div class="step-text"><strong>Result</strong> — The 1mm notch, combined with the left-hand stretch, gives 5–10mm of release. Dry procedure. No bleeding. No perforation. Verify passive closure with tweezers test.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 -->
+<div class="slide" data-slide="8">
+  <div class="slide-heading">Periosteal Release — Common Errors</div>
+  <div class="slide-subheading">Why most clinicians get it wrong — and how to avoid their mistakes</div>
+  <div class="slide-body col">
+    <div class="three-col">
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Error 1 — Too Deep</div>
+        <p style="font-size:13px">Going &gt;1mm deep → perforates mucosa. Result: hole in flap, wound dehiscence. The 1mm rule is absolute. Left-hand stretch does the rest of the work.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Error 2 — Too Apical</div>
+        <p style="font-size:13px">Cutting apical to MGJ = cutting in muscle layer. Consequence: hit infraorbital/mental nerve branch → numbness. Hit vessels → haematoma → black eye. Never go apical to MGJ.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Error 3 — Incomplete Line</div>
+        <p style="font-size:13px">Release line not run edge-to-edge across full flap width. Attached edges remain, preventing stretch. Result: only 1–2mm of gain instead of 5–10mm. Always run full width.</p>
+      </div>
+    </div>
+    <div class="info-card teal" style="margin-top:12px">
+      <div class="card-title">Signs of Correct Technique</div>
+      <p><strong>Dry procedure</strong> — no bleeding (you are away from vessels). <strong>No perforation</strong> — blade angle is nearly parallel. <strong>Visible stretch</strong> — tissue springs to 5–10mm on left-hand pull. If you see bleeding: you are in the muscle layer — reposition coronally.</p>
+    </div>
+    <div class="info-card">
+      <div class="card-title">Extended Release — Vertical Bone Augmentation</div>
+      <p>For vertical GBR requiring even more release: after the 1mm periosteal notch, use a blunt instrument (Minimi) to mechanically brush the mucosa vertically while pulling. This mechanical stretch is additive to the passive stretch from the incision.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 -->
+<div class="slide" data-slide="9">
+  <div class="slide-heading">Frenectomy — Indications</div>
+  <div class="slide-subheading">When prominent frena compromise implant surgery outcomes</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">A prominent frenum is one that attaches at a low level — crossing or close to the mucogingival line. This creates a dynamic pull on flap margins every time the patient speaks or smiles.</p>
+      <div class="info-card red">
+        <div class="card-title">Problems Caused by Prominent Frenum</div>
+        <p>• Continuous pull on sutures during healing → dehiscence<br>• Patient cannot clean the area effectively → increased plaque<br>• Impairs tension-free closure<br>• Compromises long-term tissue stability</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">When to Perform Frenectomy</div>
+        <p>Frenectomy indicated when frenum crosses or attaches at the mucogingival line. <strong>Timing:</strong> ideally 4–6 weeks before implant surgery. Allows full healing before raising the surgical flap. If done at same time as surgery: risk of perforation through weakened tissue.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">Does Frenectomy Affect the Smile Line?</div>
+        <p>No. The frenum attaches mucosa to lip musculature — not to the actual smile arc. Removing it does not alter facial aesthetics. Patients often experience improved ability to clean the area.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 260 280" width="260" height="280">
+        <!-- Arch outline -->
+        <path d="M 40 240 Q 130 30 220 240" fill="none" stroke="rgba(200,180,130,.3)" stroke-width="2"/>
+        <!-- Prominent frenum -->
+        <path d="M 120 80 Q 130 140 130 200" fill="rgba(239,68,68,.12)" stroke="rgba(239,68,68,.5)" stroke-width="2"/>
+        <circle cx="130" cy="200" r="5" fill="rgba(239,68,68,.4)"/>
+        <!-- MGJ line -->
+        <path d="M 50 200 Q 130 185 210 200" fill="none" stroke="rgba(201,168,76,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="216" y="204" fill="#c9a84c" font-family="JetBrains Mono" font-size="8">MGJ</text>
+        <!-- Frenum label -->
+        <text x="150" y="130" fill="#ef4444" font-family="Rajdhani" font-size="12">PROMINENT</text>
+        <text x="150" y="145" fill="#ef4444" font-family="Rajdhani" font-size="12">FRENUM</text>
+        <!-- Attachment point arrow -->
+        <line x1="135" y1="202" x2="155" y2="218" stroke="rgba(239,68,68,.5)" stroke-width="1"/>
+        <text x="158" y="224" fill="#4a6a80" font-family="Rajdhani" font-size="10">Attaches at/below MGJ</text>
+        <!-- Pull arrows -->
+        <line x1="125" y1="80" x2="120" y2="60" stroke="rgba(239,68,68,.4)" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="105" y="55" fill="#ef4444" font-family="JetBrains Mono" font-size="8">PULL</text>
+        <!-- After label -->
+        <rect x="30" y="248" width="200" height="24" rx="2" fill="rgba(34,197,94,.07)" stroke="rgba(34,197,94,.2)"/>
+        <text x="130" y="264" fill="#22c55e" font-family="Rajdhani" font-size="11" text-anchor="middle">After frenectomy: tension-free closure</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 -->
+<div class="slide" data-slide="10">
+  <div class="slide-heading">Frenectomy — Surgical Technique</div>
+  <div class="slide-subheading">Step-by-step surgical frenectomy procedure</div>
+  <div class="slide-body col">
+    <div class="step-flow">
+      <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Mark the frenum</strong> — Identify the full extent of the frenum attachment from the lip to the gingiva/mucosa.</div></div>
+      <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Clamp</strong> — Place mosquito clamp horizontally across the frenum at its base (or two clamps: one superior, one inferior). This controls the tissue and marks the excision line.</div></div>
+      <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Incise</strong> — Cut <em>above</em> the upper clamp and <em>below</em> the lower clamp. This removes the clamped frenum tissue. The cuts are <strong>vertical</strong> (top to bottom direction).</div></div>
+      <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Undermine</strong> — Use scissors to undermine the mucosa from the underlying muscle on both sides. Open and spread. The goal: mobilise mucosa away from muscle so you suture <em>mucosa to mucosa</em>, never muscle to muscle.</div></div>
+      <div class="step-box"><div class="step-num">5</div><div class="step-text"><strong>Suture</strong> — Note: incisions were VERTICAL but sutures are HORIZONTAL. 3–5 interrupted sutures placed across the wound (right to left orientation). Simple and effective.</div></div>
+    </div>
+    <div class="info-card teal" style="margin-top:8px">
+      <div class="card-title">Laser Frenectomy</div>
+      <p>Identical procedure but no sutures required. The laser coagulates the wound edges simultaneously. Preferred where available — less patient morbidity. Technique principle is identical.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 -->
+<div class="slide" data-slide="11">
+  <div class="slide-heading">Free Gingival Graft (FGG)</div>
+  <div class="slide-subheading">Increasing keratinized mucosa WIDTH around implants</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">FGG is indicated when keratinized mucosa width is insufficient (&lt;2mm). The graft carries its own epithelium, which <em>becomes</em> keratinized tissue at the recipient site.</p>
+      <div class="info-card">
+        <div class="card-title">Recipient Site Preparation</div>
+        <p>Split-thickness incision — peel mucosa but <strong>leave periosteum on bone</strong>. Periosteum provides the blood supply for graft take. If you remove periosteum: graft fails. Naked bone = no blood supply = graft necrosis.</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Donor Site</div>
+        <p>Best: <strong>palate</strong> (richest keratinized tissue source). Alternative: edentulous ridge (adjacent site — heals faster, less patient morbidity). Leave periosteum at donor site. Cover with collagen sponge + flowable composite splint for 72hr.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">Graft Preparation</div>
+        <p>Remove any <strong>yellow fatty tissue</strong> from the deep surface. Fat impedes vascularity and integration. Keep epithelium intact. Graft should be uniform thickness — 1–2mm ideal.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 260 300" width="260" height="300">
+        <!-- Recipient site -->
+        <text x="130" y="18" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">RECIPIENT SITE</text>
+        <!-- Bone -->
+        <rect x="20" y="60" width="220" height="30" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)"/>
+        <text x="130" y="79" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">BONE</text>
+        <!-- Periosteum left behind -->
+        <rect x="20" y="30" width="220" height="30" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.3)"/>
+        <text x="130" y="49" fill="#c9a84c" font-family="Rajdhani" font-size="11" text-anchor="middle" font-weight="600">PERIOSTEUM — LEFT IN PLACE</text>
+        <!-- Mobile mucosa pushed apically -->
+        <text x="130" y="110" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Mobile mucosa moved apically</text>
+        <!-- FGG graft -->
+        <text x="130" y="150" fill="#2dd4bf" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">FGG PLACED ON PERIOSTEUM</text>
+        <rect x="20" y="155" width="220" height="35" fill="rgba(45,212,191,.12)" stroke="rgba(45,212,191,.35)" stroke-width="1.5"/>
+        <text x="100" y="176" fill="#2dd4bf" font-family="Rajdhani" font-size="11">Epithelium</text>
+        <rect x="20" y="190" width="220" height="20" fill="rgba(45,212,191,.06)" stroke="rgba(45,212,191,.2)"/>
+        <text x="100" y="204" fill="#4a6a80" font-family="Rajdhani" font-size="10">Connective tissue layer</text>
+        <!-- Sutures -->
+        <text x="130" y="230" fill="#4a6a80" font-family="Rajdhani" font-size="11" text-anchor="middle">Sutured to periosteum</text>
+        <text x="130" y="244" fill="#4a6a80" font-family="Rajdhani" font-size="11" text-anchor="middle">Corners first, then adapt centrally</text>
+        <!-- Result -->
+        <rect x="40" y="260" width="180" height="30" fill="rgba(34,197,94,.07)" stroke="rgba(34,197,94,.2)"/>
+        <text x="130" y="279" fill="#22c55e" font-family="Rajdhani" font-size="11" text-anchor="middle">Result: 3–4mm keratinized mucosa</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12 -->
+<div class="slide" data-slide="12">
+  <div class="slide-heading">FGG — Healing &amp; Outcomes</div>
+  <div class="slide-subheading">What to expect and how to manage the patient post-procedure</div>
+  <div class="slide-body col">
+    <div class="two-col">
+      <div>
+        <div class="info-card">
+          <div class="card-title">Healing Timeline</div>
+          <p>• Day 0–3: Graft survives on plasma diffusion from periosteum<br>• Week 1–2: Neovascularisation begins — graft "takes"<br>• Week 2: Suture removal<br>• Week 4: Functional keratinized tissue forming<br>• 3 months: Assess final result</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">Expected Shrinkage</div>
+          <p>Expect approximately <strong>50% shrinkage</strong> during healing. Plan accordingly — harvest graft larger than desired final result. Starting with 3.5mm KM → end with ~2mm minimum. Consistent and predictable.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Donor Site Management</div>
+          <p>Palate heals by secondary intention. Options:<br>• Collagen haemostatic sponge<br>• Flowable composite over etched palatal cusps → acts as a pressure dressing for 72hr–2 weeks<br>• Traditional palatal stent (impression-based acrylic) — older technique, rarely needed now</p>
+        </div>
+        <div class="summary-box">
+          <div class="s-title">Key Evidence</div>
+          <p style="font-size:13px">FGG easier to perform when ≥1.5mm KM remains. Waiting until zero makes the procedure technically harder and outcomes less predictable. Act early — don't wait for complete deficiency.</p>
+        </div>
+      </div>
+    </div>
+    <div class="info-card" style="margin-top:4px">
+      <div class="card-title">Timing Relative to Implant Surgery</div>
+      <p>Do NOT perform FGG at the same time as bone grafting. Tissue needs a stable, healed base. Perform FGG either <strong>before</strong> (on native healed bone) or <strong>after</strong> (once GBR has healed). Never simultaneously.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13 -->
+<div class="slide" data-slide="13">
+  <div class="slide-heading">Connective Tissue Graft (CTG)</div>
+  <div class="slide-subheading">Increasing soft tissue THICKNESS and volume</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">CTG is used when the issue is <em>volume/thickness deficiency</em> rather than lack of keratinized mucosa. It increases the amount of soft tissue, not its keratinization status.</p>
+      <div class="info-card">
+        <div class="card-title">CTG vs FGG — The Key Difference</div>
+        <p>CTG: epithelium <strong>removed</strong> → placed <em>under</em> flap (buried) → increases thickness. FGG: epithelium <strong>kept</strong> → placed <em>on top</em> of periosteum → increases keratinized width.</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Why Remove the Epithelium?</div>
+        <p>If you bury a graft with epithelium under a flap, the epithelium creates a pocket — epithelium to epithelium won't heal (epithelium is for protection, not union). The connective tissue layer is what fuses and integrates.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">Common Indications</div>
+        <p>• Thin labial mucosal drape over implant (especially immediate placement)<br>• Compromised emergence profile requiring tissue augmentation<br>• Post-recession defects at existing implants<br>• Mucoderm (acellular dermal matrix) is an animal-derived alternative — second choice when palatal harvest not possible</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 260 280" width="260" height="280">
+        <text x="130" y="18" fill="#a855f7" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">CTG TECHNIQUE</text>
+        <!-- Flap elevated -->
+        <path d="M 20 50 L 20 150 L 240 150 L 240 50" fill="rgba(180,120,120,.1)" stroke="rgba(180,150,150,.35)" stroke-width="1.5"/>
+        <text x="130" y="100" fill="#8fa8bc" font-family="Rajdhani" font-size="11" text-anchor="middle">FULL THICKNESS FLAP</text>
+        <text x="130" y="116" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">(elevated)</text>
+        <!-- Flap open indication -->
+        <line x1="20" y1="50" x2="20" y2="30" stroke="rgba(180,150,150,.5)" stroke-width="1.5"/>
+        <line x1="240" y1="50" x2="240" y2="30" stroke="rgba(180,150,150,.5)" stroke-width="1.5"/>
+        <line x1="18" y1="30" x2="242" y2="30" stroke="rgba(180,150,150,.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- CTG graft placement -->
+        <rect x="50" y="150" width="160" height="20" fill="rgba(168,85,247,.2)" stroke="rgba(168,85,247,.5)" stroke-width="1.5"/>
+        <text x="130" y="164" fill="#a855f7" font-family="Rajdhani" font-size="11" text-anchor="middle" font-weight="600">CTG — Connective Tissue Only</text>
+        <!-- Implant -->
+        <rect x="100" y="170" width="60" height="60" rx="3" fill="rgba(100,140,200,.12)" stroke="rgba(100,140,200,.3)" stroke-width="1"/>
+        <text x="130" y="204" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">IMPLANT</text>
+        <!-- Bone -->
+        <rect x="20" y="230" width="220" height="25" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)"/>
+        <text x="130" y="246" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">BONE</text>
+        <!-- Labels -->
+        <text x="130" y="270" fill="#22c55e" font-family="Rajdhani" font-size="11" text-anchor="middle">Result: Increased soft tissue THICKNESS</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14 -->
+<div class="slide" data-slide="14">
+  <div class="slide-heading">Mucoderm — Allograft Option</div>
+  <div class="slide-subheading">When palatal harvest is not ideal</div>
+  <div class="slide-body col">
+    <p class="lead">Mucoderm is an acellular collagen matrix derived from porcine (pig) dermis. It serves as an alternative to autogenous connective tissue graft when donor site morbidity needs to be minimised.</p>
+    <div class="compare-grid">
+      <div class="compare-col good">
+        <div class="compare-title">Mucoderm — Advantages</div>
+        <ul>
+          <li>No second surgical site (no palatal harvest)</li>
+          <li>Unlimited supply — any volume needed</li>
+          <li>Reduced patient morbidity</li>
+          <li>Consistent thickness</li>
+          <li>Can be used as membrane AND soft tissue graft</li>
+          <li>Good integration with host tissue</li>
+        </ul>
+      </div>
+      <div class="compare-col bad">
+        <div class="compare-title">Mucoderm — Limitations</div>
+        <ul>
+          <li>Not as effective as autogenous CTG</li>
+          <li>Second best option — autogenous graft preferred</li>
+          <li>Higher cost</li>
+          <li>Religious/cultural considerations (porcine origin)</li>
+          <li>No live cells — purely structural scaffold</li>
+          <li>Less predictable revascularisation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-card teal" style="margin-top:12px">
+      <div class="card-title">Clinical Use — Combined Role</div>
+      <p>Mucoderm can be placed as a soft tissue augmentation material AND used simultaneously as a resorbable barrier membrane for GBR. This dual role makes it attractive for combined bone + soft tissue defect cases. The course will include hands-on practice with Mucoderm.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15 -->
+<div class="slide" data-slide="15">
+  <div class="slide-heading">Soft Tissue Tunnel Technique</div>
+  <div class="slide-subheading">Minimally invasive approach for connective tissue graft delivery</div>
+  <div class="slide-body col">
+    <p class="body-text">The tunnel technique allows CTG placement without raising a full flap — ideal when adjacent papillae must not be disturbed and the implant is already placed.</p>
+    <div class="two-col">
+      <div>
+        <div class="step-flow">
+          <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Harvest graft</strong> from palate or use de-epithelialized alveolar ridge tissue (remove shiny epithelium layer — 0.3–0.4mm). Connective tissue surface is matte/dull.</div></div>
+          <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Create tunnel</strong> — Tunnel instrument passed subperiosteally at the recipient site without raising a flap. Creates a pocket for graft insertion.</div></div>
+          <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Insert graft</strong> — CTG tucked into the tunnel. Positioned labially/buccally for volume gain. No sutures through the graft required — stabilised by the tunnel itself.</div></div>
+          <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Close</strong> — Sling sutures or interrupted sutures close the tunnel entrance. Healing abutment placed or temporary crown seated to support tissue.</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">How to Identify Correct Graft Depth</div>
+          <p>Epithelium is <strong>shiny</strong>. Connective tissue is <strong>matte and dull</strong>. Once the shiny surface disappears during de-epithelialisation, you are at the correct depth. Epithelium thickness: 0.3–0.4mm.</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">Ideal Use Case</div>
+          <p>Adjacent implant with recession/inadequate tissue volume. Cannot raise flap without disturbing precious papilla supported by minimal blood supply. Tunnel preserves all existing soft tissue architecture while adding volume beneath.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16 -->
+<div class="slide" data-slide="16">
+  <div class="slide-heading">Suturing — Principles</div>
+  <div class="slide-subheading">Choosing the right suture technique for implant surgery</div>
+  <div class="slide-body col">
+    <p class="body-text">Suturing is the final step in surgical tissue management. The wrong technique can undo everything achieved during surgery.</p>
+    <div class="compare-grid">
+      <div class="compare-col bad">
+        <div class="compare-title">✗ Interrupted Sutures Alone</div>
+        <ul>
+          <li>Flatten interdental papillae</li>
+          <li>Pull papilla tips coronally and horizontally</li>
+          <li>Result: flattened, blunted papillae</li>
+          <li>Loss of papilla height</li>
+          <li>Acceptable only where papilla aesthetic is not critical</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <div class="compare-title">✓ Vertical Mattress Sutures</div>
+        <ul>
+          <li>Evert wound margins</li>
+          <li>Hold papilla in its natural height</li>
+          <li>Better primary closure tension distribution</li>
+          <li>Preferred for anterior aesthetic zones</li>
+          <li>Practice session tomorrow (pig heads)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:12px">
+      <div class="info-card teal">
+        <div class="card-title">Horizontal Mattress Sutures</div>
+        <p>Used where broader tissue mobilisation and eversion is required. Good for flap edges across wider defects. Less commonly used than vertical mattress in implant papilla management.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">Suture Material</div>
+        <p>Resorbable (Vicryl, Monocryl) for most situations. Non-resorbable (Gore-Tex, Prolene) for membrane exposure cases where longer support needed. Remove non-resorbable at 2 weeks.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17 -->
+<div class="slide" data-slide="17">
+  <div class="slide-heading">Wound Dehiscence</div>
+  <div class="slide-subheading">Prevention, recognition, and management</div>
+  <div class="slide-body col">
+    <p class="lead">Wound dehiscence is among the most serious early post-operative complications. It exposes grafts or implants to the oral environment and bacterial colonisation.</p>
+    <div class="three-col">
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Causes</div>
+        <p style="font-size:13px">• Closure under tension (primary cause)<br>• Prominent frenum not addressed<br>• Infection<br>• Patient trauma / smoking<br>• Membrane exposure too early<br>• Excessive patient activity</p>
+      </div>
+      <div class="info-card" style="margin:0">
+        <div class="card-title">Recognition</div>
+        <p style="font-size:13px">• Wound open at 7–14 days (suture removal visit)<br>• White scar tissue visible centrally (necrosis + re-epithelialisation)<br>• Area may re-epithelialise but with low-quality tissue<br>• Marginal bone loss underneath is likely</p>
+      </div>
+      <div class="info-card teal" style="margin:0">
+        <div class="card-title">Consequences</div>
+        <p style="font-size:13px">• Marginal bone loss (guaranteed if open for &gt;48hr)<br>• Exposed threads → aesthetic failure<br>• Implant failure if infection spreads<br>• Even if re-epithelialised: bacteria already introduced</p>
+      </div>
+    </div>
+    <div class="summary-box" style="margin-top:12px">
+      <div class="s-title">Prevention Protocol</div>
+      <p class="body-text">Periosteal release → tweezers test → passive closure confirmed → suture with appropriate technique → check for blanching → frenectomy 4–6 weeks prior if prominent frenum identified. Prevention is surgical discipline, not luck.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18 -->
+<div class="slide" data-slide="18">
+  <div class="slide-heading">Fixed Temporisation</div>
+  <div class="slide-subheading">The role of provisional restorations in soft tissue management</div>
+  <div class="slide-body col">
+    <p class="lead">Fixed temporisation is superior to removable dentures for maintaining soft tissue stability between surgery and final restoration — particularly for papilla preservation.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card teal">
+          <div class="card-title">Why Fixed Beats Removable</div>
+          <p>A denture resting on the soft tissue compresses and starves the papilla of blood supply. Without lateral support, the papilla loses its anatomical reference and shrinks. <strong>Fixed temporaries maintain papilla support even during healing.</strong></p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Staged Approach Example</div>
+          <p>Patient needs implant adjacent to existing implant crown:<br>1. Make a 2-unit temporary bridge on existing implant before removing failing tooth<br>2. Extract tooth and fit temporary bridge immediately<br>3. Papilla maintained throughout healing phase<br>4. Graft at surgical date with protected soft tissue</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Prosthetic Soft Tissue Sculpting</div>
+          <p>The temporary crown's subgingival contour is used to progressively mould the peri-implant soft tissue into the desired emergence profile. Begin with a concave profile, then gradually increase convexity over weeks to "inflate" the tissue to the target shape.</p>
+        </div>
+        <div class="warning-box">
+          <div class="w-title">Cantilever Caution</div>
+          <p>As a temporary, a cantilever pontic (as large as the implant crown) is acceptable short-term to maintain papilla. Not suitable as a definitive solution. Always inform the patient of the temporary nature.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19 -->
+<div class="slide" data-slide="19">
+  <div class="slide-heading">Free Gingival Graft — Case Review</div>
+  <div class="slide-subheading">Real-world outcomes from the clinical evidence base</div>
+  <div class="slide-body col">
+    <p class="body-text">Evidence demonstrates consistent, reproducible improvement in keratinized mucosa width following FGG. The following summarises clinical findings:</p>
+    <div class="three-col">
+      <div class="stat-box">
+        <div class="stat-val">50%</div>
+        <div class="stat-unit">shrinkage</div>
+        <div class="stat-desc">Expected graft shrinkage during healing. Plan graft size accordingly.</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">3–4</div>
+        <div class="stat-unit">mm KM</div>
+        <div class="stat-desc">Typical final keratinized mucosa width achieved from near-zero baseline.</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">4–6</div>
+        <div class="stat-unit">weeks</div>
+        <div class="stat-desc">Minimum lead time before implant surgery after FGG (healed, stable tissue).</div>
+      </div>
+    </div>
+    <div class="info-card teal" style="margin-top:12px">
+      <div class="card-title">Long-Term Follow-Up Evidence</div>
+      <p>Cases reviewed at 14 years post-FGG show stable keratinized mucosa, with healthy tissue on the grafted side versus persistent inflammation and recession on non-grafted sites. The grafted tissue behaves as native keratinized mucosa in all measurable parameters — plaque index, recession rates, bone levels, and patient discomfort during oral hygiene.</p>
+    </div>
+    <div class="info-card">
+      <div class="card-title">Consensus Statement Summary</div>
+      <p>Italian Academy of Periodontology, Academy of Osseointegration: inadequate keratinized mucosa is associated with increased plaque, bleeding, recession, marginal bone loss, patient discomfort, and harder oral hygiene maintenance. This is <strong>evidence, not opinion</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20 -->
+<div class="slide" data-slide="20">
+  <div class="slide-heading">Timing of Soft Tissue Procedures</div>
+  <div class="slide-subheading">When to do what — a practical decision framework</div>
+  <div class="slide-body col">
+    <div class="obj-list">
+      <div class="obj-item"><div class="obj-num">1</div><div class="obj-text"><strong>Frenectomy</strong> → 4–6 weeks BEFORE implant surgery. Allows full healing. If omitted: perform at surgery date (but risk of perforation in weakened tissue remains).</div></div>
+      <div class="obj-item"><div class="obj-num">2</div><div class="obj-text"><strong>FGG for keratinized mucosa</strong> → Either before surgery (on native tissue, easiest) OR after implant healing (but not simultaneous with GBR). Never at the same surgical visit as bone augmentation.</div></div>
+      <div class="obj-item"><div class="obj-num">3</div><div class="obj-text"><strong>CTG for thickness</strong> → Often performed with immediate implant placement. Alternatively at second-stage surgery. Compatible with implant surgery — often combined.</div></div>
+      <div class="obj-item"><div class="obj-num">4</div><div class="obj-text"><strong>Soft tissue sculpting (temporary crown)</strong> → During healing phase, after implant osseointegration is confirmed (typically 8–12 weeks post-surgery). Before final impression.</div></div>
+      <div class="obj-item"><div class="obj-num">5</div><div class="obj-text"><strong>Final prosthetic restoration</strong> → Only when soft tissue is stable, healthy, and the desired profile has been achieved. Typically 3–6 months post-surgery depending on complexity.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21 -->
+<div class="slide" data-slide="21">
+  <div class="slide-heading">Periosteal Release — Interactive Review</div>
+  <div class="slide-subheading">Test your understanding of the technique steps</div>
+  <div class="slide-body col">
+    <div class="technique-tabs">
+      <button class="tab-btn active" onclick="showTab('t1',this)">Patient Position</button>
+      <button class="tab-btn" onclick="showTab('t2',this)">Blade Selection</button>
+      <button class="tab-btn" onclick="showTab('t3',this)">Blade Angle</button>
+      <button class="tab-btn" onclick="showTab('t4',this)">Depth of Cut</button>
+      <button class="tab-btn" onclick="showTab('t5',this)">Success Signs</button>
+      <button class="tab-btn" onclick="showTab('t6',this)">Failure Signs</button>
+    </div>
+    <div id="t1" class="tab-content show">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Patient Position</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6">Patient: supine, head tilted back slightly for upper arch. Surgeon: standing BEHIND the patient's head (12 o'clock position). <strong>Never</strong> work from in front of the patient — you cannot control the blade angle correctly and your visibility is compromised. Nurse retracts the lip to improve access.</p>
+    </div>
+    <div id="t2" class="tab-content">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Blade Selection</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6">Use a <strong>fresh blade</strong> — not the blade used for the initial incision. After contacting bone, a blade is blunted. A dull blade requires excess pressure → perforation risk increases significantly. Blade 15c preferred for its fine, pointed tip which facilitates the narrow periosteal cut.</p>
+    </div>
+    <div id="t3" class="tab-content">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Blade Angle — The 5-Degree Rule</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6">Begin with the blade nearly <strong>parallel</strong> to the flap surface, tip resting on it, pointing toward the bone. Then rotate the blade upright by just <strong>5 degrees</strong> — not 10°, not 45°. Five degrees. This angle allows the tip to engage the periosteum without the blade body perforating the mucosa above.</p>
+    </div>
+    <div id="t4" class="tab-content">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Depth of Cut — 1mm Only</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6">The blade tip disappears into the periosteum by <strong>1mm only</strong>. Not 2mm, not 3mm — just 1mm of the blade tip. The left hand provides the remaining 5–10mm of effective release through stretching. Cutting deeper increases perforation risk exponentially with no additional gain.</p>
+    </div>
+    <div id="t5" class="tab-content">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Signs of Correct Technique</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6"><strong>Dry procedure</strong> — no haemorrhage means you are in periosteum, away from vessels. <strong>No perforation</strong> — blade angle respected. <strong>Visible stretch</strong> — tissue immediately springs 5–10mm when left-hand tension is applied. <strong>Tweezers test negative</strong> — flap holds position for 3–5 seconds when released.</p>
+    </div>
+    <div id="t6" class="tab-content">
+      <p style="font-size:15px; color:var(--text); margin-bottom:8px"><strong>Signs of Incorrect Technique</strong></p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.6"><strong>Bleeding</strong> — you are in the muscle layer (too apical/too deep). Reposition coronally immediately. <strong>Perforation</strong> — blade angle too steep, too deep, or tissue not stretched adequately with left hand. <strong>Minimal stretch</strong> — cut not run full edge-to-edge, or cut in mucosa not periosteum.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22 -->
+<div class="slide" data-slide="22">
+  <div class="slide-heading">Bone Grafting &amp; GBR — Overview</div>
+  <div class="slide-subheading">The role of guided bone regeneration in the soft tissue framework</div>
+  <div class="slide-body col">
+    <p class="lead">Guided bone regeneration (GBR) is the cornerstone procedure for restoring bone volume before or concurrent with implant placement. Adequate bone underpins adequate soft tissue.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card">
+          <div class="card-title">Principle of GBR</div>
+          <p>Bone graft particles + barrier membrane create a protected space preventing soft tissue ingrowth while allowing osteoblasts to regenerate bone. The membrane maintains the "tent" space — key to vertical and horizontal bone gain.</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">Flap-Closure Demand of GBR</div>
+          <p>GBR significantly increases the volume under the flap (the "big belly" effect). This makes tension-free closure far more challenging. Periosteal release is <strong>mandatory</strong> for every GBR case — not optional.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Membrane Position Rule</div>
+          <p>The membrane edges must be away from flap margins and away from adjacent tooth roots. Flap margins should rest on <strong>vital bone</strong>, not on synthetic graft material. This reduces dehiscence risk and improves membrane protection.</p>
+        </div>
+        <div class="info-card purple">
+          <div class="card-title">Remote Palatal Incision Advantage</div>
+          <p>A palatal-offset crestal incision provides extra tissue to assist GBR closure — the additional coronal tissue reduces tension at the wound margin. Five advantages (detail in Lecture 3).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 23 -->
+<div class="slide" data-slide="23">
+  <div class="slide-heading">Socket Grafting at Extraction</div>
+  <div class="slide-subheading">Preserving ridge volume for future implant placement</div>
+  <div class="slide-body col">
+    <p class="body-text">Socket grafting (ridge preservation) at the time of extraction reduces bone loss and maintains an adequate site for later implant placement.</p>
+    <div class="two-col">
+      <div>
+        <div class="step-flow">
+          <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Atraumatic extraction</strong> — Preserve labial plate. Periotomes, extraction forceps with minimal bone removal. No buccal plate elevation.</div></div>
+          <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Degranulation</strong> — Remove all granulation tissue and PDL remnants. Special degranulation burs (800rpm) are efficient and bone-sparing. Available in multiple sizes (large to small).</div></div>
+          <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Graft packing</strong> — Bone graft material packed into socket. Various options: autogenous, xenograft (bovine), alloplast. Often a combination.</div></div>
+          <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Membrane coverage</strong> — Resorbable collagen membrane placed over graft. Sutured or tucked under flap margins.</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="info-card teal">
+          <div class="card-title">Degranulation Burs — Investment Worth Making</div>
+          <p>Designed to run at 800rpm — fast enough to remove granulation tissue but not fast enough to damage bone. Buy once, use throughout career. Excellent for immediate and early placement, socket grafting, and treating peri-implantitis.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">When to Socket Graft vs Not</div>
+          <p>Socket graft: thin phenotype, high aesthetic zone, anticipated significant bone loss, insufficient residual bone for early placement stability. Skip: thick phenotype, non-aesthetic zone, adequate residual bone, patient prefers fewer procedures.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24 -->
+<div class="slide" data-slide="24">
+  <div class="slide-heading">Soft Tissue Management — Denture Wearers</div>
+  <div class="slide-subheading">Special considerations for edentulous or near-edentulous patients</div>
+  <div class="slide-body col">
+    <p class="body-text">Long-term denture wearers present unique soft tissue challenges compared to partially dentate implant patients.</p>
+    <div class="three-col">
+      <div class="info-card" style="margin:0">
+        <div class="card-title">Atrophic Mucosa</div>
+        <p style="font-size:13px">Years of denture pressure causes tissue atrophy. Very thin, fragile mucosa. Biological width demands are harder to satisfy. Susceptible to trauma and poor healing.</p>
+      </div>
+      <div class="info-card" style="margin:0">
+        <div class="card-title">Keratinized Mucosa</div>
+        <p style="font-size:13px">Often dramatically reduced in edentulous ridges. Pre-implant FGG may be indicated to create an adequate keratinized band before implant placement, especially for mandibular overdenture implants.</p>
+      </div>
+      <div class="info-card teal" style="margin:0">
+        <div class="card-title">Overdenture Advantage</div>
+        <p style="font-size:13px">Overdenture implants do not require ideal soft tissue architecture in the same way as fixed restorations. However, adequate keratinized mucosa still protects against peri-implant disease around bar and ball attachments.</p>
+      </div>
+    </div>
+    <div class="info-card" style="margin-top:12px">
+      <div class="card-title">Denture Stabilisation During Healing</div>
+      <p>After implant placement for overdentures: existing denture must be relieved over implant sites. Tissue conditioner applied. Prevents pressure on healing implants. Premature loading (from unrelieved denture) is a common cause of early implant failure in denture patients.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25 -->
+<div class="slide" data-slide="25">
+  <div class="slide-heading">Prosthetic Soft Tissue Sculpting</div>
+  <div class="slide-subheading">Using the temporary crown to create ideal tissue architecture</div>
+  <div class="slide-body col">
+    <p class="lead">After implant healing, the temporary crown is your most powerful tool for creating and refining the peri-implant soft tissue profile.</p>
+    <div class="obj-list">
+      <div class="obj-item"><div class="obj-num">1</div><div class="obj-text"><strong>Initial temporary</strong> — Concave subgingival profile. Allows tissue to "relax" into a natural position after surgical manipulation.</div></div>
+      <div class="obj-item"><div class="obj-num">2</div><div class="obj-text"><strong>Progressive loading</strong> — At 4–6 week intervals, add composite to the subgingival aspect to gradually increase convexity and "push" tissue into desired emergence profile.</div></div>
+      <div class="obj-item"><div class="obj-num">3</div><div class="obj-text"><strong>Papilla management</strong> — Adjust the interdental contact point height to encourage papilla growth. Narrow the embrasure space progressively as tissue fills in (typically 12–24 weeks).</div></div>
+      <div class="obj-item"><div class="obj-num">4</div><div class="obj-text"><strong>Assessment criteria</strong> — Before taking final impression: tissue must be stable for minimum 4 weeks, no recession, adequate keratinized mucosa, healthy probing depths, optimal colour and texture match.</div></div>
+    </div>
+    <div class="summary-box">
+      <div class="s-title">Key Principle</div>
+      <p class="body-text">The final crown captures the soft tissue profile created by the temporary. A good temporary means a predictable final outcome. A poor temporary means the final crown will never look natural, regardless of the lab's skill.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 26 -->
+<div class="slide" data-slide="26">
+  <div class="slide-heading">Managing Existing Implant Recession</div>
+  <div class="slide-subheading">Addressing soft tissue deficiencies around previously placed implants</div>
+  <div class="slide-body col">
+    <p class="body-text">When patients present with existing implants and soft tissue deficiencies (recession, inadequate KM, aesthetic concerns), the management approach depends on diagnosis:</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card">
+          <div class="card-title">Diagnosis — What's Missing?</div>
+          <p>• Is it KM width deficiency? → FGG<br>• Is it tissue volume/thickness? → CTG<br>• Is it incorrect abutment design? → Replace abutment/crown with concave profile<br>• Is it active peri-implantitis? → Treat infection first, then augment</p>
+        </div>
+        <div class="info-card red">
+          <div class="card-title">Never Treat Without Diagnosis</div>
+          <p>Performing soft tissue augmentation on an infected or inflamed site = failure. All active disease must be controlled before any augmentation procedure.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card teal">
+          <div class="card-title">Recession After Cleaning — Normal?</div>
+          <p>When treating early peri-implantitis by removing the crown and cleaning: some recession post-treatment is normal healing. The cleaning disturbs hemidesmosomal attachments → tissue reestablishes at a slightly more apical level. As long as healthy: acceptable outcome.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Patient Communication</div>
+          <p>Pre-warn patients: cleaning peri-implant disease may result in some cosmetic recession. This is a treatment success (healthy) not a failure. Inform before treatment to prevent misunderstanding.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 27 -->
+<div class="slide" data-slide="27">
+  <div class="slide-heading">Sinus Lift &amp; Ridge Expansion — Overview</div>
+  <div class="slide-subheading">Advanced techniques that complement soft tissue management</div>
+  <div class="slide-body col">
+    <p class="body-text">When bone volume is insufficient for ideal implant placement, advanced bone management techniques become necessary. These are typically considered advanced skills beyond the core course but are introduced here for context.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card">
+          <div class="card-title">Internal Sinus Lift</div>
+          <p>Used when bone height below the sinus is 5–6mm but a longer implant is desired. The sinus floor is "nudged" 2mm upward using special Versah burs — allowing placement of a 7mm implant where only 5mm native bone exists. Osteotome-free, patient-friendly technique.</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">Versah Burs (Densah)</div>
+          <p>Purpose-designed for ridge expansion and sinus floor elevation. Rotate in an osseodensification pattern — compacting rather than cutting bone. Eliminates the mallet-and-chisel technique previously associated with tinnitus risk (ossicle disturbance).</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Ridge Expansion</div>
+          <p>For ridges ≤4mm width where a standard implant diameter is needed. Versah burs or traditional osteotomes expand the ridge laterally, allowing implant placement without bone graft in select cases.</p>
+        </div>
+        <div class="summary-box">
+          <div class="s-title">Course Masterclass</div>
+          <p style="font-size:13px">One-day masterclass (Dr Waleed, Qatar) covers both internal sinus lift and ridge expansion with hands-on training. Recommended for delegates wanting to handle cases previously requiring referral. Date: 18th July.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 28 -->
+<div class="slide" data-slide="28">
+  <div class="slide-heading">Patient Recruitment for Surgical Days</div>
+  <div class="slide-subheading">Bringing your own patients to the course practical sessions</div>
+  <div class="slide-body col">
+    <p class="body-text">The course surgical days provide you with supervised hands-on implant placement experience. You may bring your own patients or treat course-recruited patients.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card teal">
+          <div class="card-title">Patient Benefits</div>
+          <p>• 70% discount on treatment (£1,500 all-inclusive)<br>• Package includes: assessment, CBCT, implant surgery, GBR if needed, final crown<br>• Four visits to Leeds clinic<br>• Mentored by experienced implantologist</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Your Benefits</div>
+          <p>• Long-term follow-up of your own cases<br>• Portfolio building<br>• CBCT/scan taken free if needed pre-assessment<br>• Up to 3 implants per patient in one session<br>• Supervised by mentor throughout</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Suitable Cases</div>
+          <p>Simple to moderate implant cases: straightforward single tooth replacements, adequate bone, no complex GBR. Cases requiring sinus grafts or vertical bone augmentation: not suitable for course days.</p>
+        </div>
+        <div class="info-card purple">
+          <div class="card-title">Contact Academy</div>
+          <p>If you have a suitable patient: contact Alpheus as soon as possible. Cases need triage and preparation before the surgical day. The academy will confirm suitability after reviewing photos/scan.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 29 -->
+<div class="slide" data-slide="29">
+  <div class="slide-heading">Clinical Decision Summary</div>
+  <div class="slide-subheading">Integrating soft tissue management into every implant case</div>
+  <div class="slide-body col">
+    <div class="step-flow">
+      <div class="step-box"><div class="step-num">1</div><div class="step-text"><strong>Pre-operative</strong> — Assess KM width, phenotype, tissue thickness. Plan any required FGG/frenectomy 4–6 weeks before surgery.</div></div>
+      <div class="step-box"><div class="step-num">2</div><div class="step-text"><strong>Flap design</strong> — Use the four-yes system (Lecture 3). Choose appropriate flap extent. Plan vertical incision positions if needed.</div></div>
+      <div class="step-box"><div class="step-num">3</div><div class="step-text"><strong>Surgery</strong> — Implant placement at correct depth referenced to future gingival margin. GBR if required. CTG if immediate placement in thin phenotype.</div></div>
+      <div class="step-box"><div class="step-num">4</div><div class="step-text"><strong>Periosteal release</strong> — Perform in ALL cases. Tweezers test to confirm passive closure. Check for blanching after suturing.</div></div>
+      <div class="step-box"><div class="step-num">5</div><div class="step-text"><strong>Suture</strong> — Vertical mattress for papilla preservation. Appropriate material. Tension-free. Review at 2 weeks for suture removal and wound inspection.</div></div>
+      <div class="step-box"><div class="step-num">6</div><div class="step-text"><strong>Healing phase</strong> — Fixed temporisation if possible. Prosthetic sculpting at 8–12 weeks. Final restoration only when tissue is stable.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 30 -->
+<div class="slide slide-title-page" data-slide="30" style="background:radial-gradient(ellipse at 50% 40%,rgba(168,85,247,.06) 0%,transparent 60%)">
+  <div class="title-tag">Lecture 2 Summary</div>
+  <div class="main-title" style="font-size:36px">Key Takeaways</div>
+  <div class="title-divider"></div>
+  <div style="text-align:left;max-width:660px;margin-top:16px">
+    <ul class="bullet-list">
+      <li>Tension &gt;25Ncm on a flap causes dehiscence — always use the <span class="hl">tweezers test</span> before suturing</li>
+      <li><span class="hl">Periosteal release</span>: 1mm notch at the MGJ, blade at 5°, left hand provides the stretch — dry procedure with correct technique</li>
+      <li><span class="hl">FGG</span> (epithelium kept, placed on periosteum) = increases keratinized mucosa WIDTH</li>
+      <li><span class="hl">CTG</span> (epithelium removed, buried under flap) = increases soft tissue THICKNESS/VOLUME</li>
+      <li>Frenectomy: perform <span class="hl">4–6 weeks before</span> implant surgery when prominent frenum identified</li>
+      <li><span class="hl">Vertical mattress sutures</span> preserve papilla height — interrupted sutures alone flatten papillae</li>
+      <li>Fixed temporisation &gt; removable dentures for papilla and soft tissue stability during healing</li>
+    </ul>
+  </div>
+  <div class="module-info" style="margin-top:24px">Continue to Lecture 3 — Flap Design &amp; Surgical Decision-Making</div>
+</div>
+
+</div><!-- /slides-container -->
+
+<div id="nav">
+  <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+let current=1;const total=30;
+document.getElementById('tot').textContent=total;
+const dotsContainer=document.getElementById('dots');
+for(let i=1;i<=total;i++){const d=document.createElement('div');d.className='dot'+(i===1?' active':'');d.onclick=()=>goTo(i);dotsContainer.appendChild(d);}
+function updateUI(){document.getElementById('cur').textContent=current;document.getElementById('progress-fill').style.width=((current/total)*100)+'%';document.getElementById('prev-btn').disabled=current===1;document.getElementById('next-btn').disabled=current===total;document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current));}
+function goTo(n){const prev=document.querySelector('.slide.active');const next=document.querySelector('[data-slide="'+n+'"]');if(!prev||!next||n===current)return;prev.classList.remove('active');if(n>current)prev.classList.add('prev');next.classList.remove('prev');next.classList.add('active');setTimeout(()=>{prev.classList.remove('prev');},500);current=n;updateUI();}
+function changeSlide(dir){goTo(current+dir);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+function showTab(id,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('show'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('show');btn.classList.add('active');}
+updateUI();
+</script>
+</body>
+</html>

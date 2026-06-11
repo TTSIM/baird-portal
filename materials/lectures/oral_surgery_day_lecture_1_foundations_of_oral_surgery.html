@@ -851,6 +851,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);overflo
 <script>
 let currentSlide=1;const totalSlides=30;
 function showSlide(n){
+  n=Math.max(1,Math.min(totalSlides,n));
   document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
   const target=document.querySelector(`[data-slide="${n}"]`);
   if(target){target.classList.add('active');target.scrollTop=0}
