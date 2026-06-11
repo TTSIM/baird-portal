@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 3 · Lecture 2 — Dose, Risk, Justification & Guidelines</title>
+<style>
+:root{
+  --bg:#0b1020;--bg2:#121a35;--panel:#161f3d;--panel2:#1c2750;--border:#2a3868;
+  --text:#e8ecff;--muted:#9aa6d6;--accent:#6ee7ff;--accent2:#a78bfa;
+  --good:#34d399;--warn:#fbbf24;--bad:#f87171;--highlight:#fde68a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,#0d1530 100%);color:var(--text);overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+  background:rgba(11,16,32,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.brand{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+.brand small{color:var(--muted);font-weight:400;display:block;font-size:11px;margin-top:2px}
+.progress-wrap{flex:1;margin:0 24px;max-width:400px}
+.progress-bar{height:6px;background:var(--panel);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease;width:0%}
+.slide-counter{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-right:16px}
+.portal-back:hover{border-color:var(--accent);color:var(--accent)}
+.slide-area{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;padding:40px 60px 80px;display:none;flex-direction:column;
+  animation:fadeIn .4s ease;overflow-y:auto}
+.slide.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1.slide-title{font-size:28px;color:var(--accent);margin-bottom:6px;font-weight:700}
+h2.slide-sub{font-size:14px;color:var(--muted);margin-bottom:24px;font-weight:400;text-transform:uppercase;letter-spacing:1.2px}
+.content{flex:1;display:flex;flex-direction:column;gap:18px}
+p{line-height:1.6;font-size:16px;color:#dde3ff}
+ul{list-style:none;padding:0}
+ul li{padding:8px 0 8px 28px;position:relative;line-height:1.55}
+ul li::before{content:"▸";position:absolute;left:8px;color:var(--accent);font-weight:700}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.card-title{font-size:14px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.title-slide{justify-content:center;align-items:center;text-align:center}
+.title-slide .module-tag{font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+.title-slide h1{font-size:46px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;line-height:1.2;max-width:900px}
+.title-slide .subtitle{font-size:18px;color:var(--muted);margin-bottom:30px;max-width:700px}
+.title-slide .lect-num{display:inline-block;padding:8px 18px;background:var(--panel);
+  border:1px solid var(--accent);border-radius:50px;font-size:13px;color:var(--accent)}
+footer{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 60px;background:rgba(11,16,32,.9);border-top:1px solid var(--border)}
+.nav-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 18px;
+  border-radius:8px;cursor:pointer;font-size:14px;transition:all .2s}
+.nav-btn:hover:not(:disabled){background:var(--panel2);border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:60%;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--accent);width:18px;border-radius:4px}
+.dot:hover{background:var(--accent2)}
+table.compare{width:100%;border-collapse:collapse;margin-top:8px}
+table.compare th,table.compare td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+table.compare th{background:var(--panel2);color:var(--accent);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.8px}
+table.compare tr:hover td{background:rgba(110,231,255,.04)}
+.tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:12px;font-weight:600}
+.tag-good{background:rgba(52,211,153,.18);color:var(--good)}
+.tag-bad{background:rgba(248,113,113,.18);color:var(--bad)}
+.tag-warn{background:rgba(251,191,36,.18);color:var(--warn)}
+.flip{perspective:1000px;height:160px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flip-front{background:var(--panel);border:1px solid var(--border)}
+.flip-front .icon{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.flip-back{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--accent);
+  transform:rotateY(180deg);font-size:13px;line-height:1.5;color:#dde3ff}
+.reveal{background:var(--panel);border:1px dashed var(--accent2);border-radius:10px;padding:14px;cursor:pointer;transition:all .3s}
+.reveal .question{color:var(--accent);font-weight:600;font-size:14px}
+.reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:14px;color:#dde3ff;line-height:1.55}
+.reveal.shown .answer{display:block}
+.reveal.shown{border-style:solid;background:var(--panel2)}
+.callout{padding:14px 18px;border-radius:10px;border-left:4px solid;display:flex;gap:12px;align-items:flex-start}
+.callout.tip{background:rgba(52,211,153,.08);border-color:var(--good)}
+.callout.warn{background:rgba(251,191,36,.08);border-color:var(--warn)}
+.callout.key{background:rgba(167,139,250,.08);border-color:var(--accent2)}
+.callout-icon{font-size:20px;flex-shrink:0}
+.callout-text{font-size:14px;line-height:1.55}
+.callout-text strong{color:var(--accent)}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat .num{font-size:30px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.stat .lbl{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.8px}
+.svg-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:center;align-items:center}
+.svg-wrap svg{max-width:100%;height:auto}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-track{background:var(--bg2)}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.slide::-webkit-scrollbar-thumb:hover{background:var(--accent2)}
+.speaker{display:inline-block;font-size:11px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:50px;margin-bottom:14px}
+.speaker.s2{border-color:var(--accent2);color:var(--accent2)}
+.kbd-hint{position:absolute;bottom:90px;right:60px;font-size:11px;color:var(--muted);opacity:.6}
+kbd{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px}
+/* Dose chart bars */
+.dosebar{display:flex;align-items:center;gap:10px;padding:6px 0}
+.dosebar-label{min-width:140px;font-size:13px;color:var(--text)}
+.dosebar-track{flex:1;height:22px;background:var(--panel);border-radius:4px;border:1px solid var(--border);position:relative;overflow:hidden}
+.dosebar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 1s ease}
+.dosebar-val{min-width:80px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+/* Quiz buttons - for justification interactive */
+.choice-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:12px 16px;
+  border-radius:8px;cursor:pointer;text-align:left;font-size:14px;transition:all .2s;width:100%}
+.choice-btn:hover{border-color:var(--accent);background:var(--panel2)}
+.choice-btn.correct{border-color:var(--good);background:rgba(52,211,153,.12)}
+.choice-btn.incorrect{border-color:var(--bad);background:rgba(248,113,113,.12)}
+.choice-feedback{font-size:13px;color:var(--muted);margin-top:8px;padding:10px;background:var(--panel2);border-radius:6px;display:none}
+.choice-feedback.shown{display:block}
+@media (max-width:768px){
+  .slide{padding:24px 20px 90px}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  h1.slide-title{font-size:22px}
+  .title-slide h1{font-size:30px}
+  footer{padding:12px 16px}
+  .kbd-hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">CBCT LEVEL 1 · MODULE 2<small>Day 3 · Lecture 2 of 3</small></div>
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+    <div class="slide-counter"><span id="curSlide">1</span> / <span id="totSlide">30</span></div>
+  </header>
+
+  <div class="slide-area" id="slideArea">
+
+    <!-- 1: Title -->
+    <section class="slide active title-slide">
+      <div class="module-tag">Module 2 · Day 3 · Lecture 2</div>
+      <h1>Dose, Risk,<br>Justification & Guidelines</h1>
+      <p class="subtitle">Effective dose vs absorbed dose, deterministic vs stochastic effects, the linear non-threshold model, patient communication, pregnancy, selection criteria from FGDP/SedentexCT/EAO/AAOMR, and how to choose a field of view.</p>
+      <div class="lect-num">30 slides · ~50 min</div>
+    </section>
+
+    <!-- 2: Learning objectives -->
+    <section class="slide">
+      <h1 class="slide-title">Learning Objectives</h1>
+      <h2 class="slide-sub">By the end of this lecture you should be able to…</h2>
+      <div class="content">
+        <ul>
+          <li>Distinguish absorbed dose, equivalent dose and effective dose, and know which units (Gy vs Sv) belong to which</li>
+          <li>Explain deterministic vs stochastic radiation effects and the linear non-threshold model</li>
+          <li>Quote realistic effective doses for periapicals, OPGs and CBCT scans of different field-of-view sizes</li>
+          <li>Communicate dose risk to patients in a confident, reassuring way</li>
+          <li>Apply UK rules around pregnancy enquiries in dental imaging</li>
+          <li>Compare the FGDP, SedentexCT, EAO and AAOMR guidance on CBCT use in implant dentistry</li>
+          <li>Define "justification" using the Royal College of Radiologists definition</li>
+          <li>Choose the correct field of view for the clinical question and recognise the lower-wisdom-tooth and endodontic exceptions</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3: Why care about dose -->
+    <section class="slide">
+      <h1 class="slide-title">Why We Talk About Dose</h1>
+      <h2 class="slide-sub">A reassuring, not scary, message</h2>
+      <div class="content">
+        <p>The goal of this section is <strong style="color:var(--accent)">not</strong> to make you anxious about CBCT. The opposite. Once you understand the numbers you'll feel completely confident prescribing CBCT scans for your patients, and you'll be able to reassure them when they ask awkward questions.</p>
+        <div class="grid3">
+          <div class="card" style="text-align:center"><div style="font-size:32px">🛡️</div><strong>Reassure yourself</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">CBCT is genuinely low-dose</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:32px">💬</div><strong>Reassure patients</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">Confident dose-risk conversations</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:32px">⚖️</div><strong>Stay compliant</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">IRMER 2017 requires it</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4: Deterministic vs stochastic -->
+    <section class="slide">
+      <h1 class="slide-title">Deterministic vs Stochastic Effects</h1>
+      <h2 class="slide-sub">Two completely different mechanisms of harm</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Deterministic effects</div>
+            <p style="font-size:14px;line-height:1.6">Caused by <strong>cell death</strong>. Have a clear <strong>threshold dose</strong> — below it, nothing happens; above it, the effect happens 100% of the time. The severity scales with dose. Examples: radiation burns, mucositis, hair loss, salivary gland destruction in radiotherapy.</p>
+            <p style="font-size:13px;color:var(--good);margin-top:10px">✓ Impossible at diagnostic dental doses — we are nowhere near the threshold.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Stochastic effects</div>
+            <p style="font-size:14px;line-height:1.6">Caused by <strong>cell mutation</strong>. <strong>No threshold</strong> — any dose, however low, could in theory induce a mutation that escapes repair and decades later becomes a malignancy. The <em>severity</em> doesn't scale with dose, but the <em>probability</em> does.</p>
+            <p style="font-size:13px;color:var(--warn);margin-top:10px">⚠ This is the only effect we worry about in dentistry.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">Most cell mutations are repaired or apoptosed by the body. Stochastic risk only materialises when a mutation slips through the body's repair mechanisms <em>and</em> survives <em>and</em> goes on to become a malignancy. The probability of all three at dental doses is vanishingly small — but not absolutely zero.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5: Risk is age-dependent -->
+    <section class="slide">
+      <h1 class="slide-title">Risk Is Age-Dependent</h1>
+      <h2 class="slide-sub">Why we are extra cautious in children</h2>
+      <div class="content">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+            <text x="300" y="22" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Relative cancer risk by age (British Orthodontic Society)</text>
+            <!-- Bars -->
+            <g>
+              <rect x="80" y="60" width="100" height="120" fill="#f87171" opacity=".7" rx="4"/>
+              <text x="130" y="200" text-anchor="middle" fill="#9aa6d6" font-size="12">&lt; 10 yrs</text>
+              <text x="130" y="55" text-anchor="middle" fill="#f87171" font-size="14" font-weight="700">×3</text>
+              <rect x="240" y="100" width="100" height="80" fill="#fbbf24" opacity=".7" rx="4"/>
+              <text x="290" y="200" text-anchor="middle" fill="#9aa6d6" font-size="12">20 yrs (baseline)</text>
+              <text x="290" y="95" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="700">×1</text>
+              <rect x="400" y="155" width="100" height="25" fill="#34d399" opacity=".7" rx="4"/>
+              <text x="450" y="200" text-anchor="middle" fill="#9aa6d6" font-size="12">&gt; 50 yrs</text>
+              <text x="450" y="150" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700">×⅓</text>
+            </g>
+            <line x1="60" y1="180" x2="540" y2="180" stroke="#2a3868"/>
+          </svg>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Why kids are higher risk</div>
+            <ul style="margin-top:0">
+              <li>Paediatric tissues are more <strong>radiosensitive</strong> — cells are dividing rapidly</li>
+              <li>Long <strong>latent period</strong> available for mutations to manifest</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Why elderly are lower risk</div>
+            <ul style="margin-top:0">
+              <li>Slower cell turnover</li>
+              <li>Crudely: they're more likely to die of something else before any radiation-induced cancer manifests</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: Measures of dose -->
+    <section class="slide">
+      <h1 class="slide-title">Measuring Dose</h1>
+      <h2 class="slide-sub">Three things that affect risk</h2>
+      <div class="content">
+        <p>Patient risk depends on three factors:</p>
+        <div class="grid3">
+          <div class="card" style="text-align:center"><div style="font-size:24px;color:var(--accent)">⚡</div><strong>Energy deposited</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">per unit mass of tissue</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px;color:var(--accent)">💥</div><strong>Type of radiation</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">how ionising / damaging it is</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px;color:var(--accent)">🎯</div><strong>Tissue sensitivity</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">radiosensitivity of target</p></div>
+        </div>
+        <table class="compare">
+          <thead><tr><th>Measure</th><th>Unit</th><th>What it accounts for</th><th>Where you find it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Absorbed dose</strong></td><td>Gray (Gy)</td><td>Energy deposited only</td><td>Readout on your CBCT machine (e.g. as DAP, mGy·cm²)</td></tr>
+            <tr><td>Equivalent dose</td><td>Sievert (Sv)</td><td>Energy + type of radiation</td><td>Used in radiation protection</td></tr>
+            <tr><td><strong>Effective dose</strong> ⭐</td><td>Sievert (Sv)</td><td>All three factors</td><td>Manufacturer literature, academic publications — the gold standard</td></tr>
+          </tbody>
+        </table>
+        <div class="callout key">
+          <div class="callout-icon">📏</div>
+          <div class="callout-text"><strong>Memory aid:</strong> if you see units in <strong>Gy</strong> (Gray), it's the basic absorbed dose. If you see <strong>Sv</strong> (Sievert), it's the more sophisticated equivalent or effective dose. Effective dose lets you directly compare the dose of an OPG with a chest X-ray, a periapical with a banana, or a CBCT with a transatlantic flight.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7: Effective dose - why -->
+    <section class="slide">
+      <h1 class="slide-title">Why Effective Dose Is the Gold Standard</h1>
+      <h2 class="slide-sub">Whole-body equivalents make doses comparable</h2>
+      <div class="content">
+        <p>The readout you get on your scanner is the <strong style="color:var(--accent)">absorbed dose</strong> — useful for comparing two scans on the same machine, but you can't compare it directly to a chest X-ray, an aeroplane flight or a CT scan of the brain. The tissues being irradiated are too different.</p>
+        <p>The <strong style="color:var(--accent)">effective dose</strong> takes into account the radiosensitivity of every tissue irradiated and converts the result into a whole-body equivalent dose. This is what lets you make meaningful comparisons.</p>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text">The number on your control panel is <em>not</em> directly comparable to the effective doses we'll discuss in this lecture. They are different units measuring different things. Use the control panel value to compare scans on your own machine; use literature effective doses to compare against other modalities.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8: Most radiosensitive tissues -->
+    <section class="slide">
+      <h1 class="slide-title">Radiosensitive Tissues in the Head & Neck</h1>
+      <h2 class="slide-sub">Why mandible scans cost more dose than maxilla scans</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="card">
+            <div class="card-title" style="color:var(--bad)">🩸 Bone marrow</div>
+            <p style="font-size:13px;line-height:1.55">One of the most radiosensitive tissues in the body. Why radiation-induced cancers are often haematological — leukaemia, lymphoma. The mandible has more fatty marrow than the maxilla.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--warn)">🦋 Thyroid gland</div>
+            <p style="font-size:13px;line-height:1.55">Less than bone marrow, but still reasonably radiosensitive. Sits low in the neck — closer to mandibular scans, picks up more scattered radiation.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--warn)">💧 Salivary glands</div>
+            <p style="font-size:13px;line-height:1.55">Mildly radiosensitive but a huge contributor in OPG dose because the parotids sit right in the path. Excluding the ramus and condyles can roughly halve OPG dose.</p>
+          </div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Practical implication:</strong> a "focused" OPG limited to the dentition (without ramus/condyles/TMJs) delivers about <strong>half the dose</strong> of a full OPG, because it spares the parotid glands. If you only need periodontal bone levels, you don't need the TMJs in the picture.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9: Maxilla vs mandible -->
+    <section class="slide">
+      <h1 class="slide-title">Maxilla vs Mandible Scans</h1>
+      <h2 class="slide-sub">Same FOV size, different dose</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Maxilla scan</div>
+            <ul style="margin-top:0">
+              <li>Less fatty bone marrow</li>
+              <li>Further from thyroid gland</li>
+              <li>Parotid glands less in beam</li>
+              <li><span class="tag tag-good">Lower effective dose</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Mandible scan</div>
+            <ul style="margin-top:0">
+              <li>More fatty bone marrow</li>
+              <li>Closer to thyroid for scatter</li>
+              <li>Submandibular glands more in beam</li>
+              <li><span class="tag tag-warn">Slightly higher effective dose</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-text">A small change in the anatomy you image can disproportionately change the effective dose if it adds or removes a radiosensitive structure from the beam. This is why "scan less anatomy" is the most powerful lever you have.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10: Background radiation -->
+    <section class="slide">
+      <h1 class="slide-title">Background Radiation</h1>
+      <h2 class="slide-sub">The dose you can never escape</h2>
+      <div class="content">
+        <div class="grid2">
+          <div>
+            <p>The average UK resident is exposed to about <strong style="color:var(--accent)">2,700 µSv per year</strong> — roughly <strong style="color:var(--accent)">7 µSv every single day</strong>. There is nothing you can do to avoid it.</p>
+            <p style="margin-top:12px">Roughly <strong>50% comes from radon gas</strong>, mostly from granite in the ground. The rest is cosmic rays, foods, building materials and (about an eighth) artificial sources like medical imaging.</p>
+            <div class="callout tip" style="margin-top:14px">
+              <div class="callout-icon">🧠</div>
+              <div class="callout-text"><strong>Remember the number 7</strong> = one day of background radiation. <strong>Remember the number 2</strong> = a single periapical or bitewing.</div>
+            </div>
+          </div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+              <text x="120" y="20" text-anchor="middle" fill="#6ee7ff" font-size="12" font-weight="700">UK background — sources</text>
+              <!-- Pie chart -->
+              <g transform="translate(120,120)">
+                <!-- Radon 50% -->
+                <path d="M 0 -70 A 70 70 0 0 1 0 70 L 0 0 Z" fill="#f87171"/>
+                <!-- Cosmic 12.5% -->
+                <path d="M 0 70 A 70 70 0 0 1 -49.5 49.5 L 0 0 Z" fill="#fbbf24"/>
+                <!-- Foods 12.5% -->
+                <path d="M -49.5 49.5 A 70 70 0 0 1 -70 0 L 0 0 Z" fill="#a78bfa"/>
+                <!-- Gamma/ground 12.5% -->
+                <path d="M -70 0 A 70 70 0 0 1 -49.5 -49.5 L 0 0 Z" fill="#34d399"/>
+                <!-- Medical 12.5% -->
+                <path d="M -49.5 -49.5 A 70 70 0 0 1 0 -70 L 0 0 Z" fill="#6ee7ff"/>
+              </g>
+              <!-- legend -->
+              <g font-size="9" fill="#9aa6d6">
+                <rect x="20" y="195" width="10" height="8" fill="#f87171"/><text x="34" y="202">Radon 50%</text>
+                <rect x="100" y="195" width="10" height="8" fill="#fbbf24"/><text x="114" y="202">Cosmic ~12%</text>
+                <rect x="180" y="195" width="10" height="8" fill="#a78bfa"/><text x="194" y="202">Food</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11: Dose comparisons -->
+    <section class="slide">
+      <h1 class="slide-title">Dose Comparisons</h1>
+      <h2 class="slide-sub">Putting numbers in context</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Effective doses (µSv) — relative scale</div>
+          <div id="doseChart">
+            <div class="dosebar"><div class="dosebar-label">Periapical/bitewing</div><div class="dosebar-track"><div class="dosebar-fill" style="width:0.04%"></div></div><div class="dosebar-val">~2 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Day's background</div><div class="dosebar-track"><div class="dosebar-fill" style="width:0.1%"></div></div><div class="dosebar-val">~7 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">100 g Brazil nuts</div><div class="dosebar-track"><div class="dosebar-fill" style="width:0.15%"></div></div><div class="dosebar-val">~10 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Chest X-ray</div><div class="dosebar-track"><div class="dosebar-fill" style="width:0.2%"></div></div><div class="dosebar-val">~14 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">OPG (panoramic)</div><div class="dosebar-track"><div class="dosebar-fill" style="width:0.3%"></div></div><div class="dosebar-val">~20 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Transatlantic flight (return)</div><div class="dosebar-track"><div class="dosebar-fill" style="width:1.2%"></div></div><div class="dosebar-val">~80 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Annual UK background</div><div class="dosebar-track"><div class="dosebar-fill" style="width:40.9%"></div></div><div class="dosebar-val">2,700 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Medical CT head</div><div class="dosebar-track"><div class="dosebar-fill" style="width:21.2%"></div></div><div class="dosebar-val">1,400 µSv</div></div>
+            <div class="dosebar"><div class="dosebar-label">Medical CT chest</div><div class="dosebar-track"><div class="dosebar-fill" style="width:100%"></div></div><div class="dosebar-val">6,600 µSv</div></div>
+          </div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">🥜</div>
+          <div class="callout-text">100 g of Brazil nuts contains radioactive selenium-79 — about <strong>5 periapicals</strong> worth of dose. Bananas are the famous example but you'd need to eat ~20 bananas to match a single periapical. <strong>A week in Cornwall</strong> — where granite-rich rock means more radon — adds about <strong>2 weeks' background radiation</strong>.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12: Linear non-threshold model -->
+    <section class="slide">
+      <h1 class="slide-title">The Linear Non-Threshold Model</h1>
+      <h2 class="slide-sub">The model legislation is built on</h2>
+      <div class="content">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+            <!-- Axes -->
+            <line x1="60" y1="220" x2="560" y2="220" stroke="#9aa6d6" stroke-width="1.5"/>
+            <line x1="60" y1="220" x2="60" y2="30" stroke="#9aa6d6" stroke-width="1.5"/>
+            <text x="310" y="245" text-anchor="middle" fill="#9aa6d6" font-size="11">Dose →</text>
+            <text x="20" y="125" text-anchor="middle" fill="#9aa6d6" font-size="11" transform="rotate(-90 20 125)">Risk →</text>
+            <!-- LNT line (red) - through origin -->
+            <line x1="60" y1="220" x2="540" y2="40" stroke="#f87171" stroke-width="3"/>
+            <text x="450" y="60" fill="#f87171" font-size="12" font-weight="700">Linear Non-Threshold (legal model)</text>
+            <!-- threshold model -->
+            <path d="M 60 220 L 200 220 Q 250 218 320 180 L 540 60" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+            <text x="220" y="200" fill="#fbbf24" font-size="11">Threshold model</text>
+            <!-- hormesis -->
+            <path d="M 60 220 Q 150 240 220 232 L 540 80" stroke="#34d399" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+            <text x="125" y="245" fill="#34d399" font-size="11">Hormesis</text>
+            <!-- Dental dose marker -->
+            <line x1="100" y1="220" x2="100" y2="200" stroke="#6ee7ff" stroke-width="2"/>
+            <circle cx="100" cy="205" r="4" fill="#6ee7ff"/>
+            <text x="105" y="195" fill="#6ee7ff" font-size="10">Dental doses are HERE</text>
+          </svg>
+        </div>
+        <p>Three theoretical models exist for low-dose radiation risk. The <strong style="color:var(--accent)">linear non-threshold (LNT) model</strong> assumes no safe dose — risk rises in direct proportion to dose, all the way down to zero. The <strong style="color:var(--warn)">threshold model</strong> says low doses are safe. The <strong style="color:var(--good)">hormesis model</strong> claims low doses are even <em>beneficial</em> (stimulating repair).</p>
+        <div class="callout warn">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text">The best available evidence supports LNT, and from a public health perspective writing legislation, you must use the most conservative model. <strong>UK and EU radiation legislation is built on LNT</strong> — so even if some endodontists or commentators argue otherwise, you must practise within it.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13: Doses of dental imaging -->
+    <section class="slide">
+      <h1 class="slide-title">Doses of Common Dental Imaging</h1>
+      <h2 class="slide-sub">After John Ludlow (the gold-standard reference)</h2>
+      <div class="content">
+        <p>Most published effective doses for dental imaging come from John Ludlow, an academic dental radiologist in North Carolina. If you see his name on a paper, the numbers are reliable.</p>
+        <table class="compare">
+          <thead><tr><th>Modality</th><th>Effective dose</th><th>Equivalent in periapicals</th></tr></thead>
+          <tbody>
+            <tr><td>Single periapical / bitewing (digital + rectangular collimation)</td><td><strong>&lt; 2 µSv</strong></td><td>1 PA</td></tr>
+            <tr><td>Same, but <em>round</em> cone (no rectangular collimation)</td><td>up to 5× higher</td><td>~5 PA</td></tr>
+            <tr><td>Lateral cephalogram</td><td>~6 µSv</td><td>~3 PA</td></tr>
+            <tr><td>Panoramic (OPG)</td><td>14–24 µSv (use <strong>20</strong>)</td><td>~10 PA</td></tr>
+            <tr><td>CBCT — small (≤5×5 cm) FOV, good quality</td><td>~40 µSv</td><td>~20 PA / 2 OPGs</td></tr>
+            <tr><td>CBCT — both jaws (8×8 cm), good quality</td><td>~80 µSv</td><td>~40 PA / 4 OPGs</td></tr>
+            <tr><td>CBCT — full craniofacial (&gt;15 cm)</td><td>~200 µSv</td><td>~100 PA / 10 OPGs</td></tr>
+          </tbody>
+        </table>
+        <div class="callout key">
+          <div class="callout-icon">🧠</div>
+          <div class="callout-text"><strong>Numbers worth memorising:</strong> <strong>2</strong> µSv = periapical, <strong>20</strong> µSv = OPG (10 PAs), <strong>2 OPGs</strong> = small CBCT, <strong>4 OPGs</strong> = both-jaw CBCT (~transatlantic flight).</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14: CBCT FOV doses -->
+    <section class="slide">
+      <h1 class="slide-title">CBCT Effective Dose by Field of View</h1>
+      <h2 class="slide-sub">Why FOV is the dose lever</h2>
+      <div class="content">
+        <div class="grid4">
+          <div class="stat" style="border-color:var(--good)"><div class="num">~40 µSv</div><div class="lbl">≤5×5 cm<br>Single tooth / endo</div></div>
+          <div class="stat" style="border-color:var(--accent)"><div class="num">~80 µSv</div><div class="lbl">8×8 cm<br>Both jaws</div></div>
+          <div class="stat" style="border-color:var(--warn)"><div class="num">~180 µSv</div><div class="lbl">10–15 cm<br>Maxillofacial</div></div>
+          <div class="stat" style="border-color:var(--bad)"><div class="num">~200 µSv</div><div class="lbl">&gt;15 cm<br>Full craniofacial</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Compared with medical CT</div>
+          <p style="font-size:14px;line-height:1.65">A craniofacial-sized scan that costs you ~200 µSv on CBCT would cost <strong>over 1,000 µSv</strong> on medical CT — at least 5× the dose. This is why we should encourage ENT and maxillofacial colleagues to use CBCT, not medical CT, when they only need hard-tissue information (facial trauma, orthognathic planning, zygomatic implants).</p>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>Marketing trap:</strong> manufacturers sometimes claim "we can scan both jaws at the same dose as an OPG". Technically true — but only by reducing exposure time by a factor of 4, which means 4× fewer projections and a noticeably lower-quality image. Don't fall for low-dose marketing numbers if it costs you diagnostic confidence.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15: Patient communication -->
+    <section class="slide">
+      <h1 class="slide-title">Patient Communication</h1>
+      <h2 class="slide-sub">IRMER 2017 changed the rules</h2>
+      <div class="content">
+        <p>IRMER 2000 said you didn't need to give patients dose-risk information — that doing so might cause "unnecessary anxiety". <strong style="color:var(--accent)">IRMER 2017</strong> reversed this: you must now give patients adequate information about benefits and risks of the exposure in advance.</p>
+        <div class="callout key">
+          <div class="callout-icon">📋</div>
+          <div class="callout-text"><strong>What "adequate" means:</strong> the 2020 guidance update confirmed that displaying a poster in your practice is sufficient. The Society of Radiographers / Royal College of Radiologists / IPEM produced an excellent reassuring poster — it explains that dental X-ray doses are similar to everyday environmental sources, and notably <em>never mentions the word cancer</em>.</div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">❌ Don't do this</div>
+            <p style="font-size:14px;line-height:1.6">"I'm going to take a periapical now, there's a 1 in 10 million chance it could give you cancer." Technically true. Practically terrible.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">✓ Do this</div>
+            <p style="font-size:14px;line-height:1.6">Display the official poster. If asked, compare doses to everyday things — Brazil nuts, an aeroplane flight, a few days of background radiation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16: Population vs individual risk -->
+    <section class="slide">
+      <h1 class="slide-title">Population vs Individual Risk</h1>
+      <h2 class="slide-sub">Why we still need to be careful</h2>
+      <div class="content">
+        <p>If individual risk is so tiny, why bother optimising at all? Because dentistry as a profession takes a <em>lot</em> of radiographs.</p>
+        <div class="grid3">
+          <div class="stat"><div class="num">20.5M</div><div class="lbl">Dental X-rays in<br>UK practices (2008)</div></div>
+          <div class="stat"><div class="num">¼</div><div class="lbl">Of all UK X-rays<br>are dental</div></div>
+          <div class="stat"><div class="num">~7–8</div><div class="lbl">Statistically projected<br>cancers per year of<br>UK dental imaging</div></div>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>Thought experiment:</strong> if every UK dentist switched <em>tomorrow</em> from periapicals to small-volume CBCTs for every root canal extraction and post-op review, the population dose from dentistry would jump <strong>~20-fold</strong>. Individual patient risk would still be tiny — but the profession's contribution to cumulative population dose would be substantial. <em>This is why we use the smallest justifiable FOV every time.</em></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17: Pregnancy enquiries -->
+    <section class="slide">
+      <h1 class="slide-title">Pregnancy Enquiries</h1>
+      <h2 class="slide-sub">A common point of overreach</h2>
+      <div class="content">
+        <p>Who routinely asks female patients "is there any chance you could be pregnant?" before taking a dental X-ray? About half of clinicians do. <strong style="color:var(--accent)">You don't need to.</strong></p>
+        <div class="card">
+          <div class="card-title">The guidance says (verbatim)</div>
+          <p style="font-style:italic;font-size:14px;line-height:1.6;color:#dde3ff">"Such an inquiry is not relevant in dental radiography because the primary beam will not irradiate the pelvic area during a properly conducted dental radiograph or dental CBCT."</p>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">😬</div>
+          <div class="callout-text">If you do choose to ask, the guidance defines childbearing age as <strong>12 to 55 years</strong>. Which means the same logic compels you to ask the 13-year-old whose parents are sitting in the corner of your surgery. Awkward. The simpler approach: don't ask routinely.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18: CBCT in pregnant patients -->
+    <section class="slide">
+      <h1 class="slide-title">CBCT in Pregnant Patients</h1>
+      <h2 class="slide-sub">When the answer changes — and when it doesn't</h2>
+      <div class="content">
+        <p>Dental imaging is <strong style="color:var(--accent)">safe in any trimester</strong> — first, second or third. The primary beam doesn't reach the abdomen. Some clinicians choose to delay <em>treatment</em> to the second trimester, but that's a different decision from imaging.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Routine — defer it</div>
+            <p style="font-size:14px;line-height:1.6">Patient on maternity leave wanting an implant consultation? Take the CBCT after the baby is born. It's not urgent. Common sense.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Acute — take the scan</div>
+            <p style="font-size:14px;line-height:1.6">Pregnant patient with an acutely symptomatic wisdom tooth that looks close to the ID canal on OPG, and you've decided to surgically remove it during pregnancy? <strong>Take the CBCT.</strong> The risk of nerve injury doesn't change because she's pregnant. The medico-legal risk of <em>not</em> imaging is greater than the imaging dose.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>The harsh truth:</strong> "you're more likely to be criticised for <em>not</em> imaging a patient than for imaging them" — particularly in a medico-legal context. If the patient consented to the scan and the guidance says it's safe, taking the scan is the defensible choice.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19: Justification definition -->
+    <section class="slide">
+      <h1 class="slide-title">Justification</h1>
+      <h2 class="slide-sub">The Royal College of Radiologists definition</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Definition (RCR)</div>
+          <p style="font-style:italic;font-size:15px;line-height:1.65;color:#dde3ff">"A useful investigation is one of which the result, positive or negative, will <strong style="color:var(--accent)">inform clinical management</strong> <span style="color:var(--accent)">and/or</span> <strong style="color:var(--accent)">add confidence to the clinician's diagnosis</strong>."</p>
+        </div>
+        <p>Some people will challenge a CBCT prescription with "how is it going to change your management?" That's a useful test, but it's only <em>half</em> of justification. The RCR definition explicitly includes adding <strong>diagnostic confidence</strong> — being more sure of your diagnosis, more sure of your treatment plan, or being able to execute that plan more predictably and safely.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Half 1 — change of management</div>
+            <ul style="margin-top:0">
+              <li>New diagnosis revealed</li>
+              <li>Treatment plan altered</li>
+              <li>Surgical approach modified</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Half 2 — added confidence ⭐</div>
+            <ul style="margin-top:0">
+              <li>More confident diagnosis</li>
+              <li>Better-planned treatment</li>
+              <li>Safer execution</li>
+              <li><em>Equally valid grounds for a scan</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20: Justification quiz -->
+    <section class="slide">
+      <h1 class="slide-title">Justification Workout</h1>
+      <h2 class="slide-sub">Click each scenario — is the CBCT justified?</h2>
+      <div class="content">
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ Scenario 1: Implant planning at upper right 6, sound dentition, no anatomical concerns visible on PA</div>
+          <div class="answer"><strong style="color:var(--good)">JUSTIFIED.</strong> Although a competent implant could likely be placed without it, the scan adds <em>diagnostic confidence</em> — you can verify bone height, width, sinus floor anatomy, and assess the PSA artery in the lateral sinus wall. The "added confidence" half of the RCR definition makes this justifiable.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ Scenario 2: Routine 1-year review of a clinically sound implant, no symptoms, no concerns</div>
+          <div class="answer"><strong style="color:var(--bad)">NOT JUSTIFIED.</strong> For routine review of clinically sound implants, periapical imaging is the standard of care. American AAOMR guidance specifically says: "in the absence of clinical signs or symptoms, use intraoral periapical radiographs." Taking a CBCT every year for routine implant review would add 20× the dose with no clinical benefit.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ Scenario 3: Patient with new altered sensation in lower lip after lower 8 extraction</div>
+          <div class="answer"><strong style="color:var(--good)">JUSTIFIED.</strong> Post-operative altered sensation is a clear clinical indication. CBCT will tell you where the implant or root fragment sits relative to the ID canal and inform management — both halves of the definition met.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ Scenario 4: Sinus augmentation prior to implant placement</div>
+          <div class="answer"><strong style="color:var(--good)">JUSTIFIED — and arguably mandatory.</strong> European guidance (EAO 2011) explicitly says CBCT is <em>essential</em> before any sinus augmentation. You cannot reliably assess sinus health on 2D imaging, and operating on an unhealthy sinus risks serious complications.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ Scenario 5: Just placed an implant, all went perfectly, want a baseline image</div>
+          <div class="answer"><strong style="color:var(--bad)">NOT JUSTIFIED — use a periapical.</strong> Even American guidance, which mandates pre-op CBCT, says the immediate post-op baseline image should be a periapical radiograph, not a CBCT. CBCT post-op is reserved as a problem-solving tool when something has gone wrong or when later assessing a failing implant.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21: Guidelines overview -->
+    <section class="slide">
+      <h1 class="slide-title">Guidelines for CBCT Selection</h1>
+      <h2 class="slide-sub">Four documents you should know</h2>
+      <div class="content">
+        <table class="compare">
+          <thead><tr><th>Guideline</th><th>Year</th><th>Scope</th><th>What it says about CBCT for implants</th></tr></thead>
+          <tbody>
+            <tr><td><strong>FGDP "Red Book"</strong></td><td>2013</td><td>Plain film + CBCT, all dentistry</td><td>Vague — "you can take a CBCT if you want to". Out of date, mostly useful for plain film guidance.</td></tr>
+            <tr><td><strong>SedentexCT</strong></td><td>EU-funded</td><td>CBCT, all dentistry</td><td>Generally specific and opinionated — but oddly vague on implants. Says: use CBCT not medical CT, smallest possible FOV.</td></tr>
+            <tr><td><strong>EAO</strong> (Euro Assoc Osseointegration)</td><td>2011</td><td>Implants</td><td>If 2D imaging is sufficient, no CBCT required. <strong>Mandatory before any sinus augmentation.</strong></td></tr>
+            <tr><td><strong>AAOMR</strong> (American Academy of Oral & Max Radiology)</td><td>2012</td><td>Implants</td><td><strong>Cross-sectional imaging for ALL implant sites; CBCT is the method of choice.</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="callout key">
+          <div class="callout-icon">🇺🇸</div>
+          <div class="callout-text"><strong>Practical recommendation:</strong> practise in line with the AAOMR guidance — assume CBCT is the standard of care prior to <em>any</em> implant placement, anywhere in the jaws. The guidance is over a decade old but remains the most defensible position.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22: 2D measurement trap -->
+    <section class="slide">
+      <h1 class="slide-title">The 2D Measurement Trap</h1>
+      <h2 class="slide-sub">Why even simple cases benefit from CBCT</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Case: lower left 6 implant planning</div>
+          <p style="font-size:14px;line-height:1.65">A periapical shows 9 mm from crest to ID canal. You plan a 7 mm implant, leaving a 2 mm safety margin. Sounds fine.</p>
+          <p style="font-size:14px;line-height:1.65;margin-top:8px">You then take a small CBCT. The mid-crestal height is actually only <strong style="color:var(--bad)">6 mm</strong> — what you saw as the "bony peak" on the periapical was the lingual aspect of the ridge, which is higher than the buccal and mid-crestal bone. A 7 mm implant would have placed 1 mm <em>into the ID canal</em>.</p>
+        </div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+            <text x="300" y="20" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Coronal cross-section (CBCT)</text>
+            <!-- alveolus -->
+            <path d="M 200 60 Q 150 90 160 160 L 440 160 Q 450 90 400 60 Z" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+            <!-- lingual peak (shorter) -->
+            <path d="M 380 80 L 400 60 L 420 80" fill="none" stroke="#fbbf24" stroke-width="2"/>
+            <text x="450" y="60" fill="#fbbf24" font-size="11">Lingual peak</text>
+            <text x="450" y="74" fill="#fbbf24" font-size="11">(misleads PA)</text>
+            <!-- mid crest -->
+            <line x1="280" y1="85" x2="320" y2="85" stroke="#34d399" stroke-width="2"/>
+            <text x="200" y="85" fill="#34d399" font-size="11">Mid-crest</text>
+            <text x="200" y="98" fill="#34d399" font-size="10">(real height)</text>
+            <!-- ID canal -->
+            <circle cx="300" cy="140" r="10" fill="#0b1020" stroke="#a78bfa" stroke-width="2"/>
+            <text x="320" y="145" fill="#a78bfa" font-size="11">ID canal</text>
+            <!-- measurements -->
+            <line x1="260" y1="85" x2="260" y2="140" stroke="#f87171" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="220" y="120" fill="#f87171" font-size="11">6 mm</text>
+            <line x1="350" y1="60" x2="350" y2="140" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="358" y="105" fill="#fbbf24" font-size="11">9 mm (PA)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23: Why we take CBCT - more than measurements -->
+    <section class="slide">
+      <h1 class="slide-title">CBCT Is More Than Just Measurement</h1>
+      <h2 class="slide-sub">Five things you should be looking for, every scan</h2>
+      <div class="content">
+        <ol style="list-style:none;padding:0">
+          <li class="card" style="margin-bottom:10px"><strong style="color:var(--accent)">1. Bone height & width</strong> at the planned site, on coronal slices angled to your intended implant trajectory</li>
+          <li class="card" style="margin-bottom:10px"><strong style="color:var(--accent)">2. Bone quality</strong> — by structural assessment of the trabecular pattern (not Hounsfield numbers)</li>
+          <li class="card" style="margin-bottom:10px"><strong style="color:var(--accent)">3. Anatomical landmarks</strong> — ID canal position and outline, mental foramen, anterior loop, incisive branch, sinus floor, nasal floor</li>
+          <li class="card" style="margin-bottom:10px"><strong style="color:var(--accent)">4. Anatomical variants</strong> — retromolar branches, lingual canals, prominent incisive canals, the PSA artery's bony groove in the lateral sinus wall</li>
+          <li class="card" style="margin-bottom:10px"><strong style="color:var(--accent)">5. Sinus health</strong> — mucosal thickening, opacification, ostium patency, retained roots, OACs</li>
+        </ol>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text">If you "do low-dose for implant planning and high-dose for endodontics" you may pick up the gross things (where is the ID canal?) but miss the subtleties — a small bony groove containing the PSA artery, an unexpected incisive branch, a sclerotic sinus floor. <strong>If you're going to scan, scan at diagnostic quality.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 24: Bone quality - Hounsfield units -->
+    <section class="slide">
+      <h1 class="slide-title">Bone Quality — Don't Trust Hounsfield Units</h1>
+      <h2 class="slide-sub">Why the numbers your software gives you are unreliable</h2>
+      <div class="content">
+        <p>Most planning software lets you highlight an area of bone and gives you a numerical "density" value — called a Hounsfield unit, CT number or grey value (all the same thing). Higher number = denser bone, supposedly. The literature consensus is that <strong style="color:var(--accent)">these numbers should generally be avoided</strong>.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Why HUs fail in CBCT</div>
+            <ul style="margin-top:0">
+              <li>Hounsfield units were designed for medical CT, not CBCT — the physics doesn't translate</li>
+              <li>Restoration artefacts (black/white streaking) artificially raise or lower the number</li>
+              <li>Even anatomy <em>outside</em> the FOV can cast shadows that affect the value</li>
+              <li>Most patients have some restorative material in the mouth, so the numbers are nearly always contaminated</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">What to do instead</div>
+            <p style="font-size:14px;line-height:1.6"><strong style="color:var(--accent)">Structural evaluation</strong> — physically look at the bone with your eyes on a coronal cross-section through the implant site:</p>
+            <ul style="margin-top:8px">
+              <li>How thick are the cortical plates?</li>
+              <li>How small/large are the trabecular spaces?</li>
+              <li>How thick are the trabeculae between them?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">👁️</div>
+          <div class="callout-text"><strong>Rule of thumb:</strong> small trabecular spaces with thick coarse trabeculae = denser, better primary stability. Large radiolucent spaces with paper-thin trabeculae = soft fatty bone, worse primary stability. You can fit this to the Lekholm & Zarb type 1–4 classification if you like classifications, but accept it's subjective.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 25: Sinus assessment -->
+    <section class="slide">
+      <h1 class="slide-title">Why Sinus Augmentation Is the One Mandatory Indication</h1>
+      <h2 class="slide-sub">Even European guidance is firm on this</h2>
+      <div class="content">
+        <p>European guidance is generally permissive about CBCT for implants ("if you want to") — but for <strong style="color:var(--accent)">sinus augmentation</strong> it changes its tone and says CBCT is <em>essential</em>. Why?</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">2D imaging fails for sinus health</div>
+            <ul style="margin-top:0">
+              <li>Periapical: pretty much impossible to assess sinus</li>
+              <li>OPG: extremely unreliable for sinus pathology</li>
+              <li>You can't see ostium patency on 2D</li>
+              <li>You can't reliably see mucosal thickening or fluid on 2D</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Why this matters surgically</div>
+            <ul style="margin-top:0">
+              <li>You should never do sinus augmentation on an unhealthy sinus</li>
+              <li>Underlying dental cause? Fix it first</li>
+              <li>No dental cause? Refer to ENT before grafting</li>
+              <li>Need to identify and avoid the PSA artery in the lateral wall</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 26: FOV selection -->
+    <section class="slide">
+      <h1 class="slide-title">Field-of-View Selection</h1>
+      <h2 class="slide-sub">The smallest volume that answers the clinical question</h2>
+      <div class="content">
+        <p>Once you've decided to take a CBCT, the next decision is what size volume. The principle is <strong style="color:var(--accent)">smallest possible FOV that answers your clinical question</strong>. Memorise these workhorse dimensions:</p>
+        <table class="compare">
+          <thead><tr><th>Dimension</th><th>What it captures</th></tr></thead>
+          <tbody>
+            <tr><td>5 cm height (maxilla)</td><td>Occlusal plane up about ⅔ into the maxillary sinuses</td></tr>
+            <tr><td>5 cm height (mandible)</td><td>Lower border of mandible up to occlusal plane</td></tr>
+            <tr><td>8 cm height (maxilla)</td><td>Up to (and just into) the ostium region — needed to assess the ostia</td></tr>
+            <tr><td>8 cm height (both jaws)</td><td>Lower border of mandible up to inferior third of maxillary sinus</td></tr>
+            <tr><td>8 cm width</td><td>Full width of the dental arch</td></tr>
+            <tr><td>8 cm depth</td><td>Back of the wisdom teeth / posterior alveolus</td></tr>
+          </tbody>
+        </table>
+        <div class="grid3" style="margin-top:8px">
+          <div class="card" style="text-align:center"><div style="font-size:24px">🦷</div><strong>5 × 5 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Section of jaw — single tooth area</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px">🪥</div><strong>8 × 5 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Single arch</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px">😬</div><strong>8 × 8 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Both jaws / all teeth</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 27: Bigger vs multiple smaller -->
+    <section class="slide">
+      <h1 class="slide-title">Bigger or Multiple Smaller?</h1>
+      <h2 class="slide-sub">A counter-intuitive rule and two important exceptions</h2>
+      <div class="content">
+        <div class="callout key">
+          <div class="callout-icon">📏</div>
+          <div class="callout-text"><strong>General rule:</strong> if you need to image two distant areas, <em>one larger scan</em> is usually a lower total dose than <em>two separate small scans</em>. Counter-intuitive, but true. The downside is more anatomy to interpret and more chance of incidental findings.</div>
+        </div>
+        <div class="grid2">
+          <div class="card" style="border-color:var(--warn)">
+            <div class="card-title" style="color:var(--warn)">Exception 1: Lower wisdom teeth</div>
+            <p style="font-size:14px;line-height:1.6">Take <strong>two separate small volumes</strong>, not one big one. You don't want a wisdom tooth at the very edge of the scan — you might miss part of it, and you need to see anatomy distal to the tooth (retromolar branches, variant ID canal anatomy).</p>
+          </div>
+          <div class="card" style="border-color:var(--warn)">
+            <div class="card-title" style="color:var(--warn)">Exception 2: Endodontics</div>
+            <p style="font-size:14px;line-height:1.6">Take <strong>multiple small volumes</strong>. Some machines only allow the highest-resolution settings on the smallest FOVs (because they want to keep their marketing dose figures low). For endo you need maximum image quality, so accept multiple small scans rather than compromising resolution.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 28: Workflow recap -->
+    <section class="slide">
+      <h1 class="slide-title">Decision Workflow</h1>
+      <h2 class="slide-sub">From clinical question to button-press</h2>
+      <div class="content">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+            <!-- Step 1 -->
+            <rect x="250" y="20" width="200" height="50" rx="8" fill="#1c2750" stroke="#6ee7ff" stroke-width="2"/>
+            <text x="350" y="42" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Clinical question</text>
+            <text x="350" y="58" text-anchor="middle" fill="#9aa6d6" font-size="11">What do I actually need to know?</text>
+            <line x1="350" y1="70" x2="350" y2="90" stroke="#6ee7ff" stroke-width="2"/>
+            <polygon points="345,90 355,90 350,100" fill="#6ee7ff"/>
+            <!-- Step 2 -->
+            <rect x="250" y="100" width="200" height="50" rx="8" fill="#1c2750" stroke="#a78bfa" stroke-width="2"/>
+            <text x="350" y="122" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Justify the scan</text>
+            <text x="350" y="138" text-anchor="middle" fill="#9aa6d6" font-size="11">Change management AND/OR add confidence?</text>
+            <line x1="350" y1="150" x2="350" y2="170" stroke="#a78bfa" stroke-width="2"/>
+            <polygon points="345,170 355,170 350,180" fill="#a78bfa"/>
+            <!-- Step 3 -->
+            <rect x="250" y="180" width="200" height="50" rx="8" fill="#1c2750" stroke="#34d399" stroke-width="2"/>
+            <text x="350" y="202" text-anchor="middle" fill="#34d399" font-size="13" font-weight="700">Select smallest FOV</text>
+            <text x="350" y="218" text-anchor="middle" fill="#9aa6d6" font-size="11">5×5? 8×5? 8×8? Which fits your question?</text>
+            <line x1="350" y1="230" x2="350" y2="250" stroke="#34d399" stroke-width="2"/>
+            <polygon points="345,250 355,250 350,260" fill="#34d399"/>
+            <!-- Step 4 -->
+            <rect x="250" y="260" width="200" height="50" rx="8" fill="#1c2750" stroke="#fbbf24" stroke-width="2"/>
+            <text x="350" y="282" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700">Diagnostic-quality settings</text>
+            <text x="350" y="298" text-anchor="middle" fill="#9aa6d6" font-size="11">Don't drop quality to chase low-dose marketing</text>
+            <line x1="350" y1="310" x2="350" y2="330" stroke="#fbbf24" stroke-width="2"/>
+            <polygon points="345,330 355,330 350,340" fill="#fbbf24"/>
+            <!-- Step 5 -->
+            <rect x="250" y="340" width="200" height="35" rx="8" fill="#1c2750" stroke="#f87171" stroke-width="2"/>
+            <text x="350" y="362" text-anchor="middle" fill="#f87171" font-size="13" font-weight="700">Scout view → expose</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 29: Key takeaways -->
+    <section class="slide">
+      <h1 class="slide-title">Key Takeaways</h1>
+      <h2 class="slide-sub">Lecture 2 in one screen</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Dose & risk</div>
+            <ul style="margin-top:0">
+              <li>Effective dose (Sv) is the gold standard, not the absorbed dose readout (Gy) on your machine</li>
+              <li>Stochastic effects only — no threshold, but vanishingly small probability</li>
+              <li>LNT model is the legal basis</li>
+              <li>Risk is age-dependent — children carry ~3× the adult risk</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Numbers worth memorising</div>
+            <ul style="margin-top:0">
+              <li>2 µSv = periapical · 20 µSv = OPG (10 PAs)</li>
+              <li>7 µSv = day's background radiation</li>
+              <li>2 OPGs = small CBCT, 4 OPGs = both-jaw CBCT</li>
+              <li>Transatlantic flight ≈ both-jaw CBCT</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Patient communication</div>
+            <ul style="margin-top:0">
+              <li>IRMER 2017 requires dose-risk info — display the SoR/RCR/IPEM poster</li>
+              <li>Don't routinely ask about pregnancy for dental imaging</li>
+              <li>CBCT safe in any trimester if clinically needed</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Justification & FOV</div>
+            <ul style="margin-top:0">
+              <li>Justified = changes management OR adds confidence</li>
+              <li>Practise per AAOMR — CBCT is standard of care for implants</li>
+              <li>Mandatory before sinus augmentation</li>
+              <li>Smallest possible FOV — except wisdoms & endo</li>
+              <li>Don't trust Hounsfield numbers — assess bone visually</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 30: End -->
+    <section class="slide title-slide">
+      <div class="module-tag">END OF LECTURE 2</div>
+      <h1>Numbers learned.<br>Now to anatomy & cases.</h1>
+      <p class="subtitle">You can now justify a scan, choose a FOV, communicate dose risk to a patient and avoid the common medico-legal pitfalls. Lecture 3 turns to the post-lunch content: the anatomy you'll see on every CBCT, the variants that can catch you out, and a series of clinical cases that show CBCT at its most useful.</p>
+      <div class="lect-num">▶ Continue with Lecture 3: CBCT Anatomy & Clinical Cases</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <button class="nav-btn" id="prevBtn">◀ Previous</button>
+    <div class="dots" id="dotsNav"></div>
+    <button class="nav-btn" id="nextBtn">Next ▶</button>
+  </footer>
+  <div class="kbd-hint">Use <kbd>←</kbd> <kbd>→</kbd> arrow keys to navigate</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('totSlide').textContent = total;
+  let cur = 0;
+  const dots = document.getElementById('dotsNav');
+  for(let i=0;i<total;i++){
+    const d = document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click',()=>go(i));
+    dots.appendChild(d);
+  }
+  function go(i){
+    cur = Math.max(0, Math.min(total-1, i));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('active',k===cur));
+    document.getElementById('curSlide').textContent = cur+1;
+    document.getElementById('progressFill').style.width = ((cur+1)/total*100)+'%';
+    document.getElementById('prevBtn').disabled = cur===0;
+    document.getElementById('nextBtn').disabled = cur===total-1;
+    slides[cur].scrollTop=0;
+  }
+  document.getElementById('prevBtn').addEventListener('click',()=>go(cur-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ') go(cur+1);
+    if(e.key==='ArrowLeft') go(cur-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(total-1);
+  });
+  go(0);
+</script>
+</body>
+</html>

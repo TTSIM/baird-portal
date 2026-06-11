@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3 — Sinus, Socket & Staged Bone Grafting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d14;--surface:#111420;--card:#161b2e;--border:#1e2540;--gold:#c9a84c;--gold-light:#e8c97e;--gold-dim:rgba(201,168,76,0.15);--text:#e8e4dc;--muted:#8891aa;--subtle:#4a5270;--blue:#4a90d9;--teal:#3dbdac;--rose:#d96a6a;--amber:#e8a44a;}
+*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.nav-home{color:var(--gold);text-decoration:none;font-size:13px;opacity:0.8;}.nav-home:hover{opacity:1;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:17px;}
+.nav-badge{font-size:11px;background:var(--gold-dim);color:var(--gold);padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.3);}
+.slide-counter{font-size:13px;color:var(--muted);}
+.progress-track{height:3px;background:var(--border);flex-shrink:0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.3s;}
+.slides-container{flex:1;overflow:hidden;position:relative;}
+.slide{position:absolute;inset:0;overflow-y:auto;display:none;padding:48px 8%;animation:fadeIn 0.35s ease;}
+.slide.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.slide-inner{max-width:900px;margin:0 auto;}
+.slide-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.slide-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,4vw,46px);font-weight:600;line-height:1.2;margin-bottom:20px;}
+.slide-title em{color:var(--gold);font-style:italic;}
+.slide-sub{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:32px;}
+.title-slide{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 120px);text-align:center;padding:80px 8%;}
+.title-chip{display:inline-block;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:6px 18px;border-radius:20px;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px;}
+.obj-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.obj-card .num{font-size:28px;font-family:'Cormorant Garamond',serif;color:var(--gold);margin-bottom:8px;}
+.obj-card p{font-size:13px;color:var(--muted);line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.two-col-3{display:grid;grid-template-columns:1.2fr 0.8fr;gap:40px;align-items:start;}
+@media(max-width:700px){.two-col,.two-col-3{grid-template-columns:1fr;}}
+.content-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;}
+.content-block h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:16px;}
+.list{list-style:none;}
+.list li{padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6;display:flex;gap:10px;}
+.list li:last-child{border-bottom:none;}
+.list li::before{content:'›';color:var(--gold);flex-shrink:0;font-size:16px;}
+.highlight-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:20px 24px;margin:20px 0;}
+.highlight-box p{font-size:14px;line-height:1.7;}
+.highlight-box strong{color:var(--gold);}
+.info-box{background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.25);border-radius:10px;padding:20px 24px;margin:20px 0;}
+.info-box p{font-size:14px;line-height:1.7;}
+.info-box strong{color:var(--blue);}
+.warn-box{background:rgba(217,106,106,0.08);border:1px solid rgba(217,106,106,0.25);border-radius:10px;padding:20px 24px;margin:20px 0;}
+.warn-box p{font-size:14px;line-height:1.7;}
+.warn-box strong{color:var(--rose);}
+.teal-box{background:rgba(61,189,172,0.08);border:1px solid rgba(61,189,172,0.25);border-radius:10px;padding:20px 24px;margin:20px 0;}
+.teal-box p{font-size:14px;line-height:1.7;}
+.teal-box strong{color:var(--teal);}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;margin:3px;}
+.tag-gold{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,0.3);}
+.tag-blue{background:rgba(74,144,217,0.15);color:var(--blue);border:1px solid rgba(74,144,217,0.3);}
+.tag-teal{background:rgba(61,189,172,0.15);color:var(--teal);border:1px solid rgba(61,189,172,0.3);}
+.tag-rose{background:rgba(217,106,106,0.15);color:var(--rose);border:1px solid rgba(217,106,106,0.3);}
+.tag-amber{background:rgba(232,164,74,0.15);color:var(--amber);border:1px solid rgba(232,164,74,0.3);}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{background:var(--card);padding:12px 16px;text-align:left;color:var(--gold);font-weight:500;font-size:13px;border-bottom:1px solid var(--border);}
+td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);}
+tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,0.02);}
+.timeline{position:relative;padding-left:28px;}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:24px;}
+.tl-dot{position:absolute;left:-23px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);}
+.tl-item h4{font-size:14px;font-weight:500;margin-bottom:6px;}
+.tl-item p{font-size:13px;color:var(--muted);line-height:1.6;}
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
+.btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:#0a0d14;font-weight:500;}
+.btn-primary:hover{background:var(--gold-light);color:#0a0d14;}
+.btn:disabled{opacity:0.3;cursor:not-allowed;}
+.slide-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:400px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+.dot.active{background:var(--gold);transform:scale(1.3);}
+.dot.visited{background:var(--subtle);}
+/* decision tree */
+.dtree{display:grid;gap:16px;margin-top:12px;}
+.dtree-node{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.dtree-q{font-size:15px;font-weight:500;margin-bottom:10px;}
+.dtree-branches{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;}
+.dtree-yes{background:rgba(61,189,172,0.12);border:1px solid rgba(61,189,172,0.3);color:var(--teal);padding:8px 16px;border-radius:8px;font-size:13px;}
+.dtree-no{background:rgba(217,106,106,0.1);border:1px solid rgba(217,106,106,0.3);color:var(--rose);padding:8px 16px;border-radius:8px;font-size:13px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="nav-home">← Back</a>
+    <div class="nav-title">Sinus, Socket & Staged Bone Grafting</div>
+    <div class="nav-badge">Lecture 3</div>
+  </div>
+  <div class="slide-counter"><span id="slideNum">1</span> / <span id="totalSlides">28</span></div>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:3.6%"></div></div>
+<div class="slides-container">
+
+<!-- S1 TITLE -->
+<div class="slide active" id="slide-1">
+<div class="title-slide">
+  <div class="title-chip">Lecture 3 of 3</div>
+  <div class="slide-label">Leeds Dental Clinic · Sessions 13–17</div>
+  <h1 class="slide-title">Sinus Grafting, Socket Grafting<br>&amp; <em>Staged Bone Grafting</em></h1>
+  <p class="slide-sub">Advanced bone management — from sinus anatomy and lifting techniques to socket preservation and staged grafting for complex defects.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <span class="tag tag-gold">Sinus Anatomy</span><span class="tag tag-blue">External Sinus Graft</span>
+    <span class="tag tag-teal">Internal Sinus Lift</span><span class="tag tag-amber">Socket Grafting</span>
+    <span class="tag tag-rose">Block Grafts</span><span class="tag tag-gold">Healing Timelines</span>
+  </div>
+</div>
+</div>
+
+<!-- S2 OBJECTIVES -->
+<div class="slide" id="slide-2">
+<div class="slide-inner">
+  <div class="slide-label">Overview</div>
+  <h2 class="slide-title">Learning <em>Objectives</em></h2>
+  <div class="obj-grid">
+    <div class="obj-card"><div class="num">01</div><p>Describe maxillary sinus anatomy, the Schneiderian membrane, and sinus pneumatization</p></div>
+    <div class="obj-card"><div class="num">02</div><p>Differentiate internal vs external sinus graft — indications, techniques, and risks</p></div>
+    <div class="obj-card"><div class="num">03</div><p>Apply the decision tree for sinus graft approach based on bone height and width</p></div>
+    <div class="obj-card"><div class="num">04</div><p>Select the correct socket grafting material based on planned re-entry timing</p></div>
+    <div class="obj-card"><div class="num">05</div><p>Identify when staged bone grafting is required and which techniques are available</p></div>
+    <div class="obj-card"><div class="num">06</div><p>Apply complete healing timelines for all graft materials and protocols</p></div>
+  </div>
+</div>
+</div>
+
+<!-- S3 FOUR TYPES RECAP -->
+<div class="slide" id="slide-3">
+<div class="slide-inner">
+  <div class="slide-label">Recap</div>
+  <h2 class="slide-title">Four Types of Bone Grafting — <em>Where We Are</em></h2>
+  <p class="slide-sub">You covered GBR and the basics in Lectures 1 and 2. This lecture completes the picture.</p>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+    <div class="content-block" style="opacity:0.5;border-style:dashed;">
+      <span class="tag tag-teal" style="margin-bottom:12px;display:inline-block;">Covered — Lecture 1 & 2</span>
+      <h3 style="font-size:18px;font-family:'Cormorant Garamond',serif;">Guided Bone Regeneration (GBR)</h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px;">Simultaneous with implant. Layering technique, membranes, defect classification. ✓ Done</p>
+    </div>
+    <div class="content-block" style="border-color:rgba(232,164,74,0.4);">
+      <span class="tag tag-amber" style="margin-bottom:12px;display:inline-block;">This Lecture</span>
+      <h3 style="font-size:18px;font-family:'Cormorant Garamond',serif;">Socket Grafting</h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px;">At time of extraction. Material selection by re-entry timing. Preserve ridge for future implant or bridge.</p>
+    </div>
+    <div class="content-block" style="border-color:rgba(217,106,106,0.4);">
+      <span class="tag tag-rose" style="margin-bottom:12px;display:inline-block;">This Lecture</span>
+      <h3 style="font-size:18px;font-family:'Cormorant Garamond',serif;">Staged Bone Grafting</h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px;">Block graft, sausage/layering, bone plates. Build bone BEFORE implant placement. For unfavourable defects.</p>
+    </div>
+    <div class="content-block" style="border-color:rgba(74,144,217,0.4);">
+      <span class="tag tag-blue" style="margin-bottom:12px;display:inline-block;">This Lecture</span>
+      <h3 style="font-size:18px;font-family:'Cormorant Garamond',serif;">Sinus Grafting</h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px;">Internal lift or external lateral window. For posterior maxilla with insufficient bone height due to sinus pneumatization.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S4 SINUS ANATOMY -->
+<div class="slide" id="slide-4">
+<div class="slide-inner">
+  <div class="slide-label">Anatomy</div>
+  <h2 class="slide-title">Maxillary Sinus <em>Anatomy</em></h2>
+  <div class="two-col-3">
+    <div>
+      <p class="slide-sub">A thorough understanding of sinus anatomy is essential before attempting any sinus procedure — internal or external.</p>
+      <div class="content-block">
+        <h3>Sinus Structure</h3>
+        <ul class="list">
+          <li>Pyramidal air cavity within the maxillary bone, bilaterally</li>
+          <li>Lined by the Schneiderian membrane (pseudostratified ciliated epithelium)</li>
+          <li>Connected to the nasal cavity via the ostium — a small drainage canal</li>
+          <li>Air circulates in a 360° wave pattern, mucus drains via cilia</li>
+          <li>Primary function: air filtration and humidification before reaching lungs</li>
+        </ul>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>The Schneiderian Membrane</h3>
+        <ul class="list">
+          <li>Thin mucosal lining — as thin as an eggshell lining in places</li>
+          <li>Has two layers: periosteum (outside) + pseudostratified epithelium (inside)</li>
+          <li>Critical to preserve — perforation during sinus graft is a major complication</li>
+          <li>Thickness varies by patient — anatomy and history affect thickness</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 230 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+        <rect width="230" height="320" rx="10" fill="#161b2e"/>
+        <text x="115" y="16" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#8891aa">Maxillary Sinus Cross-Section</text>
+        <!-- Skull outline -->
+        <path d="M20 40 Q20 180 60 240 Q90 280 115 285 Q140 280 170 240 Q210 180 210 40" fill="rgba(201,168,76,0.05)" stroke="#1e2540" stroke-width="2"/>
+        <!-- Sinus cavity -->
+        <path d="M55 80 Q55 200 115 215 Q175 200 175 80 Q175 55 115 50 Q55 55 55 80Z" fill="rgba(74,144,217,0.12)" stroke="rgba(74,144,217,0.5)" stroke-width="2"/>
+        <text x="115" y="140" text-anchor="middle" font-family="DM Sans" font-size="10" fill="rgba(74,144,217,0.6)">Maxillary Sinus</text>
+        <!-- Ostium -->
+        <rect x="105" y="52" width="20" height="8" rx="2" fill="rgba(61,189,172,0.2)" stroke="rgba(61,189,172,0.6)" stroke-width="1.5"/>
+        <text x="132" y="58" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.7)">Ostium</text>
+        <line x1="130" y1="56" x2="125" y2="56" stroke="rgba(61,189,172,0.4)" stroke-width="1"/>
+        <!-- Nasal cavity connection -->
+        <path d="M115 52 L115 35 L135 35" stroke="rgba(61,189,172,0.4)" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="140" y="38" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.5)">→ Nose</text>
+        <!-- Schneiderian membrane -->
+        <path d="M58 82 Q58 198 115 212 Q172 198 172 82 Q172 58 115 53 Q58 58 58 82Z" fill="none" stroke="rgba(201,168,76,0.5)" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="10" y="180" font-family="DM Sans" font-size="8" fill="rgba(201,168,76,0.6)" text-anchor="middle">Schneiderian</text>
+        <text x="10" y="190" font-family="DM Sans" font-size="8" fill="rgba(201,168,76,0.6)" text-anchor="middle">membrane</text>
+        <line x1="30" y1="185" x2="56" y2="158" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <!-- Sinus floor -->
+        <line x1="55" y1="215" x2="175" y2="215" stroke="rgba(232,164,74,0.5)" stroke-width="2"/>
+        <text x="115" y="230" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(232,164,74,0.6)">Sinus Floor</text>
+        <!-- Posterior teeth roots -->
+        <path d="M80 260 L82 218" stroke="#4a5270" stroke-width="3" stroke-linecap="round"/>
+        <path d="M100 265 L102 218" stroke="#4a5270" stroke-width="3" stroke-linecap="round"/>
+        <path d="M128 265 L130 218" stroke="#4a5270" stroke-width="3" stroke-linecap="round"/>
+        <path d="M150 260 L148 218" stroke="#4a5270" stroke-width="3" stroke-linecap="round"/>
+        <text x="115" y="280" text-anchor="middle" font-family="DM Sans" font-size="8" fill="#4a5270">Posterior teeth roots</text>
+        <!-- airflow arrow -->
+        <path d="M90 120 Q115 100 140 120 Q160 140 130 160 Q115 170 100 160 Q70 140 90 120Z" fill="none" stroke="rgba(74,144,217,0.25)" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#air)"/>
+        <defs><marker id="air" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto"><path d="M0,0L4,2L0,4Z" fill="rgba(74,144,217,0.4)"/></marker></defs>
+        <text x="115" y="156" text-anchor="middle" font-family="DM Sans" font-size="7" fill="rgba(74,144,217,0.35)">airflow</text>
+        <text x="115" y="300" text-anchor="middle" font-family="DM Sans" font-size="8" fill="#4a5270">Alveolar Ridge</text>
+      </svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S5 PNEUMATIZATION -->
+<div class="slide" id="slide-5">
+<div class="slide-inner">
+  <div class="slide-label">Pathophysiology</div>
+  <h2 class="slide-title">Sinus <em>Pneumatization</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">After posterior tooth extraction, the sinus floor progressively expands downward — a process called pneumatization. This creates the implant placement challenge.</p>
+      <div class="content-block">
+        <h3>Why Pneumatization Occurs</h3>
+        <ul class="list">
+          <li>The sinus is an air-filled cavity — air pressure drives expansion</li>
+          <li>Posterior tooth roots support the sinus floor mechanically</li>
+          <li>On extraction: sinus floor loses support and expands downward</li>
+          <li>Sometimes posterior teeth are so close that roots touch the floor</li>
+          <li>The moment such a tooth is extracted, the floor drops immediately</li>
+        </ul>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Clinical Consequences</h3>
+        <ul class="list">
+          <li>Remaining bone height becomes insufficient for implant placement</li>
+          <li>Short implants alone may not be adequate</li>
+          <li>Implant placed into the sinus disrupts normal mucous wave</li>
+          <li>Chronic sinus infection results — often blamed on the clinician</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="warn-box">
+        <p><strong>⚠ "Scratching the floor is allowed — entering it is not."</strong> The implant apex can contact the sinus floor but must not perforate into the sinus cavity. Even small perforations risk chronic infection and blocked ostium drainage.</p>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>When Do You Need a Sinus Graft?</h3>
+        <ul class="list">
+          <li>Remaining bone height &lt;5mm → external sinus graft required</li>
+          <li>Remaining bone 5–10mm → internal sinus lift sufficient</li>
+          <li>Remaining bone ≥10mm → implant placed without sinus involvement</li>
+          <li>Also consider implant diameter and whether under-preparation can gain extra height</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S6 EXTERNAL SINUS HISTORY -->
+<div class="slide" id="slide-6">
+<div class="slide-inner">
+  <div class="slide-label">Historical Context</div>
+  <h2 class="slide-title">External Sinus Graft — <em>History &amp; Principle</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">The external (lateral window) sinus graft was the original procedure — designed for the most severely resorbed posterior maxillae.</p>
+      <div class="content-block">
+        <h3>Historical Development</h3>
+        <ul class="list">
+          <li><strong style="color:var(--gold)">1980 — Boyne & Tatum:</strong> First described the lateral window approach. Used iliac crest autogenous bone.</li>
+          <li><strong style="color:var(--gold)">Late 1980s — Tatum:</strong> Showed allograft and alloplastic particles could replace iliac crest harvest.</li>
+          <li>Designed for sinuses with &lt;1–2mm residual bone — extreme cases</li>
+          <li>External approach allows maximum volume creation before implant placement</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Indications for External Sinus Graft</h3>
+        <ul class="list">
+          <li>Residual bone height &lt;5mm</li>
+          <li>Bone width ≥6mm (enough for osteotomy)</li>
+          <li>Sinus floor is oblique (internal lift not possible)</li>
+          <li>Large volume needed — more than internal lift can provide</li>
+        </ul>
+      </div>
+      <div class="warn-box" style="margin-top:16px;">
+        <p><strong>⚠ High-risk procedure:</strong> External sinus graft complication rate is significantly higher than internal lift. Indemnity rises from ~£4–5K to £9–11K. Recommended only after 100+ implants placed.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S7 EXTERNAL SINUS TECHNIQUE -->
+<div class="slide" id="slide-7">
+<div class="slide-inner">
+  <div class="slide-label">Surgical Technique</div>
+  <h2 class="slide-title">External Sinus Graft — <em>Step by Step</em></h2>
+  <div class="two-col-3">
+    <div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Flap Elevation</h4>
+          <p>Full-thickness mucoperiosteal flap in posterior maxilla. Expose lateral wall of sinus.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Window Preparation</h4>
+          <p>Outline window on lateral wall using piezo. Check CBCT for bone thickness — avoid perforating the Schneiderian membrane during outlining.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Membrane Elevation</h4>
+          <p>Detach the Schneiderian membrane from the sinus walls using "elephant foot" piezo tip. Baby steps — one wrong move perforates. Gentle, methodical elevation.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Window Removal</h4>
+          <p>Remove the bone window. Place it inside the sinus under the elevated membrane — it acts as additional graft material and a floor support.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Graft Placement</h4>
+          <p>Pack bone graft material under the elevated membrane — building from the floor up to the planned implant apex level. Allograft preferred.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Membrane Placement + Closure</h4>
+          <p>Cover the window with a resorbable membrane to prevent fibroblast ingrowth. Reposition and suture flap. Wait 24 weeks (allograft) to 9 months (xenograft).</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 210 310" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+        <rect width="210" height="310" rx="10" fill="#161b2e"/>
+        <text x="105" y="16" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#8891aa">Lateral Window — External Sinus</text>
+        <!-- Sinus cavity -->
+        <path d="M20 50 Q20 170 105 180 Q190 170 190 50 Q190 30 105 25 Q20 30 20 50Z" fill="rgba(74,144,217,0.08)" stroke="rgba(74,144,217,0.3)" stroke-width="1.5"/>
+        <!-- Schneiderian membrane elevated -->
+        <path d="M35 70 Q35 165 105 173 Q175 165 175 70 Q175 48 105 43 Q35 48 35 70Z" fill="rgba(61,189,172,0.06)" stroke="rgba(61,189,172,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="105" y="130" text-anchor="middle" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.5)">Schneiderian</text>
+        <text x="105" y="141" text-anchor="middle" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.5)">membrane elevated</text>
+        <!-- Lateral window opening -->
+        <rect x="18" y="75" width="18" height="60" rx="3" fill="rgba(232,164,74,0.15)" stroke="rgba(232,164,74,0.6)" stroke-width="2"/>
+        <text x="7" y="112" font-family="DM Sans" font-size="8" fill="rgba(232,164,74,0.7)" text-anchor="middle">Window</text>
+        <!-- Graft material beneath membrane -->
+        <path d="M35 180 Q35 172 105 176 Q175 172 175 180 L175 200 Q175 215 105 220 Q35 215 35 200 Z" fill="rgba(201,168,76,0.2)" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+        <text x="105" y="200" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(201,168,76,0.7)">Graft material</text>
+        <text x="105" y="212" text-anchor="middle" font-family="DM Sans" font-size="8" fill="rgba(201,168,76,0.5)">(allograft preferred)</text>
+        <!-- Implant planned -->
+        <rect x="85" y="220" width="14" height="55" rx="4" fill="rgba(74,144,217,0.2)" stroke="rgba(74,144,217,0.4)" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="92" y="290" text-anchor="middle" font-family="DM Sans" font-size="8" fill="rgba(74,144,217,0.5)">Implant</text>
+        <text x="92" y="300" text-anchor="middle" font-family="DM Sans" font-size="7" fill="rgba(74,144,217,0.4)">(after healing)</text>
+        <!-- Alveolar ridge -->
+        <line x1="20" y1="220" x2="190" y2="220" stroke="#1e2540" stroke-width="2"/>
+        <text x="105" y="235" text-anchor="middle" font-family="DM Sans" font-size="8" fill="#4a5270">Original bone level</text>
+        <!-- Height gain arrow -->
+        <line x1="155" y1="180" x2="155" y2="220" stroke="rgba(61,189,172,0.5)" stroke-width="1.5" marker-start="url(#h1)" marker-end="url(#h2)"/>
+        <text x="168" y="205" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.6)">+height</text>
+        <defs>
+          <marker id="h1" markerWidth="5" markerHeight="5" refX="2.5" refY="0" orient="auto"><path d="M0,5L2.5,0L5,5Z" fill="rgba(61,189,172,0.6)"/></marker>
+          <marker id="h2" markerWidth="5" markerHeight="5" refX="2.5" refY="5" orient="auto"><path d="M0,0L2.5,5L5,0Z" fill="rgba(61,189,172,0.6)"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S8 EXTERNAL SINUS COMPLICATIONS -->
+<div class="slide" id="slide-8">
+<div class="slide-inner">
+  <div class="slide-label">Risk Management</div>
+  <h2 class="slide-title">External Sinus Graft — <em>Complications</em></h2>
+  <div class="two-col">
+    <div>
+      <div class="content-block">
+        <h3>Membrane Perforation</h3>
+        <ul class="list">
+          <li>The most common intra-operative complication</li>
+          <li>Membrane is as thin as eggshell lining — very fragile</li>
+          <li>Small perforation: patch with collagen membrane or suture if accessible</li>
+          <li>Large perforation: abandon procedure, reschedule after healing</li>
+          <li>If bone graft enters the sinus: major complication</li>
+        </ul>
+      </div>
+      <div class="warn-box" style="margin-top:16px;">
+        <p><strong>⚠ Case Study — Blocked Ostium:</strong> A clinician perforated the membrane undetected, packed bone, which migrated through the lining and blocked the ostium. Patient developed chronic sinus infection, destruction of the medial sinus wall, and chronic nasal discharge. Compensation: over £200,000. "Imagine living with nasal discharge for life."</p>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Other Complications</h3>
+        <ul class="list">
+          <li>Graft infection — especially xenograft if ostium blocked</li>
+          <li>Wound dehiscence — flap opening over the graft</li>
+          <li>Benign paroxysmal positional vertigo (BPPV) — from hydraulic pressure changes</li>
+          <li>Chronic sinusitis — if drainage impaired</li>
+          <li>Partial or complete graft loss</li>
+        </ul>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Indemnity Implications</h3>
+        <table>
+          <thead><tr><th>Scope</th><th>Annual Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Implant + GBR + internal sinus lift</td><td><span class="tag tag-teal">£4,000–5,000</span></td></tr>
+            <tr><td>External sinus graft added</td><td><span class="tag tag-rose">£9,000–11,000</span></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5;">Only proceed with external sinus grafting when: 100+ implants placed, patient volume justifies the indemnity cost, and referring for internal lift is not appropriate.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S9 INTERNAL SINUS LIFT HISTORY -->
+<div class="slide" id="slide-9">
+<div class="slide-inner">
+  <div class="slide-label">Technique Evolution</div>
+  <h2 class="slide-title">Internal Sinus Lift — <em>Development</em></h2>
+  <p class="slide-sub">The internal (crestal) sinus lift was developed as a less invasive alternative for cases with moderate bone height.</p>
+  <div class="two-col">
+    <div>
+      <div class="content-block">
+        <h3>Summers Osteotomes — Original Technique (1990s)</h3>
+        <ul class="list">
+          <li>Developed by Summers for cases with 5–6mm residual bone</li>
+          <li>Drill to 1mm below the sinus floor</li>
+          <li>Use concave-tipped chisels to fracture the last layer of bone upward</li>
+          <li>Pack bone graft through the osteotomy</li>
+          <li>The dome-shaped elevation lifts the sinus floor 3–4mm</li>
+        </ul>
+      </div>
+      <div class="warn-box" style="margin-top:16px;">
+        <p><strong>⚠ Patient Experience:</strong> Tapping with osteotomes was unpleasant for patients — "What are you doing to me?" Cases of tinnitus reported — the hammering transmitted through the ossicles in the middle ear. This technique is now largely abandoned.</p>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Modern Internal Sinus Lift Alternatives</h3>
+        <ul class="list">
+          <li><strong style="color:var(--gold)">Hydraulic pressure:</strong> Water injected under the membrane detaches it gently. Low trauma, no tapping.</li>
+          <li><strong style="color:var(--teal)">Versah burs:</strong> Specially designed drill that "sucks" bone from the sides and pushes it upward via reverse rotation. Acts as its own elevator.</li>
+          <li><strong style="color:var(--blue)">Guided approach:</strong> Surgical guide confirms exact drill depth (1mm below floor). Second guide places implant. Precision without guesswork.</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin-top:16px;">
+        <p><strong>Modern Standard:</strong> Internal sinus lift should be in every implant dentist's skillset. The technique course (Baird) covers this in a dedicated full-day session. Ideally learned before you need it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S10 INTERNAL SINUS LIFT TECHNIQUE -->
+<div class="slide" id="slide-10">
+<div class="slide-inner">
+  <div class="slide-label">Surgical Technique</div>
+  <h2 class="slide-title">Internal Sinus Lift — <em>Step by Step</em></h2>
+  <div class="two-col">
+    <div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Digital Planning</h4>
+          <p>CBCT: confirm bone height, sinus floor anatomy (flat or oblique). Plan implant length and position. Use guided approach for accuracy.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Guide 1: Drill to 1mm Below Floor</h4>
+          <p>Surgical guide controls osteotomy depth. Stop exactly 1mm below the sinus floor. Do NOT perforate at this stage.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Sinus Floor Elevation</h4>
+          <p>Use Versah burs (reverse rotation), hydraulic pressure, or osteotomes to fracture the last bone layer and elevate the Schneiderian membrane 3–4mm.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Check Before Proceeding</h4>
+          <p>Take periapical X-ray — confirm dome-shaped elevation (success). "Chimney smoke" appearance → membrane perforated. Decision: shorter implant or abandon.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Graft Packing</h4>
+          <p>Pack allograft through the osteotomy — preferred over xenograft. If membrane perforated: allograft resorbs. Xenograft would block ostium permanently.</p>
+        </div>
+        <div class="tl-item"><div class="tl-dot"></div>
+          <h4>Guide 2: Implant Placement</h4>
+          <p>Second guide (or guide with stoppers) positions implant correctly. Primary stability from surrounding bone — must have ≥5mm residual bone.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 210 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+        <rect width="210" height="300" rx="10" fill="#161b2e"/>
+        <text x="105" y="16" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#8891aa">Internal Sinus Lift — Crestal</text>
+        <!-- Sinus cavity -->
+        <path d="M20 30 Q20 140 105 150 Q190 140 190 30" fill="rgba(74,144,217,0.08)" stroke="rgba(74,144,217,0.3)" stroke-width="1.5"/>
+        <!-- Sinus floor original -->
+        <line x1="20" y1="150" x2="190" y2="150" stroke="rgba(201,168,76,0.4)" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="195" y="154" font-family="DM Sans" font-size="7" fill="rgba(201,168,76,0.5)">old</text>
+        <!-- Membrane elevated (dome) -->
+        <path d="M60 150 Q105 115 150 150" fill="rgba(61,189,172,0.12)" stroke="rgba(61,189,172,0.7)" stroke-width="2"/>
+        <text x="105" y="135" text-anchor="middle" font-family="DM Sans" font-size="8" fill="rgba(61,189,172,0.7)">Membrane elevated (dome)</text>
+        <!-- Graft under dome -->
+        <path d="M65 150 Q105 123 145 150 L145 160 Q105 148 65 160Z" fill="rgba(201,168,76,0.2)" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        <text x="105" y="158" text-anchor="middle" font-family="DM Sans" font-size="7" fill="rgba(201,168,76,0.5)">allograft</text>
+        <!-- Alveolar bone block -->
+        <rect x="20" y="160" width="170" height="50" rx="0" fill="rgba(201,168,76,0.07)" stroke="#1e2540"/>
+        <text x="105" y="190" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#4a5270">Residual Alveolar Bone (≥5mm)</text>
+        <!-- Osteotomy -->
+        <rect x="97" y="155" width="16" height="55" rx="3" fill="rgba(74,144,217,0.1)" stroke="rgba(74,144,217,0.3)" stroke-width="1.5"/>
+        <!-- Implant -->
+        <rect x="99" y="160" width="12" height="75" rx="4" fill="rgba(74,144,217,0.2)" stroke="rgba(74,144,217,0.6)" stroke-width="2"/>
+        <text x="105" y="260" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(74,144,217,0.6)">Implant</text>
+        <!-- Depth arrow -->
+        <line x1="145" y1="160" x2="145" y2="210" stroke="rgba(217,106,106,0.4)" stroke-width="1.5"/>
+        <text x="156" y="190" font-family="DM Sans" font-size="7" fill="rgba(217,106,106,0.5)">≥5mm</text>
+        <text x="156" y="200" font-family="DM Sans" font-size="7" fill="rgba(217,106,106,0.5)">residual</text>
+        <!-- Bone height gain -->
+        <line x1="25" y1="125" x2="25" y2="152" stroke="rgba(61,189,172,0.5)" stroke-width="1.5"/>
+        <text x="8" y="140" font-family="DM Sans" font-size="7" fill="rgba(61,189,172,0.6)">~3-4mm</text>
+        <text x="8" y="150" font-family="DM Sans" font-size="7" fill="rgba(61,189,172,0.6)">gain</text>
+      </svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S11 DECISION TREE SINUS -->
+<div class="slide" id="slide-11">
+<div class="slide-inner">
+  <div class="slide-label">Clinical Decision Making</div>
+  <h2 class="slide-title">Sinus Graft <em>Decision Tree</em></h2>
+  <p class="slide-sub">Use this framework to determine the appropriate sinus approach based on CBCT measurements.</p>
+  <div class="dtree">
+    <div class="dtree-node" style="border-color:rgba(74,144,217,0.4);">
+      <div class="dtree-q">Patient needs posterior maxillary implant. What is the residual bone height on CBCT?</div>
+      <div class="dtree-branches">
+        <div class="dtree-yes">≥10mm → No sinus involvement needed. Place implant directly.</div>
+        <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:8px 16px;border-radius:8px;font-size:13px;">5–9mm → Assess sinus floor shape</div>
+        <div class="dtree-no">&lt;5mm → External sinus graft (if width ≥6mm)</div>
+      </div>
+    </div>
+    <div class="dtree-node" style="border-color:rgba(201,168,76,0.4);">
+      <div class="dtree-q">Bone height 5–9mm: Is the sinus floor FLAT or OBLIQUE?</div>
+      <div class="dtree-branches">
+        <div class="dtree-yes">Flat floor + ≥6mm width → Internal sinus lift (Versah/hydraulic). Place implant simultaneously.</div>
+        <div class="dtree-no">Oblique floor → External sinus graft required (internal lift technically not feasible on oblique floor).</div>
+      </div>
+    </div>
+    <div class="dtree-node" style="border-color:rgba(61,189,172,0.4);">
+      <div class="dtree-q">Internal sinus lift planned: Is bone width ≥6mm?</div>
+      <div class="dtree-branches">
+        <div class="dtree-yes">Yes → Proceed with internal lift + simultaneous implant placement with deep-thread implant for stability.</div>
+        <div class="dtree-no">No → Ridge expansion (Versah) or staged grafting to widen the ridge before sinus involvement.</div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:16px;">
+    <p><strong>Evolving Threshold:</strong> Initially, 5mm was the threshold for internal sinus lift. With experience and deep-thread implants, many clinicians now perform internal lifts at 3mm. However, start with the conservative 5mm threshold.</p>
+  </div>
+</div>
+</div>
+
+<!-- S12 VERSAH BURS -->
+<div class="slide" id="slide-12">
+<div class="slide-inner">
+  <div class="slide-label">Modern Instrumentation</div>
+  <h2 class="slide-title">Versah Burs — <em>Multi-function Tool</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">Versah burs are a versatile drilling system originally designed for internal sinus lift that has expanded into ridge expansion and site optimisation.</p>
+      <div class="content-block">
+        <h3>Design Principle</h3>
+        <ul class="list">
+          <li>Bur tips resemble airplane turbine engines</li>
+          <li>Forward rotation: removes bone (conventional drilling)</li>
+          <li>Reverse rotation: condenses and pushes bone laterally/superiorly</li>
+          <li>Sucks bone from the sides and redirects it upward</li>
+          <li>Can simultaneously drill, expand ridge, and elevate sinus floor</li>
+        </ul>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Clinical Applications</h3>
+        <ul class="list">
+          <li><strong style="color:var(--gold)">Internal sinus lift:</strong> Reverse rotation elevates the sinus floor atraumatically</li>
+          <li><strong style="color:var(--blue)">Ridge expansion:</strong> Condenses narrow ridges laterally to gain width</li>
+          <li><strong style="color:var(--teal)">Site optimisation:</strong> Compresses and improves D3/D4 bone density to achieve better primary stability</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <p><strong>Training Note:</strong> There are only ~12 certified Versah trainers in the world. The Baird course instructor is one of them — trained by the inventor of the technique.</p>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Versah vs Summers — Comparison</h3>
+        <table>
+          <thead><tr><th>Aspect</th><th>Summers</th><th>Versah</th></tr></thead>
+          <tbody>
+            <tr><td>Patient comfort</td><td><span class="tag tag-rose">Poor (tapping)</span></td><td><span class="tag tag-teal">Good (drilling)</span></td></tr>
+            <tr><td>Tinnitus risk</td><td><span class="tag tag-rose">Yes</span></td><td><span class="tag tag-teal">Minimal</span></td></tr>
+            <tr><td>Elevation control</td><td><span class="tag tag-gold">Limited</span></td><td><span class="tag tag-teal">Precise</span></td></tr>
+            <tr><td>Ridge expansion</td><td><span class="tag tag-rose">No</span></td><td><span class="tag tag-teal">Yes</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S13 ALLOGRAFT FOR SINUS -->
+<div class="slide" id="slide-13">
+<div class="slide-inner">
+  <div class="slide-label">Material Selection</div>
+  <h2 class="slide-title">Sinus Graft Material — <em>Why Allograft?</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">For both internal and external sinus grafting, allograft is the preferred material. Here's why.</p>
+      <div class="content-block">
+        <h3>Allograft for Sinus — Advantages</h3>
+        <ul class="list">
+          <li>Remodels into vital bone — implant osseointegrates into live bone</li>
+          <li>Biodegradable — particles dissolve over time</li>
+          <li>If sinus membrane is perforated: allograft particles resorb and do not permanently block the ostium</li>
+          <li>Good primary stability achievable in the grafted sinus</li>
+          <li>Available in large quantities — no harvest site</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="warn-box">
+        <p><strong>⚠ Why NOT Xenograft for Sinus?</strong> Xenograft is extremely slow to resorb. If the membrane is accidentally perforated and xenograft particles enter the sinus, they remain permanently. Particles can block the ostium — leading to permanent drainage obstruction and chronic sinusitis. Allograft is far safer in the sinus environment.</p>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Internal Sinus: Allograft + Versah</h3>
+        <ul class="list">
+          <li>Pack allograft into the osteotomy first</li>
+          <li>Then use Versah in reverse to push allograft upward and lift the membrane</li>
+          <li>Allograft acts both as graft material and hydraulic medium</li>
+          <li>Simultaneous implant placed with second guide immediately after</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S14 SOCKET GRAFTING PRINCIPLE -->
+<div class="slide" id="slide-14">
+<div class="slide-inner">
+  <div class="slide-label">Socket Preservation</div>
+  <h2 class="slide-title">Socket Grafting — <em>Principles</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">Socket grafting is performed at the time of tooth extraction to preserve ridge volume. Without it, extraction leads to progressive and irreversible bone loss.</p>
+      <div class="content-block">
+        <h3>When to Socket Graft</h3>
+        <ul class="list">
+          <li>Patient wants an implant but cannot proceed immediately</li>
+          <li>Any tooth extraction where a bridge pontic will be needed</li>
+          <li>Cases where future implant is likely</li>
+          <li>"Ideally, every tooth you extract should be socket grafted"</li>
+          <li>Even if doing an immediate or early implant: socket grafting the jumping gap IS part of that procedure</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Why It's Underutilised</h3>
+        <ul class="list">
+          <li>Adds cost and time to what feels like a "simple" extraction</li>
+          <li>Patients often decline when they don't understand the long-term benefit</li>
+          <li>Many clinicians underrate it — then face difficult reconstruction later</li>
+          <li>Education: show patients the animation comparing socket-grafted vs ungrafted pontic sites</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin-top:16px;">
+        <p><strong>Bridge Argument:</strong> Even for a three-unit bridge (no implant): socket grafting at extraction preserves pontic site volume → better bridge design → improved hygiene. Always worth discussing with the restoring dentist.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S15 SOCKET GRAFTING MATERIAL SELECTION -->
+<div class="slide" id="slide-15">
+<div class="slide-inner">
+  <div class="slide-label">Clinical Decision</div>
+  <h2 class="slide-title">Socket Graft Material — <em>Re-entry Timing Determines Choice</em></h2>
+  <p class="slide-sub">The single most important factor in socket graft material selection is when you plan to re-enter the site.</p>
+  <div style="display:grid;gap:16px;margin-top:8px;">
+    <div style="background:var(--card);border:1px solid rgba(74,144,217,0.4);border-left:4px solid var(--blue);border-radius:10px;padding:20px 24px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div><span class="tag tag-blue" style="font-size:13px;padding:6px 14px;">Re-entry: ~6 months (implant)</span></div>
+        <div style="font-size:22px;">→</div>
+        <div><span class="tag tag-blue" style="font-size:15px;padding:8px 18px;font-weight:500;">Use Allograft</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">Allograft remodels into vital bone within 6 months. On re-entry: good quality bone for implant primary stability. Xenograft would still be partially unremodelled at this timepoint.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(232,164,74,0.4);border-left:4px solid var(--amber);border-radius:10px;padding:20px 24px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div><span class="tag tag-amber" style="font-size:13px;padding:6px 14px;">Re-entry: 2–5 years</span></div>
+        <div style="font-size:22px;">→</div>
+        <div><span class="tag tag-amber" style="font-size:15px;padding:8px 18px;font-weight:500;">Use Xenograft</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">Xenograft's slow resorption provides long-term volume maintenance. The site looks good years later. Allograft would have fully resorbed by then — leaving minimal ridge preservation benefit.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(201,168,76,0.4);border-left:4px solid var(--gold);border-radius:10px;padding:20px 24px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div><span class="tag tag-gold" style="font-size:13px;padding:6px 14px;">No implant / Bridge pontic only</span></div>
+        <div style="font-size:22px;">→</div>
+        <div><span class="tag tag-gold" style="font-size:15px;padding:8px 18px;font-weight:500;">Use Xenograft</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">Need maximum long-term volume stability for aesthetic pontic profile. Xenograft excels here. Vital bone formation is not required — volume maintenance is the priority.</p>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:20px;">
+    <p><strong>Common Question:</strong> "If I use xenograft for socket grafting and later want an implant, will it be OK?" Answer: After 5+ years, most xenograft has resorbed. But if re-entry is at 6 months, xenograft won't be integrated — poor implant bed. Match material to timeline.</p>
+  </div>
+</div>
+</div>
+
+<!-- S16 STAGED BONE GRAFTING OVERVIEW -->
+<div class="slide" id="slide-16">
+<div class="slide-inner">
+  <div class="slide-label">Complex Reconstruction</div>
+  <h2 class="slide-title">Staged Bone Grafting — <em>When &amp; Why</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">Staged bone grafting means building the bone first — then placing the implant in a separate surgery weeks to months later.</p>
+      <div class="content-block">
+        <h3>Indications</h3>
+        <ul class="list">
+          <li>Cannot place implant in correct prosthetic position (insufficient bone)</li>
+          <li>Cannot achieve adequate primary stability (&lt;25Ncm)</li>
+          <li>Defect has 0 or 1 wall — GBR will fail (no scaffold, no blood supply)</li>
+          <li>Knife-edge ridge defect</li>
+          <li>Large-volume deficiency requiring block bone or sausage technique</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Techniques</h3>
+        <ul class="list">
+          <li><strong style="color:var(--gold)">Block graft:</strong> Solid piece of bone (autogenous or human tissue bank) fixed with screws. Highest volume gain possible.</li>
+          <li><strong style="color:var(--blue)">Sausage technique:</strong> Particulate graft (allograft + autogenous) applied in layers with a rigid membrane. Builds volume without a block.</li>
+          <li><strong style="color:var(--teal)">Bone plates:</strong> Thin cortical plates used to contain particulate graft.</li>
+          <li><strong style="color:var(--amber)">Layering on titanium mesh:</strong> Mesh tent filled with graft — good for large horizontal defects.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S17 BLOCK GRAFTS -->
+<div class="slide" id="slide-17">
+<div class="slide-inner">
+  <div class="slide-label">Staged Grafting</div>
+  <h2 class="slide-title">Block Grafts — <em>Harvest Sites &amp; Options</em></h2>
+  <div class="two-col">
+    <div>
+      <div class="content-block">
+        <h3>Autogenous Block Harvest Sites</h3>
+        <ul class="list">
+          <li><strong style="color:var(--gold)">Ascending ramus:</strong> Dense cortical bone — excellent quality. Minimal patient morbidity.</li>
+          <li><strong style="color:var(--gold)">Chin (symphysis):</strong> Good volume. More patient discomfort post-operatively.</li>
+          <li><strong style="color:var(--gold)">Body of mandible:</strong> Option for small to medium volumes.</li>
+          <li><strong style="color:var(--muted)">Iliac crest:</strong> Largest volumes — maximum morbidity. Only for major reconstruction (e.g. full arch).</li>
+          <li><strong style="color:var(--muted)">Calvarium / scalp:</strong> Used in some Italian schools for maximum cortical bone — extreme approach.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Allograft Block (Human Tissue Bank)</h3>
+        <ul class="list">
+          <li>Processed cadaver block bone from a tissue bank</li>
+          <li>Available in standard sizes — can be shaped and adapted</li>
+          <li>Eliminates the need for a second surgical site</li>
+          <li>Slower remodelling than autogenous (24 weeks to re-enter)</li>
+          <li>Excellent option for trauma cases where autogenous harvest is an extra burden</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin-top:16px;">
+        <p><strong>Key Rule:</strong> "We do not go from –10 to +10 in one surgery." A staged block graft takes you from the deficit to approximately neutral (+1). Then a second surgery (implant + GBR) takes you to the final position.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S18 BONE SCRAPING FOR STAGED -->
+<div class="slide" id="slide-18">
+<div class="slide-inner">
+  <div class="slide-label">Autogenous Collection</div>
+  <h2 class="slide-title">Bone Scraping for <em>Staged Grafts</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">For staged grafts requiring autogenous bone, scraping offers a less traumatic collection method than a formal block harvest.</p>
+      <div class="content-block">
+        <h3>Bone Scraper Technique</h3>
+        <ul class="list">
+          <li>Use a bone scraper within the already-reflected flap</li>
+          <li>Scrape from superior to inferior with firm pressure</li>
+          <li>Go from chin, ascending ramus, or body of mandible</li>
+          <li>Bone collects in the scraper chamber — not dispersed around the field</li>
+          <li>Much less painful for patients than block harvest — "like having a wisdom tooth removed, easier"</li>
+          <li>Sharpen scrapers annually or use disposable safe scrapers</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Combining Autogenous + Allograft</h3>
+        <ul class="list">
+          <li>Mix scraped autogenous with allograft to extend volume</li>
+          <li>Autogenous provides growth factors and osteogenic cells</li>
+          <li>Allograft provides volume and osteoconductivity</li>
+          <li>Better clinical results than allograft alone for large defects</li>
+        </ul>
+      </div>
+      <div class="teal-box" style="margin-top:16px;">
+        <p><strong>Patient Communication:</strong> "Collecting the bone will be like having a wisdom tooth out — in fact, even easier. We won't be cutting a block — just scraping." This reduces patient anxiety significantly about the staged approach.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S19 HEALING TIMELINES COMPLETE -->
+<div class="slide" id="slide-19">
+<div class="slide-inner">
+  <div class="slide-label">Complete Reference</div>
+  <h2 class="slide-title">Complete Healing <em>Timelines</em></h2>
+  <p class="slide-sub">A comprehensive reference for all bone grafting procedures, materials, and re-entry timelines.</p>
+  <div style="overflow-x:auto;">
+  <table>
+    <thead>
+      <tr><th>Procedure</th><th>Material</th><th>Protocol</th><th>Wait Before Implant</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3">Simultaneous GBR</td>
+        <td>Autogenous</td>
+        <td>GBR + collagen membrane</td>
+        <td><span class="tag tag-teal">8 weeks (exposure)</span></td>
+      </tr>
+      <tr>
+        <td>Allograft/Xenograft</td>
+        <td>GBR + collagen membrane</td>
+        <td><span class="tag tag-gold">12 weeks (exposure)</span></td>
+      </tr>
+      <tr>
+        <td>Any graft</td>
+        <td>Non-resorbable PTFE</td>
+        <td><span class="tag tag-rose">24 weeks (all materials)</span></td>
+      </tr>
+      <tr>
+        <td rowspan="3">Staged Bone Graft</td>
+        <td>Autogenous block/scraping</td>
+        <td>Build first, implant later</td>
+        <td><span class="tag tag-teal">12–16 weeks</span></td>
+      </tr>
+      <tr>
+        <td>Allograft block/particulate</td>
+        <td>Build first, implant later</td>
+        <td><span class="tag tag-gold">24 weeks</span></td>
+      </tr>
+      <tr>
+        <td>Xenograft</td>
+        <td>Build first, implant later</td>
+        <td><span class="tag tag-rose">8–9 months</span></td>
+      </tr>
+      <tr>
+        <td rowspan="2">Sinus Graft (External)</td>
+        <td>Allograft</td>
+        <td>Lateral window</td>
+        <td><span class="tag tag-gold">24 weeks</span></td>
+      </tr>
+      <tr>
+        <td>Xenograft</td>
+        <td>Lateral window</td>
+        <td><span class="tag tag-rose">6–9 months</span></td>
+      </tr>
+      <tr>
+        <td>Internal Sinus Lift</td>
+        <td>Allograft (preferred)</td>
+        <td>Versah/hydraulic — simultaneous implant</td>
+        <td><span class="tag tag-teal">Simultaneous placement</span></td>
+      </tr>
+      <tr>
+        <td rowspan="2">Socket Graft</td>
+        <td>Allograft</td>
+        <td>At extraction</td>
+        <td><span class="tag tag-teal">6 months</span></td>
+      </tr>
+      <tr>
+        <td>Xenograft</td>
+        <td>At extraction (long-term)</td>
+        <td><span class="tag tag-amber">2–5 years</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="warn-box" style="margin-top:16px;">
+    <p><strong>Important Caveat:</strong> These are ranges. Patient age, medical history, defect size, membrane type, and infection history all modify individual healing times. Always take a CBCT before re-entry and assess bone density — don't rely on timelines alone.</p>
+  </div>
+</div>
+</div>
+
+<!-- S20 STAGED CASE STAR -->
+<div class="slide" id="slide-20">
+<div class="slide-inner">
+  <div class="slide-label">Clinical Case</div>
+  <h2 class="slide-title">Case Study: High Smile Line — <em>Staged Was Correct</em></h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Second Opinion — Presentation</h4>
+      <p>Patient "Star" had been told by another clinician: "I can do the implant with GBR." She wasn't comfortable and sought a second opinion. High smile line — aesthetic risk is maximum.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Assessment: Implant Would Float in Air</h4>
+      <p>Insufficient bone to place implant in correct prosthetic position AND achieve primary stability. The other clinician's plan would have resulted in a long clinical crown — unacceptable for a high smile line patient.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Decision: Staged Block Graft</h4>
+      <p>Block graft (autogenous or human tissue bank) placed first. Secured in position. Patient informed of timeline: "Ideal scenario requires two surgeries with a 6-month wait between them."</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>After Integration: Implant Placed</h4>
+      <p>Now sufficient bone for correct prosthetic position AND primary stability. Implant placed with simultaneous GBR for convexity. Good outcome achieved.</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:20px;">
+    <p><strong>Key Learning:</strong> Explaining the staged approach justifies the additional fee (£2,400 for bone grafting) by helping patients understand WHY you're doing it. "The more you educate your patients, the better the acceptance will be."</p>
+  </div>
+</div>
+</div>
+
+<!-- S21 SAUSAGE TECHNIQUE -->
+<div class="slide" id="slide-21">
+<div class="slide-inner">
+  <div class="slide-label">Staged Technique</div>
+  <h2 class="slide-title">The Sausage / Layering <em>Technique</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">The sausage technique is particulate staged grafting — building bone without a solid block, using layers of graft material contained by a rigid membrane.</p>
+      <div class="content-block">
+        <h3>Technique Principle</h3>
+        <ul class="list">
+          <li>Build a "sausage" shape of bone graft on the deficient ridge</li>
+          <li>Layer autogenous (inner) and allograft/xenograft (outer)</li>
+          <li>Contain with a rigid membrane (magnesium or titanium mesh)</li>
+          <li>Stabilise membrane with titanium pins</li>
+          <li>Suture tension-free</li>
+        </ul>
+      </div>
+      <div class="warn-box" style="margin-top:16px;">
+        <p><strong>⚠ Case Learning:</strong> "I grafted the implants perfectly — but forgot to graft the central pontic. The imperfect sausage accidentally grafted the lateral pontic, but not the central. I ended up with a ridge-lap at the central pontic." Always plan the full restorative span including every pontic site.</p>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Advantages over Block</h3>
+        <ul class="list">
+          <li>No donor site surgery needed (uses allograft/xenograft)</li>
+          <li>Can build irregular shapes to match planned restoration</li>
+          <li>Less patient morbidity than block harvest</li>
+          <li>Magnesium membrane provides rigidity without permanent foreign body</li>
+        </ul>
+      </div>
+      <div class="content-block" style="margin-top:16px;">
+        <h3>Graft to Pontic Sites Too</h3>
+        <ul class="list">
+          <li>Bridge case: graft under ALL pontic sites — not just implant sites</li>
+          <li>Pontic site: xenograft for long-term volume (vital bone not needed)</li>
+          <li>Implant sites: allograft or autogenous for vital bone</li>
+          <li>Result: flat emergence profile, hygienic ovate pontics, no ridge-lap</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S22 PLATFORM DECISIONS FOR COMPLEX CASES -->
+<div class="slide" id="slide-22">
+<div class="slide-inner">
+  <div class="slide-label">Planning Complex Cases</div>
+  <h2 class="slide-title">Complex Case Planning — <em>Think Prosthetics First</em></h2>
+  <div class="two-col">
+    <div>
+      <p class="slide-sub">Every complex bone grafting case should begin with the prosthetic plan — not the surgical plan.</p>
+      <div class="content-block">
+        <h3>The Correct Workflow</h3>
+        <ul class="list">
+          <li>Decide: what prosthesis does this patient need?</li>
+          <li>Decide: which implant positions will support that prosthesis?</li>
+          <li>Decide: what is the ideal position for each implant (prosthetically)?</li>
+          <li>Then: assess what bone exists vs what bone is needed</li>
+          <li>Then: plan bone grafting to enable the prosthetically correct position</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <p><strong>Old school approach:</strong> "Place implant where bone exists, worry about prosthesis later." This is backwards. "Old school will place the implant in the bone and then worry about prosthesis. You and I will say: I have a defect, let's decide which prosthesis, then plan the bone grafting to enable it."</p>
+      </div>
+    </div>
+    <div>
+      <div class="content-block">
+        <h3>Implant Number for Span</h3>
+        <ul class="list">
+          <li>Replacing 3 anterior teeth (2 centrals + lateral): typically 2 implants, not 3</li>
+          <li>Implant-to-pontic papilla looks better than implant-to-implant papilla</li>
+          <li>Mechanically: 3 implants + 2 units → cantilever risk; 2 implants + pontic → better load distribution</li>
+          <li>Leaving the lateral as a pontic: aesthetically and mechanically preferable</li>
+        </ul>
+      </div>
+      <div class="teal-box" style="margin-top:16px;">
+        <p><strong>Inter-implant Space:</strong> Wider space between implants = better papilla support + better prosthetic design. Choose smaller diameter implants if needed to maintain adequate inter-implant distance (≥3mm minimum, ideally more).</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S23 CASE IRAQ YOUNG MAN -->
+<div class="slide" id="slide-23">
+<div class="slide-inner">
+  <div class="slide-label">Clinical Case</div>
+  <h2 class="slide-title">Case Study: Young Patient — <em>Block + GBR + Pontic Grafting</em></h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Presentation: Iraqi Medical Student</h4>
+      <p>5th-year medical student, about to graduate. Lost multiple anterior teeth in childhood. Very little residual bone — significant congenital deficit. Needed life-changing restoration.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Staged Block Grafts</h4>
+      <p>Human tissue bank blocks placed — two separate staged grafts to build ridge to an acceptable level. Followed by integration period.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Implant Placement — Two Laterals</h4>
+      <p>Two implants placed at lateral incisor positions. GBR performed around the implants AND in the central pontic region — important not to miss the pontic site.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Soft Tissue Augmentation</h4>
+      <p>Connective tissue grafts added for volume and soft tissue quality. Further enhances the emergence profile.</p>
+    </div>
+    <div class="tl-item"><div class="tl-dot"></div>
+      <h4>Final Bridge</h4>
+      <p>Clean, hygienic three-unit bridge with ovate pontics at the central. Perfect emergence through the ridge. Patient can clean properly. The central pontic grafting made this possible.</p>
+    </div>
+  </div>
+  <div class="teal-box" style="margin-top:20px;">
+    <p><strong>Key Learning:</strong> The pontic site grafting was done both for the implants AND the central pontic. This is what makes the final restoration truly excellent — the grafting strategy was driven by the prosthetic outcome, not just the surgical convenience.</p>
+  </div>
+</div>
+</div>
+
+<!-- S24 COMPLETE WORKFLOW MASTER -->
+<div class="slide" id="slide-24">
+<div class="slide-inner">
+  <div class="slide-label">Complete Framework</div>
+  <h2 class="slide-title">Master Decision Framework — <em>Complete Bone Management</em></h2>
+  <p class="slide-sub">An integrated decision pathway connecting all four bone grafting types.</p>
+  <div style="display:grid;gap:12px;">
+    <div style="background:var(--card);border:1px solid rgba(74,144,217,0.4);border-radius:10px;padding:16px 20px;">
+      <h4 style="font-size:15px;color:var(--blue);margin-bottom:8px;">Step 1: Prosthetic Planning</h4>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;">Define the prosthetic goal. Determine ideal implant positions. Then assess what bone you have.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:16px 20px;">
+      <h4 style="font-size:15px;color:var(--gold);margin-bottom:8px;">Step 2: Bone Assessment</h4>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;">CBCT analysis: height, width, density, sinus floor, nerve position, defect wall count, phenotype.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(61,189,172,0.4);border-radius:10px;padding:16px 20px;">
+      <h4 style="font-size:15px;color:var(--teal);margin-bottom:8px;">Step 3: Choose Grafting Strategy</h4>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;"><span class="tag tag-gold">Socket graft</span> at extraction → <span class="tag tag-rose">Staged graft</span> if large deficit → <span class="tag tag-teal">Simultaneous GBR</span> at implant → <span class="tag tag-blue">Sinus lift</span> if posterior maxilla.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(232,164,74,0.4);border-radius:10px;padding:16px 20px;">
+      <h4 style="font-size:15px;color:var(--amber);margin-bottom:8px;">Step 4: Material Selection</h4>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;">Inner layer: autogenous/allograft. Outer: xenograft. Sinus: allograft. Socket: timing-dependent. Membrane: complexity-dependent.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(217,106,106,0.4);border-radius:10px;padding:16px 20px;">
+      <h4 style="font-size:15px;color:var(--rose);margin-bottom:8px;">Step 5: Soft Tissue + Prosthetics</h4>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;">Temporary crown sculpting → final impression → screw-retained crown → review. The pink must be right for the white to look right.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S25 MINI QUIZ L3 -->
+<div class="slide" id="slide-25">
+<div class="slide-inner">
+  <div class="slide-label">Knowledge Check</div>
+  <h2 class="slide-title"><em>Quick Check</em> — Lecture 3</h2>
+  <div id="l3mq">
+    <div class="content-block" id="l3q0">
+      <h3 style="font-size:17px;margin-bottom:16px;">Q1: A patient has 4mm residual bone height in the posterior maxilla on CBCT. The sinus floor is flat. What is the correct approach?</h3>
+      <div style="display:grid;gap:10px;">
+        <button class="l3opt" onclick="l3Check(0,0,'wrong')">Internal sinus lift (Versah) — place implant simultaneously</button>
+        <button class="l3opt" onclick="l3Check(0,1,'correct')">External sinus graft (lateral window) — bone height below 5mm threshold</button>
+        <button class="l3opt" onclick="l3Check(0,2,'wrong')">Place a short 6mm implant without sinus involvement</button>
+        <button class="l3opt" onclick="l3Check(0,3,'wrong')">Refer — nothing can be done</button>
+      </div>
+      <div id="l3q0-fb" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;"></div>
+    </div>
+    <div class="content-block" id="l3q1" style="display:none;margin-top:16px;">
+      <h3 style="font-size:17px;margin-bottom:16px;">Q2: A patient had a molar extracted. They want an implant but cannot proceed for financial reasons for 2–3 years. What socket graft material should you use?</h3>
+      <div style="display:grid;gap:10px;">
+        <button class="l3opt" onclick="l3Check(1,0,'wrong')">Allograft (Max graft)</button>
+        <button class="l3opt" onclick="l3Check(1,1,'correct')">Xenograft (cerabone)</button>
+        <button class="l3opt" onclick="l3Check(1,2,'wrong')">Autogenous bone chips</button>
+        <button class="l3opt" onclick="l3Check(1,3,'wrong')">No graft — blood clot will suffice</button>
+      </div>
+      <div id="l3q1-fb" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;"></div>
+    </div>
+    <div class="content-block" id="l3q2" style="display:none;margin-top:16px;">
+      <h3 style="font-size:17px;margin-bottom:16px;">Q3: Why is allograft preferred over xenograft for sinus grafting?</h3>
+      <div style="display:grid;gap:10px;">
+        <button class="l3opt" onclick="l3Check(2,0,'wrong')">Allograft is cheaper</button>
+        <button class="l3opt" onclick="l3Check(2,1,'wrong')">Allograft has better volume stability</button>
+        <button class="l3opt" onclick="l3Check(2,2,'correct')">If membrane perforates, allograft resorbs and won't block the ostium — xenograft won't resorb</button>
+        <button class="l3opt" onclick="l3Check(2,3,'wrong')">Allograft is more hydrophilic than xenograft</button>
+      </div>
+      <div id="l3q2-fb" style="display:none;margin-top:12px;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;"></div>
+    </div>
+    <div id="l3Complete" style="display:none;margin-top:20px;"><div class="highlight-box"><p style="text-align:center;font-size:16px;"><strong>✓ Quick Check Complete!</strong></p></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S26 SUMMARY -->
+<div class="slide" id="slide-26">
+<div class="slide-inner">
+  <div class="slide-label">Summary</div>
+  <h2 class="slide-title">Lecture 3 — <em>Key Takeaways</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="content-block">
+      <div style="color:var(--blue);font-size:22px;margin-bottom:10px;">🌬</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Sinus Decision</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">&lt;5mm → External (lateral window). 5–9mm flat floor → Internal lift. ≥10mm → No sinus involvement. Oblique floor always needs external approach.</p>
+    </div>
+    <div class="content-block">
+      <div style="color:var(--teal);font-size:22px;margin-bottom:10px;">⚠</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Schneiderian Membrane</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">As thin as an eggshell — treat with extreme care. If perforated: allograft is forgiving (resorbs). Xenograft can permanently block the ostium → chronic sinusitis.</p>
+    </div>
+    <div class="content-block">
+      <div style="color:var(--amber);font-size:22px;margin-bottom:10px;">🪥</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Socket Grafting</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">6 months re-entry → allograft. 2–5 years or bridge only → xenograft. Match material to timeline every time.</p>
+    </div>
+    <div class="content-block">
+      <div style="color:var(--rose);font-size:22px;margin-bottom:10px;">🏗</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Staged Bone Grafting</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">For 0–1 wall defects or insufficient bone for prosthetic implant position. Block or sausage technique. Plan from the prosthesis backwards.</p>
+    </div>
+    <div class="content-block">
+      <div style="color:var(--gold);font-size:22px;margin-bottom:10px;">⏱</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Healing Times</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">Autogenous: 12–16w. Allograft: 24w. Xenograft: 8–9 months (staged). PTFE membrane extends all to 24w. Internal sinus: simultaneous placement possible.</p>
+    </div>
+    <div class="content-block">
+      <div style="color:var(--teal);font-size:22px;margin-bottom:10px;">🎯</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Pontic Sites Too</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">Graft every pontic site in your implant bridge span. Xenograft for pontics (volume only). This is what separates good prosthetics from great prosthetics.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S27 COMPLETE COURSE SUMMARY -->
+<div class="slide" id="slide-27">
+<div class="slide-inner">
+  <div class="slide-label">Course Summary</div>
+  <h2 class="slide-title">Complete Course — <em>Core Messages</em></h2>
+  <div style="display:grid;gap:12px;">
+    <div style="background:var(--card);border:1px solid rgba(201,168,76,0.3);border-left:4px solid var(--gold);border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;line-height:1.7;"><strong style="color:var(--gold)">Biology first, always.</strong> Every surgical decision must respect post-extraction biology. Bundle bone will resorb. Plan for it — don't react to it.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(74,144,217,0.3);border-left:4px solid var(--blue);border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;line-height:1.7;"><strong style="color:var(--blue)">Prosthetic position is non-negotiable.</strong> Build the bone so the implant can go in the right place — never compromise position to avoid grafting.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(61,189,172,0.3);border-left:4px solid var(--teal);border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;line-height:1.7;"><strong style="color:var(--teal)">Layering is not optional.</strong> Inner: autogenous or allograft. Outer: xenograft. Never xenograft directly on exposed threads. This single distinction makes you a Level 3 implantologist.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(232,164,74,0.3);border-left:4px solid var(--amber);border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;line-height:1.7;"><strong style="color:var(--amber)">Graft pontic sites too.</strong> Your bridge prosthesis is only as good as the bone underneath it. A ridge-lap at the pontic is a failure — it's avoidable with socket grafting.</p>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(217,106,106,0.3);border-left:4px solid var(--rose);border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;line-height:1.7;"><strong style="color:var(--rose)">Educate to justify.</strong> Every staged approach, every graft, every additional cost — can be justified with education. Patients who understand biology will accept the correct treatment.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- S28 END -->
+<div class="slide" id="slide-28">
+<div class="title-slide">
+  <div class="title-chip">All Lectures Complete</div>
+  <h1 class="slide-title">Course <em>Complete</em></h1>
+  <p class="slide-sub">You have completed all three lectures on Bone Management in Implant Dentistry. Now test your knowledge across all three quizzes.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:600px;margin:32px auto;">
+    <a href="quiz1.html" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:18px;border-radius:10px;text-decoration:none;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:24px;margin-bottom:8px;">📝</div>
+      <div style="font-size:13px;color:var(--gold);">Quiz 1</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Biology & Planning</div>
+    </a>
+    <a href="quiz2.html" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:18px;border-radius:10px;text-decoration:none;text-align:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:24px;margin-bottom:8px;">📝</div>
+      <div style="font-size:13px;color:var(--gold);">Quiz 2</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">GBR & Membranes</div>
+    </a>
+    <a href="quiz3.html" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:18px;border-radius:10px;text-decoration:none;text-align:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-size:24px;margin-bottom:8px;">📝</div>
+      <div style="font-size:13px;color:var(--gold);">Quiz 3</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Sinus & Staged</div>
+    </a>
+  </div>
+  <a href="index.html" style="color:var(--muted);text-decoration:none;font-size:14px;">← Course Home</a>
+</div>
+</div>
+
+</div>
+<div class="bottom-nav">
+  <button class="btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <div class="slide-dots" id="dotContainer"></div>
+  <button class="btn btn-primary" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<style>
+.l3opt{background:var(--card);border:1px solid var(--border);color:var(--text);padding:12px 16px;border-radius:8px;cursor:pointer;text-align:left;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.l3opt:hover{border-color:var(--gold);color:var(--gold);}
+.l3opt.correct{background:rgba(61,189,172,0.15);border-color:var(--teal);color:var(--teal);}
+.l3opt.wrong-ans{background:rgba(217,106,106,0.12);border-color:var(--rose);color:var(--rose);}
+</style>
+
+<script>
+const totalSlides=28;
+let current=parseInt(localStorage.getItem('lec3_slide')||'1');
+function buildDots(){const dc=document.getElementById('dotContainer');dc.innerHTML='';for(let i=1;i<=totalSlides;i++){const d=document.createElement('div');d.className='dot'+(i===current?' active':'')+(i<current?' visited':'');d.onclick=()=>goTo(i);dc.appendChild(d);}}
+function goTo(n){document.getElementById('slide-'+current)?.classList.remove('active');current=Math.max(1,Math.min(totalSlides,n));document.getElementById('slide-'+current)?.classList.add('active');document.getElementById('slideNum').textContent=current;document.getElementById('progressFill').style.width=(current/totalSlides*100)+'%';document.getElementById('prevBtn').disabled=current===1;document.getElementById('nextBtn').disabled=current===totalSlides;document.getElementById('nextBtn').textContent=current===totalSlides?'Finish →':'Next →';localStorage.setItem('lec3_slide',current);if(current===totalSlides)localStorage.setItem('lec3_done','1');buildDots();document.querySelector('.slides-container').scrollTop=0;}
+function changeSlide(dir){goTo(current+dir);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+const l3fb=[
+  {c:'Correct! Less than 5mm residual bone = external sinus graft required. Internal lift needs ≥5mm to achieve primary stability for the implant.',w:'Incorrect. With only 4mm residual bone, you cannot achieve primary stability for a simultaneous implant with internal lift. External sinus graft (lateral window) is required for &lt;5mm.'},
+  {c:'Correct! For 2–3 years before re-entry, xenograft provides the long-term volume stability needed. Allograft would resorb before that timepoint.',w:'Incorrect. For re-entry in 2–3 years, xenograft is correct — it provides long-term volume stability. Allograft is used when re-entry is in ~6 months.'},
+  {c:'Correct! If the Schneiderian membrane is perforated during sinus grafting, allograft resorbs harmlessly. Xenograft particles do not resorb and can permanently block the ostium, causing chronic sinusitis.',w:'Incorrect. The key reason is membrane perforation safety — allograft resorbs if it enters the sinus, so it won\'t block the ostium. Xenograft persists indefinitely and can cause permanent drainage obstruction.'}
+];
+let l3step=0;
+function l3Check(q,opt,result){if(q!==l3step)return;const btns=document.querySelectorAll(`#l3q${q} .l3opt`);btns.forEach(b=>b.disabled=true);btns[opt].classList.add(result==='correct'?'correct':'wrong-ans');const fb=document.getElementById('l3q'+q+'-fb');fb.textContent=(result==='correct'?'✓ ':'')+l3fb[q][result==='correct'?'c':'w'];fb.style.background=result==='correct'?'rgba(61,189,172,0.1)':'rgba(217,106,106,0.08)';fb.style.border='1px solid '+(result==='correct'?'rgba(61,189,172,0.3)':'rgba(217,106,106,0.3)');fb.style.color=result==='correct'?'var(--teal)':'var(--rose)';fb.style.display='block';if(result==='correct'){l3step++;setTimeout(()=>{if(l3step<3){document.getElementById('l3q'+l3step).style.display='block';}else{document.getElementById('l3Complete').style.display='block';}},900);}}
+document.getElementById('totalSlides').textContent=totalSlides;
+goTo(current);
+</script>
+</body>
+</html>

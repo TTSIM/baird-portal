@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2 · Soft Tissue Management — Baird Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+:root{--bg:#080c10;--surface:#121a24;--surface2:#1a2738;--border:#1d2e40;--gold:#c9a84c;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--accent:#a855f7}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+#cnav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:5px 20px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(16px);min-height:36px;overflow-x:auto}
+.nb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.ns{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.nl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.ng{display:flex;gap:4px}
+.np{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border:1px solid var(--border);color:var(--text3);text-decoration:none;border-radius:2px;transition:all .2s;white-space:nowrap}
+.np:hover{border-color:var(--text2);color:var(--text)}
+.np.here{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+.np.lhov:hover{border-color:var(--accent);color:var(--accent)}
+#main{flex:1;overflow-y:auto;padding:52px 24px 24px;display:flex;flex-direction:column;align-items:center}
+.inner{width:100%;max-width:760px}
+/* Start */
+#start{text-align:center;padding:40px 0}
+.sbdg{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.3em;text-transform:uppercase;border:1px solid rgba(168,85,247,.3);padding:3px 14px;display:inline-block;margin-bottom:20px}
+.sh1{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;line-height:1.1;margin-bottom:10px}
+.sh1 em{color:var(--gold);font-style:italic}
+.smeta{font-size:14px;color:var(--text2);margin-bottom:28px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0 32px;text-align:left}
+.sm{background:var(--surface);border:1px solid var(--border);padding:14px}
+.sm .sv{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--accent)}
+.sm .sl{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;margin-top:2px}
+.sm .sd{font-size:13px;color:var(--text2);margin-top:4px}
+.stops{background:var(--surface);border:1px solid var(--border);padding:16px 20px;text-align:left;margin-bottom:28px}
+.stops h3{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:var(--accent);border-radius:2px}
+.bstart{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(168,85,247,.12);border:1px solid var(--accent);color:var(--accent);padding:12px 36px;cursor:pointer;transition:all .2s}
+.bstart:hover{background:rgba(168,85,247,.22)}
+/* Progress */
+#pgwrap{width:100%;margin-bottom:16px}
+#pgbar{height:4px;background:var(--border);border-radius:2px;margin-bottom:6px}
+#pgfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .35s ease}
+.pgm{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+/* Question */
+.qcard{background:var(--surface);border:1px solid var(--border);padding:26px 28px;border-radius:3px}
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+.qbdg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);color:var(--accent);border-radius:2px}
+.qsc{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.2);padding:12px 16px;margin-bottom:16px;border-radius:2px}
+.qsc .qslbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}
+.qsc .qstxt{font-size:14px;color:var(--text2);line-height:1.5}
+.qtxt{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:18px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left;border-radius:2px}
+.opt:hover:not(.lk){border-color:var(--accent);background:rgba(168,85,247,.05)}
+.opt.sel{border-color:var(--accent);background:rgba(168,85,247,.07)}
+.opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.09)!important}
+.opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.09)!important}
+.opt.lk{cursor:default}
+.ol{font-family:'JetBrains Mono',monospace;font-size:12px;width:22px;height:22px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;border-radius:2px;transition:all .2s}
+.opt.sel .ol{border-color:var(--accent);color:var(--accent)}
+.opt.correct .ol{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.1)}
+.opt.wrong .ol{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1)}
+.ot{font-size:15px;color:var(--text2);line-height:1.5;flex:1}
+.opt.correct .ot,.opt.wrong .ot{color:var(--text)}
+.fb{display:none;margin-top:14px;padding:14px 16px;border-radius:2px}
+.fb.show{display:block}
+.fb.fc{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.25)}
+.fb.fw{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25)}
+.fbh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fbi{font-size:18px}
+.fbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.fb.fc .fbl{color:var(--green)}.fb.fw .fbl{color:var(--red)}
+.fbe{font-size:14px;color:var(--text2);line-height:1.6}
+.fbe strong{color:var(--text)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.slv{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3)}
+.slv span{color:var(--accent)}
+.bnxt{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 22px;cursor:pointer;transition:all .2s;display:none}
+.bnxt.show{display:block}
+.bnxt:hover{border-color:var(--accent);color:var(--accent)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake .35s ease}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.pulse{animation:pulse .5s ease}
+/* Results */
+#results{display:none;text-align:center;padding:32px 0}
+.rrw{display:flex;justify-content:center;margin-bottom:20px}
+.rring{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.rinn{background:var(--bg);width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rpct{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold)}
+.rlbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)}
+.gbdg{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.2em;padding:6px 20px;border:1px solid;margin-bottom:12px;display:inline-block}
+.gbdg.dist{border-color:var(--gold);color:var(--gold)}.gbdg.merit{border-color:var(--accent);color:var(--accent)}.gbdg.pass{border-color:var(--green);color:var(--green)}.gbdg.fail{border-color:var(--red);color:var(--red)}
+.rg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:380px;margin:0 auto 24px}
+.rbox{background:var(--surface);border:1px solid var(--border);padding:14px;text-align:center}
+.rbox .rv{font-family:'Cormorant Garamond',serif;font-size:36px}
+.rbox .rl{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-top:3px;letter-spacing:.1em}
+.rv.c{color:var(--green)}.rv.w{color:var(--red)}
+.rmsg{font-size:15px;color:var(--text2);max-width:500px;margin:0 auto 24px;line-height:1.7}
+.tbd{background:var(--surface);border:1px solid var(--border);padding:18px 20px;max-width:560px;margin:0 auto 24px;text-align:left}
+.tbdttl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px}
+.tbrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tblbl{font-size:13px;color:var(--text2);flex:1;min-width:0}
+.tbbar{flex:2;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.tbfill{height:100%;border-radius:3px;transition:width .6s ease}
+.tbsc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);flex-shrink:0;min-width:36px;text-align:right}
+.rctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bp{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(168,85,247,.12);border:1px solid var(--accent);color:var(--accent);padding:10px 26px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bp:hover{background:rgba(168,85,247,.22)}
+.bo{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:10px 26px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bo:hover{border-color:var(--text2);color:var(--text)}
+/* Review */
+#review{display:none;max-width:760px;width:100%;margin:0 auto}
+.rvhdr{background:var(--surface);border:1px solid var(--border);padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.rvhdr h2{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300}
+.rvitem{background:var(--surface);border:1px solid var(--border);padding:18px 20px;margin-bottom:10px}
+.rvitem.rr{border-left:3px solid var(--green)}.rvitem.rw{border-left:3px solid var(--red)}
+.rvmeta{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.rvbdg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:2px}
+.rvbdg.correct{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.rvbdg.wrong{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.rvq{font-size:15px;color:var(--text);margin-bottom:8px;font-weight:500}
+.rva{font-size:13px;color:var(--text2);margin-bottom:6px}
+.rva span{color:var(--green);font-weight:600}
+.rvexp{font-size:13px;color:var(--text3);line-height:1.5;border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
+.rvexp strong{color:var(--text2)}
+@media(max-width:640px){#main{padding:48px 14px 14px}.qcard{padding:18px 16px}.qtxt{font-size:15px}.ot{font-size:14px}.sgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<!-- ═══ COURSE NAVIGATION BAR (consistent across all 6 files) ═══ -->
+<nav id="cnav" aria-label="Course navigation">
+  <span class="nb">🦷 Baird Implant</span><div class="ns"></div>
+  <span class="nl">Lectures</span>
+  <div class="ng">
+    <a href="lecture-1.html" class="np lhov">L1 Fundamentals</a>
+    <a href="lecture-2.html" class="np lhov">L2 Management</a>
+    <a href="lecture-3.html" class="np lhov">L3 Flap Design</a>
+  </div>
+  <div class="ns"></div><span class="nl">Quizzes</span>
+  <div class="ng">
+    <a href="quiz-1.html" class="np">Q1</a>
+    <a href="quiz-2.html" class="np here" aria-current="page">Q2</a>
+    <a href="quiz-3.html" class="np">Q3</a>
+  </div>
+</nav>
+<div id="main"><div class="inner">
+
+<!-- START -->
+<div id="start">
+  <div class="sbdg">Quiz 2 of 3</div>
+  <div class="sh1">Soft Tissue<br><em>Management</em> &amp; Grafting</div>
+  <div class="smeta">30 questions · Periosteal release, FGG, CTG, frenectomy, suturing, dehiscence</div>
+  <div class="sgrid">
+    <div class="sm"><div class="sv">30</div><div class="sl">QUESTIONS</div><div class="sd">Multiple choice, one correct answer</div></div>
+    <div class="sm"><div class="sv">~15</div><div class="sl">MINUTES</div><div class="sd">No timer — work at your own pace</div></div>
+    <div class="sm"><div class="sv">60</div><div class="sl">% TO PASS</div><div class="sd">70% Merit · 85% Distinction</div></div>
+  </div>
+  <div class="stops"><h3>Topics Covered</h3><div class="chips"><span class="chip">Tension-Free Closure</span><span class="chip">Periosteal Release</span><span class="chip">Tweezers Test</span><span class="chip">Frenectomy</span><span class="chip">FGG</span><span class="chip">CTG</span><span class="chip">Mucoderm</span><span class="chip">Suturing</span><span class="chip">Wound Dehiscence</span><span class="chip">Socket Grafting</span><span class="chip">Prosthetic Sculpting</span></div></div>
+  <button class="bstart" onclick="startQuiz()">Begin Quiz →</button>
+</div>
+
+<div id="quiz" style="display:none">
+  <div id="pgwrap"><div id="pgbar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><div id="pgfill" style="width:0%"></div></div><div class="pgm"><span id="pglbl">Question 1 of 30</span><span id="pgtop"></span></div></div>
+  <div id="qwrap"></div>
+</div>
+
+<!-- ═══ RESULTS SCREEN — score ring, grade, topic breakdown ═══ -->
+<div id="results">
+  <div class="rrw"><div class="rring" id="rring"><div class="rinn"><div class="rpct" id="rpct">0%</div><div class="rlbl">SCORE</div></div></div></div>
+  <div class="gbdg" id="gbdg">PASS</div>
+  <div class="rg2"><div class="rbox"><div class="rv c" id="rvc">0</div><div class="rl">CORRECT</div></div><div class="rbox"><div class="rv w" id="rvw">0</div><div class="rl">INCORRECT</div></div></div>
+  <p class="rmsg" id="rmsg"></p>
+  <div class="tbd" id="tbd"><div class="tbdttl">Performance by Topic</div><div id="tbrows"></div></div>
+  <div class="rctas">
+    <button class="bp" onclick="showReview()" id="rvbtn">Review Incorrect Answers</button>
+    <a href="lecture-3.html" class="bo">Lecture 3 →</a>
+    <a href="quiz-3.html" class="bo">Quiz 3 →</a>
+    <button class="bo" onclick="location.reload()">Retake Quiz</button>
+  </div>
+</div>
+
+<!-- ═══ REVIEW MODE — re-read every question with explanation ═══ -->
+<div id="review">
+  <div class="rvhdr"><h2>Review: Incorrect Answers</h2><button class="bo" onclick="backToRes()">← Back</button></div>
+  <div id="rvitems"></div>
+</div>
+
+</div></div>
+<script>
+/* ═══ QUESTION BANK — 30 questions, each tagged with a topic for
+   the per-topic results breakdown ═══ */
+const Qs=[
+  {topic:"Tension-Free Closure",q:"Research indicates flap tension above which threshold leads to wound dehiscence?",opts:["10 Newton centimetres","25 Newton centimetres","40 Newton centimetres","50 Newton centimetres"],ans:1,exp:"A threshold of <strong>25 Newton centimetres</strong> has been identified as the point at which wound dehiscence becomes likely. The tweezers test and blanching assessment are the clinical proxies."},
+  {topic:"Tweezers Test",q:"During the tweezers test, the flap stays in position for 4 seconds then slowly retracts. You should:",opts:["Perform periosteal release before suturing","Proceed to suture — this is passive closure","Extend the flap further","Apply tissue adhesive"],ans:1,exp:"Staying 3–5 seconds before slowly retracting indicates <strong>passive closure</strong> — proceed to suture. Springing back immediately = tension = periosteal release required first."},
+  {topic:"Tension-Free Closure",q:"Even without bone grafting, tension occurs after implant placement because:",opts:["The healing process always creates tension","The osteotomy is drilled smaller than the implant — it expands the ridge on seating","Implants always shrink after placement","The patient's own muscles create the tension"],ans:1,exp:"The osteotomy is drilled slightly <strong>smaller than the implant</strong> for primary stability. When seated, the implant expands the ridge — creating tension even without GBR."},
+  {topic:"Periosteal Release",q:"Periosteal release must be performed at which anatomical landmark?",opts:["At the attached gingiva","At or just above the mucogingival junction (MGJ)","2mm apical to the MGJ","At the bone crest"],ans:1,exp:"Release at or just <strong>above (coronal to) the MGJ</strong>. Below the MGJ lies the muscle layer containing nerves and vessels. Cutting apical to the MGJ risks nerve damage and vessel damage."},
+  {topic:"Periosteal Release",q:"What is the correct depth of the periosteal release incision?",opts:["3–4mm to ensure full periosteal division","1mm only — the left hand provides the stretch","5mm to reach the muscle layer","As deep as needed"],ans:1,exp:"<strong>1mm only</strong>. The blade tip enters the periosteum by 1mm. The left-hand stretch then provides 5–10mm of effective release. Going deeper dramatically increases perforation risk with no additional benefit."},
+  {topic:"Periosteal Release",q:"What is the correct blade angle during periosteal release?",opts:["90 degrees — perpendicular to tissue","45 degrees — standard cutting angle","5 degrees — nearly parallel to the flap","30 degrees"],ans:2,exp:"The blade starts nearly <strong>parallel to the flap surface</strong>, then rotated just <strong>5 degrees</strong> upright. This allows only the blade tip to engage the periosteum without the blade body perforating the overlying mucosa."},
+  {topic:"Periosteal Release",scenario:"You perform periosteal release and notice bleeding at the release site.",q:"What does this bleeding indicate and what should you do?",opts:["Normal finding — bleeding confirms you have cut the periosteum","You are in the muscle layer — reposition the blade coronally immediately","The blade is too sharp — change to a blunted instrument","The patient's blood pressure is too high"],ans:1,exp:"Bleeding during periosteal release means you are in the <strong>muscle layer</strong> — too apical, below the MGJ. Correct periosteal release is a dry procedure. Reposition the blade more coronally and retry."},
+  {topic:"Periosteal Release",q:"After correct periosteal release, the expected additional tissue mobility is:",opts:["1–2mm","5–10mm","15–20mm","Over 20mm"],ans:1,exp:"Correct periosteal release produces <strong>5–10mm of additional tissue mobility</strong>. This comes from the 1mm notch releasing the periosteal attachment combined with the left-hand stretch of the elastic mucosa."},
+  {topic:"Frenectomy",q:"When should a frenectomy ideally be performed relative to implant surgery?",opts:["Same day as implant placement","4–6 weeks before implant surgery","Immediately after implant placement","Only after the final crown is placed"],ans:1,exp:"Frenectomy should be performed <strong>4–6 weeks before</strong> implant surgery to allow complete healing. If done simultaneously, the weakened tissue is at increased risk of perforation through the surgical flap."},
+  {topic:"Frenectomy",q:"After frenectomy, incision lines are vertical but sutures are placed:",opts:["Vertically — parallel to the incision","Horizontally — perpendicular across the wound","As interrupted sutures in any direction","Only on one side of the wound"],ans:1,exp:"Although incisions are vertical, sutures are placed <strong>horizontally</strong> — crossing the wound from side to side. This brings wound edges together. Vertical sutures in vertical incisions would not close the wound."},
+  {topic:"FGG",q:"During FGG recipient site preparation, which structure must be preserved to ensure graft take?",opts:["The marginal gingiva","The periosteum — it provides blood supply for graft survival","The mobile mucosa","The junctional epithelium of adjacent teeth"],ans:1,exp:"The <strong>periosteum must be preserved</strong> on the bone at the recipient site. It provides blood supply via plasma diffusion (days 0–3) then neovascularisation. Remove it and the graft has no vascular bed — necrosis follows."},
+  {topic:"FGG",q:"Approximately what percentage shrinkage should you plan for when harvesting an FGG?",opts:["10–15%","25–30%","50%","75%"],ans:2,exp:"Approximately <strong>50% shrinkage</strong> is expected from FGG healing. Harvest approximately twice the desired final keratinized mucosa width to achieve the target result."},
+  {topic:"FGG",q:"Yellow tissue visible on the deep surface of an FGG harvest must be:",opts:["Included — it improves graft thickness","Removed — fat impedes vascular ingrowth and graft integration","Used to identify the epithelium layer","Left as it improves attachment to bone"],ans:1,exp:"<strong>Yellow fatty tissue must be removed</strong>. Fat impedes revascularisation and integration at the recipient site. The graft should be uniformly connective tissue — 1–2mm thickness, no fat."},
+  {topic:"CTG",q:"A CTG differs from an FGG primarily in that:",opts:["CTG uses a different donor site","CTG epithelium is removed before placement; it is buried under a flap to increase tissue volume","CTG is placed on the periosteum like FGG but without sutures","CTG is only used in posterior regions"],ans:1,exp:"CTG: <strong>epithelium removed, buried under flap</strong> → increases tissue thickness/volume. FGG: epithelium kept, placed on periosteum → increases KM width. Different tools for different deficiencies."},
+  {topic:"CTG",q:"How is epithelium identified versus connective tissue during CTG harvest?",opts:["Epithelium is red; connective tissue is pale","Epithelium is shiny; connective tissue is matte and dull","They feel different — epithelium is smooth","They cannot be distinguished without microscopy"],ans:1,exp:"<strong>Epithelium is shiny; connective tissue is matte and dull.</strong> During de-epithelialisation, once the shiny surface disappears (~0.3–0.4mm depth), you have reached connective tissue. Stop here."},
+  {topic:"CTG",q:"In the tunnel technique for CTG delivery, what stabilises the graft in position?",opts:["Mattress sutures through the graft","The tunnel itself — sutures through the graft body are not required","Tissue adhesive","Healing abutment pressure alone"],ans:1,exp:"In the tunnel technique, <strong>the tunnel itself holds the CTG</strong>. The snug-fitting tunnel prevents displacement. Sling or interrupted sutures close the tunnel entrance, but sutures through the graft are not required."},
+  {topic:"Mucoderm",q:"Mucoderm is derived from:",opts:["Bovine collagen","Porcine (pig) dermis","Human cadaveric tissue","Synthetic polymer"],ans:1,exp:"Mucoderm is an acellular collagen matrix from <strong>porcine (pig) dermis</strong>. This is clinically relevant — religious or cultural considerations may preclude its use in some patients."},
+  {topic:"Mucoderm",q:"The primary advantage of Mucoderm over autogenous CTG is:",opts:["It produces superior long-term outcomes","No second surgical site — reduced patient morbidity and unlimited supply","Lower cost","It contains living cells that improve integration"],ans:1,exp:"Mucoderm's primary advantage is <strong>no second surgical site</strong>, eliminating palatal donor morbidity and providing unlimited supply. However, autogenous CTG produces superior outcomes and remains first choice."},
+  {topic:"Suturing",q:"Vertical mattress sutures are preferred over interrupted sutures alone for implant closures because:",opts:["They are faster to place","They evert wound margins and maintain papilla height, rather than flattening papillae","They require less suture material","They are easier to remove at 2 weeks"],ans:1,exp:"<strong>Vertical mattress sutures evert wound margins</strong> and hold the papilla at natural height. Interrupted sutures alone pull papillae horizontally, flattening and blunting them — a permanent aesthetic compromise."},
+  {topic:"Suturing",q:"BAIRD specifies which needle size for aesthetic zone implant suturing?",opts:["Largest available for secure closure","Small needle (5-0 or 6-0) to minimise tissue trauma","Standard surgical needle (3-0)","Needle size has no impact on outcomes"],ans:1,exp:"<strong>Small needle (5-0 or 6-0)</strong> for aesthetic zones. Smaller needle = smaller passage through tissue, less trauma, less tearing risk in delicate peri-implant mucosa. Needle size matters."},
+  {topic:"Wound Dehiscence",q:"White tissue visible at a dehisced wound at 10 days represents:",opts:["Normal granulation tissue","Necrotic tissue with early re-epithelialisation — dehiscence has occurred","Exposed bone graft","A sign of successful membrane integration"],ans:1,exp:"White tissue at 10 days represents <strong>necrotic tissue with early re-epithelialisation</strong>. The wound died from ischaemia (tension) and is now covering with new epithelium. Even re-epithelialised, bacteria have already reached the graft."},
+  {topic:"Wound Dehiscence",q:"What is the most significant consequence of wound dehiscence over a bone graft?",opts:["Temporary discoloration of adjacent teeth","Marginal bone loss guaranteed once wound remains open beyond 48 hours","Delayed osseointegration only","Increased post-operative pain with no long-term effect"],ans:1,exp:"<strong>Marginal bone loss is guaranteed</strong> if dehiscence remains open beyond 48 hours. Bacteria contaminate the graft, triggering non-selective bone damage from the leukocyte response."},
+  {topic:"Socket Grafting",q:"During socket grafting, what instrument is suited for degranulation of extraction sockets?",opts:["High-speed handpiece at 250,000rpm","Degranulation burs at 800rpm","Ultrasonic scaler","Standard periodontal curettes only"],ans:1,exp:"<strong>Degranulation burs at 800rpm</strong> — fast enough to remove granulation tissue efficiently, too slow to damage bone. Available in graduated sizes for complete socket degranulation."},
+  {topic:"Prosthetic Sculpting",q:"When should prosthetic soft tissue sculpting begin with the temporary crown?",opts:["Immediately on the day of placement","At 2 weeks (suture removal)","At 8–12 weeks after confirmed osseointegration","Only at the final impression stage"],ans:2,exp:"Sculpting begins at <strong>8–12 weeks</strong> after confirmed osseointegration. Too early risks micro-movement during critical healing. The temporary crown is placed with a concave profile initially, then progressively contoured."},
+  {topic:"Prosthetic Sculpting",q:"The initial subgingival profile of a temporary implant crown should be:",opts:["Convex — to push tissue into desired position from day one","Concave — to allow tissue to settle naturally before progressive contouring","Flat — as a compromise","Identical to the final crown — to establish profile immediately"],ans:1,exp:"The initial profile should be <strong>concave</strong>, allowing tissue to settle and heal without pressure. Convexity is progressively added at intervals to gently mould the tissue toward the desired emergence profile."},
+  {topic:"FGG",q:"When is it BEST to perform a free gingival graft relative to implant surgery?",opts:["At the same visit as bone grafting","Before surgery on native tissue or after implant healing — NOT simultaneously with GBR","During the restorative phase","Only after peri-implantitis develops"],ans:1,exp:"FGG before or after implant surgery — <strong>never simultaneously with GBR</strong>. The graft needs a stable, vascularised periosteal bed on healed bone. Simultaneous GBR compromises this."},
+  {topic:"Tension-Free Closure",scenario:"After placing sutures, you notice white blanching at the wound margins.",q:"What is the correct immediate action?",opts:["Apply pressure to improve circulation","Remove the sutures, perform periosteal release, and re-suture","Leave it — some blanching is expected","Place additional sutures to stabilise"],ans:1,exp:"<strong>Remove sutures immediately.</strong> Blanching = ischaemia from tension. The flap is under too much pressure. Periosteal release is required, then passive closure must be confirmed before re-suturing."},
+  {topic:"Periosteal Release",q:"A correct periosteal release is described as a 'dry procedure' because:",opts:["No saline irrigation is used","No bleeding occurs — you are away from vessels when cutting at the MGJ in the periosteum","The tissue dries out during the procedure","Dry environment improves cutting efficiency"],ans:1,exp:"<strong>No bleeding</strong> = correct technique. The periosteum at the MGJ is avascular at the level of release. If bleeding occurs, you are in the muscle layer below the MGJ where vessels lie."},
+  {topic:"FGG",q:"A 14-year follow-up study of FGG sites shows:",opts:["Keratinized tissue gradually converts back to mobile mucosa","Stable keratinized mucosa with superior health parameters vs non-grafted control sites","No meaningful difference from non-grafted sides","Complete resorption of graft tissue"],ans:1,exp:"At 14 years, FGG sites show <strong>stable keratinized mucosa behaving as native tissue</strong> — better plaque scores, less recession, better bone levels, and less patient discomfort than non-grafted control sites."},
+  {topic:"Wound Dehiscence",q:"The primary cause of wound dehiscence in implant surgery is:",opts:["Incorrect suture material","Closure under tension — the most important preventable cause","Patient non-compliance","Incorrect implant size"],ans:1,exp:"<strong>Closure under tension is the primary cause</strong> of wound dehiscence. This is entirely preventable through periosteal release, tweezers test, and checking for blanching. No suture material or technique can compensate for a flap closed under tension."}
+];
+
+let qIdx=0,score=0;
+const answers=[];
+const topicStats={};
+
+function startQuiz(){document.getElementById('start').style.display='none';document.getElementById('quiz').style.display='block';renderQ();}
+
+function renderQ(){
+  const q=Qs[qIdx];const L=['A','B','C','D'];
+  document.getElementById('pglbl').textContent=`Question ${qIdx+1} of ${Qs.length}`;
+  document.getElementById('pgtop').textContent=q.topic;
+  document.getElementById('pgfill').style.width=(qIdx/Qs.length*100)+'%';
+  document.getElementById('pgbar').setAttribute('aria-valuenow',qIdx);
+  let h=`<div class="qcard"><div class="qtop"><span class="qnum">Q${qIdx+1}/${Qs.length}</span><span class="qbdg">${q.topic}</span></div>`;
+  if(q.scenario)h+=`<div class="qsc"><div class="qslbl">Clinical Scenario</div><div class="qstxt">${q.scenario}</div></div>`;
+  h+=`<div class="qtxt">${q.q}</div><div class="opts" role="radiogroup" aria-label="Answer options">${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})" id="o${i}" role="radio" aria-checked="false"><span class="ol">${L[i]}</span><span class="ot">${o}</span></button>`).join('')}</div>
+  <div class="fb" id="fb" role="alert"></div>
+  <div class="qfoot"><div class="slv">Score: <span id="ls">${score}</span>/${qIdx}</div><button class="bnxt" id="bnxt" onclick="nextQ()">${qIdx<Qs.length-1?'Next Question →':'See Results →'}</button></div></div>`;
+  document.getElementById('qwrap').innerHTML=h;
+}
+
+function pick(i){
+  const opts=document.querySelectorAll('.opt');
+  if([...opts].some(o=>o.classList.contains('lk')))return;
+  const q=Qs[qIdx];const ok=i===q.ans;
+  opts.forEach(o=>o.classList.add('lk'));
+  opts[i].classList.add('sel',ok?'correct':'wrong');
+  if(!ok){opts[q.ans].classList.add('correct');opts[i].classList.add('shake');}
+  else{opts[i].classList.add('pulse');score++;document.getElementById('ls').textContent=score;}
+  const fb=document.getElementById('fb');
+  fb.className=`fb show ${ok?'fc':'fw'}`;
+  fb.innerHTML=`<div class="fbh"><span class="fbi">${ok?'✓':'✗'}</span><span class="fbl">${ok?'Correct':'Incorrect'}</span></div><div class="fbe">${q.exp}</div>`;
+  answers.push({correct:ok,qIdx});
+  if(!topicStats[q.topic])topicStats[q.topic]={c:0,t:0};
+  topicStats[q.topic].t++;
+  if(ok)topicStats[q.topic].c++;
+  document.getElementById('bnxt').classList.add('show');
+}
+
+function nextQ(){if(qIdx<Qs.length-1){qIdx++;renderQ();}else showResults();}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  const r=document.getElementById('results');r.style.display='block';
+  const pct=Math.round(score/Qs.length*100);
+  const deg=Math.round(score/Qs.length*360);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('rvc').textContent=score;
+  document.getElementById('rvw').textContent=Qs.length-score;
+  document.getElementById('rring').style.background=`conic-gradient(var(--accent) ${deg}deg, var(--border) ${deg}deg)`;
+  let grade,gc,msg;
+  if(pct>=85){grade='DISTINCTION';gc='dist';msg='Excellent command of soft tissue management. You understand the surgical technique principles and grafting rationale. Ready for Lecture 3.';}
+  else if(pct>=70){grade='MERIT';gc='merit';msg='Good grasp of the key concepts. Review topics below scoring under 70% before progressing to Lecture 3.';}
+  else if(pct>=60){grade='PASS';gc='pass';msg='Passing standard achieved. Revisit Lecture 2 to consolidate the areas where gaps remain.';}
+  else{grade='NEEDS REVIEW';gc='fail';msg='Review Lecture 2 thoroughly before retaking. Focus on periosteal release technique, FGG vs CTG distinctions, and dehiscence prevention.';}
+  document.getElementById('gbdg').textContent=grade;
+  document.getElementById('gbdg').className='gbdg '+gc;
+  document.getElementById('rmsg').textContent=msg;
+  const tbr=document.getElementById('tbrows');tbr.innerHTML='';
+  Object.entries(topicStats).forEach(([t,s])=>{const p=Math.round(s.c/s.t*100);const col=p>=70?'var(--green)':p>=50?'var(--yellow)':'var(--red)';tbr.innerHTML+=`<div class="tbrow"><div class="tblbl">${t}</div><div class="tbbar"><div class="tbfill" style="width:${p}%;background:${col}"></div></div><div class="tbsc">${s.c}/${s.t}</div></div>`;});
+  if(answers.every(a=>a.correct))document.getElementById('rvbtn').style.display='none';
+}
+
+function showReview(){
+  document.getElementById('results').style.display='none';
+  const rv=document.getElementById('review');rv.style.display='block';
+  const L=['A','B','C','D'];const items=document.getElementById('rvitems');items.innerHTML='';
+  answers.forEach(a=>{const q=Qs[a.qIdx];const cls=a.correct?'rr':'rw';const bdg=a.correct?'<span class="rvbdg correct">✓ Correct</span>':'<span class="rvbdg wrong">✗ Incorrect</span>';items.innerHTML+=`<div class="rvitem ${cls}"><div class="rvmeta">${bdg}<span style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace">${q.topic}</span></div><div class="rvq">${a.qIdx+1}. ${q.q}</div><div class="rva">Correct: <span>${L[q.ans]}. ${q.opts[q.ans]}</span></div><div class="rvexp">${q.exp}</div></div>`;});
+  window.scrollTo(0,0);
+}
+
+function backToRes(){document.getElementById('review').style.display='none';document.getElementById('results').style.display='block';window.scrollTo(0,0);}
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE PROGRESS SYSTEM  (identical block in all 6 files)
+     Stores progress in localStorage under one shared key so the
+     3 lectures + 3 quizzes behave as a single connected course:
+       · ✓ ticks and quiz best-scores in the top course nav
+       · a 6-segment course completion meter in the nav bar
+       · lectures remember your furthest slide ("Resume")
+       · quizzes remember best score, attempts and pass status
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── 1 · Page identity (edited per file) ─────────────────────── */
+var CP_PAGE = 'q2';        // key for THIS file: l1/l2/l3/q1/q2/q3
+var CP_PASS = 60;              // pass mark (%) — matches quiz grading
+
+/* ── 2 · Storage helpers ─────────────────────────────────────── */
+var KEY = 'bairdM2D2Progress';
+function cpLoad(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function cpSave(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+
+/* ── 3 · Injected styles (nav ticks, chips, meter, resume btn) ─ */
+var st = document.createElement('style');
+st.textContent =
+  '.cp-tick{color:var(--green);margin-left:4px;font-size:10px;font-weight:700}' +
+  '.cp-chip{font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gold);margin-left:5px;opacity:.9}' +
+  '.cp-meter{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;padding-left:10px}' +
+  '.cp-meter-lbl{font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;white-space:nowrap}' +
+  '.cp-segs{display:flex;gap:3px}' +
+  '.cp-seg{width:13px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}' +
+  '.cp-seg.done{background:linear-gradient(90deg,var(--accent),var(--gold))}' +
+  '.cp-resume{font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}' +
+  '.cp-resume:hover{background:rgba(201,168,76,.22);box-shadow:0 0 20px rgba(201,168,76,.18)}' +
+  '.cp-note{font-family:JetBrains Mono,monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-top:14px}' +
+  '.cp-note .ok{color:var(--green)}.cp-note .gold{color:var(--gold)}' +
+  '.cp-best-line{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text2);letter-spacing:.06em;margin:0 auto 18px;max-width:500px}' +
+  '.cp-best-line .gold{color:var(--gold)}.cp-best-line .ok{color:var(--green)}' +
+  '@media(max-width:768px){.cp-meter-lbl{display:none}.cp-seg{width:9px}}';
+document.head.appendChild(st);
+
+/* ── 4 · Decorate the course nav (ticks, best scores, meter) ─── */
+var ORDER = ['l1','q1','l2','q2','l3','q3'];   // course sequence
+var HREF  = { 'lecture-1.html':'l1','lecture-2.html':'l2','lecture-3.html':'l3',
+              'quiz-1.html':'q1','quiz-2.html':'q2','quiz-3.html':'q3' };
+
+function decorateNav(){
+  var p = cpLoad();
+  var nav = document.getElementById('course-nav') || document.getElementById('cnav');
+  if(!nav) return;
+
+  /* ticks + score chips on each pill */
+  nav.querySelectorAll('a').forEach(function(a){
+    var k = HREF[a.getAttribute('href')]; if(!k) return;
+    a.querySelectorAll('.cp-tick,.cp-chip').forEach(function(n){ n.remove(); });
+    var d = p[k]; if(!d) return;
+    if(k.charAt(0)==='q' && typeof d.best === 'number'){
+      var chip = document.createElement('span');
+      chip.className = 'cp-chip'; chip.textContent = d.best + '%';
+      a.appendChild(chip);
+    }
+    if(d.done){
+      var t = document.createElement('span');
+      t.className = 'cp-tick'; t.textContent = '✓';
+      t.setAttribute('aria-label','completed');
+      a.appendChild(t);
+    }
+  });
+
+  /* 6-segment completion meter, right-aligned in the nav */
+  var meter = nav.querySelector('.cp-meter');
+  if(!meter){
+    meter = document.createElement('div');
+    meter.className = 'cp-meter';
+    meter.innerHTML = '<span class="cp-meter-lbl"></span><div class="cp-segs"></div>';
+    nav.appendChild(meter);
+  }
+  var doneN = ORDER.filter(function(k){ return p[k] && p[k].done; }).length;
+  meter.querySelector('.cp-meter-lbl').textContent = 'Course ' + doneN + '/6';
+  meter.setAttribute('role','img');
+  meter.setAttribute('aria-label','Course progress: ' + doneN + ' of 6 parts complete');
+  var segs = meter.querySelector('.cp-segs'); segs.innerHTML = '';
+  ORDER.forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'cp-seg' + (p[k] && p[k].done ? ' done' : '');
+    segs.appendChild(s);
+  });
+}
+decorateNav();
+
+/* ── 5 · QUIZ HOOKS ──────────────────────────────────────────── */
+
+/* Shuffle answer positions once per attempt. The original question
+   bank had ~78% of correct answers at option B, so the quiz could be
+   passed by pattern-guessing. Shuffling each question's options (and
+   remapping its correct index) removes that bias without changing a
+   single word of content. Runs before the first renderQ() call.     */
+Qs.forEach(function(q){
+  var order = q.opts.map(function(_, i){ return i; });
+  for(var i = order.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = order[i]; order[i] = order[j]; order[j] = t;
+  }
+  q.opts = order.map(function(i){ return q.opts[i]; });
+  q.ans  = order.indexOf(q.ans);
+});
+
+/* record an attempt when results are shown; keep the best score.
+   `score` and `Qs` are top-level bindings from the quiz engine
+   above, visible from this later script block.                    */
+if(typeof window.showResults === 'function'){
+  var _showResults = window.showResults;
+  window.showResults = function(){
+    _showResults();
+    var pct = Math.round(score / Qs.length * 100);
+    var p = cpLoad();
+    var d = p[CP_PAGE] || {};
+    d.attempts = (d.attempts || 0) + 1;
+    var newBest = (typeof d.best !== 'number') || pct > d.best;
+    d.best = newBest ? pct : d.best;
+    if(pct >= CP_PASS) d.done = true;
+    p[CP_PAGE] = d; cpSave(p);
+    decorateNav();
+
+    /* personal best / attempts line under the grade message */
+    var anchor = document.getElementById('res-msg') || document.getElementById('rmsg');
+    if(anchor){
+      var line = document.createElement('p');
+      line.className = 'cp-best-line';
+      line.innerHTML =
+        (newBest && d.attempts > 1 ? '<span class="ok">★ New personal best!</span> &nbsp;' : '') +
+        'Personal best: <span class="gold">' + d.best + '%</span> · ' +
+        d.attempts + (d.attempts === 1 ? ' attempt' : ' attempts');
+      anchor.insertAdjacentElement('afterend', line);
+    }
+
+    /* Quiz 3 only: reveal the "Module 2 Complete" banner once all
+       three quizzes have been passed                              */
+    var banner = document.getElementById('cbanner');
+    if(banner){
+      var allDone = ['q1','q2','q3'].every(function(k){ return p[k] && p[k].done; });
+      banner.style.display = allDone ? 'block' : 'none';
+    }
+  };
+}
+
+/* mirror selection state for screen readers when an option is picked */
+if(typeof window.pick === 'function'){
+  var _pick = window.pick;
+  window.pick = function(i){
+    _pick(i);
+    var o = document.getElementById('opt-' + i) || document.getElementById('o' + i);
+    if(o) o.setAttribute('aria-checked', 'true');
+  };
+}
+
+/* keyboard answering: 1–4 / A–D select an option, Enter or → for next */
+document.addEventListener('keydown', function(e){
+  if(e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  var k = (e.key || '').toLowerCase();
+  var i = '1234'.indexOf(k); if(i < 0) i = 'abcd'.indexOf(k);
+  if(i > -1){
+    var opts = document.querySelectorAll('.opt');
+    if(opts.length && opts[i] &&
+       !opts[0].classList.contains('locked') && !opts[0].classList.contains('lk')){
+      e.preventDefault(); opts[i].click(); return;
+    }
+  }
+  if(k === 'enter' || k === 'arrowright'){
+    var nb = document.querySelector('.btn-next.show, .bnxt.show');
+    if(nb){ e.preventDefault(); nb.click(); }
+  }
+});
+
+/* show previous best + keyboard hint on the start screen */
+(function(){
+  var startBtn = document.querySelector('#start button');
+  if(!startBtn) return;
+  var p = cpLoad(); var d = p[CP_PAGE];
+  var note = document.createElement('div');
+  note.className = 'cp-note';
+  var bits = [];
+  if(d && typeof d.best === 'number'){
+    bits.push('Personal best: <span class="gold">' + d.best + '%</span> · ' +
+              (d.attempts || 1) + (d.attempts === 1 ? ' attempt' : ' attempts') +
+              (d.done ? ' <span class="ok">· passed ✓</span>' : ''));
+  }
+  bits.push('Keyboard: 1–4 or A–D to answer · Enter for next question');
+  note.innerHTML = bits.join('<br>');
+  startBtn.insertAdjacentElement('afterend', note);
+})();
+
+})();
+</script>
+</body>
+</html>

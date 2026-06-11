@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 03 — Aligners & Implant Planning | Baird Implant Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b12;--surface:#0d1220;--surface2:#121929;--teal:#00b4d8;--gold:#d4a94a;--text:#e2e8f0;--muted:#718096;--subtle:#1e2840;--green:#48bb78;--orange:#fb923c;--purple:#a78bfa;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(13,18,32,.95);border-bottom:1px solid var(--subtle);position:sticky;top:0;z-index:10;}
+.back-btn{font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--subtle);padding:5px 12px;border-radius:4px;}
+.back-btn:hover{color:var(--purple);}
+.quiz-badge{font-size:.68rem;background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:4px 10px;border-radius:12px;}
+.prog-text{font-size:.8rem;color:var(--muted);}
+.prog-text span{color:var(--purple);font-weight:600;}
+.progress-track{height:3px;background:var(--subtle);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));transition:width .4s ease;}
+main{flex:1;max-width:720px;margin:0 auto;padding:36px 24px;width:100%;}
+.screen{display:none;}
+.screen.active{display:block;}
+.start-hero{text-align:center;padding:40px 0;}
+.start-hero h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;margin-bottom:12px;}
+.start-hero h1 em{color:var(--purple);font-style:italic;}
+.start-hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:460px;margin:0 auto 28px;}
+.meta-grid{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
+.meta-item{text-align:center;}.meta-num{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--purple);}
+.meta-lbl{font-size:.72rem;color:var(--muted);letter-spacing:.08em;}
+.start-btn{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:14px 36px;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+.start-btn:hover{background:rgba(167,139,250,.25);}
+.q-tag{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;line-height:1.35;margin-bottom:24px;color:var(--text);}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.opt{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 18px;cursor:pointer;font-size:.9rem;color:var(--text);transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif;display:flex;align-items:flex-start;gap:12px;}
+.opt:hover:not(:disabled){background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.3);}
+.opt-letter{width:22px;height:22px;border-radius:50%;background:var(--surface2);border:1px solid var(--subtle);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;}
+.opt.correct{background:rgba(72,187,120,.1);border-color:rgba(72,187,120,.4);}
+.opt.correct .opt-letter{background:var(--green);color:#000;border-color:var(--green);}
+.opt.wrong{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);}
+.opt.wrong .opt-letter{background:var(--orange);color:#000;border-color:var(--orange);}
+.opt.reveal{background:rgba(72,187,120,.06);border-color:rgba(72,187,120,.2);}
+.opt:disabled{cursor:not-allowed;}
+.explanation{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;display:none;}
+.explanation.show{display:block;}
+.explanation p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.explanation p strong{color:var(--purple);}
+.next-btn{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:11px 28px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;display:none;}
+.next-btn.show{display:inline-block;}
+.next-btn:hover{background:rgba(167,139,250,.25);}
+.score-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;}
+.score-dot{width:18px;height:18px;border-radius:50%;background:var(--subtle);transition:background .3s;}
+.score-dot.correct{background:var(--green);}
+.score-dot.wrong{background:var(--orange);}
+.results{text-align:center;padding:40px 0;}
+.score-big{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;line-height:1;}
+.score-big span{color:var(--purple);}
+.grade{font-size:1.1rem;margin:8px 0 20px;color:var(--muted);}
+.review-list{text-align:left;margin:24px 0;}
+.review-item{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;}
+.review-item.wr{border-color:rgba(251,146,60,.3);}
+.review-item.co{border-color:rgba(72,187,120,.3);}
+.review-q{font-size:.88rem;color:var(--text);margin-bottom:5px;}
+.review-a{font-size:.82rem;color:var(--muted);}
+.review-a span.cr{color:var(--green);}
+.review-a span.wr{color:var(--orange);}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+.res-btn{padding:11px 24px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;}
+.res-btn.primary{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+.res-btn.secondary{background:transparent;color:var(--muted);border:1px solid var(--subtle);}
+.res-btn.gold{background:rgba(212,169,74,.15);color:var(--gold);border:1px solid rgba(212,169,74,.3);}
+.res-btn:hover{filter:brightness(1.15);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="back-btn">← Back</a>
+  <span class="quiz-badge">Quiz 03 — Aligners & Implant Planning</span>
+  <span class="prog-text">Q <span id="qNum">0</span> / 30</span>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<main>
+
+<div class="screen active" id="startScreen">
+  <div class="start-hero">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Assessment Quiz</div>
+    <h1>Aligners &<br><em>Implant Planning</em></h1>
+    <p>Test your knowledge of space analysis, aligner biomechanics, treatment sequencing, retention strategy, and multidisciplinary decision-making from Lecture 03.</p>
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-num">30</div><div class="meta-lbl">Questions</div></div>
+      <div class="meta-item"><div class="meta-num">MCQ</div><div class="meta-lbl">Format</div></div>
+      <div class="meta-item"><div class="meta-num">∞</div><div class="meta-lbl">Attempts</div></div>
+    </div>
+    <div id="resumeNotice" style="display:none;margin-bottom:16px;padding:10px 20px;background:rgba(72,187,120,.08);border:1px solid rgba(72,187,120,.2);border-radius:var(--r);font-size:.82rem;color:var(--green);">Saved progress found — resuming from where you left off.</div>
+    <button class="start-btn" onclick="startQuiz()">Begin Quiz →</button>
+  </div>
+</div>
+
+<div class="screen" id="quizScreen">
+  <div class="score-bar" id="scoreDots"></div>
+  <div class="q-tag" id="qTag">Question 1 of 30</div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="optionsContainer"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<div class="screen" id="resultsScreen">
+  <div class="results">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;">Quiz Complete</div>
+    <div class="score-big"><span id="scoreNum">0</span><span style="font-size:2rem;color:var(--muted);">/30</span></div>
+    <div class="grade" id="gradeText"></div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="results-btns">
+      <button class="res-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="lecture_03_aligners_implants.html" class="res-btn secondary">Review Lecture 03</a>
+      <a href="index.html" class="res-btn gold">Back to Portal</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+const KEY = 'baird_quiz3';
+const questions = [
+  {q:"What is the recommended minimum mesiodistal space for a single implant?",opts:["5.5mm","6.0mm","6.5–7mm","8mm"],ans:2,exp:"The minimum is <strong>6.5–7mm mesiodistal space</strong>. While some references cite 6mm as a minimum, the clinical recommendation is 6.5–7mm to allow 1–1.5mm of bone on each side of the implant without risking bone loss from proximity to adjacent roots."},
+  {q:"What minimum interocclusal vertical space is required for a single implant crown and components?",opts:["4mm","6mm","8mm","10mm"],ans:2,exp:"A minimum of <strong>8mm of interocclusal (vertical) space</strong> is required. This must accommodate the crown AND the abutment + connection components. Insufficient vertical space leads to short abutments, poor retention, and cleaning difficulty — all implant failure risk factors."},
+  {q:"What total mesiodistal space is typically needed for two adjacent implants?",opts:["8–10mm","10–12mm","12–14mm","15–18mm"],ans:2,exp:"<strong>12–14mm of mesiodistal space</strong> is needed for two adjacent implants. This ensures ≥3mm between the implant platforms, plus 1–1.5mm of bone on each outer side, plus space for both crowns to have natural proportions."},
+  {q:"What is the expected root movement relapse rate after orthodontic tooth movement?",opts:["5%","8%","11%","15%"],ans:2,exp:"<strong>11% root relapse</strong> is the quoted expected rate after orthodontic root movement. This means when planning implant space requirements, a buffer above the minimum space should be built into the orthodontic prescription to account for this predictable amount of root drift back."},
+  {q:"What is the purpose of a Bolton analysis in implant-orthodontic planning?",opts:["To measure bone density for implant placement","To compare mesiodistal tooth widths between arches to guide crown proportions","To calculate the optimal implant length and diameter","To assess the occlusal plane for crown height space"],ans:1,exp:"A Bolton analysis <strong>compares the mesiodistal widths of teeth against their antagonists</strong>. In implant planning, this ensures the planned implant crown width is proportionate to the opposing and adjacent teeth — critical for natural aesthetics, particularly for central incisors."},
+  {q:"Why is orthodontics generally recommended BEFORE implant placement rather than after?",opts:["Orthodontic forces cause periimplant bone loss if applied after placement","Implants integrate faster if placed after ortho","Aligners are cheaper to use pre-implant","Gingival surgery is easier after ortho"],ans:0,exp:"<strong>Orthodontic forces around an osseointegrated implant cause periimplant bone resorption</strong>. The implant is ankylosed with no periodontal ligament — it cannot move under orthodontic force. Adjacent teeth moving around a static implant creates bone resorption. Ortho before placement avoids this entirely."},
+  {q:"What is the maximum predictable molar intrusion achievable with clear aligners alone?",opts:["0.2mm","0.5mm","1mm","2mm"],ans:1,exp:"The maximum predictable molar intrusion with clear aligners alone is approximately <strong>0.5mm</strong>. Brachycephalic patients (strong masseter, heavy bite) are even less predictable. For greater intrusion — or in heavy bite patients — TADs should be used."},
+  {q:"What colour flag in ClearCorrect indicates a movement is very difficult or requires auxiliaries?",opts:["Red","Orange","Yellow","Purple"],ans:3,exp:"In ClearCorrect's difficulty rating system, <strong>purple indicates very difficult movements</strong> that likely require elastics, buttons, or TADs to achieve. Green indicates straightforward movements. This helps clinicians anticipate which parts of the prescription may need supplementary mechanics."},
+  {q:"When should extrusion movements be programmed in a clear aligner treatment plan?",opts:["At the very beginning of the sequence","In the middle of treatment","At the very end of the sequence","Equally distributed throughout"],ans:2,exp:"Extrusion should always be programmed <strong>at the very end of the treatment sequence</strong>. Extrusion is the hardest movement for aligners to achieve. If programmed early, other movements complete and the aligner focus shifts before full extrusion is reached. Saving it for last maximises the chance of success."},
+  {q:"What trim line is recommended when an implant has already been placed or is placed mid-treatment?",opts:["High trim line — for maximum torque control","Low trim line — to avoid pressure on gingival margin around the implant","Extended trim line — for maximum coverage","No trim line preference — both are equivalent"],ans:1,exp:"A <strong>low trim line</strong> is recommended when an implant is already present. A high trim line extends to the cervical area of the crown and can apply pressure to the gingival margin around the implant — risking soft tissue retraction. The low trim line applies forces only near the occlusal/incisal surface."},
+  {q:"What is the recommended wait time after implant integration before using it as orthodontic anchorage?",opts:["6 weeks","2 months","3 months","6 months"],ans:2,exp:"Wait <strong>3 months post-integration</strong> before using an implant as orthodontic anchorage. This ensures full bone maturation around the implant before applying the additional forces of tooth movement against it."},
+  {q:"What medication class is specifically noted to reduce bone response to orthodontic movement AND slow osseointegration?",opts:["Beta blockers","Antidepressants","Antihistamines","NSAIDs"],ans:1,exp:"<strong>Antidepressants</strong> are specifically highlighted as reducing bone response to both orthodontic tooth movement and implant osseointegration. Patients on antidepressants may need longer treatment timelines and should be informed that results may be less predictable."},
+  {q:"What type of retainer is recommended for patients who grind their teeth and have implants?",opts:["Essix (clear vacuum-formed) retainer","Fixed bonded retainer","Hawley retainer (acrylic plate with occlusal coverage)","No retainer — nightguard covers retention needs"],ans:2,exp:"A <strong>Hawley retainer</strong> is preferred for grinders with implants. Its acrylic occlusal plate provides a grinding surface, protecting the implant crown from direct occlusal trauma. An Essix retainer has no occlusal coverage, offering no protection against bruxing forces."},
+  {q:"Why does an implant have no protective proprioceptive feedback against grinding forces?",opts:["Implants are too rigid to transmit force","The implant has no periodontal ligament, so neural mechanoreceptors are absent","The bone absorbs all forces before the implant senses them","Titanium oxide layer dampens force transmission"],ans:1,exp:"Natural teeth have mechanoreceptors in the <strong>periodontal ligament</strong> that sense excessive forces and trigger jaw-opening reflexes. An implant has <strong>no periodontal ligament</strong> — it is directly anchored in bone — so there is no protective neural feedback. The patient cannot feel grinding at night, making nocturnal protection critical."},
+  {q:"What is the interradicular space required between two adjacent implants?",opts:["3mm","5.5mm","7mm","8mm"],ans:1,exp:"The minimum interradicular space between two adjacent implants is <strong>5.5mm</strong>. This ensures at least 3mm between the implant platforms (to protect marginal bone) plus 1–1.5mm of bone on each side. This is a bone-level measurement — different from the crown-level contact-point-to-contact-point distance."},
+  {q:"What is Smartcloud's primary benefit in combined ortho-implant cases?",opts:["It allows patients to purchase aligners directly","It provides a GDPR-safe platform for sharing patient images and treatment plans with the team","It automatically orders surgical guides","It calculates implant positioning from CBCT data alone"],ans:1,exp:"<strong>Smartcloud provides a secure, GDPR-compliant platform</strong> for sharing patient images, treatment plans, digital mockups, and case files with the extended team (orthodontist, lab technician, specialist). This avoids the common and problematic practice of sharing patient images via mobile messaging apps."},
+  {q:"During which step of the six-step treatment sequence should periodontal/soft tissue surgery be performed?",opts:["Step 1 — before everything","Step 3 — after ortho but before implant placement","Step 4 — simultaneously with implant placement","Step 5 — after ortho and after implant integration"],ans:3,exp:"Soft tissue and periodontal surgery is performed as <strong>Step 5 — after ortho and after implant integration</strong>. Performing it earlier risks relapse: orthodontic tooth movement after periodontal surgery can undo the tissue management. The surgical site must also be stable before adding new movements."},
+  {q:"What is the 'buccal corridor' concern specific to implant-orthodontic planning?",opts:["The implant may be placed too labially","Once an implant is placed, arch expansion at that site is no longer possible — the implant is a fixed point","The aligner may cause buccal mucosa irritation at the implant site","Buccal bone resorption around the implant during ortho"],ans:1,exp:"The <strong>buccal corridor</strong> concern: once an implant is osseointegrated, it cannot be moved. If the arch later needs expansion (for aesthetics or occlusion), the teeth around the implant can move but the implant cannot — leaving an asymmetric, aesthetically compromised result. Arch expansion needs should be addressed BEFORE implant placement."},
+  {q:"What are the two distinct space measurements that must be taken for every planned implant site?",opts:["Crown width and root width","Contact point to contact point (crown level) AND minimum available at bone/gingival level","Mesiodistal and buccolingual","Clinical crown height and bone depth"],ans:1,exp:"Two separate measurements are required: <strong>(1) Contact point to contact point</strong> — the wider measurement at the crown level used for aesthetic crown planning, and <strong>(2) Minimum available at bone/gingival level</strong> — the narrower measurement where roots converge, used for surgical safety planning."},
+  {q:"In the All-on-X + aligners case, what clever sequencing was used?",opts:["Upper All-on-X placed last, after lower ortho was complete","Upper All-on-X placed first using a surgical guide based on the planned final lower aligner position","Lower ortho done first, then upper All-on-X placed","Both arches treated simultaneously"],ans:1,exp:"The surgical guide for the <strong>upper All-on-X was made based on the planned final lower arch orthodontic position</strong>. By planning the lower arch setup first, the technician knew exactly where the lower teeth would end up — allowing the upper All-on-X implant positions to be optimised for that final occlusion before lower ortho even began."},
+  {q:"Why should extrusion of a periodontally compromised tooth be considered before extraction in implant planning?",opts:["It reduces extraction difficulty","Moving the tooth into a better position improves the bone and soft tissue landscape for the future implant site","It delays treatment unnecessarily","It causes root resorption"],ans:1,exp:"Orthodontic extrusion of a compromised tooth <strong>moves bone and soft tissue coronally</strong> — even as the tooth is eventually lost, the site has been anatomically improved. This can create additional bone height, better ridge width, and improved soft tissue contour for the future implant. Special consent is required as the tooth may be lost during treatment."},
+  {q:"What is the recommended maximum charge for a digital mockup at consultation?",opts:["£50–75","£100–150","Up to £250","Mockups should always be free"],ans:2,exp:"The lecturer recommends charging <strong>up to £250</strong> for a digital mockup. Patients are described as grateful — they take the mockup home, show family (who then support the treatment decision), and remember what they looked like at the start. It dramatically improves treatment acceptance and compliance over the course of long combined treatments."},
+  {q:"When a tooth must be extracted mid-aligner treatment, what is the correct next step?",opts:["Stop treatment and start again from scratch","Continue the existing aligner set until complete","Rescan the patient, replan with pontic in aligner at the extracted site, and continue with new aligners","Wait 3 months before rescanning"],ans:2,exp:"Mid-treatment extraction requires: <strong>rescan the patient → replan the remaining treatment → include a pontic in the aligner at the extracted site → continue treatment toward the final planned position</strong>. This maintains aesthetics and progress simultaneously, and the implant may be placed as an unloaded provisional crown during this phase."},
+  {q:"What does a 'pontic in aligner' mean and why is it preferred?",opts:["A special aligner material for post-extraction sites","An artificial tooth built into the aligner shell to fill the visible gap","A temporary crown bonded to adjacent teeth","A special attachment placed on adjacent teeth"],ans:1,exp:"A <strong>pontic in aligner</strong> is an artificial tooth shell built directly into the aligner material at the edentulous space. It maintains aesthetics without additional bonding or appointments, updates automatically with each new aligner, and avoids the need for bonded temporary teeth during active treatment."},
+  {q:"Which patients should NOT have their osseointegrated implant used as orthodontic anchorage?",opts:["Patients over age 60","Patients with a history of smoking","Patients who are diabetic or on immunosuppressants, or who are heavy grinders","Patients with a high smile line"],ans:2,exp:"Implant anchorage should be avoided in: <strong>diabetics</strong> (increased implant failure risk + impaired bone remodelling), <strong>immunosuppressed patients</strong>, and <strong>heavy grinders / bruxers</strong> (until nightguard compliance is proven). These conditions increase the risk that orthodontic loading on the implant leads to failure."},
+  {q:"What orthodontic movement is described as the 'beast' for clear aligners?",opts:["Canine rotation","Molar uprighting","Central incisor torque","Premolar distalization"],ans:1,exp:"<strong>Molar uprighting</strong> is described as the 'beast' — the movement clear aligners find most difficult. The large surface area of the molar, its strong periodontal support, and the limited force application area of the aligner on a molar make reliable uprighting very challenging without TADs or auxiliary mechanics."},
+  {q:"What critical reason is given for the timing of soft tissue surgery in combined treatment cases?",opts:["Soft tissue is more vascular before ortho","Ortho movement after soft tissue surgery risks relapse of the tissue management outcome","Soft tissue surgery is always done under local anaesthesia so timing doesn't matter","The implant must be removed before soft tissue surgery"],ans:1,exp:"<strong>Orthodontic tooth movement after soft tissue surgery can undo the periodontal or mucosal management outcome</strong>. If root position changes after a gum graft or ridge augmentation, the tissue geometry may shift. Soft tissue surgery is always the last step — after all tooth and implant positions are final."},
+  {q:"When planning space for two implants, what is the minimum distance required between the implant platforms themselves?",opts:["1mm","2mm","3mm","5mm"],ans:2,exp:"A minimum of <strong>3mm between implant platforms</strong> is required. This protects the interimplant bone from resorption (the horizontal distance determines marginal bone preservation between adjacent implants). Combined with 1–1.5mm on each outer side, this drives the 12–14mm total mesiodistal space requirement."},
+  {q:"What is the current consensus on whether orthodontic movement can generate new bone?",opts:["Definitively proven — ortho regularly creates new bone","Definitively disproven — ortho never creates bone","Emerging positive evidence but not yet consensus; should not replace staged bone grafting for significant defects","Only applies to the mandible, not the maxilla"],ans:2,exp:"The current status is <strong>emerging but not consensus</strong>. Some cases show benefit from orthodontically-mediated bone generation. However, it is not reliable for significant defects and should not replace staged GBR. It may serve as a useful adjunct in carefully selected small defect cases."},
+  {q:"A patient has a missing upper first premolar in a narrow arch. You place the implant. Two years later, the patient needs arch expansion for aesthetics. What is the problem?",opts:["The implant cannot accept an aligner attachment","The implant is osseointegrated and cannot move — arch expansion is blocked at that site","The aligner will extrude the implant during expansion","Expansion forces cause peri-implant mucositis"],ans:1,exp:"This is the <strong>buccal corridor problem</strong>. An osseointegrated implant is permanently fixed in position. Arch expansion will move the teeth around it, but the implant cannot expand with them — creating a visible asymmetry or step in the arch form. This situation is entirely preventable by assessing expansion needs BEFORE implant placement."},
+  {q:"What is the key message the lecturer uses to explain to patients why they need a nightguard after implant treatment?",opts:["The implant is very fragile and can break easily","The implant has no proprioception — you will not know if you grind at night, and grinding forces go directly to the bone","The nightguard retains the space created by ortho","NHS guidelines require nightguards for all implant patients"],ans:1,exp:"The patient-facing explanation is: <strong>'The implant has no periodontal ligament, so you have no feeling to tell you you're grinding. You won't know it's happening. If you grind at night, the force goes directly to the bone.'</strong> This is combined with the analogy of the nightguard being an investment protection device — like insurance for the implant."}
+];
+
+let current = 0, score = 0, answers = [], answered = false;
+
+function buildDots() {
+  const d = document.getElementById('scoreDots');
+  d.innerHTML = '';
+  for(let i=0;i<30;i++){
+    const dot = document.createElement('div');
+    dot.className = 'score-dot';
+    dot.id = 'dot'+i;
+    d.appendChild(dot);
+  }
+}
+
+function startQuiz() {
+  const saved = loadState();
+  if(saved && saved.current > 0) {
+    current = saved.current; score = saved.score; answers = saved.answers;
+  }
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.add('active');
+  buildDots();
+  answers.forEach((a,i)=>{
+    const d = document.getElementById('dot'+i);
+    if(d) d.classList.add(a.correct?'correct':'wrong');
+  });
+  showQuestion();
+}
+
+function showQuestion() {
+  if(current >= questions.length) { showResults(); return; }
+  const q = questions[current];
+  document.getElementById('qTag').textContent = `Question ${current+1} of 30`;
+  document.getElementById('qNum').textContent = current+1;
+  document.getElementById('progressFill').style.width = ((current+1)/30*100)+'%';
+  document.getElementById('qText').textContent = q.q;
+  const cont = document.getElementById('optionsContainer');
+  cont.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    cont.appendChild(btn);
+  });
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = questions[current];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  if(correct) score++;
+  opts[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) opts[q.ans].classList.add('reveal');
+  const dot = document.getElementById('dot'+current);
+  if(dot) dot.classList.add(correct?'correct':'wrong');
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<p>${correct?'✓ Correct! ':'✗ Incorrect. '}${q.exp}</p>`;
+  exp.className = 'explanation show';
+  document.getElementById('nextBtn').className = 'next-btn show';
+  answers[current] = {chosen: idx, correct};
+  saveState();
+}
+
+function nextQuestion() {
+  current++;
+  if(current >= questions.length) { showResults(); return; }
+  showQuestion();
+  saveState();
+}
+
+function showResults() {
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('resultsScreen').classList.add('active');
+  document.getElementById('scoreNum').textContent = score;
+  const pct = Math.round(score/30*100);
+  let grade;
+  if(pct>=90) grade='Excellent — Outstanding knowledge 🏆';
+  else if(pct>=70) grade='Good — Solid understanding ✓';
+  else if(pct>=50) grade='Pass — Some areas to review';
+  else grade='Needs improvement — Revisit Lecture 03';
+  document.getElementById('gradeText').textContent = grade;
+  const rev = document.getElementById('reviewList');
+  rev.innerHTML = '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.2rem;margin-bottom:12px;color:var(--text);">Question Review</h3>';
+  questions.forEach((q,i)=>{
+    const a = answers[i];
+    if(!a) return;
+    const div = document.createElement('div');
+    div.className = `review-item ${a.correct?'co':'wr'}`;
+    div.innerHTML = `<div class="review-q">${i+1}. ${q.q}</div><div class="review-a">Your answer: <span class="${a.correct?'cr':'wr'}">${q.opts[a.chosen]}</span>${!a.correct?` | Correct: <span class="cr">${q.opts[q.ans]}</span>`:''}</div>`;
+    rev.appendChild(div);
+  });
+  localStorage.removeItem(KEY);
+}
+
+function retakeQuiz() {
+  current=0; score=0; answers=[];
+  localStorage.removeItem(KEY);
+  document.getElementById('resultsScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('startScreen').classList.add('active');
+}
+
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify({current, score, answers})); } catch(e){}
+}
+function loadState() {
+  try { const d=localStorage.getItem(KEY); return d?JSON.parse(d):null; } catch(e){ return null; }
+}
+
+const s = loadState();
+if(s && s.current > 0) document.getElementById('resumeNotice').style.display='block';
+</script>
+</body>
+</html>

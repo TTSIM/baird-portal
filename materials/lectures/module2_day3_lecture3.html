@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 3 · Lecture 3 — CBCT Anatomy & Clinical Cases</title>
+<style>
+:root{
+  --bg:#0b1020;--bg2:#121a35;--panel:#161f3d;--panel2:#1c2750;--border:#2a3868;
+  --text:#e8ecff;--muted:#9aa6d6;--accent:#6ee7ff;--accent2:#a78bfa;
+  --good:#34d399;--warn:#fbbf24;--bad:#f87171;--highlight:#fde68a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,#0d1530 100%);color:var(--text);overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+  background:rgba(11,16,32,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.brand{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+.brand small{color:var(--muted);font-weight:400;display:block;font-size:11px;margin-top:2px}
+.progress-wrap{flex:1;margin:0 24px;max-width:400px}
+.progress-bar{height:6px;background:var(--panel);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease;width:0%}
+.slide-counter{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-right:16px}
+.portal-back:hover{border-color:var(--accent);color:var(--accent)}
+.slide-area{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;padding:40px 60px 80px;display:none;flex-direction:column;
+  animation:fadeIn .4s ease;overflow-y:auto}
+.slide.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1.slide-title{font-size:28px;color:var(--accent);margin-bottom:6px;font-weight:700}
+h2.slide-sub{font-size:14px;color:var(--muted);margin-bottom:24px;font-weight:400;text-transform:uppercase;letter-spacing:1.2px}
+.content{flex:1;display:flex;flex-direction:column;gap:18px}
+p{line-height:1.6;font-size:16px;color:#dde3ff}
+ul{list-style:none;padding:0}
+ul li{padding:8px 0 8px 28px;position:relative;line-height:1.55}
+ul li::before{content:"▸";position:absolute;left:8px;color:var(--accent);font-weight:700}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.card-title{font-size:14px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.title-slide{justify-content:center;align-items:center;text-align:center}
+.title-slide .module-tag{font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+.title-slide h1{font-size:46px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;line-height:1.2;max-width:900px}
+.title-slide .subtitle{font-size:18px;color:var(--muted);margin-bottom:30px;max-width:700px}
+.title-slide .lect-num{display:inline-block;padding:8px 18px;background:var(--panel);
+  border:1px solid var(--accent);border-radius:50px;font-size:13px;color:var(--accent)}
+footer{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 60px;background:rgba(11,16,32,.9);border-top:1px solid var(--border)}
+.nav-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 18px;
+  border-radius:8px;cursor:pointer;font-size:14px;transition:all .2s}
+.nav-btn:hover:not(:disabled){background:var(--panel2);border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:60%;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--accent);width:18px;border-radius:4px}
+.dot:hover{background:var(--accent2)}
+table.compare{width:100%;border-collapse:collapse;margin-top:8px}
+table.compare th,table.compare td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+table.compare th{background:var(--panel2);color:var(--accent);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.8px}
+table.compare tr:hover td{background:rgba(110,231,255,.04)}
+.tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:12px;font-weight:600}
+.tag-good{background:rgba(52,211,153,.18);color:var(--good)}
+.tag-bad{background:rgba(248,113,113,.18);color:var(--bad)}
+.tag-warn{background:rgba(251,191,36,.18);color:var(--warn)}
+.flip{perspective:1000px;height:160px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flip-front{background:var(--panel);border:1px solid var(--border)}
+.flip-front .icon{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.flip-back{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--accent);
+  transform:rotateY(180deg);font-size:13px;line-height:1.5;color:#dde3ff}
+.reveal{background:var(--panel);border:1px dashed var(--accent2);border-radius:10px;padding:14px;cursor:pointer;transition:all .3s}
+.reveal .question{color:var(--accent);font-weight:600;font-size:14px}
+.reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:14px;color:#dde3ff;line-height:1.55}
+.reveal.shown .answer{display:block}
+.reveal.shown{border-style:solid;background:var(--panel2)}
+.callout{padding:14px 18px;border-radius:10px;border-left:4px solid;display:flex;gap:12px;align-items:flex-start}
+.callout.tip{background:rgba(52,211,153,.08);border-color:var(--good)}
+.callout.warn{background:rgba(251,191,36,.08);border-color:var(--warn)}
+.callout.key{background:rgba(167,139,250,.08);border-color:var(--accent2)}
+.callout.danger{background:rgba(248,113,113,.08);border-color:var(--bad)}
+.callout-icon{font-size:20px;flex-shrink:0}
+.callout-text{font-size:14px;line-height:1.55}
+.callout-text strong{color:var(--accent)}
+.svg-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:center;align-items:center}
+.svg-wrap svg{max-width:100%;height:auto}
+.radio-card{background:#000;border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;margin:8px 0}
+.radio-card .radio-img-wrap{position:relative;background:#000;display:flex;justify-content:center;align-items:center;min-height:200px}
+.radio-card img{max-width:100%;max-height:480px;height:auto;display:block;object-fit:contain}
+.radio-card .radio-fallback{display:none;padding:30px;color:var(--muted);text-align:center;font-size:13px;line-height:1.6}
+.radio-card .radio-fallback strong{color:var(--accent);display:block;margin-bottom:8px}
+.radio-card .radio-caption{padding:12px 16px;background:var(--panel);border-top:1px solid var(--border);font-size:12px;color:var(--text);line-height:1.5}
+.radio-card .radio-caption .radio-label{display:inline-block;background:var(--accent2);color:#0b1020;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 8px;border-radius:50px;margin-right:8px;vertical-align:middle}
+.radio-card .radio-source{display:block;margin-top:8px;font-size:10.5px;color:var(--muted);font-style:italic}
+.radio-card .radio-source a{color:var(--accent);text-decoration:none}
+.radio-card .radio-source a:hover{text-decoration:underline}
+.radio-banner{background:linear-gradient(90deg,rgba(110,231,255,.08),rgba(167,139,250,.08));border:1px solid var(--accent);border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:13px;color:var(--text);display:flex;gap:12px;align-items:center}
+.radio-banner-icon{font-size:22px}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-track{background:var(--bg2)}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.slide::-webkit-scrollbar-thumb:hover{background:var(--accent2)}
+.case-tag{display:inline-block;background:var(--panel2);border:1px solid var(--accent2);color:var(--accent2);
+  padding:4px 12px;border-radius:50px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.kbd-hint{position:absolute;bottom:90px;right:60px;font-size:11px;color:var(--muted);opacity:.6}
+kbd{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px}
+@media (max-width:768px){
+  .slide{padding:24px 20px 90px}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  h1.slide-title{font-size:22px}
+  .title-slide h1{font-size:30px}
+  footer{padding:12px 16px}
+  .kbd-hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">CBCT LEVEL 1 · MODULE 2<small>Day 3 · Lecture 3 of 3</small></div>
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+    <div class="slide-counter"><span id="curSlide">1</span> / <span id="totSlide">32</span></div>
+  </header>
+
+  <div class="slide-area" id="slideArea">
+
+    <!-- 1: Title -->
+    <section class="slide active title-slide">
+      <div class="module-tag">Module 2 · Day 3 · Lecture 3</div>
+      <h1>CBCT Anatomy<br>& Clinical Cases</h1>
+      <p class="subtitle">The post-lunch clinical session: mandibular and maxillary anatomy on CBCT, the variants that catch you out, sinus pathology and foreign-body migration, endodontic and trauma cases, root fractures, ECR, and the artefacts that mimic disease.</p>
+      <div class="lect-num">32 slides · ~60 min</div>
+    </section>
+
+    <!-- 2: Objectives -->
+    <section class="slide">
+      <h1 class="slide-title">Learning Objectives</h1>
+      <h2 class="slide-sub">By the end of this lecture you should be able to…</h2>
+      <div class="content">
+        <div class="radio-banner">
+          <div class="radio-banner-icon">📷</div>
+          <div>This lecture embeds <strong>real CBCT radiographs</strong> from open-access peer-reviewed papers alongside the schematic illustrations. Sources are cited under each image. <em>Internet connection required to display them — schematics still work offline.</em></div>
+        </div>
+        <ul>
+          <li>Identify the ID canal, mental foramen, anterior loop, incisive branch and lingual canals on CBCT, and explain why each matters for implant planning</li>
+          <li>Recognise common anatomical variants — retromolar branch, prominent incisive canal, atypical PSA artery course</li>
+          <li>Locate the posterior superior alveolar artery and describe the implications for sinus surgery</li>
+          <li>Use CBCT to assess sinus health, ostium patency and the dental causes of sinusitis</li>
+          <li>Apply CBCT diagnostically in endodontics — apical pathology, ECR, root fractures</li>
+          <li>Recognise common CBCT artefacts (beam hardening, metal streaking, motion) and avoid the diagnostic pitfalls they create</li>
+          <li>Understand why CBCT complements rather than replaces 2D imaging</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3: Mandibular anatomy intro -->
+    <section class="slide">
+      <h1 class="slide-title">Mandibular Anatomy on CBCT</h1>
+      <h2 class="slide-sub">The ID canal — your principal landmark</h2>
+      <div class="content">
+        <p>The inferior dental neurovascular bundle enters the mandible at the <strong style="color:var(--accent)">mandibular foramen</strong>, descends through the ramus and body, and exits at the <strong style="color:var(--accent)">mental foramen</strong>. Beyond the mental foramen it continues as the <strong style="color:var(--accent)">incisive branch</strong> of the ID canal into the pre-foraminal mandible.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+            <!-- Mandible outline (lateral view) -->
+            <path d="M 80 100 Q 100 60 160 50 L 540 50 Q 600 60 620 100 L 615 140 Q 600 175 540 180 L 160 180 Q 100 175 80 140 Z" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+            <!-- Mandibular foramen -->
+            <circle cx="600" cy="100" r="8" fill="#0b1020" stroke="#a78bfa" stroke-width="2"/>
+            <text x="610" y="80" fill="#a78bfa" font-size="11">Mandibular foramen</text>
+            <!-- ID canal path -->
+            <path d="M 600 100 Q 580 130 540 140 L 250 140 Q 200 138 180 125" stroke="#6ee7ff" stroke-width="3" fill="none"/>
+            <!-- Mental foramen -->
+            <circle cx="180" cy="125" r="8" fill="#0b1020" stroke="#fbbf24" stroke-width="2"/>
+            <text x="155" y="155" fill="#fbbf24" font-size="11">Mental foramen</text>
+            <!-- Incisive branch -->
+            <path d="M 180 125 Q 130 130 95 125" stroke="#34d399" stroke-width="2.5" stroke-dasharray="4,2" fill="none"/>
+            <text x="80" y="115" fill="#34d399" font-size="11">Incisive branch →</text>
+            <!-- Anterior loop -->
+            <path d="M 180 125 Q 175 140 165 138 Q 160 132 168 122" stroke="#f87171" stroke-width="2" fill="none"/>
+            <text x="155" y="195" fill="#f87171" font-size="10">Anterior loop</text>
+            <!-- Teeth markers -->
+            <g fill="#e8ecff" opacity=".4">
+              <rect x="120" y="35" width="14" height="14" rx="2"/>
+              <rect x="160" y="35" width="14" height="14" rx="2"/>
+              <rect x="200" y="35" width="14" height="14" rx="2"/>
+              <rect x="240" y="35" width="14" height="14" rx="2"/>
+              <rect x="280" y="35" width="14" height="14" rx="2"/>
+              <rect x="320" y="35" width="14" height="14" rx="2"/>
+              <rect x="360" y="35" width="14" height="14" rx="2"/>
+              <rect x="400" y="35" width="14" height="14" rx="2"/>
+            </g>
+            <text x="350" y="210" text-anchor="middle" fill="#9aa6d6" font-size="11">Sagittal view through mandible (schematic)</text>
+          </svg>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/9880/10130278/95f67ee341c5/12663_2023_1865_Fig1_HTML.jpg" alt="CBCT showing mandibular foramen, accessory mandibular foramina, retromolar foramina, mental foramen and lingual canals on a single mandible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT image (offline — connect to internet to view)</strong>3D reconstruction and coronal sections of an 18-year-old female mandible showing mandibular foramen, accessory mandibular foramina, retromolar foramina (bilateral), accessory mental foramen and lingual canals — all on one CBCT.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>3D superolateral view (a, b) and coronal sections (f, g) of an 18-year-old female. Arrows mark mandibular foramen (arrowhead), accessory mandibular foramina (thick arrows), retromolar foramen (thin arrow) and the mental and accessory mental foramina. Note how multiple anatomical variants can coexist on a single CBCT.
+            <span class="radio-source">Source: Angammana &amp; Jayasinghe. <em>J Maxillofac Oral Surg</em> 2023;22(2):365–370. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10130278/" target="_blank" rel="noopener">PMC10130278</a> · © Association of Oral and Maxillofacial Surgeons of India 2023.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 4: ID canal cortication -->
+    <section class="slide">
+      <h1 class="slide-title">Why the ID Canal Isn't Always Clear</h1>
+      <h2 class="slide-sub">Cortication depends on surrounding trabeculation</h2>
+      <div class="content">
+        <p>You hope the ID canal looks like a nice distinct corticated circle on coronal cross-sections. It often doesn't — and this is <strong style="color:var(--accent)">not pathological</strong>, it's anatomical.</p>
+        <div class="card">
+          <div class="card-title">Why some patients have indistinct ID canals</div>
+          <p style="font-size:14px;line-height:1.6">The "cortication" around the ID canal is formed by surrounding trabecular bone <em>compacting</em> against the neurovascular bundle. In patients with sparsely trabeculated, soft bone there simply isn't enough trabecular volume to form a clear corticated outline. The canal becomes faint or incompletely corticated.</p>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">🔍</div>
+          <div class="callout-text"><strong>Workaround:</strong> if the canal is hard to see on the coronal view, switch to the <strong>sagittal view</strong> through the jaw. You can usually trace the path of the canal along its length on sagittal, then correlate that position back to your coronal cross-section. Bonus: the patients with the softest bone and the most indistinct canals are often the same ones where you most need to know exactly where it is.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/a6ec/9364640/11bdf4da3581/JOMFP-26-277-g003.jpg" alt="CBCT coronal and axial cross-sections of a mandible showing the inferior alveolar canal with distance measurements" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT image (connect to internet to view)</strong>Coronal and axial CBCT cross-sections of a female mandible showing the ID canal at the mandibular foramen, first molar and mental foramen levels, with distance measurements to cortical borders.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Coronal and axial cross-sections at the level of the mandibular foramen (a–b), first molar (c) and mental foramen (d). Note the well-corticated canal outline at the molar level and how it becomes less distinct anteriorly. Distance measurements show the canal's position relative to the buccal, lingual and inferior cortical borders.
+            <span class="radio-source">Source: Rath et al. <em>J Oral Maxillofac Pathol</em> 2022;26(2):277–282. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9364640/" target="_blank" rel="noopener">PMC9364640</a> · CC BY-NC-SA 4.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 5: ID canal contents -->
+    <section class="slide">
+      <h1 class="slide-title">Inside the ID Canal</h1>
+      <h2 class="slide-sub">What's actually in there</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="svg-wrap">
+            <svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+              <!-- Bony canal -->
+              <circle cx="120" cy="110" r="80" fill="#1c2750" stroke="#fbbf24" stroke-width="3"/>
+              <text x="120" y="20" text-anchor="middle" fill="#fbbf24" font-size="11">Bony cortication</text>
+              <!-- Artery (top, smaller, ~20%) -->
+              <ellipse cx="120" cy="55" rx="22" ry="14" fill="#f87171"/>
+              <text x="120" y="58" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Artery 20%</text>
+              <!-- Nerve bundle (lower, large, ~80%) -->
+              <ellipse cx="120" cy="135" rx="55" ry="40" fill="#a78bfa" opacity=".7"/>
+              <text x="120" y="135" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Nerve bundle</text>
+              <text x="120" y="150" text-anchor="middle" fill="#fff" font-size="10">~80%</text>
+              <text x="120" y="210" text-anchor="middle" fill="#9aa6d6" font-size="10">Cross-section through ID canal</text>
+            </svg>
+          </div>
+          <div>
+            <p>About <strong style="color:var(--accent)">80% of the canal volume is nerve</strong>. The artery occupies just ~20% — but it sits at the <strong style="color:var(--accent)">top</strong> of the canal, so when an osteotomy hits the canal roof, the first structure traumatised is usually the vessel.</p>
+            <div class="callout key" style="margin-top:14px">
+              <div class="callout-icon">💡</div>
+              <div class="callout-text">This explains why most ID nerve injuries from drilling are <strong>vascular</strong> — they cause a haematoma, which causes pressure oedema on the nerve, which is why most resolve over time. True direct nerve laceration is much less common.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: Lining up coronal -->
+    <section class="slide">
+      <h1 class="slide-title">Lining Up the Coronal Cross-Section</h1>
+      <h2 class="slide-sub">The only error is human error</h2>
+      <div class="content">
+        <p>For accurate implant planning, you must line up your coronal cross-section to <strong style="color:var(--accent)">exactly match the angulation</strong> at which you intend to place the implant. The scan itself gives mathematically perfect measurements — <em>any error is human error in alignment</em>.</p>
+        <ol style="list-style:none;padding:0;counter-reset:s">
+          <li class="card" style="margin-bottom:8px;padding-left:55px;position:relative;counter-increment:s">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:30px;height:30px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">1</span>
+            Open the axial view, find the implant site
+          </li>
+          <li class="card" style="margin-bottom:8px;padding-left:55px;position:relative;counter-increment:s">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:30px;height:30px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">2</span>
+            Rotate the coronal cross-section line to match your planned implant angle
+          </li>
+          <li class="card" style="margin-bottom:8px;padding-left:55px;position:relative;counter-increment:s">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:30px;height:30px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">3</span>
+            On that aligned coronal slice, measure crest of ridge → roof of ID canal
+          </li>
+          <li class="card" style="margin-bottom:8px;padding-left:55px;position:relative;counter-increment:s">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:30px;height:30px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">4</span>
+            Measure buccolingual width at the level of your planned fixture
+          </li>
+          <li class="card" style="margin-bottom:8px;padding-left:55px;position:relative;counter-increment:s">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:30px;height:30px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">5</span>
+            Allow your safety margin (typically 2 mm above ID canal)
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 7: Retromolar branch -->
+    <section class="slide">
+      <h1 class="slide-title">Variant: Retromolar Branch of the ID Canal</h1>
+      <h2 class="slide-sub">Common at lower 8s, easy to miss on OPG</h2>
+      <div class="content">
+        <p>The most common variant of the ID canal is a <strong style="color:var(--accent)">retromolar branch</strong> — a branch coming up vertically from the main canal towards the crest of the ridge, distal to the third molar. Mainly relevant for wisdom-tooth surgery (and occasionally ramus grafting).</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">When to worry</div>
+            <ul style="margin-top:0">
+              <li>Large diameter (close to size of main canal)</li>
+              <li>Close to the tooth being removed</li>
+            </ul>
+            <p style="font-size:14px;color:var(--muted);margin-top:8px">If it's tiny and distant, no concern.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Prevalence</div>
+            <ul style="margin-top:0">
+              <li>Some literature claims up to 25%</li>
+              <li>Realistic clinical experience: ~1 in 20, maybe 1 in 10</li>
+              <li>Much more commonly seen on CBCT than on OPG (only ~7/31 visible on the corresponding OPG in one study)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text">If you traumatise a large branch — even one anterior to the mental foramen or above the main canal — the resulting haematoma and pressure oedema can still track to the main bundle and cause altered sensation. Consent the patient if you identify a significant variant.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/9880/10130278/95f67ee341c5/12663_2023_1865_Fig1_HTML.jpg" alt="CBCT 3D reconstruction showing retromolar foramina bilaterally on the mandibular ramus" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>3D reconstruction showing bilateral retromolar foramina (thin arrows) in the retromolar fossa, with accessory mandibular foramina (thick arrows) and the main mandibular foramen (arrowhead).</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Focus on the <strong>thin arrows</strong> in panels (a) and (b–c): bilateral retromolar foramina in an 18-year-old. These are the exit points of retromolar canals — branches of the ID canal that run superiorly through the retromolar fossa. Note they are invisible on the corresponding OPG and only detectable on CBCT.
+            <span class="radio-source">Source: Angammana &amp; Jayasinghe. <em>J Maxillofac Oral Surg</em> 2023;22(2):365–370. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10130278/" target="_blank" rel="noopener">PMC10130278</a></span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="slide">
+      <h1 class="slide-title">Anterior Loop vs Incisive Branch</h1>
+      <h2 class="slide-sub">A widely misunderstood pair</h2>
+      <div class="content">
+        <p>This is one of the commonest naming errors made by clinicians: people see a canal in the first premolar region and call it the "anterior loop". <strong style="color:var(--accent)">It almost certainly isn't.</strong></p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title" style="color:var(--bad)">Anterior loop</div>
+            <p style="font-size:14px;line-height:1.6">A small forward extension of the ID canal <em>before</em> it loops back to exit at the mental foramen. Located <strong>just at or behind the mental foramen</strong>. Usually small (a few mm at most). Not always present.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--good)">Incisive branch (incisive canal)</div>
+            <p style="font-size:14px;line-height:1.6">The continuation of the ID nerve <em>past</em> the mental foramen — the mental foramen is just where it gives off branches to soft tissues, not the end of the nerve. Runs forward into the pre-foraminal mandible. Usually clearly visible in the <strong>first premolar region</strong>.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">📐</div>
+          <div class="callout-text"><strong>Practical rule:</strong> for implants in the first premolar region, measure from the <strong>roof of the incisive branch</strong> to the crest, not from the lower border to the crest. By the canine region the incisive branch usually disperses into a plexus and is no longer visible — at which point you don't need to worry about it.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/9880/10130278/95f67ee341c5/12663_2023_1865_Fig1_HTML.jpg" alt="CBCT showing mental foramen and accessory mental foramen with coronal cross-sections" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>3D view showing mental foramen and accessory mental foramen on the right side, with coronal cross-sections at the second premolar level showing canal connections.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Focus on panels (d–g): (d) left mental foramen; (e) right side shows <strong>two mental foramina</strong> — an accessory mental foramen exits just superior to the main one. (f, g) Coronal cross-sections confirm both connect to the main mandibular canal. The incisive canal continues anterior to the mental foramen — the ID nerve doesn't end at the mental foramen.
+            <span class="radio-source">Source: Angammana &amp; Jayasinghe. <em>J Maxillofac Oral Surg</em> 2023;22(2):365–370. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10130278/" target="_blank" rel="noopener">PMC10130278</a></span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 9: Incisive case -->
+    <section class="slide">
+      <h1 class="slide-title">Case: The Numb Lip from an Incisive Branch</h1>
+      <h2 class="slide-sub">Why this anatomy matters</h2>
+      <div class="content">
+        <span class="case-tag">Real case</span>
+        <div class="card">
+          <div class="card-title">The case</div>
+          <p style="font-size:14px;line-height:1.65">An edentulous mandible patient was treatment-planned for two implants in the anterior mandible to retain an overdenture. They received bilateral mental nerve blocks and infiltrations — no ID block was given. As the surgeon began the right osteotomy, the patient experienced sudden electric-shock pain.</p>
+          <p style="font-size:14px;line-height:1.65;margin-top:10px">The surgeon panicked, looked back at the CBCT, and only then noticed an unusually <strong style="color:var(--bad)">prominent incisive canal extending all the way to the central incisor region</strong>. They aborted the case. The patient developed temporary numbness of the lip and chin from trauma to the incisive branch — and per the radiologist's understanding, it did not fully resolve.</p>
+        </div>
+        <div class="callout danger">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>Medico-legal corollary case:</strong> a separate dentist who placed full-arch mandibular implants had a patient develop neuralgia-type pain in one side a year later. Post-op CBCT showed an implant placed directly into the incisive branch. The expert witness noted: "you didn't put an implant in the ID canal, you didn't put an implant in the mental foramen, but you put an implant into the incisive branch." Once it's visible on a scan, you're obliged to identify it.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10: Lingual canals -->
+    <section class="slide">
+      <h1 class="slide-title">Lingual Canals of the Anterior Mandible</h1>
+      <h2 class="slide-sub">The one place "canal" means vessel only</h2>
+      <div class="content">
+        <p>Most canal-like structures in the jaws are neurovascular. The <strong style="color:var(--accent)">midline lingual canals</strong> of the anterior mandible are the exception — they are <strong>purely vascular</strong>, carrying terminal branches of the sublingual artery into the mandible at the level of the genial tubercles.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Anatomy</div>
+            <ul style="margin-top:0">
+              <li>Every patient has at least one</li>
+              <li>Some have 1, 2 or even 3</li>
+              <li>Take an oblique course towards the central incisor region</li>
+              <li>Always visible on CBCT (unlike the tiny incisive plexus)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Risk profile</div>
+            <ul style="margin-top:0">
+              <li>Trauma <em>inside</em> the bone usually self-tamponades when the implant is placed</li>
+              <li>Trauma <em>before</em> the artery enters the bone is more dangerous — soft-tissue bleed</li>
+              <li>Greatest concern in <strong>atrophic anterior mandibles</strong> where the canal becomes very close to the crest</li>
+            </ul>
+          </div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/9880/10130278/95f67ee341c5/12663_2023_1865_Fig1_HTML.jpg" alt="CBCT showing lingual foramina on body of mandible" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>3D view showing lingual foramina in the midline and body of the mandible — these carry branches of the sublingual/submental arteries into the bone.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>The same 18-year-old mandible shows <strong>lingual foramina</strong> on both the midline and the body of the mandible (visible on the lingual surface in the 3D reconstructions). These vascular canals are present in every patient and carry sublingual/submental artery branches — the structures responsible for the rare but life-threatening sublingual haematoma discussed on the next slide.
+            <span class="radio-source">Source: Angammana &amp; Jayasinghe. <em>J Maxillofac Oral Surg</em> 2023;22(2):365–370. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10130278/" target="_blank" rel="noopener">PMC10130278</a></span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 11: Sublingual hematoma case -->
+    <section class="slide">
+      <h1 class="slide-title">Sublingual Haematoma — A Rare Catastrophe</h1>
+      <h2 class="slide-sub">Why we identify these canals before we drill</h2>
+      <div class="content">
+        <span class="case-tag">Real case</span>
+        <div class="card">
+          <div class="card-title">The case</div>
+          <p style="font-size:14px;line-height:1.65">A patient had implants placed in the anterior mandible. The surgeon traumatised one of the lingual artery branches before it entered the bone — outside the alveolus where there's nothing to tamponade the bleed. The bleed was not controlled. Half an hour later, after the patient had left the chair, they returned with a <strong style="color:var(--bad)">sublingual haematoma</strong>.</p>
+        </div>
+        <div class="callout danger">
+          <div class="callout-icon">💀</div>
+          <div class="callout-text"><strong>Historical case:</strong> there is a published case from ~30 years ago of <em>death from dental implant surgery</em> caused exactly this way — anterior mandible implant, traumatised lingual artery branch, expanding sublingual haematoma pushed the tongue against the palate, the patient lost their airway and died. This is rare but real — and is why even the central incisor region is not as safe as it looks.</div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-text"><strong>Management if you do hit a vessel:</strong> control the bleed. Bipolar diathermy if you have it, otherwise pressure or under-suturing. Use the CBCT preoperatively to plan around it — and if it sits very close to where you'll be working in an atrophic ridge, consider doing the case with a more experienced colleague nearby.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12: Maxillary anatomy intro -->
+    <section class="slide">
+      <h1 class="slide-title">Maxillary Anatomy — The Switching Rule</h1>
+      <h2 class="slide-sub">When to worry about nerve vs artery</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Simple memory rule</div>
+          <table class="compare" style="margin-top:8px">
+            <thead><tr><th>Region</th><th>If you see a canal, worry about…</th></tr></thead>
+            <tbody>
+              <tr><td>Posterior mandible</td><td><span class="tag tag-warn">NERVE</span> (ID nerve)</td></tr>
+              <tr><td>Midline anterior mandible</td><td><span class="tag tag-bad">VESSEL</span> (sublingual artery)</td></tr>
+              <tr><td><strong>Posterior maxilla</strong></td><td><span class="tag tag-bad">VESSEL</span> (PSA artery)</td></tr>
+              <tr><td>Anterior maxilla</td><td><span class="tag tag-warn">NERVE</span> (anterior superior alveolar)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The maxilla carries <strong style="color:var(--accent)">posterior, middle and anterior superior alveolar nerves and vessels</strong>. In the posterior maxilla — which is where you do most of your sinus and implant work — the structure that catches you out is almost always the <strong>posterior superior alveolar (PSA) artery</strong>.</p>
+      </div>
+    </section>
+
+    <!-- 13: PSA artery -->
+    <section class="slide">
+      <h1 class="slide-title">The Posterior Superior Alveolar Artery</h1>
+      <h2 class="slide-sub">The lateral wall canal you must identify</h2>
+      <div class="content">
+        <p>The PSA artery branches off the maxillary artery (which itself comes off the external carotid). It runs in a <strong style="color:var(--accent)">bony canal in the lateral wall of the maxillary sinus</strong>. For lateral window sinus grafting, you want your window <em>below</em> this canal to avoid a pulsatile arterial bleed.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+            <!-- Maxilla cross-section -->
+            <text x="300" y="22" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Coronal — left maxillary sinus</text>
+            <!-- Maxilla -->
+            <path d="M 150 200 L 150 80 Q 200 30 300 30 Q 400 30 450 80 L 450 200 Z" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+            <!-- Sinus cavity -->
+            <path d="M 200 180 L 200 90 Q 230 60 300 60 Q 370 60 400 90 L 400 180 Z" fill="#0b1020" stroke="#3a4878" stroke-width="1.5"/>
+            <text x="300" y="120" text-anchor="middle" fill="#9aa6d6" font-size="13">Maxillary sinus</text>
+            <text x="300" y="135" text-anchor="middle" fill="#9aa6d6" font-size="11">(black air = healthy)</text>
+            <!-- PSA artery in lateral wall -->
+            <circle cx="195" cy="130" r="6" fill="#f87171" stroke="#fff" stroke-width="1"/>
+            <text x="100" y="125" fill="#f87171" font-size="11">PSA artery</text>
+            <text x="100" y="138" fill="#f87171" font-size="10">in lateral wall</text>
+            <!-- Lateral window suggestion -->
+            <rect x="180" y="155" width="35" height="25" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="3,2"/>
+            <text x="125" y="195" fill="#34d399" font-size="11">Lateral window</text>
+            <text x="125" y="208" fill="#34d399" font-size="10">below the artery ✓</text>
+            <!-- Teeth -->
+            <g fill="#e8ecff">
+              <rect x="235" y="195" width="15" height="20" rx="2"/>
+              <rect x="265" y="195" width="15" height="20" rx="2"/>
+              <rect x="295" y="195" width="15" height="20" rx="2"/>
+              <rect x="325" y="195" width="15" height="20" rx="2"/>
+              <rect x="355" y="195" width="15" height="20" rx="2"/>
+            </g>
+          </svg>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>Variant alert:</strong> in 95%+ of patients the PSA runs in the lateral wall as expected. Very rarely it can run within the <strong>floor of the sinus</strong> — and this is dangerous because you can hit it during a crestal-approach (transcrestal) sinus lift, with no easy access to control the bleed (it bleeds upwards into the sinus). <strong>Always identify the PSA before any sinus floor work — crestal or lateral approach.</strong></div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/8b05/5175788/7452a38405ae/poljradiol-81-606-g001.jpg" alt="CBCT coronal section showing intraosseous PSA artery canal as a small round hypodense channel within the lateral wall of the maxillary sinus" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>Coronal CBCT cross-section showing the intraosseous PSA artery canal as a small round hypodense channel (dark spot) within the cortical bone of the lateral wall of the maxillary sinus. This is what you identify before planning your lateral window osteotomy.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Coronal CBCT section of the posterior maxilla showing the <strong>intraosseous PSA artery canal</strong> — the small round dark channel within the lateral sinus wall (indicated by arrow). The canal sits above the planned lateral window position. Mean distance from canal to alveolar crest ~16 mm, mean diameter ~0.6–1.4 mm depending on the study. Always document its position and proximity to your osteotomy site.
+            <span class="radio-source">Source: Pandharbale et al. <em>Pol J Radiol</em> 2016;81:606–610. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5175788/" target="_blank" rel="noopener">PMC5175788</a> · Open Access</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 14: Sinus anatomy and ostium -->
+    <section class="slide">
+      <h1 class="slide-title">Sinus Anatomy & the Ostium</h1>
+      <h2 class="slide-sub">Why a black sinus is a happy sinus</h2>
+      <div class="content">
+        <p>The maxillary sinus drains into the nasal cavity through its <strong style="color:var(--accent)">ostium</strong>, located high up at the level of the orbital floor. The sinus is lined with respiratory mucosa with cilia that pump secretions <em>upwards</em> towards the ostium — the so-called <strong>mucociliary clearance</strong>.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Healthy sinus</div>
+            <ul style="margin-top:0">
+              <li>Ostium patent</li>
+              <li>Mucus drains freely into the nose</li>
+              <li>Sinus appears <strong style="color:var(--accent)">full of black air</strong> on CBCT</li>
+              <li>Thin, delicate mucosal lining</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Unhealthy sinus</div>
+            <ul style="margin-top:0">
+              <li>Mucosa swells and obstructs the ostium</li>
+              <li>Fluid trapped inside</li>
+              <li>Sinus appears <strong style="color:var(--warn)">grey/opacified</strong> on CBCT</li>
+              <li>Mucosal thickening visible at the periphery</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Practical insight:</strong> you do <em>not</em> need to scan high enough to actually visualise the ostium itself (which would require ~8 cm height, above the orbital floors and outside dentist scope). If the sinus is full of black air with little mucosal thickening, the ostium <em>has</em> to be patent — otherwise where would the air come from? Black air = patent ostium = healthy sinus, by inference.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15: Sinus pathology and dental causes -->
+    <section class="slide">
+      <h1 class="slide-title">Sinus Pathology — Look for a Dental Cause</h1>
+      <h2 class="slide-sub">Don't graft an unhealthy sinus</h2>
+      <div class="content">
+        <p>Maxillary sinusitis is commonly of dental origin. If you find an unhealthy sinus on a CBCT, the first question is: <strong style="color:var(--accent)">is there a dental cause I can fix?</strong></p>
+        <div class="grid3">
+          <div class="card">
+            <div class="card-title">1. Find a dental cause</div>
+            <p style="font-size:13px;line-height:1.55">Periapical infection? Retained root? Existing OAC? Treat the dental problem and the sinus often resolves.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Refer to ENT</div>
+            <p style="font-size:13px;line-height:1.55">No dental cause? Refer for ENT assessment. The patient may need medical management before any surgical sinus work.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">3. Don't graft yet</div>
+            <p style="font-size:13px;line-height:1.55">Sinus augmentation on an unhealthy sinus is asking for trouble — graft material gets infected, ostium obstructs further, complications cascade.</p>
+          </div>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text">Always correlate clinically — does the patient have actual sinusitis symptoms? Mucosal thickening on imaging in an asymptomatic patient is very common and may not need treatment.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/8b05/5175788/95b207634df5/poljradiol-81-606-g002.jpg" alt="CBCT cross-section of maxillary sinus showing measurements: PSA artery canal to sinus floor, to alveolar crest, sinus floor to crest, and canal to medial wall" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>Cross-sectional CBCT of the maxillary sinus showing how the PSA artery canal is measured: (a) from canal inferior border to sinus floor, (b) from canal to alveolar crest, (c) sinus floor to crest, (d) canal to medial sinus wall.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>This cross-section shows how you measure the PSA artery position pre-operatively. <strong>(a)</strong> distance from canal to sinus floor ~9–10 mm, <strong>(b)</strong> from canal to alveolar crest ~16–17 mm, <strong>(d)</strong> from canal to medial wall ~11–15 mm. The lateral window should be placed below measurement (a) to avoid the artery. Note the sinus floor, alveolar crest, and the dark canal in the lateral wall.
+            <span class="radio-source">Source: Pandharbale et al. <em>Pol J Radiol</em> 2016;81:606–610. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5175788/" target="_blank" rel="noopener">PMC5175788</a> · Open Access</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 16: Foreign body migration -->
+    <section class="slide">
+      <h1 class="slide-title">Foreign Body Migration in the Sinus</h1>
+      <h2 class="slide-sub">Mucociliary clearance pumps everything towards the ostium</h2>
+      <div class="content">
+        <p>If a foreign body — implant, root tip, alginate, graft material — is displaced into the maxillary sinus, it <strong style="color:var(--accent)">does not stay where it lands</strong>. The sinus mucosa engulfs it and the mucociliary system pumps it superiorly, towards the ostium.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+            <text x="300" y="22" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Foreign body migration over time</text>
+            <!-- Sinus outline -->
+            <path d="M 100 180 L 100 70 Q 130 40 300 40 Q 470 40 500 70 L 500 180 Z" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+            <!-- Day 0 - at floor -->
+            <circle cx="180" cy="170" r="7" fill="#f87171"/>
+            <text x="180" y="200" text-anchor="middle" fill="#f87171" font-size="11">Day 0</text>
+            <text x="180" y="213" text-anchor="middle" fill="#9aa6d6" font-size="10">Sinus floor</text>
+            <!-- Arrow up -->
+            <line x1="200" y1="160" x2="280" y2="100" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <polygon points="278,98 286,100 280,108" fill="#fbbf24"/>
+            <!-- Day 7 - middle -->
+            <circle cx="300" cy="100" r="7" fill="#fbbf24"/>
+            <text x="300" y="200" text-anchor="middle" fill="#fbbf24" font-size="11">Days–weeks</text>
+            <text x="300" y="213" text-anchor="middle" fill="#9aa6d6" font-size="10">Engulfed, migrating</text>
+            <!-- Arrow up -->
+            <line x1="320" y1="90" x2="400" y2="60" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <polygon points="398,58 406,60 400,68" fill="#fbbf24"/>
+            <!-- Day 14 - near ostium -->
+            <circle cx="420" cy="55" r="7" fill="#34d399"/>
+            <text x="430" y="50" fill="#34d399" font-size="11">→ Ostium</text>
+            <text x="420" y="200" text-anchor="middle" fill="#34d399" font-size="11">Weeks later</text>
+            <text x="420" y="213" text-anchor="middle" fill="#9aa6d6" font-size="10">Through ostium / nose</text>
+          </svg>
+        </div>
+        <div class="callout danger">
+          <div class="callout-icon">📷</div>
+          <div class="callout-text"><strong>The same-day imaging rule:</strong> if you're going into a sinus through a Caldwell-Luc to retrieve a foreign body, <strong>never rely on a CT scan from 2–3 weeks ago</strong>. Take a fresh scan as close to the day of surgery as possible — ideally on the same day. Documented case: a root tip that was in the sinus floor at the time of original imaging had migrated through the ostium and into the nasal cavity by the time of surgery — and the ENT surgeon eventually removed it with a suction tip via the nostril.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17: Sinus FB cases -->
+    <section class="slide">
+      <h1 class="slide-title">Sinus Foreign Body — Three Cases</h1>
+      <h2 class="slide-sub">Different materials, different management</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="card">
+            <div class="card-title" style="color:var(--accent)">Case 1: Implant</div>
+            <p style="font-size:13px;line-height:1.55">Upper 7 implant displaced into sinus. Caught quickly — still near sinus floor on CBCT. Lateral window approach by oral surgery, OAC closed, antibiotics + decongestants, resolved.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--accent)">Case 2: Alginate</div>
+            <p style="font-size:13px;line-height:1.55">After extraction the dentist took an alginate impression for a healing plate; alginate displaced into the sinus. Weeks later it had been engulfed by mucosa and pumped towards the ostium. Needed ENT removal.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--accent)">Case 3: Root tip</div>
+            <p style="font-size:13px;line-height:1.55">Upper 6 palatal root apex pushed into sinus during extraction. Day-of-surgery CBCT showed root <em>no longer there</em> — it had passed through the ostium into the nasal cavity. ENT removed it with suction.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">🤔</div>
+          <div class="callout-text"><strong>If something stays at the sinus floor and doesn't migrate</strong> (e.g. a sealer extrusion that stayed sub-mucosal), it's often best left alone. The danger comes when something is <em>inside</em> the airspace and gets caught up in mucociliary clearance.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18: Diagnostic case - upper 6 -->
+    <section class="slide">
+      <h1 class="slide-title">Case: Subtle Apical Pathology</h1>
+      <h2 class="slide-sub">When CBCT changes a borderline diagnosis</h2>
+      <div class="content">
+        <span class="case-tag">Real case · Upper right 6</span>
+        <div class="card">
+          <div class="card-title">History</div>
+          <p style="font-size:14px;line-height:1.65">Patient: a lady booked in before going travelling for 6 months. Vague intermittent pain from an upper right 6 (bridge abutment) over the last year, settled with paracetamol. Tooth not obviously TTP. Vitality test unreliable through the crown. No deep pocketing. Periapical: ambiguous — some thought it was suspicious, some not.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">CBCT findings</div>
+          <ul style="margin-top:0">
+            <li><strong>Distobuccal root:</strong> tiny dot of lucency, possibly normal</li>
+            <li><strong>Palatal root:</strong> normal PDL, no apical pathology</li>
+            <li><strong>Mesiobuccal root:</strong> <span class="tag tag-bad">definite apical bone loss</span> with remodelling pushing the sinus floor superiorly, fenestration of the buccal cortex, and 2-1-2 canal morphology visible</li>
+          </ul>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">✅</div>
+          <div class="callout-text"><strong>Outcome:</strong> CBCT confidently confirmed chronic apical periodontitis on the MB root. Justified the (risky) decision to drill through the bridge to access and treat the tooth before the patient left for 6 months of travel. This is the "added confidence" half of the RCR justification definition in action.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19: History bias -->
+    <section class="slide">
+      <h1 class="slide-title">Beware History Bias on Periapical Imaging</h1>
+      <h2 class="slide-sub">When the clinical story makes you see what isn't there</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">The thought experiment</div>
+          <p style="font-size:14px;line-height:1.65">Once you have a clinical history — pain, TTP, vitality result — your brain forms a preconception of what you expect to see on the radiograph. You then "see" pathology that confirms it. Show clinicians the same periapical with no clinical history and they often disagree completely about whether there's any lesion at all.</p>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">👁️</div>
+          <div class="callout-text"><strong>The post-trauma upper incisor case:</strong> a 25-year-old with a hockey-ball history at age 16, and a pink cervical discoloration on the upper right 1 — classic external cervical resorption (ECR). Without history, the periapical looks subtle and ambiguous. With history, ECR jumps out at you. CBCT removes the ambiguity. <em>3D imaging is most valuable when 2D imaging is making your judgement biased by clinical context.</em></div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/3455/8353645/5bc9ce21cfe9/etm-22-04-10499-g00.jpg" alt="Periapical radiograph and extracted tooth views of upper central incisor with Heithersay class 3 ECR showing how 2D imaging fails to capture the full lesion" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real radiograph + extracted tooth (offline — connect to internet to view)</strong>Tooth 11 with Heithersay Class 3 ECR. (A) Periapical X-ray showing the lesion in the coronal third with prior endo. (B) Buccal view of extracted tooth, lesion repaired with glass ionomer. (C, D) Mesial and distal views show the true circumferential spread and depth — completely invisible on the 2D radiograph.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real case</span>The same tooth seen four ways. The periapical (A) gives you a coronal-third radiolucency. The extracted tooth (B–D) shows what was actually there — circumferential spread and depth that <strong>no periapical could ever convey</strong>. This is why CBCT exists: 2D imaging cannot tell you what the lesion looks like in the third dimension.
+            <span class="radio-source">Source: Talpos-Niculescu et al. <em>Exp Ther Med</em> 2021;22(4):1065. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8353645/" target="_blank" rel="noopener">PMC8353645</a> · CC BY-NC-ND 4.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 20: ECR -->
+    <section class="slide">
+      <h1 class="slide-title">External Cervical Resorption on CBCT</h1>
+      <h2 class="slide-sub">The pathognomonic appearance</h2>
+      <div class="content">
+        <p>External cervical resorption (ECR) often gets misdiagnosed as internal resorption because the lesion sits inside the tooth. The CBCT appearance is highly characteristic:</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title" style="color:var(--bad)">External cervical resorption</div>
+            <ul style="margin-top:0">
+              <li>External point of entry — often just a tiny pinpoint channel (occasionally a frank cavity)</li>
+              <li>Lesion spreads <em>around</em> the pulp, peripheral to the root canal</li>
+              <li>Pulp itself is usually preserved until very late</li>
+              <li>Apical pathology develops only when resorption finally reaches the pulp</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--accent)">Internal resorption (contrast)</div>
+            <ul style="margin-top:0">
+              <li>Centred on the root canal space</li>
+              <li>Balloons <em>outward</em> from the canal</li>
+              <li>Always involves the canal directly</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">🔍</div>
+          <div class="callout-text"><strong>The diagnostic test:</strong> if you can't immediately see the external communication, look more carefully — there will be <em>at least</em> a tiny pinpoint channel somewhere on the external surface. Resorption that spreads around the pulp without involving the canal directly = ECR, not internal resorption. Always.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/3455/8353645/ee3469fc5b4d/etm-22-04-10499-g01.jpg" alt="CBCT of upper right central incisor with external cervical resorption shown in axial, cross-sectional, panoramic and 3D reconstruction views" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT image (offline — connect to internet to view)</strong>CBCT of tooth 11 with ECR — Patel 3D classification class 2Bp. Axial section (A) shows the lesion spreading almost half the root circumference (179°). Cross-section (B) shows penetration into the root canal and extension below the alveolar crest. Panoramic view (C) shows none of this detail. 3D reconstruction (D) confirms lateral spread.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Tooth 11 with ECR classified as Patel <strong>Class 2Bp</strong> — (A) axial section showing 179° circumferential spread, (B) cross-section showing root canal perforation and sub-crestal extension, (C) panoramic view (note how little it tells you), (D) 3D reconstruction. Blue arrows mark the lesion. This figure is the textbook example of why CBCT is mandatory for ECR — every meaningful piece of information is in the cross-sectional and 3D views, not the panoramic.
+            <span class="radio-source">Source: Talpos-Niculescu et al. <em>Exp Ther Med</em> 2021;22(4):1065. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8353645/" target="_blank" rel="noopener">PMC8353645</a> · CC BY-NC-ND 4.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 21: Vertical root fracture -->
+    <section class="slide">
+      <h1 class="slide-title">Vertical Root Fracture — The Bone Loss Pattern</h1>
+      <h2 class="slide-sub">Pathognomonic, even when you can't see the crack</h2>
+      <div class="content">
+        <span class="case-tag">Real case · Lower right 7</span>
+        <p>Aching lower right 7, TTP, devitalised, no deep pocketing on probing. Periapical shows an apical lucency. Why would a tooth with only a small occlusal restoration suddenly devitalise? Suspicion: vertical root fracture.</p>
+        <div class="grid2">
+          <div class="svg-wrap">
+            <svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
+              <text x="140" y="20" text-anchor="middle" fill="#6ee7ff" font-size="12" font-weight="700">Axial through root — VRF pattern</text>
+              <!-- Tooth -->
+              <ellipse cx="140" cy="120" rx="35" ry="50" fill="#e8ecff" stroke="#9aa6d6" stroke-width="1.5"/>
+              <ellipse cx="140" cy="120" rx="6" ry="10" fill="#1c2750"/>
+              <text x="140" y="123" text-anchor="middle" fill="#fff" font-size="9">canal</text>
+              <!-- Focal defect -->
+              <ellipse cx="180" cy="120" rx="8" ry="22" fill="#0b1020" stroke="#f87171" stroke-width="2"/>
+              <text x="200" y="125" fill="#f87171" font-size="11">Focal</text>
+              <text x="200" y="138" fill="#f87171" font-size="11">defect</text>
+              <!-- Crack line (very faint) -->
+              <line x1="148" y1="120" x2="172" y2="120" stroke="#f87171" stroke-width="0.8" stroke-dasharray="2,1" opacity=".6"/>
+              <!-- normal PDL on other side -->
+              <text x="60" y="115" fill="#34d399" font-size="10">Normal</text>
+              <text x="60" y="128" fill="#34d399" font-size="10">PDL</text>
+              <text x="140" y="225" text-anchor="middle" fill="#9aa6d6" font-size="10">Narrow, deep, focal — pathognomonic</text>
+            </svg>
+          </div>
+          <div class="card">
+            <div class="card-title">Bone loss patterns compared</div>
+            <ul style="margin-top:0">
+              <li><strong style="color:var(--bad)">Narrow, deep, focal defect</strong> running vertically along the root → highly suggestive of VRF</li>
+              <li><strong style="color:var(--warn)">Broad, J-shaped lesion</strong> → less specific, could be VRF or apical infection tracking</li>
+              <li><strong style="color:var(--warn)">Frank endo-perio defect</strong> → too late, non-specific</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">You may never directly visualise the crack — patient motion, low resolution, metal posts, or simply a thin crack line beyond voxel resolution all obscure it. <strong>Catch them early on the bone-loss pattern alone</strong>, not on direct visualisation. CBCT is more sensitive than periodontal probing for finding these tight focal defects (which often need LA + heavy pressure to probe).</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/6083/9258388/e1d19b56ce57/WJCC-10-5816-g001.jpg" alt="Pre-operative images of tooth 21 with VRF showing sinus tract on labial gingiva, deep isolated narrow pocket on palatal aspect, and CBCT cross-section confirming fracture line" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>Tooth 21 (upper left central incisor) with vertical root fracture. (A) Sinus tract on labial gingiva. (B) Deep 8–10mm isolated narrow pocket on palatal side — the pathognomonic clinical finding. (C) CBCT cross-section showing fracture line on palatal aspect. (D) CBCT coronal section.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real case</span>Upper left central incisor, female patient, 27 years old. Root-filled with full crown. Classic presentation: (A) sinus tract + (B) deep <strong>narrow isolated pocket</strong> limited to one surface — pathognomonic for VRF. (C) CBCT cross-section showing the fracture line on the palatal aspect (arrowhead). (D) Coronal section confirms. Note how the fracture line is visible on the cross-section but would be completely missed on a periapical radiograph.
+            <span class="radio-source">Source: Zhong X et al. <em>World J Clin Cases</em> 2022;10(17):5816–5824. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9258388/" target="_blank" rel="noopener">PMC9258388</a> · CC BY-NC 4.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 22: Endo with artifact -->
+    <section class="slide">
+      <h1 class="slide-title">Case: Don't Skip the Periapical</h1>
+      <h2 class="slide-sub">Why CBCT cannot replace 2D imaging</h2>
+      <div class="content">
+        <span class="case-tag">Real case · Upper canine root canal retreatment</span>
+        <p>Upper right 3 with a metal-ceramic crown and cast post-and-core. Periapical clearly shows a fractured file in the apical third and apparent internal resorption.</p>
+        <div class="card">
+          <div class="card-title">CBCT findings (with severe metal artefact)</div>
+          <ul style="margin-top:0">
+            <li>The fractured file is buried in the metal artefact — <strong style="color:var(--bad)">would have been missed</strong> if only CBCT were taken</li>
+            <li>What looked like "internal resorption" on the periapical is actually a <strong>lateral periapical lesion</strong> superimposed on the root, mimicking internal resorption</li>
+          </ul>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>The lesson:</strong> CBCT and 2D imaging each have advantages and disadvantages. Some things are obvious on a periapical and invisible on CBCT (especially anything obscured by metal artefact). Some things are obvious on CBCT and invisible on 2D (anything obscured by superimposition). <strong>CBCT is a special test — it adds to bitewings and periapicals, never replaces them.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23: Beam hardening -->
+    <section class="slide">
+      <h1 class="slide-title">Beam Hardening — The Black Artefact</h1>
+      <h2 class="slide-sub">Why you cannot diagnose caries on CBCT</h2>
+      <div class="content">
+        <div class="grid2">
+          <div>
+            <p>The X-ray beam is <strong style="color:var(--accent)">polychromatic</strong> — it contains photons of many different energies. When the beam passes through a dense object (metal crown, post, even enamel) the lower-energy photons are absorbed preferentially. Only the highest-energy photons make it through. The beam literally becomes "harder".</p>
+            <p style="margin-top:10px">When all those high-energy photons hit the detector, the reconstruction algorithm gets confused, and that confusion is rendered as <strong style="color:var(--bad)">black low-density streaking</strong> — beam hardening artefact.</p>
+          </div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+              <text x="120" y="20" text-anchor="middle" fill="#6ee7ff" font-size="12" font-weight="700">Beam hardening pattern</text>
+              <!-- Dense objects (e.g. two implants) -->
+              <rect x="60" y="60" width="20" height="80" fill="#e8ecff" stroke="#9aa6d6"/>
+              <rect x="160" y="60" width="20" height="80" fill="#e8ecff" stroke="#9aa6d6"/>
+              <!-- Black streak between them -->
+              <rect x="80" y="85" width="80" height="30" fill="#0b1020" opacity=".9"/>
+              <!-- Streaks emanating -->
+              <line x1="65" y1="55" x2="40" y2="30" stroke="#0b1020" stroke-width="3"/>
+              <line x1="75" y1="55" x2="80" y2="25" stroke="#0b1020" stroke-width="2"/>
+              <line x1="170" y1="55" x2="175" y2="25" stroke="#0b1020" stroke-width="2"/>
+              <line x1="180" y1="55" x2="200" y2="30" stroke="#0b1020" stroke-width="3"/>
+              <line x1="65" y1="145" x2="40" y2="170" stroke="#0b1020" stroke-width="3"/>
+              <line x1="180" y1="145" x2="200" y2="170" stroke="#0b1020" stroke-width="3"/>
+              <text x="120" y="200" text-anchor="middle" fill="#f87171" font-size="11">Two parallel implants → blackout</text>
+            </svg>
+          </div>
+        </div>
+        <div class="callout danger">
+          <div class="callout-icon">🚫</div>
+          <div class="callout-text"><strong>Why you cannot diagnose caries on CBCT:</strong> beam hardening occurs from <em>anything</em> denser than dentine — including unrestored enamel — so you can get black streaks <em>inside</em> healthy teeth that look convincingly like caries. Guidance is firm: CBCT is <strong>not indicated</strong> as a method of caries detection. The gold standard for caries remains the radiograph (and clinical examination). If you see something on CBCT that looks like caries, it's not caries until you've reproduced it on a radiograph or proven it clinically.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/594f/4697226/2fa45a4ddec2/JISPCD-5-440-g002.jpg" alt="CBCT axial slice showing beam hardening artifact as dark shadow adjacent to a silver point, plus bright metal artifact streaks from a metal coping" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT (connect to internet to view)</strong>Axial CBCT slice showing beam hardening (dark shadow) adjacent to a silver point endodontic fill, combined with bright white metal artifact streaks from a metal coping. Classic example of how dense materials degrade the image.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Real CBCT</span>Classic dual-artefact example: <strong>beam hardening</strong> (dark shadow adjacent to the silver point) plus <strong>metal streaking</strong> (bright white lines radiating from the metal coping). The dark zones mimic pathology — this is exactly why you cannot diagnose caries or peri-implant bone loss reliably on CBCT when metal is present.
+            <span class="radio-source">Source: Nagarajappa et al. <em>J Int Soc Prev Community Dent</em> 2015;5(6):440–445. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4697226/" target="_blank" rel="noopener">PMC4697226</a> · CC BY-NC-SA 3.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 24: Metal artefacts -->
+    <section class="slide">
+      <h1 class="slide-title">Metal Artefacts — Black + White Combined</h1>
+      <h2 class="slide-sub">Worst case: two parallel metal objects</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Black streaks (low-density)</div>
+            <ul style="margin-top:0">
+              <li>Caused by anything denser than dentine</li>
+              <li>Worst from metal (crowns, posts, implants)</li>
+              <li>Two parallel metal objects → complete blackout between them</li>
+              <li>Mimics caries, mimics peri-implant bone loss</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">White streaks (high-density)</div>
+            <ul style="margin-top:0">
+              <li>Tend to come more from metal objects</li>
+              <li>Some from gutta-percha and dense restorations</li>
+              <li>Can make root fillings look better-condensed than they are (artefact obscures voids)</li>
+              <li>Can mimic strip perforations</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>Peri-implantitis trap:</strong> a CBCT of a clinically sound implant can show a halo of "bone loss" around the fixture that is actually pure beam-hardening artefact. If you really need to assess a failing implant on CBCT, always combine it with a periapical and clinical assessment to triangulate what's real bone loss and what's artefact.</div>
+        </div>
+        <figure class="radio-card">
+          <div class="radio-img-wrap">
+            <img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/594f/4697226/c2c276292269/JISPCD-5-440-g001.jpg" alt="Classification diagram showing the main types of CBCT artefacts including beam hardening, scatter, motion, ring, aliasing and stair-step" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div class="radio-fallback"><strong>Real CBCT artefact classification (connect to internet to view)</strong>Classification of CBCT artefacts with examples: beam hardening (dark streaks), scatter, motion blur, ring artefacts, aliasing and stair-step artefacts.</div>
+          </div>
+          <figcaption class="radio-caption">
+            <span class="radio-label">Reference figure</span>Classification of CBCT artefacts showing the main categories: <strong>X-ray beam artefacts</strong> (beam hardening, scatter, cupping), <strong>patient-related artefacts</strong> (motion blur, double contours) and <strong>scanner-related artefacts</strong> (ring, aliasing, stair-step). The dark shadows and white streaks from metal are the most clinically relevant for dental reporting.
+            <span class="radio-source">Source: Nagarajappa et al. <em>J Int Soc Prev Community Dent</em> 2015;5(6):440–445. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4697226/" target="_blank" rel="noopener">PMC4697226</a> · CC BY-NC-SA 3.0</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 25: Other artefacts -->
+    <section class="slide">
+      <h1 class="slide-title">Other Artefacts to Recognise</h1>
+      <h2 class="slide-sub">Motion, scatter and what increases vs decreases artefact</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="card">
+            <div class="card-title">Motion artefact</div>
+            <p style="font-size:13px;line-height:1.55">Blurring from patient movement during the scan. Even a small movement can obscure subtle findings — especially crack lines. Patient cooperation is essential.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Higher dose helps</div>
+            <p style="font-size:13px;line-height:1.55">Higher resolution (more projections) gives the algorithm more information to distinguish real anatomy from artefact. Low-dose scans have <em>worse</em> artefacts, not better.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Exposure factors</div>
+            <p style="font-size:13px;line-height:1.55">Most machines have presets (low / standard / high res). The thing changing under the bonnet is usually <strong>exposure time</strong> (sampling frequency). Increasing kV also helps but most machines fix kV.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Counter-intuitive but important:</strong> if you cut dose by switching to a low-dose preset, you get <em>worse</em> artefacts, not the same artefacts at lower dose. The single biggest factor improving image quality is exposure time (sampling frequency). mA changes the photon flux per unit time. kV (when adjustable) changes photon energy. Increasing any of them improves image quality at the cost of dose.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 26: 90/10 rule for CBCT -->
+    <section class="slide">
+      <h1 class="slide-title">The 90/10 Rule for Reading CBCT</h1>
+      <h2 class="slide-sub">Where to spend your interpretation effort</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">A practical rule of thumb</div>
+          <p style="font-size:14px;line-height:1.65">When you read a CBCT scan, spend <strong style="color:var(--accent)">90% of your effort</strong> on the bone, the roots and the periapical tissues — these are what CBCT does well. Spend only minimal effort on the crowns of the teeth — CBCT is a poor modality for assessing crowns because of the artefacts that come off restorative materials.</p>
+        </div>
+        <table class="compare">
+          <thead><tr><th>Anatomy</th><th>Best modality</th></tr></thead>
+          <tbody>
+            <tr><td>Crowns of teeth, caries</td><td>Bitewings + periapicals (clinical)</td></tr>
+            <tr><td>Bone levels, alveolus</td><td><strong>CBCT</strong> ⭐</td></tr>
+            <tr><td>Roots, root morphology</td><td><strong>CBCT</strong> ⭐ (with periapicals as backup)</td></tr>
+            <tr><td>Periapical tissues</td><td><strong>CBCT</strong> ⭐ (more sensitive than periapical)</td></tr>
+            <tr><td>Anatomical landmarks (ID canal, sinus, etc.)</td><td><strong>CBCT</strong> ⭐</td></tr>
+            <tr><td>Soft-tissue pathology</td><td>Medical CT or MRI</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 27: Justification revisited -->
+    <section class="slide">
+      <h1 class="slide-title">Justification Revisited</h1>
+      <h2 class="slide-sub">Bringing it all together</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">RCR definition</div>
+          <p style="font-style:italic;font-size:15px;line-height:1.65;color:#dde3ff">"A useful investigation is one of which the result, positive or negative, will inform clinical management <strong style="color:var(--accent)">and/or</strong> add confidence to the clinician's diagnosis."</p>
+        </div>
+        <p>Realistically, in everyday dentistry CBCT will rarely <em>change</em> the diagnosis or management — but it routinely <strong style="color:var(--accent)">adds confidence</strong>, lets you plan more predictably, and lets you offer the patient the best possible outcome. That's just as good a reason to take the scan.</p>
+        <div class="callout tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">In implant dentistry, people placed implants for decades without CBCT. The technology is now affordable and low-dose enough that <em>not</em> taking advantage of it is hard to defend. The same trend is now overtaking endodontics — Endodontists who don't use CBCT and a microscope are starting to look out of step with current practice. Orthodontics is probably next.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 28: FOV recap -->
+    <section class="slide">
+      <h1 class="slide-title">FOV Selection — Final Recap</h1>
+      <h2 class="slide-sub">The smallest volume that answers the clinical question</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="card" style="text-align:center"><div style="font-size:24px">🦷</div><strong>5 × 5 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Section of jaw</p><p style="font-size:11px;color:var(--accent);margin-top:4px">~2 OPGs · ~40 µSv</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px">🪥</div><strong>8 × 5 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Single arch</p><p style="font-size:11px;color:var(--accent);margin-top:4px">~3 OPGs</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:24px">😬</div><strong>8 × 8 cm</strong><p style="font-size:12px;color:var(--muted);margin-top:4px">Both jaws</p><p style="font-size:11px;color:var(--accent);margin-top:4px">~4 OPGs · ~80 µSv</p></div>
+        </div>
+        <div class="grid2">
+          <div class="card" style="border-color:var(--warn)">
+            <div class="card-title" style="color:var(--warn)">Exception: lower wisdom teeth</div>
+            <p style="font-size:13px;line-height:1.55">Take two separate small volumes. Don't put a wisdom tooth at the edge of the scan — you need to see anatomy distal to it.</p>
+          </div>
+          <div class="card" style="border-color:var(--warn)">
+            <div class="card-title" style="color:var(--warn)">Exception: endodontics</div>
+            <p style="font-size:13px;line-height:1.55">Some machines only allow highest-resolution settings on smallest FOVs. Take multiple small volumes to preserve image quality.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 29: Scope reminder -->
+    <section class="slide">
+      <h1 class="slide-title">Don't Forget Scope of Reporting</h1>
+      <h2 class="slide-sub">Anatomy you should NOT report on independently</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card" style="border-color:var(--good)">
+            <div class="card-title" style="color:var(--good)">✓ Within scope</div>
+            <ul style="margin-top:0">
+              <li>Teeth and roots</li>
+              <li>Alveolar bone</li>
+              <li>Periapical tissues</li>
+              <li>ID canal, mental foramen, incisive branch</li>
+              <li>Lingual canals</li>
+              <li>Maxillary sinus floor & up to ⅔ of sinus</li>
+              <li>PSA artery in lateral wall</li>
+            </ul>
+          </div>
+          <div class="card" style="border-color:var(--bad)">
+            <div class="card-title" style="color:var(--bad)">✗ Outside scope</div>
+            <ul style="margin-top:0">
+              <li>Above orbital floors</li>
+              <li>Ostium of maxillary sinus (need to scan high)</li>
+              <li>Skull base, pituitary fossa</li>
+              <li>TMJs (can't image without ear)</li>
+              <li>Airway, cervical spine</li>
+              <li>Anything not "dentoalveolar"</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>If in doubt → second opinion.</strong> A radiology report typically costs ~£100, which is negligible compared to the cost of a missed pituitary tumour, ENT pathology, or cervical spine finding. There's no shame in referring scans for second-opinion reporting.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 30: Quick check -->
+    <section class="slide">
+      <h1 class="slide-title">Quick Check</h1>
+      <h2 class="slide-sub">Click each question to reveal the answer</h2>
+      <div class="content">
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q1 ▸ You see a canal-like structure in the first premolar region of the mandible. What is it most likely to be?</div>
+          <div class="answer">The <strong>incisive branch of the ID canal</strong>, NOT the anterior loop. The anterior loop is at or just behind the mental foramen. The incisive branch is the continuation of the ID nerve forward into the pre-foraminal mandible — distinctly visible in most patients in the first premolar region.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q2 ▸ Why does black air in the maxillary sinus prove the ostium is patent?</div>
+          <div class="answer">If the ostium were obstructed, the sinus would fill with trapped fluid (mucus / pus) and appear grey or opacified. The only way the sinus can contain black air is if that air came in from the nose — and the only route is through the ostium. So a healthy black-air sinus has, by inference, a patent ostium, even if you can't visualise the ostium directly.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q3 ▸ What is the pathognomonic CBCT bone-loss pattern of a vertical root fracture?</div>
+          <div class="answer">A <strong>narrow, deep, focal intrabony defect</strong> running vertically along the length of the root — directly over the line of the crack. Not a broad J-shaped lesion (less specific) and not a frank periodontal defect (too late). The crack itself is often invisible due to artefact, motion or resolution, so you diagnose on the bone-loss pattern alone.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q4 ▸ Why should you not diagnose caries on CBCT?</div>
+          <div class="answer">Beam hardening artefact from anything denser than dentine — including unrestored enamel — produces black streaks <em>inside</em> teeth that look convincingly like caries. Combined with metal artefacts from any restorations, the rate of false positives is unacceptable. Use bitewings and periapicals (the gold standard) for caries diagnosis.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q5 ▸ A patient has a foreign body that was displaced into the maxillary sinus 3 weeks ago. You're going in to retrieve it via Caldwell-Luc. What's the imaging rule?</div>
+          <div class="answer">Take a <strong>fresh CBCT as close to the day of surgery as possible</strong> — ideally on the same day. Mucociliary clearance pumps the foreign body towards the ostium over time, so the location on the original scan is no longer reliable. The object may have moved up the sinus wall, reached the ostium, or even passed through into the nasal cavity.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q6 ▸ When you find an unhealthy maxillary sinus on CBCT, what is the first question to ask?</div>
+          <div class="answer">Is there a dental cause I can fix? Maxillary sinusitis is commonly of dental origin — periapical infection, retained roots, OAC. Treat the dental cause and the sinus often resolves. Only refer to ENT once you've excluded a dental cause. And never graft an unhealthy sinus.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 31: Key takeaways -->
+    <section class="slide">
+      <h1 class="slide-title">Key Takeaways</h1>
+      <h2 class="slide-sub">Lecture 3 in one screen</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Mandibular anatomy</div>
+            <ul style="margin-top:0">
+              <li>ID canal cortication depends on trabecular density — soft bone = faint canal</li>
+              <li>~80% of canal volume is nerve, but artery sits at the top</li>
+              <li>Retromolar branch — variant, ~1 in 20</li>
+              <li>Don't confuse anterior loop with incisive branch</li>
+              <li>Lingual canals are vascular only — beware in atrophic mandibles</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Maxillary anatomy & sinus</div>
+            <ul style="margin-top:0">
+              <li>PSA artery in lateral sinus wall — identify before any sinus work</li>
+              <li>Rare variant: PSA in sinus floor (dangerous in transcrestal lifts)</li>
+              <li>Black air = patent ostium = healthy sinus</li>
+              <li>Always look for a dental cause of sinusitis</li>
+              <li>Foreign bodies migrate — same-day imaging before retrieval</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Endo & root fractures</div>
+            <ul style="margin-top:0">
+              <li>CBCT more sensitive than PA for apical pathology</li>
+              <li>ECR spreads <em>around</em> the pulp; internal resorption balloons <em>from</em> the canal</li>
+              <li>VRF: narrow focal defect along the root line</li>
+              <li>You'll often diagnose VRF on bone loss pattern, not the crack itself</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Artefacts & limits</div>
+            <ul style="margin-top:0">
+              <li>Beam hardening = black streaks from anything denser than dentine</li>
+              <li>Metal causes both black and white streaks</li>
+              <li>Two parallel metal objects → complete blackout between them</li>
+              <li>Never diagnose caries on CBCT</li>
+              <li>CBCT is a special test — never a replacement for bitewings/PAs</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 32: End -->
+    <section class="slide title-slide">
+      <div class="module-tag">END OF LECTURE 3 · END OF MODULE 2 DAY 2</div>
+      <h1>Course complete.<br>Onwards into clinical practice.</h1>
+      <p class="subtitle">You now have the fundamentals, the dose & justification framework, and the anatomical and clinical pattern recognition needed to use CBCT safely and effectively in everyday dentistry. Remember the core principles — smallest FOV, diagnostic quality, stay in scope, justified by added confidence — and don't forget that CBCT is a special test that complements rather than replaces 2D imaging.</p>
+      <div class="lect-num">▶ Test your knowledge in the three module quizzes</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <button class="nav-btn" id="prevBtn">◀ Previous</button>
+    <div class="dots" id="dotsNav"></div>
+    <button class="nav-btn" id="nextBtn">Next ▶</button>
+  </footer>
+  <div class="kbd-hint">Use <kbd>←</kbd> <kbd>→</kbd> arrow keys to navigate</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('totSlide').textContent = total;
+  let cur = 0;
+  const dots = document.getElementById('dotsNav');
+  for(let i=0;i<total;i++){
+    const d = document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click',()=>go(i));
+    dots.appendChild(d);
+  }
+  function go(i){
+    cur = Math.max(0, Math.min(total-1, i));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('active',k===cur));
+    document.getElementById('curSlide').textContent = cur+1;
+    document.getElementById('progressFill').style.width = ((cur+1)/total*100)+'%';
+    document.getElementById('prevBtn').disabled = cur===0;
+    document.getElementById('nextBtn').disabled = cur===total-1;
+    slides[cur].scrollTop=0;
+  }
+  document.getElementById('prevBtn').addEventListener('click',()=>go(cur-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ') go(cur+1);
+    if(e.key==='ArrowLeft') go(cur-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(total-1);
+  });
+  go(0);
+</script>
+</body>
+</html>

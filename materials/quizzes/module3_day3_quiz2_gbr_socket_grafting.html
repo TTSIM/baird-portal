@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 02 — GBR & Socket Grafting | Baird Implant Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b12;--surface:#0d1220;--surface2:#121929;--teal:#00b4d8;--gold:#d4a94a;--text:#e2e8f0;--muted:#718096;--subtle:#1e2840;--green:#48bb78;--orange:#fb923c;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(13,18,32,.95);border-bottom:1px solid var(--subtle);position:sticky;top:0;z-index:10;}
+.back-btn{font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--subtle);padding:5px 12px;border-radius:4px;}
+.back-btn:hover{color:var(--gold);}
+.quiz-badge{font-size:.68rem;background:rgba(212,169,74,.12);color:var(--gold);border:1px solid rgba(212,169,74,.3);padding:4px 10px;border-radius:12px;}
+.prog-text{font-size:.8rem;color:var(--muted);}
+.prog-text span{color:var(--gold);font-weight:600;}
+.progress-track{height:3px;background:var(--subtle);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--teal));transition:width .4s ease;}
+main{flex:1;max-width:720px;margin:0 auto;padding:36px 24px;width:100%;}
+.screen{display:none;}
+.screen.active{display:block;}
+.start-hero{text-align:center;padding:40px 0;}
+.start-hero h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;margin-bottom:12px;}
+.start-hero h1 em{color:var(--gold);font-style:italic;}
+.start-hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:460px;margin:0 auto 28px;}
+.meta-grid{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
+.meta-item{text-align:center;}.meta-num{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);}
+.meta-lbl{font-size:.72rem;color:var(--muted);letter-spacing:.08em;}
+.start-btn{background:rgba(212,169,74,.15);color:var(--gold);border:1px solid rgba(212,169,74,.3);padding:14px 36px;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+.start-btn:hover{background:rgba(212,169,74,.25);}
+.q-tag{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;line-height:1.35;margin-bottom:24px;color:var(--text);}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.opt{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 18px;cursor:pointer;font-size:.9rem;color:var(--text);transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif;display:flex;align-items:flex-start;gap:12px;}
+.opt:hover:not(:disabled){background:rgba(212,169,74,.06);border-color:rgba(212,169,74,.3);}
+.opt-letter{width:22px;height:22px;border-radius:50%;background:var(--surface2);border:1px solid var(--subtle);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;}
+.opt.correct{background:rgba(72,187,120,.1);border-color:rgba(72,187,120,.4);}
+.opt.correct .opt-letter{background:var(--green);color:#000;border-color:var(--green);}
+.opt.wrong{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);}
+.opt.wrong .opt-letter{background:var(--orange);color:#000;border-color:var(--orange);}
+.opt.reveal{background:rgba(72,187,120,.06);border-color:rgba(72,187,120,.2);}
+.opt:disabled{cursor:not-allowed;}
+.explanation{background:rgba(212,169,74,.08);border:1px solid rgba(212,169,74,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;display:none;}
+.explanation.show{display:block;}
+.explanation p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.explanation p strong{color:var(--gold);}
+.next-btn{background:rgba(212,169,74,.15);color:var(--gold);border:1px solid rgba(212,169,74,.3);padding:11px 28px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;display:none;}
+.next-btn.show{display:inline-block;}
+.next-btn:hover{background:rgba(212,169,74,.25);}
+.score-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;}
+.score-dot{width:18px;height:18px;border-radius:50%;background:var(--subtle);transition:background .3s;}
+.score-dot.correct{background:var(--green);}
+.score-dot.wrong{background:var(--orange);}
+.results{text-align:center;padding:40px 0;}
+.score-big{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;line-height:1;}
+.score-big span{color:var(--gold);}
+.grade{font-size:1.1rem;margin:8px 0 20px;color:var(--muted);}
+.review-list{text-align:left;margin:24px 0;}
+.review-item{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;}
+.review-item.wr{border-color:rgba(251,146,60,.3);}
+.review-item.co{border-color:rgba(72,187,120,.3);}
+.review-q{font-size:.88rem;color:var(--text);margin-bottom:5px;}
+.review-a{font-size:.82rem;color:var(--muted);}
+.review-a span.cr{color:var(--green);}
+.review-a span.wr{color:var(--orange);}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+.res-btn{padding:11px 24px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;}
+.res-btn.primary{background:rgba(212,169,74,.15);color:var(--gold);border:1px solid rgba(212,169,74,.3);}
+.res-btn.secondary{background:transparent;color:var(--muted);border:1px solid var(--subtle);}
+.res-btn:hover{filter:brightness(1.15);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="back-btn">← Back</a>
+  <span class="quiz-badge">Quiz 02 — GBR & Socket Grafting</span>
+  <span class="prog-text">Q <span id="qNum">0</span> / 30</span>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<main>
+
+<div class="screen active" id="startScreen">
+  <div class="start-hero">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Assessment Quiz</div>
+    <h1>GBR & <em>Socket Grafting</em></h1>
+    <p>Test your knowledge of membrane fixation evidence, socket grafting technique, ridge preservation, and the Kahn classification from Lecture 02.</p>
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-num">30</div><div class="meta-lbl">Questions</div></div>
+      <div class="meta-item"><div class="meta-num">MCQ</div><div class="meta-lbl">Format</div></div>
+      <div class="meta-item"><div class="meta-num">∞</div><div class="meta-lbl">Attempts</div></div>
+    </div>
+    <div id="resumeNotice" style="display:none;margin-bottom:16px;padding:10px 20px;background:rgba(72,187,120,.08);border:1px solid rgba(72,187,120,.2);border-radius:var(--r);font-size:.82rem;color:var(--green);">Saved progress found — resuming from where you left off.</div>
+    <button class="start-btn" onclick="startQuiz()">Begin Quiz →</button>
+  </div>
+</div>
+
+<div class="screen" id="quizScreen">
+  <div class="score-bar" id="scoreDots"></div>
+  <div class="q-tag" id="qTag">Question 1 of 30</div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="optionsContainer"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<div class="screen" id="resultsScreen">
+  <div class="results">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Quiz Complete</div>
+    <div class="score-big"><span id="scoreNum">0</span><span style="font-size:2rem;color:var(--muted);">/30</span></div>
+    <div class="grade" id="gradeText"></div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="results-btns">
+      <button class="res-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="lecture_02_gbr_socket_grafting.html" class="res-btn secondary">Review Lecture 02</a>
+      <a href="quiz_03_aligners_implants.html" class="res-btn primary">Next Quiz →</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+const KEY = 'baird_quiz2';
+const questions = [
+  {q:"Which term does the lecturer explicitly say does NOT exist and must never be used?",opts:["Ridge preservation","Socket grafting","Socket preservation","Bone augmentation"],ans:2,exp:"<strong>Socket preservation does not exist</strong> — the lecturer says 'if I hear socket preservation I will pour cold water on you.' The socket always collapses. The correct terms are either <strong>socket grafting</strong> (technique) or <strong>ridge preservation</strong> (outcome goal)."},
+  {q:"Who first described socket grafting, and in what year?",opts:["Fouad Khoury, 2005","Joseph Kahn, 2011","Chen, 2009","Buser, 2004"],ans:2,exp:"Socket grafting was first described by <strong>Chen in 2009</strong>. This is referenced as the landmark paper that introduced the concept to the mainstream implant literature."},
+  {q:"What are the three pre-conditions required for socket grafting to be appropriate?",opts:["No infection, visible CBCT bone, patient consent","No acute infection, intact labial plate, intact interseptal bone","Healthy gingiva, no smoking, intact labial plate","No infection, thick biotype, primary closure possible"],ans:1,exp:"The three pre-conditions are: <strong>(1) No acute infection</strong> (cellulitis/pus = contraindication), <strong>(2) Intact labial plate</strong> (fractured or absent = need membrane rebuild), and <strong>(3) Intact interseptal bone</strong> (not essential but significantly improves outcomes)."},
+  {q:"In the membrane fixation study, CBCT scans were taken at which two time points?",opts:["Day 0 and Day 90","Day 1 and Day 180","Week 1 and Week 24","Day 7 and Month 6"],ans:1,exp:"The landmark membrane fixation study used CBCT imaging at <strong>Day 1 and Day 180</strong>. This allowed precise volumetric comparison of bone stability in the coronal 5mm zone across the four membrane fixation groups."},
+  {q:"Which membrane fixation group produced the BEST GBR outcomes in the evidence?",opts:["No fixation","Sutures only","Apical pins only","Apical + coronal pins and sutures"],ans:3,exp:"<strong>Group 4 (apical + coronal fixation)</strong> — pins placed both at the apical and coronal aspect, supplemented with sutures at the four corners — produced the best outcomes. Stability at both ends prevented micro-movement, which is the primary cause of GBR failure."},
+  {q:"What is the recommended hydration time for Mucoderm before use?",opts:["30 seconds in saline","5 minutes (as per manufacturer guidelines)","2–3 minutes maximum","10 minutes in warm saline"],ans:2,exp:"Although the manufacturer states <strong>5 minutes</strong>, the clinical recommendation is <strong>2–3 minutes maximum</strong>. Over-hydration makes Mucoderm too soft and difficult to suture precisely. Under-hydration is more controllable and preferable to over-hydration."},
+  {q:"What shape should Mucoderm be cut into for socket grafting?",opts:["Square","Round disc","Inverted sandwich (wider base, narrower neck)","T-shape"],ans:2,exp:"Mucoderm should be cut into an <strong>inverted sandwich shape</strong> — a wider base that sits into the trapezoid tunnel labially, and a narrower coronal portion that matches the socket diameter. One-third sits palatally, one-third over the socket, one-third labially."},
+  {q:"Why is a non-resorbable suture specifically recommended for socket grafting closure?",opts:["It is cheaper than resorbable options","Monofilament surface traps less plaque, and it maintains strength for the full 2-week healing period","It causes less inflammation","It is easier to tie"],ans:1,exp:"Non-resorbable nylon suture is preferred for two reasons: <strong>(1) monofilament surface traps less plaque</strong> than braided resorbable, and <strong>(2) it maintains full strength for 2 weeks</strong>. Resorbable sutures degrade progressively from day 1, losing reliability by day 5 when healing is still active."},
+  {q:"What is the purpose of the X-suture in socket grafting?",opts:["To close the vertical release","To prevent Mucoderm from expanding and escaping between interrupted sutures","To secure the healing abutment","To close the palatal flap"],ans:1,exp:"The <strong>X-suture prevents Mucoderm from expanding and escaping</strong> between interrupted sutures. As Mucoderm heals it expands as blood supply enters — without the X-suture, the patient could accidentally pull it out with their tongue or it could dislodge from the socket."},
+  {q:"What is the clinical appearance of a socket graft at 2 weeks post-operatively?",opts:["Clean, pink, and well-healed","Yellow, slimy, and slippery — but normal","Bright red and vascular","White and firm"],ans:1,exp:"At 2 weeks, a normal healing socket graft appears <strong>yellowish, slimy, and slippery</strong>. This alarms many clinicians who mistake it for infection — but it is entirely normal. The only intervention should be suture removal. Wiping or disrupting the membrane at this stage risks exposing bone."},
+  {q:"What type of incision is preferred for anterior socket grafting to avoid aesthetic scarring?",opts:["Mid-crestal incision with mesial release","Paramarginal incision","Labial tunnel (flapless) past the mucogingival junction","Full vestibular flap"],ans:2,exp:"The preferred anterior approach is a <strong>labial tunnel (flapless)</strong> using a blunt tunnelling instrument. This avoids visible incisions, preserves papillae, and creates the trapezoid pocket past the mucogingival junction to house the membrane without tension."},
+  {q:"What percentage of anterior root-to-bone relationships fall into Kahn Type I (good labial AND palatal bone)?",opts:["50%","70%","86%","94%"],ans:2,exp:"<strong>86% of anterior cases</strong> present as Kahn Type I — good labial and good palatal bone. This means immediate implant placement is possible in the vast majority of cases. Types II, III, and IV represent progressively less favourable anatomy."},
+  {q:"What is the approximate incidence of Kahn Type III (very little palatal bone, thick labial)?",opts:["0.5%","5%","10%","15%"],ans:0,exp:"Kahn Type III — characterised by very little palatal bone but thick labial bone — is extremely rare at approximately <strong>0.5% of cases</strong>. The unusual angulation requires careful planning. It is almost never encountered in everyday practice."},
+  {q:"Which Kahn classification ALWAYS requires ridge preservation before implant placement?",opts:["Type I","Type II","Type III","Type IV"],ans:3,exp:"<strong>Kahn Type IV</strong> — thin labial AND thin/absent palatal bone — always requires ridge preservation. Immediate implant placement is contraindicated because labial wall collapse is inevitable. Without grafting, vertical and horizontal bone loss is guaranteed."},
+  {q:"What is the polished collar height on a standard Straumann tissue-level implant?",opts:["0.8mm","1.2mm","1.8mm","2.5mm"],ans:2,exp:"The standard Straumann tissue-level implant has a <strong>1.8mm polished transmucosal collar</strong>. This sits above the bone level at the soft tissue zone. The abutment-implant junction is therefore 1.8mm above the bone, further from the biological width than an equivalent bone-level implant."},
+  {q:"What is the main clinical concern when using a tissue-level implant in a thin biotype patient?",opts:["Higher infection rate","Greater peri-implantitis risk","The polished metal collar may show through or shine through thin tissue","More difficult integration"],ans:2,exp:"In thin biotype patients, <strong>the polished collar may be visible through or shine through the thin gingival tissue</strong>, creating an aesthetic grey shadow. Any subsequent gum recession immediately exposes the metal collar — a significant anterior aesthetic problem."},
+  {q:"What is the recommended graft fill level in socket grafting (how high to pack)?",opts:["Pack to the very top, slightly overfilling","Pack to the level of the mesial and distal bone peaks only","Pack to the cemento-enamel junction level","Pack to 2mm below the socket margin"],ans:1,exp:"The graft should be packed <strong>to the level of the mesial and distal bone peaks only</strong>. Overfilling above the peaks leaves no space for soft tissue closure centrally. Packing in thirds (apical → middle → coronal) with loose, not tight, compaction."},
+  {q:"How should degranulation burs be used during socket preparation?",opts:["1,500 RPM dry, coronal to apical","800 RPM with irrigation, coronal to apical (socket walls)","800 RPM with irrigation, apical to coronal","1,200 RPM dry, walls only"],ans:1,exp:"Degranulation burs are used at <strong>800 RPM with constant irrigation</strong>. The sequence is <strong>coronal to apical</strong> — starting with the widest bur at the socket entrance and progressing to smaller sizes toward the apex. This removes fibrotic tissue from all four walls systematically."},
+  {q:"When should antibiotics be prescribed after socket grafting or GBR?",opts:["Only if there are signs of infection","Only for compromised patients (diabetics, smokers)","Every time, without exception","Only for procedures involving xenograft material"],ans:2,exp:"<strong>Every ridge preservation and GBR procedure requires post-operative antibiotics without exception</strong>. This is one of the lecturer's four modern GBR non-negotiables. Xenograft especially behaves like 'gunpowder' — bacterial contamination ignites catastrophic failure rapidly."},
+  {q:"What review interval is recommended after socket grafting for the lower jaw?",opts:["4 weeks","6 weeks","8 weeks","12 weeks"],ans:2,exp:"The recommended first review interval after lower jaw socket grafting is <strong>8 weeks</strong>. For the upper jaw, it is 10 weeks (slower healing due to less dense bone and proximity to sinus). The 2-week appointment is suture removal only."},
+  {q:"What is the minimum tunnel release that must be achieved before placing the Mucoderm?",opts:["The tunnel must pass the free gingival margin","The tunnel must extend past the mucogingival junction","The tunnel should reach the vestibule","The tunnel must be full-thickness to periosteum only at the crest"],ans:1,exp:"The tunnel must extend <strong>past the mucogingival junction</strong> to create a true trapezoid shape — wider at the base than at the socket entrance. This is confirmed by gently pulling the socket margin: it should move easily. Insufficient tunnel means the membrane will be compressed rather than lying flat."},
+  {q:"Why does the lecturer specifically mention xenograft material as behaving like 'gunpowder' if contaminated?",opts:["It resorbs unpredictably when infected","It ignites very rapid and aggressive infection compared to other graft materials","It is rejected by the immune system","It causes a specific type of chronic osteomyelitis"],ans:1,exp:"Xenograft contaminated with bacteria causes <strong>extremely rapid and aggressive infection</strong> — far more so than autogenous or allograft infection. The particles provide an excellent substrate for bacterial proliferation. If xenograft fails: remove everything, debride thoroughly, and allow natural healing before re-grafting."},
+  {q:"What is the 2025 innovation for cases where the labial wall is absent at extraction?",opts:["Immediate implant placement with GBR","Rigid magnesium membrane adapted to replace the labial wall at socket grafting","Titanium mesh placed externally","Staged GBR must always be done first"],ans:1,exp:"The 2025 advance is using a <strong>rigid Novamat magnesium membrane adapted to the labial surface</strong> — shaped to recreate the missing labial wall at the time of extraction. Socket grafting then proceeds normally with the artificial wall in place, potentially avoiding a separate staged GBR procedure."},
+  {q:"In which clinical scenario should socket grafting be done even if the patient does not want an implant at that site?",opts:["When the patient is a smoker","When an adjacent implant exists and bone/papillae protection is needed","When the tooth has chronic periapical pathology","All extractions should have socket grafting"],ans:1,exp:"When an <strong>adjacent implant exists</strong>, the extraction site must be managed to protect the bone and papillae around the neighbouring implant — even if the patient declines replacement. Cerabone in the socket with a free gingival graft cover preserves the implant's marginal environment."},
+  {q:"Which of the following is a correct statement about bone-level implants versus tissue-level implants?",opts:["Tissue-level implants allow greater angular correction","Bone-level implants have the abutment-implant junction 1.8mm above the bone","Bone-level implants allow up to 4mm of angular correction via custom abutments","Tissue-level implants integrate better due to rough surface design"],ans:2,exp:"<strong>Bone-level implants allow up to approximately 4mm of angular correction</strong> at the abutment level because the connection is subcrestal and the abutment can be angled significantly. Tissue-level implants allow only ~1mm of correction because the polished collar height limits the margin for angulation."},
+  {q:"What happens if a clinician mistakes the normal 2-week appearance of a socket graft for infection and wipes or removes the membrane?",opts:["The healing simply restarts","The bone underneath is exposed, risking osteitis and total graft failure","The graft remodels faster","The patient experiences pain but the graft is unaffected"],ans:1,exp:"Wiping or removing the membrane at 2 weeks exposes the <strong>bone underneath</strong>, risking osteitis and <strong>total graft failure</strong>. Everything that was successfully grafted is lost. The correct management at 2 weeks is suture removal only — never disturb the healing tissue."},
+  {q:"In the sequential multi-tooth extraction and implant strategy for anterior teeth, what is the key reason for extracting lateral incisors first?",opts:["Lateral incisors are easier to extract","Lateral implants heal faster than central implants","Lateral implant temporaries maintain papillae stability when central teeth are subsequently extracted","Laterals have less bone support and need the longest healing time"],ans:2,exp:"Lateral incisor implants are placed first and allowed to integrate. Once the <strong>lateral temporaries are in place</strong>, they act as a stable framework maintaining papillae when the central incisors are extracted. Without this framework, central extraction would collapse all the papillae around the implant."},
+  {q:"What does modern GBR protocol say about cover screws?",opts:["Use cover screws for all GBR cases","Cover screws are preferred over healing abutments in posterior cases","Cover screws should NOT be used — they compress bone particles; healing abutments tent the tissue instead","Cover screws are interchangeable with healing abutments"],ans:2,exp:"Modern GBR protocol says <strong>do NOT use cover screws</strong>. Cover screws press on the graft, compressing particles beneath the flap closure. Healing abutments instead tent the soft tissue over the graft, allowing graft space to be maintained without mechanical compression."},
+  {q:"If a xenograft socket graft fails with infection, what is the correct management?",opts:["Apply topical antibiotics and leave the graft in place","Remove the contaminated graft completely, debride, allow natural healing, re-graft after 8–12 weeks","Replace only the contaminated portion","Place a collagen membrane over the infected graft and close"],ans:1,exp:"The correct management is: <strong>remove ALL contaminated xenograft material</strong> (leaving any is dangerous), debride thoroughly, irrigate, and allow natural socket healing. Wait a minimum of <strong>8–12 weeks</strong> before attempting re-grafting. Partial removal is inadequate — xenograft + bacteria = continued rapid destruction."},
+  {q:"What is the Kahn classification fundamentally describing?",opts:["Severity of peri-implant disease","Anterior root-to-bone spatial relationships that determine implant planning strategy","Classification of GBR membrane types","Socket morphology after extraction"],ans:1,exp:"The Kahn classification (Joseph Kahn, Loma Linda University, 2011) describes <strong>the spatial relationship between the root and surrounding bone in the anterior zone</strong>. It defines Types I–IV based on the amount of labial and palatal bone present, and directly determines whether immediate placement or ridge preservation is appropriate."},
+  {q:"In the membrane fixation study, why did the 'no fixation' group produce the worst results?",opts:["The membrane was absorbed too quickly","Suturing the flap closed scattered the particles beneath the membrane","The bone graft material was of lower quality","The healing abutments compressed the graft"],ans:1,exp:"In the 'no fixation' group, <strong>suturing the flap closed scattered the particles beneath the membrane</strong>. Without any means to hold the membrane in position, the suturing action pushed particles away from the desired location. This demonstrates that membrane stability — not just membrane presence — is critical to GBR outcome."}
+];
+
+let current = 0, score = 0, answers = [], answered = false;
+
+function buildDots() {
+  const d = document.getElementById('scoreDots');
+  d.innerHTML = '';
+  for(let i=0;i<30;i++){
+    const dot = document.createElement('div');
+    dot.className = 'score-dot';
+    dot.id = 'dot'+i;
+    d.appendChild(dot);
+  }
+}
+
+function startQuiz() {
+  const saved = loadState();
+  if(saved && saved.current > 0) {
+    current = saved.current; score = saved.score; answers = saved.answers;
+  }
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.add('active');
+  buildDots();
+  answers.forEach((a,i)=>{
+    const d = document.getElementById('dot'+i);
+    if(d) d.classList.add(a.correct?'correct':'wrong');
+  });
+  showQuestion();
+}
+
+function showQuestion() {
+  if(current >= questions.length) { showResults(); return; }
+  const q = questions[current];
+  document.getElementById('qTag').textContent = `Question ${current+1} of 30`;
+  document.getElementById('qNum').textContent = current+1;
+  document.getElementById('progressFill').style.width = ((current+1)/30*100)+'%';
+  document.getElementById('qText').textContent = q.q;
+  const cont = document.getElementById('optionsContainer');
+  cont.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    cont.appendChild(btn);
+  });
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = questions[current];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  if(correct) score++;
+  opts[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) opts[q.ans].classList.add('reveal');
+  const dot = document.getElementById('dot'+current);
+  if(dot) dot.classList.add(correct?'correct':'wrong');
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<p>${correct?'✓ Correct! ':'✗ Incorrect. '}${q.exp}</p>`;
+  exp.className = 'explanation show';
+  document.getElementById('nextBtn').className = 'next-btn show';
+  answers[current] = {chosen: idx, correct};
+  saveState();
+}
+
+function nextQuestion() {
+  current++;
+  if(current >= questions.length) { showResults(); return; }
+  showQuestion();
+  saveState();
+}
+
+function showResults() {
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('resultsScreen').classList.add('active');
+  document.getElementById('scoreNum').textContent = score;
+  const pct = Math.round(score/30*100);
+  let grade;
+  if(pct>=90) grade='Excellent — Outstanding knowledge 🏆';
+  else if(pct>=70) grade='Good — Solid understanding ✓';
+  else if(pct>=50) grade='Pass — Some areas to review';
+  else grade='Needs improvement — Revisit Lecture 02';
+  document.getElementById('gradeText').textContent = grade;
+  const rev = document.getElementById('reviewList');
+  rev.innerHTML = '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.2rem;margin-bottom:12px;color:var(--text);">Question Review</h3>';
+  questions.forEach((q,i)=>{
+    const a = answers[i];
+    if(!a) return;
+    const div = document.createElement('div');
+    div.className = `review-item ${a.correct?'co':'wr'}`;
+    div.innerHTML = `<div class="review-q">${i+1}. ${q.q}</div><div class="review-a">Your answer: <span class="${a.correct?'cr':'wr'}">${q.opts[a.chosen]}</span>${!a.correct?` | Correct: <span class="cr">${q.opts[q.ans]}</span>`:''}</div>`;
+    rev.appendChild(div);
+  });
+  localStorage.removeItem(KEY);
+}
+
+function retakeQuiz() {
+  current=0; score=0; answers=[];
+  localStorage.removeItem(KEY);
+  document.getElementById('resultsScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('startScreen').classList.add('active');
+}
+
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify({current, score, answers})); } catch(e){}
+}
+function loadState() {
+  try { const d=localStorage.getItem(KEY); return d?JSON.parse(d):null; } catch(e){ return null; }
+}
+
+const s = loadState();
+if(s && s.current > 0) document.getElementById('resumeNotice').style.display='block';
+</script>
+</body>
+</html>

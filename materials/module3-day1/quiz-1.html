@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 · Soft Tissue Fundamentals — Baird Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+:root {
+  --bg:#080c10; --surface:#121a24; --surface2:#1a2738;
+  --border:#1d2e40; --gold:#c9a84c;
+  --text:#e2eaf0; --text2:#8fa8bc; --text3:#4a6a80;
+  --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+  --accent:#2dd4bf;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+
+/* ── COURSE NAV ── */
+#course-nav { position:fixed; top:0; left:0; right:0; z-index:300; background:rgba(8,12,16,.97); border-bottom:1px solid var(--border); padding:5px 20px; display:flex; align-items:center; gap:14px; backdrop-filter:blur(16px); min-height:36px; flex-wrap:nowrap; }
+.nav-brand { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; }
+.nav-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; }
+.nav-lbl { font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3); letter-spacing:.15em; text-transform:uppercase; white-space:nowrap; }
+.nav-grp { display:flex; gap:4px; }
+.np { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:600; padding:2px 8px; border:1px solid var(--border); color:var(--text3); text-decoration:none; border-radius:2px; transition:all .2s; white-space:nowrap; }
+.np:hover { border-color:var(--text2); color:var(--text); }
+.np.here { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,.08); }
+.np.lp:hover { border-color:var(--accent); color:var(--accent); }
+
+/* ── MAIN ── */
+#main { flex:1; overflow-y:auto; padding:56px 24px 24px; display:flex; flex-direction:column; align-items:center; }
+.inner { width:100%; max-width:760px; }
+
+/* ── START SCREEN ── */
+#start { text-align:center; padding:40px 0; }
+.start-badge { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent); letter-spacing:.3em; text-transform:uppercase; border:1px solid rgba(45,212,191,.3); padding:3px 14px; display:inline-block; margin-bottom:20px; }
+.start-h1 { font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:300; line-height:1.1; margin-bottom:10px; }
+.start-h1 em { color:var(--gold); font-style:italic; }
+.start-meta { font-size:14px; color:var(--text2); margin-bottom:28px; }
+.start-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:24px 0 32px; text-align:left; }
+.sm { background:var(--surface); border:1px solid var(--border); padding:14px; }
+.sm .sv { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--accent); }
+.sm .sl { font-size:12px; color:var(--text3); font-family:'JetBrains Mono',monospace; letter-spacing:.1em; margin-top:2px; }
+.sm .sd { font-size:13px; color:var(--text2); margin-top:4px; }
+.start-topics { background:var(--surface); border:1px solid var(--border); padding:16px 20px; text-align:left; margin-bottom:28px; }
+.start-topics h3 { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent); letter-spacing:.2em; text-transform:uppercase; margin-bottom:10px; }
+.topic-chips { display:flex; gap:6px; flex-wrap:wrap; }
+.chip { font-size:11px; font-family:'JetBrains Mono',monospace; padding:3px 9px; background:rgba(45,212,191,.08); border:1px solid rgba(45,212,191,.2); color:var(--accent); border-radius:2px; }
+.btn-start { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; background:rgba(45,212,191,.12); border:1px solid var(--accent); color:var(--accent); padding:12px 36px; cursor:pointer; transition:all .2s; }
+.btn-start:hover { background:rgba(45,212,191,.22); box-shadow:0 0 24px rgba(45,212,191,.15); }
+
+/* ── PROGRESS BAR ── */
+#pgwrap { width:100%; margin-bottom:16px; }
+#pg-bar { height:4px; background:var(--border); border-radius:2px; margin-bottom:6px; }
+#pg-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); border-radius:2px; transition:width .35s ease; }
+.pg-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+
+/* ── QUESTION CARD ── */
+.qcard { background:var(--surface); border:1px solid var(--border); padding:26px 28px; border-radius:3px; }
+.q-top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.q-num { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text3); }
+.q-badge { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 8px; background:rgba(45,212,191,.1); border:1px solid rgba(45,212,191,.25); color:var(--accent); border-radius:2px; }
+.q-scenario { background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02)); border:1px solid rgba(201,168,76,.2); padding:12px 16px; margin-bottom:16px; border-radius:2px; }
+.q-scenario .qs-lbl { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:.2em; text-transform:uppercase; margin-bottom:5px; }
+.q-scenario .qs-text { font-size:14px; color:var(--text2); line-height:1.5; }
+.q-text { font-size:17px; color:var(--text); line-height:1.6; margin-bottom:18px; font-weight:500; }
+.opts { display:flex; flex-direction:column; gap:8px; }
+.opt { display:flex; align-items:flex-start; gap:12px; padding:12px 14px; background:rgba(255,255,255,.02); border:1px solid var(--border); cursor:pointer; transition:all .2s; text-align:left; border-radius:2px; }
+.opt:hover:not(.locked) { border-color:var(--accent); background:rgba(45,212,191,.05); }
+.opt:focus { outline:2px solid var(--accent); outline-offset:1px; }
+.opt.sel { border-color:var(--accent); background:rgba(45,212,191,.07); }
+.opt.correct { border-color:var(--green) !important; background:rgba(34,197,94,.09) !important; }
+.opt.wrong { border-color:var(--red) !important; background:rgba(239,68,68,.09) !important; }
+.opt.locked { cursor:default; }
+.opt-l { font-family:'JetBrains Mono',monospace; font-size:12px; width:22px; height:22px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; border-radius:2px; transition:all .2s; }
+.opt.sel .opt-l { border-color:var(--accent); color:var(--accent); }
+.opt.correct .opt-l { border-color:var(--green); color:var(--green); background:rgba(34,197,94,.1); }
+.opt.wrong .opt-l { border-color:var(--red); color:var(--red); background:rgba(239,68,68,.1); }
+.opt-t { font-size:15px; color:var(--text2); line-height:1.5; flex:1; }
+.opt.correct .opt-t, .opt.wrong .opt-t { color:var(--text); }
+
+/* Feedback */
+.feedback { display:none; margin-top:14px; padding:14px 16px; border-radius:2px; }
+.feedback.show { display:block; }
+.feedback.fb-correct { background:rgba(34,197,94,.06); border:1px solid rgba(34,197,94,.25); }
+.feedback.fb-wrong { background:rgba(239,68,68,.06); border:1px solid rgba(239,68,68,.25); }
+.fb-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.fb-icon { font-size:18px; }
+.fb-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; }
+.feedback.fb-correct .fb-label { color:var(--green); }
+.feedback.fb-wrong .fb-label { color:var(--red); }
+.fb-exp { font-size:14px; color:var(--text2); line-height:1.6; }
+.fb-exp strong { color:var(--text); }
+
+/* Q footer */
+.q-footer { display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
+.score-live { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text3); }
+.score-live span { color:var(--accent); }
+.btn-next { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--text2); padding:8px 22px; cursor:pointer; transition:all .2s; display:none; }
+.btn-next.show { display:block; }
+.btn-next:hover { border-color:var(--accent); color:var(--accent); }
+
+/* Shake animation for wrong */
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.shake { animation:shake .35s ease; }
+@keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 70%{box-shadow:0 0 0 8px rgba(34,197,94,0)} 100%{box-shadow:0 0 0 0 rgba(34,197,94,0)} }
+.pulse { animation:pulse .5s ease; }
+
+/* ── RESULTS ── */
+#results { display:none; text-align:center; padding:32px 0; }
+.res-ring-wrap { display:flex; justify-content:center; margin-bottom:20px; }
+.res-ring { width:130px; height:130px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.res-inner { background:var(--bg); width:96px; height:96px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.res-pct { font-family:'Cormorant Garamond',serif; font-size:30px; color:var(--gold); }
+.res-lbl { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); }
+.grade-badge { font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; letter-spacing:.2em; padding:6px 20px; border:1px solid; margin-bottom:12px; display:inline-block; }
+.grade-badge.dist { border-color:var(--gold); color:var(--gold); }
+.grade-badge.merit { border-color:var(--accent); color:var(--accent); }
+.grade-badge.pass { border-color:var(--green); color:var(--green); }
+.grade-badge.fail { border-color:var(--red); color:var(--red); }
+.res-g2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:380px; margin:0 auto 24px; }
+.res-box { background:var(--surface); border:1px solid var(--border); padding:14px; }
+.res-box .rv { font-family:'Cormorant Garamond',serif; font-size:36px; }
+.res-box .rl { font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--text3); margin-top:3px; letter-spacing:.1em; }
+.rv.c { color:var(--green); } .rv.w { color:var(--red); }
+.res-msg { font-size:15px; color:var(--text2); max-width:500px; margin:0 auto 24px; line-height:1.7; }
+
+/* Topic breakdown */
+.topics-breakdown { background:var(--surface); border:1px solid var(--border); padding:18px 20px; max-width:560px; margin:0 auto 24px; text-align:left; }
+.tb-title { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent); letter-spacing:.2em; text-transform:uppercase; margin-bottom:14px; }
+.tb-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.tb-label { font-size:13px; color:var(--text2); flex:1; min-width:0; }
+.tb-bar { flex:2; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.tb-fill { height:100%; border-radius:3px; transition:width .6s ease; }
+.tb-score { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text3); flex-shrink:0; min-width:36px; text-align:right; }
+
+/* Review mode */
+#review { display:none; max-width:760px; width:100%; margin:0 auto; }
+.review-header { background:var(--surface); border:1px solid var(--border); padding:14px 18px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+.review-header h2 { font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--gold); font-weight:300; }
+.review-item { background:var(--surface); border:1px solid var(--border); padding:18px 20px; margin-bottom:10px; }
+.review-item.got-right { border-left:3px solid var(--green); }
+.review-item.got-wrong { border-left:3px solid var(--red); }
+.rv-meta { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+.rv-badge { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 7px; border-radius:2px; }
+.rv-badge.correct { background:rgba(34,197,94,.1); color:var(--green); border:1px solid rgba(34,197,94,.25); }
+.rv-badge.wrong { background:rgba(239,68,68,.1); color:var(--red); border:1px solid rgba(239,68,68,.25); }
+.rv-q { font-size:15px; color:var(--text); margin-bottom:8px; font-weight:500; }
+.rv-a { font-size:13px; color:var(--text2); margin-bottom:6px; }
+.rv-a span { color:var(--green); font-weight:600; }
+.rv-exp { font-size:13px; color:var(--text3); line-height:1.5; border-top:1px solid var(--border); padding-top:8px; margin-top:8px; }
+.rv-exp strong { color:var(--text2); }
+
+/* Res CTAs */
+.res-ctas { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn-p { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; background:rgba(45,212,191,.12); border:1px solid var(--accent); color:var(--accent); padding:10px 26px; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block; }
+.btn-p:hover { background:rgba(45,212,191,.22); }
+.btn-o { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--text2); padding:10px 26px; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block; }
+.btn-o:hover { border-color:var(--text2); color:var(--text); }
+
+@media (max-width:640px) {
+  #main { padding:52px 14px 14px; }
+  .qcard { padding:18px 16px; }
+  .q-text { font-size:15px; }
+  .opt-t { font-size:14px; }
+  .start-grid { grid-template-columns:1fr 1fr; }
+  .res-g2 { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- COURSE NAV -->
+<nav id="course-nav" aria-label="Course navigation">
+  <span class="nav-brand">🦷 Baird Implant</span>
+  <div class="nav-sep"></div>
+  <span class="nav-lbl">Lectures</span>
+  <div class="nav-grp">
+    <a href="lecture-1.html" class="np lp">L1 Fundamentals</a>
+    <a href="lecture-2.html" class="np lp">L2 Management</a>
+    <a href="lecture-3.html" class="np lp">L3 Flap Design</a>
+  </div>
+  <div class="nav-sep"></div>
+  <span class="nav-lbl">Quizzes</span>
+  <div class="nav-grp">
+    <a href="quiz-1.html" class="np here" aria-current="page">Q1</a>
+    <a href="quiz-2.html" class="np">Q2</a>
+    <a href="quiz-3.html" class="np">Q3</a>
+  </div>
+</nav>
+
+<div id="main">
+<div class="inner">
+
+<!-- ── START SCREEN ── -->
+<div id="start">
+  <div class="start-badge">Quiz 1 of 3</div>
+  <div class="start-h1">Soft Tissue<br><em>Fundamentals</em></div>
+  <div class="start-meta">30 questions · Peri-implant zones, biological width, phenotype, keratinized mucosa</div>
+  <div class="start-grid">
+    <div class="sm"><div class="sv">30</div><div class="sl">QUESTIONS</div><div class="sd">Multiple choice, one correct answer</div></div>
+    <div class="sm"><div class="sv">~15</div><div class="sl">MINUTES</div><div class="sd">No timer — work at your own pace</div></div>
+    <div class="sm"><div class="sv">60</div><div class="sl">% TO PASS</div><div class="sd">70% Merit · 85% Distinction</div></div>
+  </div>
+  <div class="start-topics">
+    <h3>Topics Covered</h3>
+    <div class="topic-chips">
+      <span class="chip">Peri-implant Zones</span>
+      <span class="chip">2+3 Rule</span>
+      <span class="chip">Biological Width</span>
+      <span class="chip">Phenotype</span>
+      <span class="chip">Keratinized Mucosa</span>
+      <span class="chip">Pre-extraction Assessment</span>
+      <span class="chip">Crown Design</span>
+      <span class="chip">Implant Depth</span>
+      <span class="chip">Papilla Stability</span>
+    </div>
+  </div>
+  <button class="btn-start" onclick="startQuiz()" aria-label="Start the quiz">Begin Quiz →</button>
+</div>
+
+<!-- ── QUIZ VIEW ── -->
+<div id="quiz" style="display:none">
+  <div id="pgwrap">
+    <div id="pg-bar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><div id="pg-fill" style="width:0%"></div></div>
+    <div class="pg-meta">
+      <span id="pg-label">Question 1 of 30</span>
+      <span id="pg-topic"></span>
+    </div>
+  </div>
+  <div id="qcard-wrap"></div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div id="results">
+  <div class="res-ring-wrap"><div class="res-ring" id="res-ring"><div class="res-inner"><div class="res-pct" id="res-pct">0%</div><div class="res-lbl">SCORE</div></div></div></div>
+  <div class="grade-badge" id="grade-badge">PASS</div>
+  <div class="res-g2">
+    <div class="res-box"><div class="rv c" id="rv-correct">0</div><div class="rl">CORRECT</div></div>
+    <div class="res-box"><div class="rv w" id="rv-wrong">0</div><div class="rl">INCORRECT</div></div>
+  </div>
+  <p class="res-msg" id="res-msg"></p>
+  <div class="topics-breakdown" id="topics-breakdown">
+    <div class="tb-title">Performance by Topic</div>
+    <div id="tb-rows"></div>
+  </div>
+  <div class="res-ctas">
+    <button class="btn-p" onclick="showReview()" id="review-btn">Review Incorrect Answers</button>
+    <a href="lecture-2.html" class="btn-o">Lecture 2 →</a>
+    <a href="quiz-2.html" class="btn-o">Quiz 2 →</a>
+    <button class="btn-o" onclick="location.reload()">Retake Quiz</button>
+  </div>
+</div>
+
+<!-- ── REVIEW MODE ── -->
+<div id="review">
+  <div class="review-header">
+    <h2>Review: Incorrect Answers</h2>
+    <button class="btn-o" onclick="backToResults()">← Back to Results</button>
+  </div>
+  <div id="review-items"></div>
+</div>
+
+</div><!-- /inner -->
+</div><!-- /main -->
+
+<script>
+/* ================================================
+   QUESTION BANK — 30 questions
+   ================================================ */
+const Qs = [
+  { topic:"Peri-implant Zones", q:"Which peri-implant zone represents the visible aesthetic portion of the mucosa?", opts:["B Zone","C Zone","E Zone","Dead Zone"], ans:2, exp:"The <strong>E Zone</strong> is the aesthetic zone — the visible portion of the peri-implant mucosa above the gingival margin. It is supported by the bone and tissue beneath it." },
+  { topic:"Peri-implant Zones", q:"Bacteria reaching the C Zone (crestal zone) around a dental implant will trigger:", opts:["Hemidesmosomal strengthening","Leukocyte-mediated non-selective bone damage","Improved biological seal formation","Immediate implant mobility"], ans:1, exp:"Bacteria in the <strong>C Zone</strong> trigger a leukocyte response. White blood cells damage surrounding bone non-selectively — initiating marginal bone loss and peri-implantitis." },
+  { topic:"Peri-implant Zones", q:"The thickness of the Dead Zone between B and C zones is influenced by:", opts:["Crown material only","Soft tissue thickness, oral hygiene, and abutment material/polish","Implant diameter and length","Bone density and type"], ans:1, exp:"The Dead Zone thickness is increased by: <strong>greater soft tissue thickness</strong>, better oral hygiene (less bacteria penetrating), and appropriate abutment material/polish (polished titanium or zirconia)." },
+  { topic:"2+3 Rule", q:"What is the minimum soft tissue HEIGHT required above the implant shoulder?", opts:["1 mm","2 mm","3 mm","4 mm"], ans:2, exp:"The 2+3 rule specifies a minimum of <strong>3mm height</strong> of soft tissue above the implant shoulder. Below this, biological width enforcement causes bone resorption." },
+  { topic:"2+3 Rule", q:"What is the minimum soft tissue THICKNESS required around a dental implant?", opts:["1 mm","2 mm","3 mm","4 mm"], ans:1, exp:"The minimum is <strong>2mm thickness</strong>. Together with 3mm height, this defines the 2+3 rule. Thinner tissue = inadequate biological seal and bone protection." },
+  { topic:"2+3 Rule", scenario:"A patient has 1mm of peri-implant mucosa. The implant shoulder is at the bone crest.", q:"What is the predicted long-term outcome if nothing is changed?", opts:["Stable bone levels — 1mm is sufficient","2mm of marginal bone resorption to re-establish biological width","Immediate implant failure","Graft rejection within 6 months"], ans:1, exp:"With 1mm mucosa and implant at bone crest, the body needs 3mm biological width. Since only 1mm exists above bone, <strong>2mm of bone resorption</strong> will occur to create the necessary space." },
+  { topic:"Biological Width", q:"The updated modern term for biological width is:", opts:["Periosteal attachment","Supracrestal attachment","Mucosal seal","Peri-implant biotype"], ans:1, exp:"Biological width is increasingly referred to as <strong>supracrestal attachment</strong> in contemporary literature. Both terms are used — familiarity with both is important for exam and clinical communication." },
+  { topic:"Biological Width", q:"The biological width requirement around dental implants (3–4mm) is larger than around natural teeth (2–3mm) because:", opts:["Implants are larger than tooth roots","Implants lack sulcular epithelium — the continuous mucosal-to-bone distance is wider","Titanium is a foreign material requiring more buffer","Implants are placed deeper than natural teeth"], ans:1, exp:"Implants lack sulcular epithelium. This means the continuous distance from mucosa crest to bone is wider, requiring <strong>3–4mm</strong> compared to the 2–3mm seen around natural teeth." },
+  { topic:"Biological Width", q:"A digital surgical guide places the implant shoulder only 2mm below the planned gingival margin. The likely consequence is:", opts:["No consequence — 2mm is adequate","Marginal bone resorption as the body enforces the required 3–4mm biological width","Improved aesthetics from a shallower implant","Accelerated osseointegration"], ans:1, exp:"With only 2mm tissue above the implant, biological width (3–4mm) cannot be satisfied. <strong>Marginal bone resorption</strong> will occur until the required dimension is established." },
+  { topic:"Phenotype", q:"A patient has triangular teeth, high gingival scalloping, and the probe shadow is clearly visible through the sulcular tissue. This patient is:", opts:["Thick phenotype","Thin phenotype","Mixed phenotype","Cannot be determined without CBCT"], ans:1, exp:"Triangular teeth, high scalloping, and a <strong>visible probe shadow</strong> are classic thin phenotype indicators. Tissue is &lt;2mm thick, allowing the metal probe to show through." },
+  { topic:"Phenotype", q:"Thick phenotype is associated with which tooth shape?", opts:["Triangular with long pointed cusps","Square or rectangular tooth forms","Spatulated wide teeth","No correlation between tooth shape and phenotype"], ans:1, exp:"<strong>Square or rectangular tooth forms</strong> are associated with thick phenotype. Triangular teeth = thin phenotype with high scalloping and pointed papillae." },
+  { topic:"Phenotype", q:"In a thin phenotype patient, what percentage of labial plate bone is lost after tooth extraction?", opts:["5–20%","30–40%","Over 50%","Less than 10%"], ans:2, exp:"Thin phenotype results in <strong>over 50%</strong> volume loss after extraction, occurring in an apical and lingual direction. Compare this to thick phenotype: 5–20% loss." },
+  { topic:"Phenotype", q:"How is gingival phenotype assessed clinically at the chairside?", opts:["Raise a flap and measure with calipers","Press on the mucosa and assess resilience","Insert a probe 1mm into the sulcus and check if the metal shadow is visible","Take a CBCT and measure labial plate thickness"], ans:2, exp:"Insert a probe <strong>1mm into the sulcus</strong>. Visible metal shadow = thin phenotype (&lt;2mm tissue). Shadow invisible = thick phenotype. Simple, no anaesthesia required." },
+  { topic:"Keratinized Mucosa", q:"What is the minimum width of keratinized mucosa recommended around dental implants?", opts:["1 mm","2 mm","3 mm","4 mm"], ans:1, exp:"<strong>2mm</strong> keratinized mucosa width is the evidence-based minimum, supported by consensus statements from the Italian Academy of Periodontology and the Academy of Osseointegration." },
+  { topic:"Keratinized Mucosa", q:"A patient with non-keratinized mobile mucosa around their implant reports pain every time they brush. The primary cause is:", opts:["Implant failure","Mobile mucosa is inherently more sensitive and painful to brush — leading to hygiene avoidance","Active peri-implantitis","Crown is too tight"], ans:1, exp:"<strong>Mobile (non-keratinized) mucosa is physiologically painful to brush</strong>. This leads patients to avoid cleaning, causing plaque accumulation, inflammation, and progressive bone loss." },
+  { topic:"Keratinized Mucosa", q:"Which graft increases keratinized mucosa WIDTH?", opts:["Connective tissue graft (CTG)","Free gingival graft (FGG)","Socket graft","Mucoderm membrane alone"], ans:1, exp:"<strong>FGG</strong> (epithelium kept, placed on periosteum) increases keratinized mucosa width. CTG (epithelium removed, buried under flap) increases tissue volume/thickness. Different tool for different problem." },
+  { topic:"Pre-extraction Assessment", q:"Which of the following is NOT one of the four pre-extraction assessment factors for implant patients?", opts:["Keratinized mucosa width","Gingival phenotype","Root morphology of the tooth to be extracted","Supracrestal attachment (biological width)"], ans:2, exp:"The four pre-extraction factors are: KM width, phenotype, soft tissue thickness, and supracrestal attachment. <strong>Root morphology</strong> is not one of the four soft tissue assessment factors." },
+  { topic:"Pre-extraction Assessment", q:"Bone sounding at the mesial papilla reveals a distance of 4.5mm from mucosa crest to bone. This means:", opts:["The papilla is supported and can safely be elevated","The papilla cannot be safely elevated — biological width will cause recession if disturbed","GBR is immediately required","The patient has peri-implantitis"], ans:1, exp:"&gt;3mm bone sounding = <strong>unfavourable</strong>. If this papilla is elevated, biological width re-establishes at 3mm from bone — the coronal tissue above has inadequate blood supply and will necrose/recede." },
+  { topic:"Crown Design", q:"What subgingival crown profile is correct for an implant restoration?", opts:["Convex — to support the soft tissue","Concave or flat — to avoid pressure on thin tissue","A flat profile creates food traps and must be avoided","Shape does not matter once osseointegration is achieved"], ans:1, exp:"The subgingival profile should be <strong>concave or flat</strong> initially. A convex profile pushes on soft tissue as the crown is seated, causing pressure-induced ischaemia and recession — especially in thin phenotype." },
+  { topic:"Crown Design", q:"At annual review, you remove a screw-retained crown and see bleeding points at the abutment-tissue interface. This represents:", opts:["Early peri-implantitis requiring immediate treatment","Disrupted hemidesmosomal attachments — a normal finding on crown removal","Failure of osseointegration","Active bacterial infection requiring antibiotics"], ans:1, exp:"Bleeding when removing a healthy crown = <strong>disrupted hemidesmosomes</strong>, not disease. This is why routine crown removal at annual reviews should be avoided unless disease is present." },
+  { topic:"Implant Depth", q:"For a thin phenotype patient, the implant shoulder should be placed how far below the planned gingival margin?", opts:["1 mm","2 mm","3 mm","4 mm"], ans:3, exp:"<strong>4mm below</strong> the planned gingival margin for thin phenotype patients. The extra depth accommodates the thinner tissue above and satisfies biological width more conservatively." },
+  { topic:"Implant Depth", q:"Which statement about implant placement depth is correct?", opts:["Depth can be compromised if bone volume is limited","Depth is non-negotiable — use shorter implant or augment instead","The implant shoulder should always be at bone level","More shallow placement reduces peri-implantitis risk"], ans:1, exp:"Depth is <strong>non-negotiable</strong> for biological width satisfaction. If bone is insufficient for correct depth, use a shorter implant, perform sinus lift, or graft. Never sacrifice depth." },
+  { topic:"Peri-implant Zones", q:"Hemidesmosomal attachment forms reliably on which abutment surface?", opts:["Glazed zirconia","Clean polished titanium","Rough sandblasted titanium","Acrylic provisional material"], ans:1, exp:"<strong>Polished titanium</strong> supports hemidesmosomal attachment. Glazed zirconia is too smooth — epithelium cannot anchor and a pocket forms instead of a seal." },
+  { topic:"Biological Width", scenario:"You are planning an immediate implant in a thick phenotype patient. CBCT shows 3.5mm of labial soft tissue at the site.", q:"Does this patient satisfy the 2+3 rule without additional grafting?", opts:["No — thickness is always inadequate for immediate placement","Yes — 3.5mm exceeds the 2mm thickness minimum; biological width is satisfied if placed at appropriate depth","Only if the implant is placed 6mm below the gingival margin","Cannot determine without intraoral bone sounding"], ans:1, exp:"3.5mm tissue thickness <strong>exceeds the 2mm minimum</strong>. The 2+3 rule is satisfied on the thickness dimension. Biological width will also be satisfied if the implant is placed at the correct depth (3mm below GML for thick phenotype)." },
+  { topic:"Keratinized Mucosa", q:"A 14-year follow-up study of FGG sites shows:", opts:["Keratinized tissue gradually converted back to mobile mucosa","Stable keratinized mucosa with better health parameters than non-grafted control sites","No significant difference between grafted and non-grafted sides","The graft tissue completely resorbed"], ans:1, exp:"At 14-year follow-up, FGG sites show <strong>stable keratinized mucosa behaving as native tissue</strong> — better plaque index, less recession, better bone levels, and less patient discomfort than non-grafted control sites." },
+  { topic:"Phenotype", q:"Immediate implant placement is most predictable in:", opts:["Thin phenotype with intact labial plate","Thick phenotype patients with intact labial plate","All patients regardless of phenotype","Only patients with &gt;4mm labial bone"], ans:1, exp:"Immediate placement is most predictable in <strong>thick phenotype</strong> with intact multi-layered cortical labial plate. Thin phenotype = high risk because labial bundle bone disappears after PDL removal." },
+  { topic:"2+3 Rule", q:"Which statement about the 2+3 rule violation is correct?", opts:["Violations cause immediate implant failure","The body corrects violations through bone resorption to establish the required dimensions","Violations only matter aesthetically, not biologically","Violations are prevented by antibiotic prophylaxis"], ans:1, exp:"The body enforces biological width through <strong>bone resorption</strong>. This is not a failure — it is predictable biology correcting a dimensional problem created by insufficient tissue or incorrect implant depth." },
+  { topic:"Pre-extraction Assessment", q:"At what stage should pre-extraction soft tissue assessment be performed?", opts:["During the surgical appointment","At the pre-extraction consultation — before any irreversible procedure","After extraction at 8-week review","Only if the patient is thin phenotype"], ans:1, exp:"Assessment must be at the <strong>pre-extraction consultation</strong> — before any irreversible procedures. The findings drive all planning decisions (grafting, timing, flap design) which must be planned in advance." },
+  { topic:"Phenotype", q:"The thick biotype bone change hypothesis after extraction states:", opts:["Rapid resorption facilitates soft tissue ingrowth","Thick bone wall represents a barrier allowing self-contained bony healing with ingrowth from socket walls","Both biotypes lose &gt;50% ridge volume","Thick biotype always requires socket grafting"], ans:1, exp:"Thick biotype: the <strong>thick bone wall acts as a barrier</strong>, maintaining a self-contained bony defect. Cells ingrow from bony socket walls and marrow spaces. Minimal facial bone resorption. 5–20% volume loss." },
+  { topic:"Keratinized Mucosa", q:"When is it BEST to perform a free gingival graft relative to implant surgery?", opts:["At the same visit as bone grafting","Before surgery on native tissue, or after implant healing — NOT simultaneously with GBR","During impression-taking at the restorative phase","Only after peri-implantitis develops"], ans:1, exp:"FGG before or after implant surgery — <strong>never simultaneously with GBR</strong>. The graft needs a stable, vascularised periosteal bed (healed bone) for take. Simultaneous GBR compromises this." }
+];
+
+/* ================================================
+   STATE
+   ================================================ */
+let qIdx = 0, score = 0;
+const answers = []; // {correct: bool, qIdx: number}
+const topicStats = {}; // topic -> {c:0, t:0}
+
+function startQuiz() {
+  document.getElementById('start').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ();
+}
+
+/* ================================================
+   RENDER QUESTION
+   ================================================ */
+function renderQ() {
+  const q = Qs[qIdx];
+  const letters = ['A','B','C','D'];
+  document.getElementById('pg-label').textContent = `Question ${qIdx+1} of ${Qs.length}`;
+  document.getElementById('pg-topic').textContent = q.topic;
+  document.getElementById('pg-fill').style.width = (qIdx / Qs.length * 100) + '%';
+  document.querySelector('#pg-bar').setAttribute('aria-valuenow', qIdx);
+
+  let html = `<div class="qcard" id="current-q">
+    <div class="q-top">
+      <span class="q-num">Q${qIdx+1} / ${Qs.length}</span>
+      <span class="q-badge">${q.topic}</span>
+    </div>`;
+
+  if (q.scenario) {
+    html += `<div class="q-scenario"><div class="qs-lbl">Clinical Scenario</div><div class="qs-text">${q.scenario}</div></div>`;
+  }
+
+  html += `<div class="q-text">${q.q}</div>
+    <div class="opts" role="radiogroup" aria-label="Answer options">
+      ${q.opts.map((o,i) => `<button class="opt" onclick="pick(${i})" id="opt-${i}" role="radio" aria-checked="false"><span class="opt-l">${letters[i]}</span><span class="opt-t">${o}</span></button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback" role="alert" aria-live="polite"></div>
+    <div class="q-footer">
+      <div class="score-live">Score: <span id="live-score">${score}</span> / ${qIdx}</div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" aria-label="${qIdx < Qs.length-1 ? 'Next question' : 'See results'}">${qIdx < Qs.length-1 ? 'Next Question →' : 'See Results →'}</button>
+    </div>
+  </div>`;
+
+  document.getElementById('qcard-wrap').innerHTML = html;
+}
+
+/* ================================================
+   PICK ANSWER
+   ================================================ */
+function pick(i) {
+  const opts = document.querySelectorAll('.opt');
+  if ([...opts].some(o => o.classList.contains('locked'))) return;
+
+  const q = Qs[qIdx];
+  const isCorrect = i === q.ans;
+
+  opts.forEach(o => { o.classList.add('locked'); o.setAttribute('aria-disabled', 'true'); });
+  opts[i].classList.add('sel', isCorrect ? 'correct' : 'wrong');
+  opts[i].setAttribute('aria-checked', 'true');
+
+  if (!isCorrect) {
+    opts[q.ans].classList.add('correct');
+    opts[i].classList.add('shake');
+  } else {
+    opts[i].classList.add('pulse');
+    score++;
+    document.getElementById('live-score').textContent = score;
+  }
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback show ${isCorrect ? 'fb-correct' : 'fb-wrong'}`;
+  fb.innerHTML = `<div class="fb-header"><span class="fb-icon">${isCorrect ? '✓' : '✗'}</span><span class="fb-label">${isCorrect ? 'Correct' : 'Incorrect'}</span></div><div class="fb-exp">${q.exp}</div>`;
+
+  // Track
+  answers.push({ correct: isCorrect, qIdx });
+  if (!topicStats[q.topic]) topicStats[q.topic] = { c:0, t:0 };
+  topicStats[q.topic].t++;
+  if (isCorrect) topicStats[q.topic].c++;
+
+  document.getElementById('btn-next').classList.add('show');
+}
+
+/* ================================================
+   NEXT QUESTION
+   ================================================ */
+function nextQ() {
+  qIdx++;
+  if (qIdx < Qs.length) {
+    renderQ();
+  } else {
+    showResults();
+  }
+}
+
+/* ================================================
+   SHOW RESULTS
+   ================================================ */
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+
+  const pct = Math.round(score / Qs.length * 100);
+  const deg = Math.round(score / Qs.length * 360);
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('rv-correct').textContent = score;
+  document.getElementById('rv-wrong').textContent = Qs.length - score;
+  document.getElementById('res-ring').style.background = `conic-gradient(var(--accent) ${deg}deg, var(--border) ${deg}deg)`;
+
+  let grade, gc, msg;
+  if (pct >= 85) { grade = 'DISTINCTION'; gc = 'dist'; msg = 'Excellent command of soft tissue fundamentals. Ready to progress to clinical application in Lecture 2.'; }
+  else if (pct >= 70) { grade = 'MERIT'; gc = 'merit'; msg = 'Good understanding. Review the topics highlighted below — particularly any scoring under 70% — before moving to Lecture 2.'; }
+  else if (pct >= 60) { grade = 'PASS'; gc = 'pass'; msg = 'Passing standard achieved. Revisit Lecture 1 to consolidate the areas where gaps remain before proceeding.'; }
+  else { grade = 'NEEDS REVIEW'; gc = 'fail'; msg = 'Review Lecture 1 thoroughly before retaking. Focus on biological width, the 2+3 rule, phenotype classification, and keratinized mucosa evidence.'; }
+
+  const badge = document.getElementById('grade-badge');
+  badge.textContent = grade;
+  badge.className = 'grade-badge ' + gc;
+  document.getElementById('res-msg').textContent = msg;
+
+  // Topic breakdown
+  const tbRows = document.getElementById('tb-rows');
+  tbRows.innerHTML = '';
+  Object.entries(topicStats).forEach(([topic, stat]) => {
+    const pctT = Math.round(stat.c / stat.t * 100);
+    const color = pctT >= 70 ? 'var(--green)' : pctT >= 50 ? 'var(--yellow)' : 'var(--red)';
+    tbRows.innerHTML += `<div class="tb-row">
+      <div class="tb-label">${topic}</div>
+      <div class="tb-bar"><div class="tb-fill" style="width:${pctT}%;background:${color}"></div></div>
+      <div class="tb-score">${stat.c}/${stat.t}</div>
+    </div>`;
+  });
+
+  // Hide review btn if all correct
+  if (answers.every(a => a.correct)) {
+    document.getElementById('review-btn').style.display = 'none';
+  }
+}
+
+/* ================================================
+   REVIEW MODE
+   ================================================ */
+function showReview() {
+  document.getElementById('results').style.display = 'none';
+  const rev = document.getElementById('review');
+  rev.style.display = 'block';
+  const items = document.getElementById('review-items');
+  const letters = ['A','B','C','D'];
+  items.innerHTML = '';
+  answers.forEach(a => {
+    const q = Qs[a.qIdx];
+    const cls = a.correct ? 'got-right' : 'got-wrong';
+    const badge = a.correct ? '<span class="rv-badge correct">✓ Correct</span>' : '<span class="rv-badge wrong">✗ Incorrect</span>';
+    items.innerHTML += `<div class="review-item ${cls}">
+      <div class="rv-meta">${badge}<span style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace">${q.topic}</span></div>
+      <div class="rv-q">${a.qIdx+1}. ${q.q}</div>
+      <div class="rv-a">Correct answer: <span>${letters[q.ans]}. ${q.opts[q.ans]}</span></div>
+      <div class="rv-exp">${q.exp}</div>
+    </div>`;
+  });
+  window.scrollTo(0, 0);
+}
+
+function backToResults() {
+  document.getElementById('review').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE PROGRESS SYSTEM  (identical block in all 6 files)
+     Stores progress in localStorage under one shared key so the
+     3 lectures + 3 quizzes behave as a single connected course:
+       · ✓ ticks and quiz best-scores in the top course nav
+       · a 6-segment course completion meter in the nav bar
+       · lectures remember your furthest slide ("Resume")
+       · quizzes remember best score, attempts and pass status
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── 1 · Page identity (edited per file) ─────────────────────── */
+var CP_PAGE = 'q1';        // key for THIS file: l1/l2/l3/q1/q2/q3
+var CP_PASS = 60;              // pass mark (%) — matches quiz grading
+
+/* ── 2 · Storage helpers ─────────────────────────────────────── */
+var KEY = 'bairdM2D2Progress';
+function cpLoad(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function cpSave(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+
+/* ── 3 · Injected styles (nav ticks, chips, meter, resume btn) ─ */
+var st = document.createElement('style');
+st.textContent =
+  '.cp-tick{color:var(--green);margin-left:4px;font-size:10px;font-weight:700}' +
+  '.cp-chip{font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gold);margin-left:5px;opacity:.9}' +
+  '.cp-meter{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;padding-left:10px}' +
+  '.cp-meter-lbl{font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;white-space:nowrap}' +
+  '.cp-segs{display:flex;gap:3px}' +
+  '.cp-seg{width:13px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}' +
+  '.cp-seg.done{background:linear-gradient(90deg,var(--accent),var(--gold))}' +
+  '.cp-resume{font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}' +
+  '.cp-resume:hover{background:rgba(201,168,76,.22);box-shadow:0 0 20px rgba(201,168,76,.18)}' +
+  '.cp-note{font-family:JetBrains Mono,monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-top:14px}' +
+  '.cp-note .ok{color:var(--green)}.cp-note .gold{color:var(--gold)}' +
+  '.cp-best-line{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text2);letter-spacing:.06em;margin:0 auto 18px;max-width:500px}' +
+  '.cp-best-line .gold{color:var(--gold)}.cp-best-line .ok{color:var(--green)}' +
+  '@media(max-width:768px){.cp-meter-lbl{display:none}.cp-seg{width:9px}}';
+document.head.appendChild(st);
+
+/* ── 4 · Decorate the course nav (ticks, best scores, meter) ─── */
+var ORDER = ['l1','q1','l2','q2','l3','q3'];   // course sequence
+var HREF  = { 'lecture-1.html':'l1','lecture-2.html':'l2','lecture-3.html':'l3',
+              'quiz-1.html':'q1','quiz-2.html':'q2','quiz-3.html':'q3' };
+
+function decorateNav(){
+  var p = cpLoad();
+  var nav = document.getElementById('course-nav') || document.getElementById('cnav');
+  if(!nav) return;
+
+  /* ticks + score chips on each pill */
+  nav.querySelectorAll('a').forEach(function(a){
+    var k = HREF[a.getAttribute('href')]; if(!k) return;
+    a.querySelectorAll('.cp-tick,.cp-chip').forEach(function(n){ n.remove(); });
+    var d = p[k]; if(!d) return;
+    if(k.charAt(0)==='q' && typeof d.best === 'number'){
+      var chip = document.createElement('span');
+      chip.className = 'cp-chip'; chip.textContent = d.best + '%';
+      a.appendChild(chip);
+    }
+    if(d.done){
+      var t = document.createElement('span');
+      t.className = 'cp-tick'; t.textContent = '✓';
+      t.setAttribute('aria-label','completed');
+      a.appendChild(t);
+    }
+  });
+
+  /* 6-segment completion meter, right-aligned in the nav */
+  var meter = nav.querySelector('.cp-meter');
+  if(!meter){
+    meter = document.createElement('div');
+    meter.className = 'cp-meter';
+    meter.innerHTML = '<span class="cp-meter-lbl"></span><div class="cp-segs"></div>';
+    nav.appendChild(meter);
+  }
+  var doneN = ORDER.filter(function(k){ return p[k] && p[k].done; }).length;
+  meter.querySelector('.cp-meter-lbl').textContent = 'Course ' + doneN + '/6';
+  meter.setAttribute('role','img');
+  meter.setAttribute('aria-label','Course progress: ' + doneN + ' of 6 parts complete');
+  var segs = meter.querySelector('.cp-segs'); segs.innerHTML = '';
+  ORDER.forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'cp-seg' + (p[k] && p[k].done ? ' done' : '');
+    segs.appendChild(s);
+  });
+}
+decorateNav();
+
+/* ── 5 · QUIZ HOOKS ──────────────────────────────────────────── */
+
+/* Shuffle answer positions once per attempt. The original question
+   bank had ~78% of correct answers at option B, so the quiz could be
+   passed by pattern-guessing. Shuffling each question's options (and
+   remapping its correct index) removes that bias without changing a
+   single word of content. Runs before the first renderQ() call.     */
+Qs.forEach(function(q){
+  var order = q.opts.map(function(_, i){ return i; });
+  for(var i = order.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = order[i]; order[i] = order[j]; order[j] = t;
+  }
+  q.opts = order.map(function(i){ return q.opts[i]; });
+  q.ans  = order.indexOf(q.ans);
+});
+
+/* record an attempt when results are shown; keep the best score.
+   `score` and `Qs` are top-level bindings from the quiz engine
+   above, visible from this later script block.                    */
+if(typeof window.showResults === 'function'){
+  var _showResults = window.showResults;
+  window.showResults = function(){
+    _showResults();
+    var pct = Math.round(score / Qs.length * 100);
+    var p = cpLoad();
+    var d = p[CP_PAGE] || {};
+    d.attempts = (d.attempts || 0) + 1;
+    var newBest = (typeof d.best !== 'number') || pct > d.best;
+    d.best = newBest ? pct : d.best;
+    if(pct >= CP_PASS) d.done = true;
+    p[CP_PAGE] = d; cpSave(p);
+    decorateNav();
+
+    /* personal best / attempts line under the grade message */
+    var anchor = document.getElementById('res-msg') || document.getElementById('rmsg');
+    if(anchor){
+      var line = document.createElement('p');
+      line.className = 'cp-best-line';
+      line.innerHTML =
+        (newBest && d.attempts > 1 ? '<span class="ok">★ New personal best!</span> &nbsp;' : '') +
+        'Personal best: <span class="gold">' + d.best + '%</span> · ' +
+        d.attempts + (d.attempts === 1 ? ' attempt' : ' attempts');
+      anchor.insertAdjacentElement('afterend', line);
+    }
+
+    /* Quiz 3 only: reveal the "Module 2 Complete" banner once all
+       three quizzes have been passed                              */
+    var banner = document.getElementById('cbanner');
+    if(banner){
+      var allDone = ['q1','q2','q3'].every(function(k){ return p[k] && p[k].done; });
+      banner.style.display = allDone ? 'block' : 'none';
+    }
+  };
+}
+
+/* mirror selection state for screen readers when an option is picked */
+if(typeof window.pick === 'function'){
+  var _pick = window.pick;
+  window.pick = function(i){
+    _pick(i);
+    var o = document.getElementById('opt-' + i) || document.getElementById('o' + i);
+    if(o) o.setAttribute('aria-checked', 'true');
+  };
+}
+
+/* keyboard answering: 1–4 / A–D select an option, Enter or → for next */
+document.addEventListener('keydown', function(e){
+  if(e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  var k = (e.key || '').toLowerCase();
+  var i = '1234'.indexOf(k); if(i < 0) i = 'abcd'.indexOf(k);
+  if(i > -1){
+    var opts = document.querySelectorAll('.opt');
+    if(opts.length && opts[i] &&
+       !opts[0].classList.contains('locked') && !opts[0].classList.contains('lk')){
+      e.preventDefault(); opts[i].click(); return;
+    }
+  }
+  if(k === 'enter' || k === 'arrowright'){
+    var nb = document.querySelector('.btn-next.show, .bnxt.show');
+    if(nb){ e.preventDefault(); nb.click(); }
+  }
+});
+
+/* show previous best + keyboard hint on the start screen */
+(function(){
+  var startBtn = document.querySelector('#start button');
+  if(!startBtn) return;
+  var p = cpLoad(); var d = p[CP_PAGE];
+  var note = document.createElement('div');
+  note.className = 'cp-note';
+  var bits = [];
+  if(d && typeof d.best === 'number'){
+    bits.push('Personal best: <span class="gold">' + d.best + '%</span> · ' +
+              (d.attempts || 1) + (d.attempts === 1 ? ' attempt' : ' attempts') +
+              (d.done ? ' <span class="ok">· passed ✓</span>' : ''));
+  }
+  bits.push('Keyboard: 1–4 or A–D to answer · Enter for next question');
+  note.innerHTML = bits.join('<br>');
+  startBtn.insertAdjacentElement('afterend', note);
+})();
+
+})();
+</script>
+</body>
+</html>

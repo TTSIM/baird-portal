@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3 — Sinus, Socket & Staged Grafting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d14;--surface:#111420;--card:#161b2e;--border:#1e2540;--gold:#c9a84c;--gold-light:#e8c97e;--gold-dim:rgba(201,168,76,0.15);--text:#e8e4dc;--muted:#8891aa;--subtle:#4a5270;--blue:#4a90d9;--teal:#3dbdac;--rose:#d96a6a;--amber:#e8a44a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.nav-home{color:var(--gold);text-decoration:none;font-size:13px;opacity:0.8;}.nav-home:hover{opacity:1;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:17px;}
+.nav-badge{font-size:11px;background:var(--gold-dim);color:var(--gold);padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.3);}
+.score-display{font-size:14px;color:var(--muted);}
+.score-display strong{color:var(--gold);}
+.progress-track{height:4px;background:var(--border);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.4s;}
+.container{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+.quiz-header{text-align:center;margin-bottom:48px;}
+.quiz-header h1{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;margin-bottom:10px;}
+.quiz-header h1 em{color:var(--gold);font-style:italic;}
+.quiz-header p{color:var(--muted);font-size:15px;}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:24px;transition:border-color 0.3s;}
+.question-card.correct-card{border-color:rgba(61,189,172,0.4);}
+.question-card.wrong-card{border-color:rgba(217,106,106,0.3);}
+.q-num{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.q-text{font-size:16px;line-height:1.65;margin-bottom:22px;}
+.options{display:grid;gap:10px;}
+.opt-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:13px 18px;border-radius:9px;cursor:pointer;text-align:left;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;line-height:1.5;}
+.opt-btn:hover:not(:disabled){border-color:var(--gold);background:rgba(201,168,76,0.05);}
+.opt-btn:disabled{cursor:default;}
+.opt-btn.selected-correct{background:rgba(61,189,172,0.12);border-color:var(--teal);color:var(--teal);}
+.opt-btn.selected-wrong{background:rgba(217,106,106,0.1);border-color:var(--rose);color:var(--rose);}
+.opt-btn.reveal-correct{background:rgba(61,189,172,0.08);border-color:rgba(61,189,172,0.4);color:var(--teal);}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:9px;font-size:13px;line-height:1.65;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(61,189,172,0.08);border:1px solid rgba(61,189,172,0.25);color:#7dd5c8;}
+.feedback.wrong{background:rgba(217,106,106,0.07);border:1px solid rgba(217,106,106,0.22);color:#cc8888;}
+.results-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;margin-top:32px;display:none;}
+.results-panel.show{display:block;}
+.results-score{font-family:'Cormorant Garamond',serif;font-size:72px;color:var(--gold);line-height:1;}
+.results-label{font-size:16px;color:var(--muted);margin:8px 0 24px;}
+.results-grade{font-size:22px;font-family:'Cormorant Garamond',serif;margin-bottom:16px;}
+.results-bar{background:var(--border);border-radius:8px;height:12px;margin:20px 0;overflow:hidden;}
+.results-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 1s ease;}
+.action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.btn{padding:12px 26px;border-radius:9px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all 0.2s;border:1px solid var(--border);color:var(--text);background:transparent;}
+.btn:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:#0a0d14;font-weight:500;}
+.btn-primary:hover{background:var(--gold-light);}
+.sticky-score{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;gap:16px;}
+.sticky-score .s-correct{color:var(--teal);}
+.sticky-score .s-wrong{color:var(--rose);}
+.sticky-score .s-remain{color:var(--muted);}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="nav-home">← Back</a>
+    <div class="nav-title">Sinus, Socket &amp; Staged Grafting</div>
+    <div class="nav-badge">Quiz 3</div>
+  </div>
+  <div class="score-display">Score: <strong id="liveScore">0</strong> / <span id="liveTotal">0</span></div>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="container">
+  <div class="quiz-header">
+    <h1>Quiz 3 — <em>Sinus, Socket &amp; Staged</em></h1>
+    <p>30 questions · Select the best answer · Explanations provided after each question</p>
+  </div>
+  <div id="quizBody"></div>
+  <div class="results-panel" id="resultsPanel">
+    <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Quiz Complete</div>
+    <div class="results-score" id="finalScore">0</div>
+    <div class="results-label">out of 30 correct</div>
+    <div class="results-grade" id="finalGrade"></div>
+    <div class="results-bar"><div class="results-fill" id="resultsFill" style="width:0%"></div></div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.7;" id="finalMsg"></p>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="lecture3.html" class="btn">Review Lecture 3</a>
+      <a href="quiz1.html" class="btn">Restart from Quiz 1</a>
+      <a href="index.html" class="btn">Course Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-score">
+  <span class="s-correct">✓ <span id="sCorrect">0</span></span>
+  <span class="s-wrong">✗ <span id="sWrong">0</span></span>
+  <span class="s-remain">⬜ <span id="sRemain">30</span></span>
+</div>
+
+<script>
+const questions = [
+  {q:"What is the name of the thin mucosal lining of the maxillary sinus?",opts:["Periosteal membrane","Schneiderian membrane","Ostial membrane","Haversian lining"],correct:1,exp:"The Schneiderian membrane is the mucosal lining of the maxillary sinus. It consists of pseudostratified ciliated columnar epithelium on the inside and periosteum on the outside. It is critically important to preserve during sinus grafting — it is 'as thin as the lining of an eggshell.'"},
+  {q:"What is the name of the small canal that connects the maxillary sinus to the nasal cavity?",opts:["The Eustachian tube","The Schneiderian canal","The Ostium","The Foraminal canal"],correct:2,exp:"The ostium is the drainage canal connecting the maxillary sinus to the nasal cavity. Mucus and filtered air move from the sinus through the ostium to the nose. If this is blocked (e.g. by graft material), chronic sinusitis develops."},
+  {q:"Why does the sinus floor expand downward after posterior tooth extraction?",opts:["The sinus fills with fluid","Air pressure in the sinus drives expansion when root support of the floor is lost — pneumatization","Inflammation causes bone resorption","The teeth maintain sinus floor position through their crowns"],correct:1,exp:"The sinus is an air-filled cavity. When posterior tooth roots are removed, the mechanical support they provided to the sinus floor is lost. Air pressure then drives the floor downward in a process called pneumatization — progressively reducing available bone height."},
+  {q:"What is the threshold bone height below which an external sinus graft (lateral window) is typically required?",opts:["Less than 10mm","Less than 8mm","Less than 5mm","Less than 3mm"],correct:2,exp:"Less than 5mm residual bone height is the threshold requiring an external (lateral window) sinus graft. At this height, there is insufficient bone for primary implant stability even with an internal sinus lift. This threshold was established conservatively — some experienced clinicians go lower."},
+  {q:"An internal sinus lift is generally appropriate when residual bone height is:",opts:["Less than 3mm","5mm or more with a flat sinus floor","Any height with a flat sinus floor","Only when combined with short implants"],correct:1,exp:"5mm or more residual bone height with a flat sinus floor is the classic indication for internal sinus lift. The 5mm of bone provides enough engagement for primary stability when the implant is placed simultaneously with the lift. An oblique sinus floor is a contraindication — requiring external approach."},
+  {q:"What is the 'elephant foot' tip used for during external sinus grafting?",opts:["Making the lateral window outline","Removing the bone window","Detaching and elevating the Schneiderian membrane from the sinus walls","Packing the graft material"],correct:2,exp:"The 'elephant foot' is a piezo tip specifically designed for atraumatic elevation of the Schneiderian membrane from the sinus walls. Its rounded concave tip allows it to follow the membrane contours while separating it from the bone without perforation."},
+  {q:"Who first described the lateral window external sinus graft procedure?",opts:["Brånemark","Boyne and Tatum (1980)","Summers","Mish"],correct:1,exp:"The lateral window sinus graft was described by Boyne and Tatum in 1980. At the time, iliac crest autogenous bone was used. It was originally designed for extremely resorbed posterior maxillae with almost no residual bone."},
+  {q:"What happens when bone graft material accidentally enters the sinus through a membrane perforation and blocks the ostium?",opts:["The body resorbs it within 2–3 weeks","Chronic sinusitis, nasal discharge, and potential sinus wall destruction","Temporary swelling that resolves","Only a mild allergic reaction"],correct:1,exp:"Blocking the ostium is catastrophic. The sinus cannot drain, leading to chronic sinusitis, persistent nasal discharge, and potential destruction of the medial sinus wall. This was illustrated by a case with over £200,000 in compensation — 'imagine living with nasal discharge for life.'"},
+  {q:"Why is allograft preferred over xenograft for sinus grafting?",opts:["Allograft is cheaper","Allograft provides better volume stability","If membrane perforation occurs, allograft resorbs harmlessly — xenograft persists and can permanently block the ostium","Allograft has faster osseointegration in the sinus"],correct:2,exp:"The critical safety reason: if allograft accidentally enters the sinus (membrane perforation), it will biodegrade over time without permanently blocking the ostium. Xenograft particles persist indefinitely — a blockage would be permanent, causing chronic sinusitis that cannot resolve without surgical intervention."},
+  {q:"What is the Summers osteotome technique for internal sinus lift?",opts:["Using a small round bur to open the sinus floor","Using hydraulic pressure to detach the membrane","Tapping chisels with a concave tip to fracture and elevate the sinus floor through the osteotomy","Using Versah burs in reverse to push bone upward"],correct:2,exp:"Summers' technique uses concave-tipped chisels (osteotomes) hammered through the osteotomy to fracture the last millimetre of bone and push it upward, balloon-expanding the Schneiderian membrane. It is now largely abandoned due to patient discomfort from the tapping and reports of tinnitus from ossicle vibration."},
+  {q:"Versah burs achieve sinus floor elevation through which mechanism?",opts:["Forward rotation with increased speed","Reverse rotation — the bur 'sucks' bone from the sides and pushes it superiorly","Hydraulic water pressure injection","Ultrasonic vibration"],correct:1,exp:"Versah burs use reverse rotation (opposite to normal drilling direction) to condense bone from the sides of the osteotomy and redirect it upward — simultaneously widening the ridge and elevating the sinus floor. This eliminates the tapping and discomfort of the Summers technique."},
+  {q:"What radiographic sign during internal sinus lift indicates successful membrane elevation?",opts:["A flat horizontal line at the sinus floor","A dome-shaped radiopacity at the sinus floor","Increased bone density around the osteotomy","No change is expected on X-ray"],correct:1,exp:"A dome-shaped radiopacity on the periapical X-ray taken after elevation confirms successful tent-like elevation of the Schneiderian membrane. If you see a 'chimney smoke' appearance — elongated thin radiopacity extending up into the sinus — the membrane has been perforated."},
+  {q:"For internal sinus lift, what should you do if you suspect membrane perforation before packing graft?",opts:["Pack allograft — it's safe either way","Switch to xenograft — it will seal the perforation","Take a periapical X-ray — if chimney smoke seen, either use a shorter implant or abandon and reschedule","Proceed with xenograft at reduced volume"],correct:2,exp:"X-ray confirmation is essential before packing. If you see the chimney smoke pattern of perforation: option 1 — use a shorter implant that doesn't require the elevation; option 2 — abandon, allow healing, and reschedule. If you must pack, allograft is safer than xenograft for the reasons of ostium safety."},
+  {q:"The indemnity cost for an implant dentist performing external sinus grafts rises to approximately:",opts:["£4,000–5,000 per year","£6,000–7,000 per year","£9,000–11,000 per year","£15,000–20,000 per year"],correct:2,exp:"External sinus grafts significantly increase the indemnity cost due to the higher complication risk — rising from approximately £4,000–5,000 (for implants + GBR + internal sinus lift) to £9,000–11,000 per year. This is only financially viable if you perform sufficient cases."},
+  {q:"At what experience level is it appropriate to begin performing external sinus grafts?",opts:["After your first 10 implants","After your first 50 implants","After approximately 100 implants and only with sufficient case volume to justify indemnity cost","Immediately if you have attended a course"],correct:2,exp:"The recommendation is approximately 100 implants of experience before attempting external sinus grafting. Additionally, the patient volume must be sufficient to justify the £9–11K indemnity uplift. If you're only doing 2 external sinus grafts per year, the math doesn't work."},
+  {q:"A patient had a molar extracted today. She is unsure about an implant but thinks she may want one in about 3 years. What socket graft should you use?",opts:["Allograft — fastest remodelling","Autogenous bone — best biology","Xenograft — long-term volume stability","No graft needed — blood clot is sufficient"],correct:2,exp:"For re-entry 3 years later, xenograft is correct. Its slow resorption provides long-term volume maintenance for up to several years. Allograft would have fully remodelled and resorbed by then. The preserved ridge volume makes implant placement much more predictable years later."},
+  {q:"A patient wants an implant placed in 6 months after extraction. What socket graft material should be used?",opts:["Xenograft — for volume stability","Allograft — remodels into viable bone within 6 months","Autogenous — fastest healing","Any material — timing doesn't matter for socket grafts"],correct:1,exp:"Allograft remodels into vital bone within approximately 6 months — providing a quality bone bed for implant placement. Xenograft would still have large remaining particles at 6 months with insufficient vital bone for reliable primary stability."},
+  {q:"Socket grafting is beneficial even for patients having a three-unit bridge (no implant) because:",opts:["It accelerates healing of the extraction socket","It preserves the pontic site volume, enabling an ovate pontic design and preventing ridge-lap","It prevents adjacent tooth migration","It reduces the need for post-operative antibiotics"],correct:1,exp:"Without socket grafting, the pontic site loses volume and becomes concave. This forces a ridge-lap pontic that traps food and is impossible to clean properly. With xenograft socket grafting, the volume is maintained allowing an ovate pontic that rests on a convex ridge — hygienic and aesthetic."},
+  {q:"What are the THREE key questions that determine whether simultaneous GBR or staged bone grafting is needed?",opts:["Bone density, patient age, and torque achieved","Correct prosthetic position possible? Adequate primary stability achievable? Defect favourable (≥2 walls)?","Sinus proximity, nerve proximity, and bone width","Phenotype, smoking status, and implant system"],correct:1,exp:"The three diagnostic questions are: (1) Can I place the implant in the correct prosthetic position? (2) Can I achieve adequate primary stability (≥25 Ncm)? (3) Is the defect favourable — does it have ≥2 remaining bony walls? A 'No' to any one redirects to staged bone grafting."},
+  {q:"What type of bone graft is a 'block graft' using tissue from the ascending ramus?",opts:["Allograft","Xenograft","Autogenous","Alloplast"],correct:2,exp:"A block graft from the ascending ramus uses the patient's own bone — making it autogenous. The ascending ramus provides dense cortical bone with minimal post-operative morbidity compared to chin or iliac crest harvest. It is the preferred autogenous block harvest site for most clinicians."},
+  {q:"Regarding staged bone grafting with an autogenous block, how long should you wait before implant placement?",opts:["4–6 weeks","8 weeks","12–16 weeks","24 weeks"],correct:2,exp:"Autogenous block grafts require 12–16 weeks for integration before implant placement. This is faster than allograft (24 weeks) or xenograft (8–9 months) due to autogenous bone's osteogenic and osteoinductive properties accelerating remodelling."},
+  {q:"For staged bone grafting using an allograft block, how long should you wait before implant placement?",opts:["12–16 weeks","24 weeks","9 months","6 weeks"],correct:1,exp:"Allograft staged grafts require approximately 24 weeks (6 months) before implant placement. Allograft is osteoinductive but not osteogenic — it lacks living cells — making it slower to remodel than autogenous but faster than xenograft."},
+  {q:"In the 'sausage technique' for staged bone grafting, what contains and shapes the graft?",opts:["Collagen membrane","Resorbable sutures","A rigid membrane (magnesium or titanium mesh) stabilised with pins","A PTFE non-resorbable membrane"],correct:2,exp:"The sausage technique uses a rigid membrane (typically magnesium membrane or titanium mesh) to contain and shape the particulate graft into the desired ridge contour. The rigidity is essential — a collagen membrane would collapse under the weight of graft particles and fail to maintain space."},
+  {q:"When grafting a three-unit implant bridge case, which sites should receive bone graft?",opts:["Only the implant sites","Only the pontic site","Both implant sites AND the pontic site","No grafting needed if implants achieve primary stability"],correct:2,exp:"Both implant sites AND the pontic site must be grafted. A case illustrated this perfectly — the clinician grafted the two implant sites beautifully but forgot the central pontic. The result was a concave pontic site requiring a ridge-lap design. 'Convexity, convexity, convexity' — including under pontics."},
+  {q:"What is the bone scraping technique for autogenous collection during staged grafting?",opts:["Using the implant drill at low speed to collect chips","Using a periosteal elevator on the cortical bone","Using a manual bone scraper on the exposed cortical surface within the raised flap","Aspirating blood from the surgical site"],correct:2,exp:"Bone scraping uses a dedicated bone scraper tool applied to the exposed cortical bone within the raised flap. Firm scraping from superior to inferior collects bone chips in the scraper chamber. It is less traumatic than block harvesting — described as 'easier than a wisdom tooth extraction' for the patient."},
+  {q:"What is pneumatization of the maxillary sinus?",opts:["Infection of the maxillary sinus","Progressive expansion of the sinus cavity — typically downward after tooth loss","A congenital variation in sinus size","Air embolism during sinus grafting"],correct:1,exp:"Pneumatization is the progressive expansion of the air-filled maxillary sinus — driven by the air pressure within. After posterior tooth extraction, the support for the sinus floor is removed and the floor progressively descends, reducing available bone height for implant placement."},
+  {q:"For a knife-edge ridge defect with no distal wall, simultaneous GBR is:",opts:["Appropriate if a titanium-reinforced membrane is used","The recommended approach for all ridge defects","Not possible — no walls means no blood supply or stability for graft particles","Only possible with xenograft inner layer"],correct:2,exp:"A knife-edge defect with no distal wall is a staged approach case. Without walls, there is no blood supply scaffold for the graft particles and no mechanical stability for the blood clot. GBR requires at least 2 walls — without them, even the best membrane and graft will fail."},
+  {q:"What distinguishes a 'staged' bone grafting approach from a 'simultaneous' GBR approach?",opts:["Staged uses different membrane types","In staged grafting, bone is built in a separate surgery BEFORE the implant is placed","Simultaneous requires two surgical visits","Staged grafting is only for sinus procedures"],correct:1,exp:"In staged bone grafting, the defect is built up in a dedicated first surgery — block graft, sausage, or sinus graft — and the implant is placed in a second separate surgery after the bone has integrated. Simultaneous GBR places the implant and grafts in the same surgery."},
+  {q:"A patient needs bone block grafting but cannot tolerate a second surgical site. What is the best alternative?",opts:["Perform the procedure anyway","Use an allograft block from the human tissue bank","Use xenograft particulate without a block","Cancel treatment"],correct:1,exp:"An allograft block from a human tissue bank provides comparable results to an autogenous block without requiring a second surgical site for harvesting. It eliminates donor site morbidity while providing the rigid scaffold needed for large volume defects."},
+  {q:"Which of the following correctly summarises the complete healing timeline for xenograft in a staged approach?",opts:["4–6 weeks","12–16 weeks","24 weeks","8–9 months"],correct:3,exp:"Xenograft in a staged bone graft scenario requires 8–9 months before implant placement. Xenograft is osteoconductive only and resorbs very slowly — this is what gives it excellent long-term volume stability, but also means it takes the longest time to integrate sufficiently for safe implant placement."},
+  {q:"What is the CORRECT order of priority when planning complex implant reconstructions involving bone grafting?",opts:["Surgical access → bone graft choice → implant placement → prosthetic design","Prosthetic design → ideal implant positions → bone assessment → grafting strategy to enable those positions","Bone assessment → grafting → implant placement → prosthetic design","Cost estimation → patient consent → surgery → prosthetics"],correct:1,exp:"The prosthesis should be designed first — then ideal implant positions are determined to support it — then bone is assessed — then grafting is planned to enable those positions. Never plan grafting before the prosthetic goal is defined. 'I have a defect — let's decide which prosthesis first, then plan the bone grafting to achieve it.'"}
+];
+
+let answered = JSON.parse(localStorage.getItem('q3_answers') || '{}');
+let correct = 0, wrong = 0;
+
+function buildQuiz(){
+  const body = document.getElementById('quizBody');
+  body.innerHTML = '';
+  correct = 0; wrong = 0;
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card-' + i;
+    const prev = answered[i];
+    const isAnswered = prev !== undefined;
+    if(isAnswered){ if(prev === q.correct) correct++; else wrong++; }
+    card.innerHTML = `
+      <div class="q-num">Question ${i+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((o,oi)=>`<button class="opt-btn" id="opt-${i}-${oi}" onclick="answer(${i},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-${i}"></div>`;
+    body.appendChild(card);
+    if(isAnswered) restoreAnswer(i, prev, q);
+  });
+  updateStats();
+}
+
+function answer(qi, opt){
+  const q = questions[qi];
+  if(answered[qi] !== undefined) return;
+  answered[qi] = opt;
+  localStorage.setItem('q3_answers', JSON.stringify(answered));
+  if(opt === q.correct) correct++; else wrong++;
+  restoreAnswer(qi, opt, q);
+  updateStats();
+  if(Object.keys(answered).length === questions.length) setTimeout(showResults, 600);
+}
+
+function restoreAnswer(qi, opt, q){
+  const card = document.getElementById('card-'+qi);
+  const isCorrect = opt === q.correct;
+  card.classList.add(isCorrect ? 'correct-card' : 'wrong-card');
+  for(let i=0;i<q.opts.length;i++){
+    const btn = document.getElementById('opt-'+qi+'-'+i);
+    btn.disabled = true;
+    if(i === opt) btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+    if(!isCorrect && i === q.correct) btn.classList.add('reveal-correct');
+  }
+  const fb = document.getElementById('fb-'+qi);
+  fb.textContent = (isCorrect ? '✓ Correct — ' : '✗ Incorrect — ') + q.exp;
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+}
+
+function updateStats(){
+  const total = Object.keys(answered).length;
+  document.getElementById('liveScore').textContent = correct;
+  document.getElementById('liveTotal').textContent = total;
+  document.getElementById('progressFill').style.width = (total/questions.length*100)+'%';
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sWrong').textContent = wrong;
+  document.getElementById('sRemain').textContent = questions.length - total;
+}
+
+function showResults(){
+  const pct = Math.round(correct/questions.length*100);
+  document.getElementById('finalScore').textContent = correct;
+  document.getElementById('resultsFill').style.width = pct+'%';
+  let grade, msg;
+  if(pct>=90){grade='Excellent — Distinction Level';msg='Exceptional performance across the most advanced topics. You are ready to apply these principles in clinical practice with confidence.';}
+  else if(pct>=75){grade='Good — Merit Level';msg='Strong performance. Review any areas where you lost marks — particularly sinus decision thresholds and healing timelines.';}
+  else if(pct>=60){grade='Pass Level';msg='Satisfactory. Focus on the sinus graft decision tree, socket graft material selection, and staged vs simultaneous indications.';}
+  else{grade='Needs Improvement';msg='Please revisit Lecture 3 fully before retaking. Key areas: sinus anatomy, ostium risk, socket graft timing, and staged approach indications.';}
+  document.getElementById('finalGrade').textContent = grade;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('resultsPanel').classList.add('show');
+  localStorage.setItem('quiz3_done','1');
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
+}
+
+function retakeQuiz(){
+  answered = {};
+  localStorage.removeItem('q3_answers');
+  correct = 0; wrong = 0;
+  document.getElementById('resultsPanel').classList.remove('show');
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildQuiz();
+if(Object.keys(answered).length === questions.length) showResults();
+</script>
+</body>
+</html>
