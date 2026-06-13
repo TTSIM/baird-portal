@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2 — Clinical Decision-Making, Grafting & Loading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* L2 identity: slate-blue + copper. Variable NAMES kept from L1 so the shared
+   component CSS is reused; only the values change for module differentiation. */
+:root{
+  --bg:#EEF0F4; --slide:#FBFBFD; --ink:#16202E; --ink-soft:#48566A;
+  --teal:#1F3A5F; --teal-2:#33639C; --teal-ghost:#E4EAF3;   /* slate */
+  --gold:#BF6238; --gold-soft:#F1DBCF;                       /* copper */
+  --rim:#9E3B33; --pink:#E7B7AE; --pink-soft:#F3D9D3;
+  --bone:#EFE6D2; --bone-line:#CDB98C; --void:#2C2622;
+  --metal:#9FB0C4; --metal-2:#6F8197; --green:#2E8B6F;
+  --line:#DBE0E9; --shadow:0 18px 50px -24px rgba(20,30,46,.45);
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{position:fixed;inset:0;display:flex;flex-direction:column}
+.topbar{height:4px;background:var(--teal-ghost);position:relative;z-index:30;flex:0 0 auto}
+.topbar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal),var(--teal-2));width:0;transition:width .4s cubic-bezier(.5,0,.1,1)}
+.stage{flex:1 1 auto;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(20px,4.5vw,76px);opacity:0;visibility:hidden;transform:translateY(14px) scale(.992);
+  transition:opacity .5s ease,transform .5s ease,visibility .5s;overflow-y:auto}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide-inner{width:100%;max-width:1060px;margin:auto}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal-2);display:flex;align-items:center;gap:.6em;margin-bottom:1.1rem}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--gold)}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,5.4vw,4rem);line-height:1.03;letter-spacing:-.015em}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.55rem,3.6vw,2.55rem);line-height:1.08;letter-spacing:-.01em;margin-bottom:.5em}
+h3{font-family:var(--sans);font-weight:700;font-size:1.02rem;letter-spacing:-.005em;margin-bottom:.35em}
+p{font-size:clamp(1rem,1.4vw,1.16rem);line-height:1.6;color:var(--ink-soft);max-width:64ch}
+p strong,li strong{color:var(--ink);font-weight:600}
+.lead{font-size:clamp(1.12rem,1.7vw,1.4rem);color:var(--ink)}
+.muted{color:var(--ink-soft)}
+.grid{display:grid;gap:clamp(14px,2vw,28px)}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+.center{align-items:center}
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:.65rem;margin-top:.4rem}
+ul.clean li{position:relative;padding-left:1.6rem;font-size:clamp(.98rem,1.35vw,1.12rem);line-height:1.5;color:var(--ink-soft)}
+ul.clean li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:2px;background:var(--gold);transform:rotate(45deg)}
+.card{background:var(--slide);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,26px);box-shadow:var(--shadow)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.32em .7em;border-radius:99px;background:var(--teal-ghost);color:var(--teal)}
+.tag.gold{background:var(--gold-soft);color:#8a4422}
+.pull{font-family:var(--serif);font-size:clamp(1.3rem,2.4vw,1.9rem);line-height:1.25;color:var(--teal);font-weight:500}
+.kbd{font-family:var(--mono);font-size:.78rem;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:.1em .5em;color:var(--ink-soft)}
+.navbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,3vw,40px);background:rgba(251,251,253,.86);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:30}
+.navbar .title{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn{font-family:var(--sans);font-weight:600;font-size:.9rem;border:1px solid var(--teal);background:var(--teal);color:#fff;border-radius:10px;padding:.55em 1em;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:.4em}
+.btn:hover{background:var(--teal-2);border-color:var(--teal-2)}
+.btn.ghost{background:transparent;color:var(--teal)}.btn.ghost:hover{background:var(--teal-ghost)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.counter{font-family:var(--mono);font-size:.82rem;color:var(--ink-soft);min-width:62px;text-align:center}
+.menu-toggle{position:fixed;top:14px;right:16px;z-index:40;background:var(--slide);border:1px solid var(--line);border-radius:10px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+.menu-toggle span,.menu-toggle span::before,.menu-toggle span::after{content:"";display:block;width:18px;height:2px;background:var(--teal);position:relative}
+.menu-toggle span::before{position:absolute;top:-6px}.menu-toggle span::after{position:absolute;top:6px}
+.menu{position:fixed;inset:0;background:rgba(22,32,46,.55);backdrop-filter:blur(4px);z-index:39;opacity:0;visibility:hidden;transition:.3s;display:flex;justify-content:flex-end}
+.menu.open{opacity:1;visibility:visible}
+.menu-panel{width:min(360px,86vw);background:var(--slide);height:100%;overflow-y:auto;padding:64px 18px 24px;transform:translateX(20px);transition:.3s}
+.menu.open .menu-panel{transform:none}
+.menu-panel h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-2);margin:14px 8px 8px}
+.menu-item{display:flex;gap:10px;align-items:baseline;padding:.5em .6em;border-radius:8px;cursor:pointer;color:var(--ink-soft);font-size:.92rem}
+.menu-item:hover{background:var(--teal-ghost);color:var(--ink)}
+.menu-item.cur{background:var(--teal);color:#fff}
+.menu-item .n{font-family:var(--mono);font-size:.74rem;opacity:.7;min-width:1.4em}
+.ui{background:var(--slide);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,24px);box-shadow:var(--shadow)}
+.range{width:100%;-webkit-appearance:none;height:6px;border-radius:99px;background:var(--gold-soft);outline:none;margin:14px 0}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.range::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff}
+.scale-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.readout{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,2rem);color:var(--teal);font-weight:600}
+.frame{background:linear-gradient(180deg,#fff,#EEF1F6);border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:var(--shadow)}
+.frame svg{width:100%;height:auto;display:block}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:4px;background:var(--slide);gap:4px}
+.toggle button{border:none;background:transparent;font-family:var(--sans);font-weight:600;font-size:.9rem;padding:.5em 1.1em;border-radius:99px;cursor:pointer;color:var(--ink-soft)}
+.toggle button.on{background:var(--teal);color:#fff}
+.choices{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.choice{border:1px solid var(--line);background:#fff;border-radius:12px;padding:.7em 1.1em;cursor:pointer;font-weight:600;font-size:.95rem;color:var(--ink);transition:.18s}
+.choice:hover{border-color:var(--teal);background:var(--teal-ghost)}
+.choice.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.verdict-box{margin-top:16px;border-left:4px solid var(--gold);background:#fff;border-radius:0 12px 12px 0;padding:14px 18px}
+.verdict-box b{color:var(--teal)}
+.note{border-left:4px solid var(--gold);background:var(--gold-soft);border-radius:0 10px 10px 0;padding:12px 16px;font-size:.95rem;color:#7a3c1f}
+.title-mark{font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.objgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px}
+.obj{display:flex;gap:12px;align-items:flex-start;background:var(--slide);border:1px solid var(--line);border-radius:12px;padding:14px}
+.obj .num{font-family:var(--serif);font-size:1.6rem;color:var(--gold);font-weight:700;line-height:1}
+/* myth flip cards */
+.myth{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.flip{perspective:1000px;cursor:pointer;min-height:128px}
+.flip .inner{position:relative;width:100%;height:100%;min-height:128px;transition:transform .5s;transform-style:preserve-3d}
+.flip.flipped .inner{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:16px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+.flip .front{background:var(--slide)}
+.flip .back{background:var(--teal);color:#fff;transform:rotateY(180deg)}
+.flip .back p{color:#dfe7f2;font-size:.9rem}
+.flip .front h3{color:var(--teal)} .flip .front small{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+/* reveal list */
+.reveal-item{border:1px solid var(--line);border-radius:12px;background:var(--slide);margin-bottom:10px;overflow:hidden}
+.reveal-item button{width:100%;text-align:left;border:none;background:transparent;padding:14px 16px;font-family:var(--sans);font-weight:600;font-size:1rem;cursor:pointer;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
+.reveal-item .body{max-height:0;overflow:hidden;transition:.35s;padding:0 16px}
+.reveal-item.open .body{max-height:200px;padding:0 16px 14px}
+.reveal-item button .pm{color:var(--gold);font-family:var(--mono)}
+/* case tabs */
+.case-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.case-tab{font-weight:600;font-size:.86rem;border:1px solid var(--line);background:var(--slide);border-radius:10px;padding:.5em .8em;cursor:pointer;color:var(--ink-soft);transition:.16s}
+.case-tab.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.qcard{background:var(--slide);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.qcard .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:.7em .9em;margin-top:8px;cursor:pointer;font-size:.96rem;transition:.16s;color:var(--ink)}
+.qcard .opt:hover{border-color:var(--teal-2)}
+.qcard .opt.correct{background:#E2F0EB;border-color:var(--green);color:#1f6b53}
+.qcard .opt.wrong{background:#F6E4E1;border-color:var(--rim);color:var(--rim)}
+.qcard .exp{font-size:.88rem;color:var(--ink-soft);margin-top:10px;display:none;border-top:1px dashed var(--line);padding-top:10px}
+.qcard .exp.show{display:block}
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.compare .col{background:var(--slide);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.86rem}
+.compare .col h4{color:var(--teal);font-family:var(--serif);font-size:1.1rem;margin-bottom:6px}
+.fade-seq>*{opacity:0;transform:translateY(10px);animation:seq .6s ease forwards}
+@keyframes seq{to{opacity:1;transform:none}}
+.fade-seq>*:nth-child(1){animation-delay:.05s}.fade-seq>*:nth-child(2){animation-delay:.16s}
+.fade-seq>*:nth-child(3){animation-delay:.27s}.fade-seq>*:nth-child(4){animation-delay:.38s}
+.fade-seq>*:nth-child(5){animation-delay:.49s}.fade-seq>*:nth-child(6){animation-delay:.6s}
+@media (max-width:780px){.g2,.g3,.iti-wrap,.objgrid,.myth,.compare,.split{grid-template-columns:1fr}.slide{justify-content:flex-start;padding-top:60px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,34px);align-items:center}
+</style>
+</head>
+<body>
+<div class="menu-toggle" id="menuBtn" aria-label="Slide menu"><span></span></div>
+<div class="menu" id="menu"><div class="menu-panel" id="menuPanel"></div></div>
+<div class="deck">
+  <div class="topbar"><span id="prog"></span></div>
+  <div class="stage" id="stage"></div>
+  <div class="navbar">
+    <div class="title">Module · Decision-Making, Grafting &amp; Loading — Lecture 2</div>
+    <div class="nav-right">
+      <button class="btn ghost" id="prev">‹ Back</button>
+      <span class="counter" id="counter">01 / 30</span>
+      <button class="btn" id="next">Next ›</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ---------- SVG instruments (signature) ---------- */
+function gauge(v){ // torque gauge 0..50 Ncm
+  const cx=160,cy=170,r=120;
+  const a=Math.PI-(v/50)*Math.PI;           // 180°→0°
+  const nx=cx+Math.cos(a)*(r-22), ny=cy-Math.sin(a)*(r-22);
+  function arc(from,to){const a0=Math.PI-(from/50)*Math.PI,a1=Math.PI-(to/50)*Math.PI;
+    const x0=cx+Math.cos(a0)*r,y0=cy-Math.sin(a0)*r,x1=cx+Math.cos(a1)*r,y1=cy-Math.sin(a1)*r;
+    return `M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}`;}
+  return `<svg viewBox="0 0 320 210" role="img" aria-label="Torque gauge ${v} Ncm">
+    <path d="${arc(0,20)}" fill="none" stroke="#C9817A" stroke-width="14" stroke-linecap="round"/>
+    <path d="${arc(20,35)}" fill="none" stroke="#D9A441" stroke-width="14"/>
+    <path d="${arc(35,50)}" fill="none" stroke="var(--green)" stroke-width="14" stroke-linecap="round"/>
+    <g font-family="IBM Plex Mono" font-size="11" fill="var(--ink-soft)">
+      <text x="34" y="185">0</text><text x="150" y="42" text-anchor="middle">25</text><text x="288" y="185" text-anchor="end">50</text>
+      <text x="${cx+Math.cos(Math.PI-(20/50)*Math.PI)*(r+16)}" y="${cy-Math.sin(Math.PI-(20/50)*Math.PI)*(r+16)}" text-anchor="middle">20</text>
+      <text x="${cx+Math.cos(Math.PI-(35/50)*Math.PI)*(r+16)}" y="${cy-Math.sin(Math.PI-(35/50)*Math.PI)*(r+16)}" text-anchor="middle">35</text></g>
+    <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="var(--teal)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="9" fill="var(--teal)"/>
+    <text x="${cx}" y="${cy+34}" text-anchor="middle" font-family="Fraunces" font-weight="600" font-size="30" fill="var(--teal)">${v}</text>
+    <text x="${cx}" y="${cy+52}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="var(--ink-soft)">Ncm</text>
+  </svg>`;
+}
+function jumpGap(mm){ // implant in socket, gap to buccal plate
+  const base=270,boneTop=90;
+  const gapPx=8+mm*12;               // visual width of gap
+  const implL=170, implR=implL+44;   // implant body
+  const buccalInner=implL-gapPx;
+  const zoneColor=mm<2?'#C9817A':mm<4?'#D9A441':'var(--green)';
+  return `<svg viewBox="0 0 380 300" role="img" aria-label="Jumping gap ${mm} mm">
+   <defs><linearGradient id="bn2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EBD6"/><stop offset="1" stop-color="#E3D5B4"/></linearGradient></defs>
+   <path d="M30 ${base} L30 ${boneTop} q160 -36 320 0 L350 ${base} Z" fill="url(#bn2)" stroke="var(--bone-line)" stroke-width="2"/>
+   <!-- socket void right of implant -->
+   <path d="M${implR} ${boneTop+18} q40 -6 70 4 L${implR+50} ${base-20} q-30 14 -50 0 Z" fill="var(--void)" opacity=".12"/>
+   <!-- buccal plate (left, thin) -->
+   <path d="M${buccalInner} ${boneTop+8} q-10 90 6 ${base-boneTop-30}" fill="none" stroke="var(--bone-line)" stroke-width="2"/>
+   <!-- the gap zone -->
+   <rect x="${buccalInner}" y="${boneTop+30}" width="${implL-buccalInner}" height="150" fill="${zoneColor}" opacity=".35"/>
+   <line x1="${buccalInner}" y1="${boneTop+22}" x2="${implL}" y2="${boneTop+22}" stroke="${zoneColor}" stroke-width="2"/>
+   <text x="${(buccalInner+implL)/2}" y="${boneTop+14}" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="${zoneColor}">${mm} mm</text>
+   <!-- implant -->
+   <g><rect x="${implL}" y="${boneTop+18}" width="44" height="200" rx="10" fill="var(--metal)" stroke="var(--metal-2)" stroke-width="2"/>
+   ${[0,1,2,3,4,5,6,7].map(i=>`<path d="M${implL} ${boneTop+34+i*24} l44 8" stroke="var(--metal-2)" stroke-width="2" fill="none"/>`).join('')}
+   </g>
+   <text x="${implL+22}" y="${boneTop+8}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--metal-2)">implant</text>
+   <text x="40" y="${boneTop-2}" font-family="IBM Plex Mono" font-size="9" fill="#7c6a3a">buccal</text>
+  </svg>`;
+}
+function molar(root,angle){ // lower molar, two roots, implant + cantilever
+  // crown band on top, two roots hanging down, fossa = middle of crown
+  const top=70,gum=96,rootBot=250;
+  const mesX=150,disX=250,fossaX=200;
+  // implant entry depends on root, angle determines exit
+  const entry=root==='mesial'?mesX:disX;
+  let exit;
+  if(angle==='upright') exit=entry;
+  else exit=root==='mesial'?entry+46:entry-46;
+  // cantilever = horizontal distance between implant exit (at crown) and fossa
+  const exitAtCrown=exit; // approx
+  const cant=Math.abs(exitAtCrown-fossaX);
+  const good=cant<22;
+  return `<svg viewBox="0 0 380 280" role="img" aria-label="Molar implant ${root} ${angle}">
+    <!-- crown -->
+    <path d="M110 ${top} q90 -22 180 0 q6 26 0 30 q-90 18 -180 0 q-6 -8 0 -30 z" fill="#EDE9E0" stroke="#c9c2b2" stroke-width="2"/>
+    <path d="M${fossaX} ${top+2} v28" stroke="#b9b0a0" stroke-width="2"/>
+    <text x="${fossaX}" y="${top-6}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#9a907e">central fossa</text>
+    <!-- roots / sockets -->
+    <path d="M${mesX-16} ${gum+4} q-6 90 8 ${rootBot-gum-10}" fill="none" stroke="var(--bone-line)" stroke-width="2"/>
+    <path d="M${disX+16} ${gum+4} q6 90 -8 ${rootBot-gum-10}" fill="none" stroke="var(--bone-line)" stroke-width="2"/>
+    <!-- interseptal bone -->
+    <path d="M${fossaX-14} ${gum+10} q14 60 0 110 q-14 -50 0 -110" fill="var(--bone)" stroke="var(--bone-line)" stroke-width="1.5"/>
+    <text x="${fossaX}" y="${rootBot+12}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#7c6a3a">interseptal bone</text>
+    <!-- implant line -->
+    <line x1="${entry}" y1="${gum+8}" x2="${exit}" y2="${rootBot-18}" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+    <!-- cantilever bracket -->
+    <line x1="${entry}" y1="${gum-6}" x2="${fossaX}" y2="${gum-6}" stroke="${good?'var(--green)':'var(--rim)'}" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle cx="${entry}" cy="${gum-6}" r="3" fill="${good?'var(--green)':'var(--rim)'}"/>
+    <circle cx="${fossaX}" cy="${gum-6}" r="3" fill="${good?'var(--green)':'var(--rim)'}"/>
+  </svg>`;
+}
+function guideSVG(d){ // d 0..100 = how far implant is seated
+  const sleeveT=50,sleeveB=200, win=120; // window y-centre
+  const carrierY=40+(d/100)*120;         // descends with depth
+  const greenY=carrierY+118;             // green line near tip
+  const matched=d>=92;
+  return `<svg viewBox="0 0 360 260" role="img" aria-label="Guided placement ${d}%">
+    <!-- sleeve -->
+    <rect x="150" y="${sleeveT}" width="60" height="${sleeveB-sleeveT}" rx="6" fill="#E7EBF2" stroke="var(--metal-2)" stroke-width="2"/>
+    <!-- window notch -->
+    <rect x="206" y="${win-16}" width="20" height="32" rx="3" fill="#fff" stroke="var(--metal-2)" stroke-width="1.5"/>
+    <text x="244" y="${win+4}" font-family="IBM Plex Mono" font-size="9" fill="var(--metal-2)">window</text>
+    <!-- sleeve margin reference -->
+    <line x1="140" y1="${sleeveT}" x2="150" y2="${sleeveT}" stroke="var(--teal-2)" stroke-width="2"/>
+    <text x="100" y="${sleeveT+4}" font-family="IBM Plex Mono" font-size="9" fill="var(--teal-2)">sleeve margin</text>
+    <!-- carrier inside -->
+    <rect x="160" y="${carrierY}" width="40" height="150" rx="6" fill="var(--metal)" stroke="var(--metal-2)" stroke-width="1.5"/>
+    <!-- black band -->
+    <rect x="160" y="${carrierY+62}" width="40" height="14" fill="${ (carrierY+62<win+16 && carrierY+76>win-16)?'#111':'#444'}"/>
+    <!-- green line -->
+    <line x1="158" y1="${greenY}" x2="202" y2="${greenY}" stroke="${matched?'var(--green)':'#9bbf72'}" stroke-width="3"/>
+    ${matched?`<text x="240" y="${sleeveT-6}" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">✓ matched</text>`:''}
+  </svg>`;
+}
+
+/* ---------- slides ---------- */
+const slides=[
+/* 1 */`<div class="slide-inner fade-seq">
+  <div class="title-mark">Implant Treatment Planning · Lecture 2 of 2</div>
+  <h1 style="margin:.3em 0 .35em">Decision-Making,<br>Grafting &amp; Loading</h1>
+  <p class="lead" style="max-width:56ch">From the classification to the chairside: when immediate works, how to read the jumping gap and the torque gauge, what to graft and when, and how guided surgery ties it together.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1.4rem"><span class="tag">Treatment planning weekend</span><span class="tag gold">30 slides · interactive</span></div>
+  <p class="muted" style="margin-top:1.6rem;font-size:.92rem">Navigate with <span class="kbd">→</span> <span class="kbd">←</span>, the buttons, or the menu (top-right). Surgical bench demonstration is intentionally excluded.</p></div>`,
+
+/* 2 */`<div class="slide-inner"><div class="eyebrow">What you'll take away</div><h2>Learning objectives</h2>
+  <div class="objgrid fade-seq">
+   <div class="obj"><div class="num">1</div><div><h3>Weigh immediate placement honestly</h3><p style="font-size:.95rem">Separate genuine benefits from the myths, and name its real disadvantages.</p></div></div>
+   <div class="obj"><div class="num">2</div><div><h3>Graft on indication</h3><p style="font-size:.95rem">Apply the jumping-gap rule and know when a socket graft is justified.</p></div></div>
+   <div class="obj"><div class="num">3</div><div><h3>Load by the numbers</h3><p style="font-size:.95rem">Use torque thresholds to decide submerge vs transmucosal vs immediate load.</p></div></div>
+   <div class="obj"><div class="num">4</div><div><h3>Plan & place with a guide</h3><p style="font-size:.95rem">Read the sleeve, window and green line; apply it to real cases.</p></div></div>
+  </div></div>`,
+
+/* 3 */`<div class="slide-inner"><div class="eyebrow">From Lecture 1</div><h2>The types were the map. Now we drive.</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Lecture 1 classified sites by the tissue you'll find: Types 1–4.</li>
+    <li>Lecture 2 turns that into decisions: graft or not, load or bury, freehand or guided.</li>
+    <li>Two instruments govern most of it — the <b>jumping gap</b> and the <b>torque gauge</b>.</li>
+  </ul></div>
+   <div class="frame" id="g3gauge"></div></div></div>`,
+
+/* 4 */`<div class="slide-inner"><div class="eyebrow">Immediate placement</div><h2>Why it's attractive</h2>
+  <div class="grid g3 fade-seq" style="margin-top:6px">
+    <div class="card"><h3>One episode</h3><p style="font-size:.92rem">A single surgery and anaesthetic — extraction and implant together.</p></div>
+    <div class="card"><h3>Psychology</h3><p style="font-size:.92rem">The patient feels they “already have” their implant; good for experience and flow.</p></div>
+    <div class="card"><h3>Market pressure</h3><p style="font-size:.92rem">In some markets, no same-day implant means the patient shops around.</p></div>
+  </div>
+  <p style="margin-top:18px">All real — but several commonly-claimed advantages don't survive scrutiny.</p></div>`,
+
+/* 5 */`<div class="slide-inner"><div class="eyebrow">Myth-buster</div><h2>Tap each “advantage”</h2>
+  <p style="margin-bottom:10px">Do these claims for immediate placement hold up?</p>
+  <div class="myth" id="myth">
+   <div class="flip"><div class="inner"><div class="face front"><small>Claim</small><h3>“It's cheaper for the patient”</h3></div><div class="face back"><h3 style="color:#fff">No</h3><p>Same work — if anything trickier. Don't discount it.</p></div></div></div>
+   <div class="flip"><div class="inner"><div class="face front"><small>Claim</small><h3>“It stops bone loss”</h3></div><div class="face back"><h3 style="color:#fff">Myth (1990s)</h3><p>Bundle-bone resorption happens regardless of immediate placement.</p></div></div></div>
+   <div class="flip"><div class="inner"><div class="face front"><small>Claim</small><h3>“It preserves soft-tissue architecture”</h3></div><div class="face back"><h3 style="color:#fff">That's loading</h3><p>The papilla benefit comes from immediate <em>loading</em> (a temp crown), not placement.</p></div></div></div>
+   <div class="flip"><div class="inner"><div class="face front"><small>Claim</small><h3>“Atraumatic extraction saves the buccal plate”</h3></div><div class="face back"><h3 style="color:#fff">Only briefly</h3><p>The plate still remodels via bundle bone, preserved or not.</p></div></div></div>
+  </div></div>`,
+
+/* 6 */`<div class="slide-inner"><div class="eyebrow">Immediate placement</div><h2>The real disadvantages</h2>
+  <ul class="clean fade-seq">
+   <li><b>Least predictable aesthetics</b> — the widest range of soft-tissue outcomes in the evidence.</li>
+   <li><b>High technique sensitivity</b> and a tendency to drift.</li>
+   <li><b>Higher infection risk</b> / retrograde peri-implantitis.</li>
+   <li><b>Must graft</b> bone and soft tissue — sometimes multiple grafts.</li>
+   <li><b>Not for every case</b> — needs adequate bone beyond the socket.</li>
+  </ul></div>`,
+
+/* 7 */`<div class="slide-inner"><div class="eyebrow">Aesthetics</div><h2>The high-smile-line trap</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Even the best operators report wide soft-tissue variability with immediate placement.</li>
+    <li>You can do everything right and still not predict how the patient heals.</li>
+    <li>For a fussy, high-smile-line patient: <b>stage it.</b> Staging lets you diagnose and correct a recession at the graft stage.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“If I drive fast I'm out of control; slow, I keep the car — a safer journey for you.”</p></div></div></div>`,
+
+/* 8 */`<div class="slide-inner"><div class="eyebrow">Technique sensitivity</div><h2>Why immediates drift palatally</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Placing into an <b>empty socket</b> the drill tends to drift; a fully healed ridge is easier.</li>
+    <li>Palatal bone is thicker than buccal, so chasing primary stability pushes you palatally.</li>
+    <li>End result: the implant shoulder sits too far <b>buccal</b>.</li>
+    <li>The fix: a <b>fully guided</b> digital surgical guide. Never do an immediate without one.</li>
+   </ul></div>
+   <div class="note">Drifting is the quiet reason many immediate cases look “off”. The guide removes it from the equation.</div></div></div>`,
+
+/* 9 */`<div class="slide-inner"><div class="eyebrow">A named complication</div><h2>Retrograde peri-implantitis — three causes</h2>
+  <div id="rpi">
+   <div class="reveal-item"><button>1 · Too much torque initially <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Over-compression of the bone at placement.</p></div></div>
+   <div class="reveal-item"><button>2 · Infection — adjacent teeth or the socket <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Residual or neighbouring pathology seeds the apex.</p></div></div>
+   <div class="reveal-item"><button>3 · Overheating during preparation <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Inadequate irrigation / blunt drills cook the bone.</p></div></div>
+  </div></div>`,
+
+/* 10 */`<div class="slide-inner"><div class="eyebrow">Why early/delayed is cleaner</div><h2>Body vs bacteria</h2>
+  <div class="split"><div><p>With an immediate you can't guarantee the socket is free of residual bacteria. With early or delayed placement, <b>the body has done the cleaning</b>.</p>
+   <ul class="clean" style="margin-top:12px"><li>The failing tooth keeps supplying “soldiers” to the bacterial side.</li><li>Remove it and you cut that supply, so the body can win.</li></ul></div>
+   <div class="card"><p class="pull">“The body is the best Hoover — but it needs time.”</p></div></div></div>`,
+
+/* 11 */`<div class="slide-inner"><div class="eyebrow">Infected sockets</div><h2>Chronic vs acute</h2>
+  <div class="grid g2 fade-seq" style="margin-top:6px">
+   <div class="card"><h3 style="color:var(--green)">Chronic infection — debatable</h3><p style="font-size:.93rem">An RCT (attributed to Lindeboom) randomised chronically-infected teeth to immediate vs delayed and found <b>similar success</b> — provided you open up and clean thoroughly.</p></div>
+   <div class="card" style="border-color:var(--rim)"><h3 style="color:var(--rim)">Acute infection — don't touch</h3><p style="font-size:.93rem">Immediate placement is not suitable for acute infection.</p></div>
+  </div>
+  <div class="note" style="margin-top:16px">Even with chronic infection, the caveat stands: higher risk of infection / retrograde peri-implantitis. Clean meticulously.</div></div>`,
+
+/* 12 */`<div class="slide-inner"><div class="eyebrow">The cleaning tool</div><h2>Degranulation burs</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Far more efficient than hand instruments at clearing a socket.</li>
+    <li>Come in graded sizes — <b>start large, work down</b> toward the apex.</li>
+    <li>Used under saline. The cleaner the socket, the lower the retrograde risk.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“If you clean manually it's never as efficient as the burs.”</p></div></div></div>`,
+
+/* 13 */`<div class="slide-inner"><div class="eyebrow">Imaging strategy</div><h2>Anterior — CBCT before extraction</h2>
+  <div class="split"><div><ul class="clean">
+    <li>The patient may turn out to be a <b>socket-graft case</b> (e.g. Kan thin labial + thin palatal).</li>
+    <li>Anteriors usually plan as Type 2 — stability from bone <b>above</b> the socket — so bony changes won't alter the plan.</li>
+    <li>One pre-extraction CBCT is enough; a second at 8 weeks adds radiation without changing anything.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“You can plan off the pre-op CBCT even if you wait eight weeks.”</p></div></div></div>`,
+
+/* 14 */`<div class="slide-inner"><div class="eyebrow">Imaging strategy</div><h2>When do you scan? Toggle the site</h2>
+  <div class="ui"><div class="toggle" id="cbToggle"><button class="on" data-c="ant">Anterior</button><button data-c="post">Posterior</button></div>
+   <p id="cbtxt" style="margin-top:16px"></p></div></div>`,
+
+/* 15 */`<div class="slide-inner"><div class="eyebrow">Socket grafting</div><h2>When is it justified?</h2>
+  <div id="sg">
+   <div class="reveal-item"><button>Not enough bone for stability <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">A must where the site would otherwise lose what little support exists.</p></div></div>
+   <div class="reveal-item"><button>High aesthetic demand / high smile line <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Minimise bone loss and add a soft-tissue plug to protect the result.</p></div></div>
+   <div class="reveal-item"><button>Patient delaying 2–4 years <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Thin phenotypes lose &gt;50% volume if left; graft with a slow-resorbing xenograft / corticocancellous allograft.</p></div></div>
+   <div class="reveal-item"><button>Pontic site preservation <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Maintain ridge form under a conventional or implant bridge.</p></div></div>
+   <div class="reveal-item"><button>Tooth next to an existing implant <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Graft (or flapless immediate) to support the neighbour's mesial/distal bone.</p></div></div>
+   <div class="reveal-item"><button>Upper six into the sinus <span class="pm">+</span></button><div class="body"><p style="font-size:.92rem">Support the sinus floor to avoid a later external sinus lift.</p></div></div>
+  </div></div>`,
+
+/* 16 */`<div class="slide-inner"><div class="eyebrow">Restraint</div><h2>Don't graft everyone</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Routine grafting adds ~6 months per case.</li>
+    <li>It drives <b>operator and patient burnout</b> (“a year and still no tooth”).</li>
+    <li>It adds cost — graft only on indication, and explain why to the patient.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“Your case forces me to graft — I only do it when it's needed.”</p></div></div></div>`,
+
+/* 17 */`<div class="slide-inner"><div class="eyebrow">Instrument 1</div><h2>The jumping-gap rule</h2>
+  <p style="margin-bottom:4px">Set the gap between the implant and the buccal plate.</p>
+  <div class="split"><div class="frame" id="jgSvg"></div>
+   <div class="ui"><input class="range" id="jgrange" min="1" max="6" step="1" value="1" aria-label="Jumping gap mm">
+     <div class="scale-row"><span>1 mm</span><span>3 mm</span><span>6 mm</span></div>
+     <div class="readout" id="jgval" style="margin-top:8px"></div>
+     <div class="verdict-box" id="jgv"></div></div></div></div>`,
+
+/* 18 */`<div class="slide-inner"><div class="eyebrow">Instrument 1 · summary</div><h2>Gap → protocol</h2>
+  <div class="compare fade-seq">
+   <div class="col" style="border-color:var(--rim)"><h4>&lt; 2 mm</h4><p>Implant too buccal — <b>not suitable</b> for immediate.</p></div>
+   <div class="col" style="border-color:#D9A441"><h4>2–3 mm</h4><p>Raise a flap; graft <b>inside and outside</b>; close.</p></div>
+   <div class="col" style="border-color:var(--green)"><h4>≥ 4 mm</h4><p>Stay <b>flapless</b>; graft inside only.</p></div>
+  </div>
+  <div class="note" style="margin-top:16px">Tunnelling is great for soft tissue, but bone graft delivered through a tunnel is hard to build — for bone, raise the flap.</div></div>`,
+
+/* 19 */`<div class="slide-inner"><div class="eyebrow">Instrument 2</div><h2>The torque gauge</h2>
+  <p style="margin-bottom:4px">Dial the insertion torque and read the loading decision.</p>
+  <div class="split"><div class="frame" id="tqSvg"></div>
+   <div class="ui"><input class="range" id="tqrange" min="10" max="50" step="5" value="20" aria-label="Torque Ncm">
+     <div class="scale-row"><span>10</span><span>25</span><span>35</span><span>50 Ncm</span></div>
+     <div class="verdict-box" id="tqv" style="margin-top:14px"></div></div></div></div>`,
+
+/* 20 */`<div class="slide-inner"><div class="eyebrow">Instrument 2 · the limits</div><h2>Thresholds &amp; micromotion</h2>
+  <div class="grid g3 fade-seq" style="margin-top:6px">
+   <div class="card"><b style="font-family:var(--mono);color:var(--teal);font-size:1.3rem">≈ 25 Ncm</b><p style="font-size:.9rem;margin-top:4px">Submerge vs transmucosal decision point. Temporary abutment never torqued beyond this.</p></div>
+   <div class="card"><b style="font-family:var(--mono);color:var(--green);font-size:1.3rem">35 Ncm</b><p style="font-size:.9rem;margin-top:4px">Threshold for immediate loading of a single unit. Only the final crown goes to 35.</p></div>
+   <div class="card"><b style="font-family:var(--mono);color:var(--rim);font-size:1.3rem">&gt; 100 µm</b><p style="font-size:.9rem;margin-top:4px">Micromotion beyond ~100 microns = failed osseointegration. Why ≤20 Ncm must be submerged.</p></div>
+  </div>
+  <div class="note" style="margin-top:16px">Reading torque while keeping orientation: seat to ~2 mm short with the handpiece, then finish on the torque wrench so you stop on the green-line match.</div></div>`,
+
+/* 21 */`<div class="slide-inner"><div class="eyebrow">Immediate loading</div><h2>The temp crown is a healing abutment</h2>
+  <div class="split"><div><ul class="clean">
+    <li>A temporary crown is your <b>customised healing abutment</b> — it shapes the emergence profile while the implant integrates.</li>
+    <li>So chairside you don't need to swap to a longer healing abutment first.</li>
+    <li>Put a barrier (Surgicel / membrane / collagen) under it so composite never touches bone — composite traps plaque.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“It's good for the patient — but what it really does is shape the emergence profile.”</p></div></div></div>`,
+
+/* 22 */`<div class="slide-inner"><div class="eyebrow">Compensating for change</div><h2>Overcorrect — bone and soft tissue</h2>
+  <div class="split"><div><p>With immediate placement you expect “minus” changes in both bone and soft tissue. So you build in extra.</p>
+   <ul class="clean" style="margin-top:12px"><li><b>Bone:</b> aim for ~4 mm hoping to keep ~2 mm.</li><li><b>Soft tissue:</b> add a second connective-tissue layer under the flap.</li><li>Stabilising suture 5–6 mm from the margin — higher pulls the graft too high.</li></ul></div>
+   <div class="card"><p class="pull">“Over-correct the bone, over-correct the soft tissue.”</p></div></div></div>`,
+
+/* 23 */`<div class="slide-inner"><div class="eyebrow">Molar immediate</div><h2>Engage the interseptal bone</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Increasingly used where some stability exists — flapless, through the socket.</li>
+    <li>Aim at the <b>interseptal bone</b>; graft the socket inside as a contained defect.</li>
+    <li>Deep-thread designs (e.g. Megagen BlueDiamond) can reach good torque on only ~2 mm of engagement — while keeping a 2 mm safety zone from the nerve.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“No swelling, no pain — that's the advantage of a flapless immediate.”</p></div></div></div>`,
+
+/* 24 */`<div class="slide-inner"><div class="eyebrow">Molar immediate · the angle</div><h2>Where to enter, and at what tilt?</h2>
+  <p style="margin-bottom:6px">Pick a root and an angle. Watch the cantilever to the central fossa.</p>
+  <div class="split"><div class="frame" id="mlSvg"></div>
+   <div class="ui">
+     <div style="margin-bottom:10px"><span class="tag">Root</span><div class="choices" id="mlRoot"><button class="choice on" data-r="mesial">Mesial</button><button class="choice" data-r="distal">Distal</button></div></div>
+     <div><span class="tag">Angle</span><div class="choices" id="mlAng"><button class="choice on" data-a="upright">Upright</button><button class="choice" data-a="tilted">Tilted forward</button></div></div>
+     <div class="verdict-box" id="mlv" style="margin-top:14px"></div></div></div></div>`,
+
+/* 25 */`<div class="slide-inner"><div class="eyebrow">The finishing piece</div><h2>Anatomical healing abutments</h2>
+  <div class="split"><div><ul class="clean">
+    <li>Square-section, graded sizes, central or off-centre to match implant position.</li>
+    <li>Block the socket so the implant itself isn't touching it; graft sits underneath.</li>
+    <li>Reusable metal components — one kit logged per use so it isn't lost.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“The healing abutment is nice and wide — it blocks the socket for me.”</p></div></div></div>`,
+
+/* 26 */`<div class="slide-inner"><div class="eyebrow">Guided surgery</div><h2>Sleeve, window, green line</h2>
+  <p style="margin-bottom:4px">Seat the implant. Match the green line to the sleeve margin and the black band to the window.</p>
+  <div class="split"><div class="frame" id="gdSvg"></div>
+   <div class="ui"><input class="range" id="gdrange" min="0" max="100" value="0" aria-label="Seating depth">
+     <div class="scale-row"><span>Starting</span><span>Seating</span><span>Matched</span></div>
+     <p id="gdtxt" style="margin-top:12px"></p></div></div></div>`,
+
+/* 27 */`<div class="slide-inner"><div class="eyebrow">Guided surgery · why</div><h2>Why ~100% of cases are guided</h2>
+  <div class="grid g2 fade-seq" style="margin-top:6px">
+   <div class="card"><h3>No wobble</h3><p style="font-size:.92rem">All guided drills share a 5 mm shank matching the sleeve's 5 mm internal diameter — works across brands.</p></div>
+   <div class="card"><h3>Lab approval</h3><p style="font-size:.92rem">Tell the lab implant size, position and brand; approve the digital guide before manufacture.</p></div>
+   <div class="card"><h3>Fixation</h3><p style="font-size:.92rem">Teeth present → no screws needed; edentulous → fixation screws.</p></div>
+   <div class="card"><h3>The economics</h3><p style="font-size:.92rem">~£260 vs ~£120 — “the best investment ever”: you can't afford an implant in the wrong place.</p></div>
+  </div></div>`,
+
+/* 28 */`<div class="slide-inner"><div class="eyebrow">Putting it together</div><h2>Worked cases</h2>
+  <div class="case-tabs" id="caseTabs">
+   <button class="case-tab on" data-c="A">A · Canine</button><button class="case-tab" data-c="B">B · Premolar</button>
+   <button class="case-tab" data-c="C">C · Michelle</button><button class="case-tab" data-c="D">D · Molar</button></div>
+  <div class="card" id="caseBody"></div></div>`,
+
+/* 29 */`<div class="slide-inner"><div class="eyebrow">Quick self-check</div><h2>Test yourself</h2>
+  <div id="selfcheck"></div>
+  <p class="muted" style="font-size:.9rem">The full 30-question quiz for this lecture is a separate file.</p></div>`,
+
+/* 30 */`<div class="slide-inner fade-seq"><div class="eyebrow">Wrap-up</div><h2>Key takeaways</h2>
+  <ul class="clean" style="margin-bottom:18px">
+    <li>Immediate placement is convenient but least predictable aesthetically — stage high-smile-line cases.</li>
+    <li><b>Jumping gap:</b> &lt;2 mm not suitable · 2–3 mm flap + graft in/out · ≥4 mm flapless graft inside.</li>
+    <li><b>Torque:</b> ~25 Ncm submerge/transmucosal · 35 Ncm immediate load · ≤20 Ncm must submerge (micromotion &gt;100 µm fails).</li>
+    <li>Graft on indication, not by reflex. Anterior CBCT before extraction; posterior ~2–3 weeks before placement.</li>
+    <li>Guide everything: it removes drift and protects the result.</li>
+  </ul>
+  <div class="card" style="border-color:var(--teal)"><h3 style="color:var(--teal)">Next — the quizzes</h3>
+    <p style="font-size:.95rem">Two 30-question quizzes follow: Quiz 1 on Lecture 1 (timing &amp; classification) and Quiz 2 on Lecture 2 (decision-making, grafting &amp; loading), each ranging across the material.</p></div></div>`
+];
+
+/* ---------- engine ---------- */
+const stage=document.getElementById('stage');
+slides.forEach((html,i)=>{const d=document.createElement('section');d.className='slide';d.id='s'+i;d.innerHTML=html;stage.appendChild(d);});
+let cur=0;const N=slides.length;
+const prog=document.getElementById('prog'),counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+const KEY='module4_day2_lec2_implant_decisions_pos';
+function show(i,save=true){i=Math.max(0,Math.min(N-1,i));
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+i).classList.add('active');cur=i;
+  prog.style.width=((i+1)/N*100)+'%';counter.textContent=String(i+1).padStart(2,'0')+' / '+N;
+  prevB.disabled=i===0;nextB.disabled=i===N-1;
+  document.querySelectorAll('.menu-item').forEach(m=>m.classList.toggle('cur',+m.dataset.i===i));
+  stage.scrollTop=0;document.getElementById('s'+i).scrollTop=0;
+  if(save){try{localStorage.setItem(KEY,i)}catch(e){}}}
+nextB.onclick=()=>show(cur+1);prevB.onclick=()=>show(cur-1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')show(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')show(cur-1);if(e.key==='Home')show(0);if(e.key==='End')show(N-1);});
+const menu=document.getElementById('menu'),panel=document.getElementById('menuPanel');
+const titles=["Title","Objectives","From Lecture 1","Why immediate","Myth-buster","Disadvantages","High smile line","Drifting","Retrograde PI","Body vs bacteria","Chronic vs acute","Degranulation burs","Anterior CBCT","When to scan","Socket graft — when","Don't graft all","Jumping-gap rule","Gap → protocol","Torque gauge","Thresholds","Temp = abutment","Overcorrect","Interseptal bone","Molar tilt","Healing abutments","Guided placement","Why guided","Worked cases","Self-check","Takeaways"];
+panel.innerHTML='<h4>Lecture 2 · slides</h4>'+titles.map((t,i)=>`<div class="menu-item" data-i="${i}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${t}</span></div>`).join('');
+panel.querySelectorAll('.menu-item').forEach(m=>m.onclick=()=>{show(+m.dataset.i);menu.classList.remove('open')});
+document.getElementById('menuBtn').onclick=()=>menu.classList.toggle('open');
+menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open')};
+
+/* ---------- interactions ---------- */
+// 3 + 19 gauges
+document.getElementById('g3gauge').innerHTML=gauge(35);
+// 5 myth flips
+document.querySelectorAll('#myth .flip').forEach(f=>f.onclick=()=>f.classList.toggle('flipped'));
+// 9 + 15 reveals
+function wireReveal(id){const r=document.getElementById(id);if(!r)return;
+  r.querySelectorAll('.reveal-item button').forEach(b=>b.onclick=()=>{const it=b.parentElement;it.classList.toggle('open');
+    b.querySelector('.pm').textContent=it.classList.contains('open')?'–':'+';});}
+wireReveal('rpi');wireReveal('sg');
+// 14 cbct toggle
+const cb=document.getElementById('cbToggle');
+const cbTxt={ant:'<b>Anterior → CBCT before extraction.</b> Catch a socket-graft case early, and since stability comes from bone above the socket, the pre-op scan still plans the case even after an 8-week wait. A second scan rarely justifies the radiation.',
+ post:'<b>Posterior → CBCT ~2–3 weeks before placement.</b> Socket and sinus levels move a lot, so you want to see the real state — empty, apically filled, or full — close to surgery. PA often enough to judge whether a socket graft is needed.'};
+if(cb){document.getElementById('cbtxt').innerHTML=cbTxt.ant;
+  cb.querySelectorAll('button').forEach(b=>b.onclick=()=>{cb.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('cbtxt').innerHTML=cbTxt[b.dataset.c];});}
+// 17 jumping gap
+const jgr=document.getElementById('jgrange');
+function paintJG(){const mm=+jgr.value;document.getElementById('jgSvg').innerHTML=jumpGap(mm);
+  document.getElementById('jgval').textContent=mm+' mm jumping gap';
+  let v;if(mm<2)v='<b>Not suitable</b> for immediate — the implant sits too buccal and the bone won\'t be good enough.';
+  else if(mm<4)v='<b>2–3 mm:</b> raise a flap and graft <b>inside and outside</b>, then close.';
+  else v='<b>≥ 4 mm:</b> stay <b>flapless</b> and graft inside only.';
+  document.getElementById('jgv').innerHTML=v;}
+if(jgr){jgr.oninput=paintJG;paintJG();}
+// 19 torque
+const tqr=document.getElementById('tqrange');
+function paintTQ(){const v=+tqr.value;document.getElementById('tqSvg').innerHTML=gauge(v);
+  let t;if(v<=20)t='<b>≤ 20 Ncm → submerge.</b> A transmucosal long healing abutment risks chewing micromotion; bury the implant.';
+  else if(v<35)t='<b>25–30 Ncm → transmucosal.</b> Long healing abutment is fine; not enough for single-unit immediate loading.';
+  else t='<b>≥ 35 Ncm → immediate loading possible.</b> Enough primary stability for a single-tooth temporary crown.';
+  document.getElementById('tqv').innerHTML=t;}
+if(tqr){tqr.oninput=paintTQ;paintTQ();}
+// 24 molar tilt
+let mlState={root:'mesial',angle:'upright'};
+function paintML(){document.getElementById('mlSvg').innerHTML=molar(mlState.root,mlState.angle);
+  const s=mlState.root+'-'+mlState.angle;
+  const map={'mesial-upright':'<b>Mesial root, upright → ends in the fossa.</b> The ideal: minimal cantilever, good load distribution.',
+   'mesial-tilted':'<b>Mesial root, tilted → long mesial cantilever.</b> Avoid — you\'ve pushed the exit away from the fossa.',
+   'distal-upright':'<b>Distal root, upright → exits at the distal cusp.</b> Off the fossa; not ideal.',
+   'distal-tilted':'<b>Distal root, tilted → big mesial cantilever.</b> Worst option for load.'};
+  document.getElementById('mlv').innerHTML=map[s];}
+const mlRoot=document.getElementById('mlRoot'),mlAng=document.getElementById('mlAng');
+if(mlRoot){mlRoot.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{mlRoot.querySelectorAll('.choice').forEach(x=>x.classList.remove('on'));b.classList.add('on');mlState.root=b.dataset.r;paintML();});
+  mlAng.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{mlAng.querySelectorAll('.choice').forEach(x=>x.classList.remove('on'));b.classList.add('on');mlState.angle=b.dataset.a;paintML();});
+  paintML();}
+// 26 guided
+const gdr=document.getElementById('gdrange');
+function paintGD(){const d=+gdr.value;document.getElementById('gdSvg').innerHTML=guideSVG(d);
+  document.getElementById('gdtxt').innerHTML=d>=92?'<b>Matched.</b> Green line meets the sleeve margin and the black band shows in the window — correct position, depth and orientation.':'Keep seating until the green line reaches the sleeve margin and the black band sits in the window.';}
+if(gdr){gdr.oninput=paintGD;paintGD();}
+// 28 cases
+const cases={
+ A:{t:'Type 1 immediate — upper canine (failing post crown)',b:'Elderly patient wanting it done quickly; small canine root (large roots need an implant ~2 mm longer than the root). Degranulation burs to clean; an apical lesion found, so a modified semilunar flap as a cleaning window down to hard bone. Prosthetic guide placed to the cingulum. 4 mm jumping gap → essentially flapless, graft inside. Only 20 Ncm → short healing abutment, buried with a soft-tissue punch as a plug. 12 weeks, then a simple punch exposure (adequate keratinised tissue and convexity).'},
+ B:{t:'Guided immediate — failing premolar post crown',b:'Plenty of bone, cosmetics not the priority → guided Type 1 with a lab-made temporary crown. 15C cut the PDL for atraumatic extraction; degranulation burs at 800 rpm under saline. Sleeve + window + green line confirm position/depth/orientation. 35 Ncm achieved → immediate loading. Tunnel for a connective-tissue graft (harvested from the edentulous ridge — less pain/bleeding than the palate); jumping gap grafted with corticocancellous bone + barrier; temp crown shapes emergence; final screw-retained crown at 12 weeks.'},
+ C:{t:'Michelle — failing post crown (immediate, 30 Ncm)',b:'Guided immediate within the prosthetic envelope. Only 30 Ncm → long healing abutment rather than immediate loading, plus soft-tissue graft and bone. Regular blood donor, so no allograft → xenograft with a Jason membrane, sutured. ~12 weeks then temporised; convexity matched the natural tooth because both the jumping gap and the soft tissue were grafted.'},
+ D:{t:'Molar immediate — root sectioning & R2Gate',b:'ID nerve well clear; interseptal bone available. Roots sectioned and elevated one by one with Coupland\'s elevators (Cryer\'s avoided — they crack the interseptal bone). Planned in R2Gate; sleeve over preserved interseptal bone. 4.1 × 10 mm deep-thread implant (deep threads add ~0.3 mm → 4.7 mm outer Ø). Pathfinder direction-indicator screwed in temporarily while grafting; anatomical healing abutment over the graft with cross-linked collagen fleece.'}
+};
+function paintCase(k){document.getElementById('caseBody').innerHTML=`<h3 style="color:var(--teal);font-family:var(--serif);font-size:1.25rem;margin-bottom:8px">${cases[k].t}</h3><p style="font-size:.96rem">${cases[k].b}</p>`;}
+const ctabs=document.getElementById('caseTabs');
+if(ctabs){ctabs.querySelectorAll('.case-tab').forEach(b=>b.onclick=()=>{ctabs.querySelectorAll('.case-tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');paintCase(b.dataset.c);});paintCase('A');}
+// 29 self-check
+const scQ=[
+ {q:'A patient with a high smile line wants a single anterior implant. Best approach?',
+  o:['Immediate placement for speed','Stage it — manage tissues over time','Immediate, but skip grafting'],a:1,
+  e:'Immediate placement is the least predictable aesthetically; staging lets you diagnose and correct tissue changes.'},
+ {q:'Jumping gap of 3 mm. Protocol?',
+  o:['Flapless, graft inside only','Raise a flap, graft inside and outside','Not suitable for immediate'],a:1,
+  e:'2–3 mm → raise a flap and graft both inside and outside; ≥4 mm can stay flapless.'},
+ {q:'Insertion torque reads 18 Ncm. You should:',
+  o:['Immediately load with a temp crown','Submerge the implant','Transmucosal long healing abutment'],a:1,
+  e:'≤20 Ncm must be submerged; transmucosal risks chewing micromotion (>100 µm fails).'},
+ {q:'For an anterior implant, when do you take the CBCT?',
+  o:['Before extraction','8 weeks after extraction','Only after placement'],a:0,
+  e:'Anterior: CBCT before extraction — it catches socket-graft cases and still plans the case after a wait.'},
+ {q:'In a molar immediate, the implant should engage the:',
+  o:['Buccal plate','Interseptal bone, tilted to exit the fossa','Distal root, upright'],a:1,
+  e:'Engage interseptal bone and tilt ~5–10° so the implant exits in the central fossa, minimising cantilever.'}
+];
+const sc=document.getElementById('selfcheck');
+if(sc){sc.innerHTML=scQ.map((q,i)=>`<div class="qcard" data-i="${i}"><h3>${i+1}. ${q.q}</h3>${q.o.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}<div class="exp">${q.e}</div></div>`).join('');
+ sc.querySelectorAll('.qcard').forEach((card,i)=>{card.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+   if(card.dataset.done)return;card.dataset.done=1;const k=+btn.dataset.k;
+   card.querySelectorAll('.opt').forEach((b,kk)=>{if(kk===scQ[i].a)b.classList.add('correct');});
+   if(k!==scQ[i].a)btn.classList.add('wrong');card.querySelector('.exp').classList.add('show');});});}
+
+let start=0;try{const v=localStorage.getItem(KEY);if(v!==null)start=+v;}catch(e){}
+show(start,false);
+</script>
+</body>
+</html>
