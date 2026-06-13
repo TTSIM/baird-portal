@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2 — Peri-Implant Disease</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1822;--bg2:#0a121a;--surface:#16232F;--surface2:#1d2f3d;--line:#2a3f50;
+  --accent:#F0A868;--accent-dim:#a86a37;--gold:#C9A961;--text:#E8EEF2;--muted:#8FA3B0;--muted2:#5f7585;
+  --danger:#E87A6B;--ok:#6FCF8E;--warn:#F0C36A;
+  --display:'Fraunces',serif;--body:'Inter',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:30px 22px 120px}
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:50;transition:width .4s;box-shadow:0 0 12px var(--accent)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;padding-top:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.05;margin-top:8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.7}
+.meta b{color:var(--text);font-size:15px}
+.intro{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px}
+.intro p{color:#cdd9e1;line-height:1.6;margin-bottom:14px}
+.intro ul{list-style:none;margin:12px 0}
+.intro li{padding-left:26px;position:relative;margin-bottom:9px;color:var(--muted)}
+.intro li::before{content:"\203A";position:absolute;left:6px;color:var(--accent);font-weight:700}
+.btn{font-family:var(--body);font-weight:600;font-size:1rem;background:var(--accent);color:#2a1605;border:none;padding:14px 28px;border-radius:12px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(240,168,104,.25)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.qnum{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.12em}
+.qtopic{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;border-radius:20px}
+.qtext{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.3;margin:10px 0 22px}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:flex-start;gap:13px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:15px 17px;cursor:pointer;transition:.18s;font-size:1rem;line-height:1.4}
+.opt:hover{border-color:var(--accent-dim);background:var(--surface2)}
+.opt .key{font-family:var(--mono);font-size:.85rem;color:var(--muted);border:1px solid var(--line);border-radius:7px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;transition:.18s}
+.opt.correct{border-color:var(--ok);background:rgba(111,207,142,.1)}
+.opt.correct .key{border-color:var(--ok);color:var(--ok);background:rgba(111,207,142,.15)}
+.opt.wrong{border-color:var(--danger);background:rgba(232,122,107,.1)}
+.opt.wrong .key{border-color:var(--danger);color:var(--danger)}
+.opt.disabled{pointer-events:none;opacity:.85}
+.opt.dim{opacity:.5}
+.explain{margin-top:18px;border-left:3px solid var(--accent);background:var(--bg2);border-radius:0 12px 12px 0;padding:15px 18px;font-size:.95rem;line-height:1.55;color:#cdd9e1;display:none}
+.explain.show{display:block;animation:fade .3s}
+.explain .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.explain.ok{border-color:var(--ok)}.explain.ok .lab{color:var(--ok)}
+.explain.no{border-color:var(--danger)}.explain.no .lab{color:var(--danger)}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--bg) 60%,transparent);padding:18px 22px 24px;display:flex;justify-content:center}
+.navinner{max-width:720px;width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.scoreline{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.scoreline b{color:var(--accent)}
+.result{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:40px 28px;animation:fade .4s}
+.ring{width:180px;height:180px;margin:0 auto 20px}
+.result h2{font-family:var(--display);font-weight:900;font-size:2rem;margin-bottom:8px}
+.result .grade{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.result p{color:var(--muted);line-height:1.6;max-width:48ch;margin:0 auto 10px}
+.breakdown{text-align:left;margin:24px 0;border-top:1px solid var(--line);padding-top:18px}
+.brow{display:flex;justify-content:space-between;font-size:.9rem;padding:8px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.brow b{font-family:var(--mono)}
+.result-cta{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.hide{display:none}
+@media(max-width:560px){.qtext{font-size:1.15rem}.wrap{padding:24px 16px 120px}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="wrap">
+  <div class="head">
+    <div><div class="eyebrow">Implant Course · Quiz 2</div><h1>Peri-Implant<br>Disease</h1></div>
+    <div class="meta" id="meta"><b id="qpos">—</b><br>30 questions</div>
+  </div>
+
+  <div id="intro" class="intro">
+    <p>This quiz tests <b>Lecture 2</b> — diagnosing and managing peri-implant mucositis and peri-implantitis: aetiology, probing, surfaces, the real prevalence figures, and what the evidence says about treatment.</p>
+    <ul>
+      <li>30 single-answer questions across 9 topics</li>
+      <li>Instant feedback and an explanation after each answer</li>
+      <li>Your progress is saved if you close the tab</li>
+      <li>A scored breakdown by topic at the end</li>
+    </ul>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn" id="startBtn">Start quiz</button>
+      <button class="btn ghost hide" id="resumeBtn">Resume</button>
+    </div>
+  </div>
+
+  <div id="quiz" class="hide"></div>
+  <div id="results" class="hide"></div>
+</div>
+
+<div class="navbar hide" id="navbar">
+  <div class="navinner">
+    <div class="scoreline">Score <b id="liveScore">0</b> / <span id="liveTotal">30</span></div>
+    <button class="btn" id="nextBtn" disabled>Next</button>
+  </div>
+</div>
+
+<script>
+const QS=[
+{t:"Definitions",q:"Peri-implant mucositis is best characterised as:",o:["Irreversible bone loss with pus","A reversible, plaque-induced soft-tissue inflammation without appreciable bone loss","A fracture of the implant body","An allergic reaction to titanium"],a:1,e:"It is the implant equivalent of gingivitis \u2014 reversible inflammation, no real bone loss."},
+{t:"Definitions",q:"Peri-implantitis is defined by:",o:["Bleeding alone","Progressive marginal bone loss with signs of infection","A 3 mm pocket","Mobility only"],a:1,e:"The defining feature is progressive bone loss plus clinical inflammation \u2014 analogous to periodontitis."},
+{t:"Definitions",q:"To judge whether bone loss has truly occurred, you must know the bone level:",o:["At the first sign of bleeding","At crown/prosthesis placement","From the dog studies","At the consultation"],a:1,e:"Without the baseline at loading you cannot say whether current levels represent pathological loss."},
+{t:"Definitions",q:"Roughly how common is peri-implantitis in everyday implant practice?",o:["Once a year","About once a week","Almost never","Only in smokers"],a:1,e:"It is the commonest long-term complication \u2014 expect to meet it about weekly."},
+{t:"Aetiology",q:"The fundamental cause of peri-implant disease is:",o:["Occlusal overload","Titanium corrosion","An imbalance between bacterial load and host defence","Cold sensitivity"],a:2,e:"It is bacterially induced; disease results when bacteria overwhelm \u2014 or the host over-reacts."},
+{t:"Aetiology",q:"In experimental work, giving anti-inflammatory drugs did what to the disease?",o:["Cured it","Delayed it \u2014 showing inflammation drives the tissue destruction","Had no effect","Caused implant fracture"],a:1,e:"Delaying disease with anti-inflammatories proves the host reaction itself is destructive \u2014 though this is NOT a treatment recommendation."},
+{t:"Aetiology",q:"What is the verdict on occlusal overload as a cause of peri-implantitis?",o:["It is the main cause","It does not cause it \u2014 unless it fractures the implant or causes fibrous separation","It only matters in the lower jaw","It causes mucositis but not peri-implantitis"],a:1,e:"Physiological loading tends to increase bone density; excessive load fractures the implant or yields fibrous separation \u2014 a different failure."},
+{t:"Aetiology",q:"The Pontoriero-type experiment (stop brushing, then resume) demonstrated that mucositis is:",o:["Permanent","Reversible \u2014 removing plaque removes the cause","Caused by occlusion","Unrelated to plaque"],a:1,e:"Stopping hygiene induced mucositis; resuming it restored health \u2014 confirming plaque as the aetiology and reversibility."},
+{t:"Diagnosis",q:"Esposito\u2019s first diagnostic step is to:",o:["Probe every implant routinely","Look \u2014 for swelling, redness, bleeding, pus","Take a CBCT","Remove the crown"],a:1,e:"He looks first and only probes when he suspects a problem."},
+{t:"Diagnosis",q:"Why can thick peri-implant tissue be deceptive?",o:["It bleeds more","It can hide an active lesion that looks calm externally","It always means health","It prevents probing"],a:1,e:"Thick tissue masks inflammation \u2014 the lesion is present but doesn\u2019t show on the surface."},
+{t:"Probing",q:"Compared with a tooth, probing an implant differs because:",o:["The probe meets a true periodontal attachment","There is no true attachment, so the probe is blocked by threads yet sinks through loose tissue","Implants cannot be probed","Probing always reads zero"],a:1,e:"Implants have no real attachment; threads block the probe while inflamed loose tissue lets it sink \u2014 interpret, don\u2019t just measure."},
+{t:"Probing",q:"A 6\u20137 mm pocket around a deeply placed implant may indicate:",o:["Always severe peri-implantitis","Possibly just mucositis \u2014 deep placement plus abundant soft tissue","Implant fracture","A measurement error only"],a:1,e:"Depth must be interpreted in context: deep placement and thick tissue can give a deep pocket without bone disease."},
+{t:"Probing",q:"Radiographs and probing tend to do what to the size of a peri-implant defect?",o:["Overestimate it","Underestimate it \u2014 opening a flap reveals a bigger lesion","Measure it exactly","Cannot detect it"],a:1,e:"The real situation is usually worse than it appears \u2014 flap elevation consistently shows a larger defect."},
+{t:"Defect",q:"A thick bony envelope around an implant tends to produce which defect shape?",o:["Horizontal","A circumferential crater (infrabony)","No defect","A vertical root fracture"],a:1,e:"Thick bone \u2192 crater-form defect, which is more amenable to a regenerative/graft approach."},
+{t:"Defect",q:"Thin surrounding bone more often gives:",o:["A deep crater","Horizontal bone loss, less amenable to grafting","No bone loss","A periapical lesion"],a:1,e:"Thin bone \u2192 flat horizontal loss; think resective/smoothing rather than grafting."},
+{t:"Surfaces",q:"Compared with rough surfaces, machined (smooth) implants typically show:",o:["Faster peri-implantitis","Slower disease progression and easier cleaning, but more early integration failures","No failures ever","More fractures"],a:1,e:"Smooth surfaces resist peri-implantitis and clean easily; their risk is failure to integrate early \u2014 which you see immediately."},
+{t:"Surfaces",q:"Why did titanium plasma-sprayed and hollow-cylinder implants fall out of use?",o:["Too expensive","Very rough/weak \u2014 peri-implantitis raced once colonised, and hollow types fractured","Patients disliked them","They never integrated"],a:1,e:"Excellent integration but catastrophic once disease set in; hollow-cylinders were also structurally weak."},
+{t:"Surfaces",q:"Pooling the four 2014 surface studies, rougher surfaces showed about:",o:["No difference","20% more peri-implantitis at 3 years","50% fewer failures","Identical bone levels"],a:1,e:"Individually non-significant; pooled they showed ~20% more peri-implantitis with rough surfaces at 3 years \u2014 a conservative figure."},
+{t:"Surfaces",q:"Why are those surface figures considered conservative?",o:["The samples were huge","The planned 5-year data were never published once problems mounted","They used animal data","They excluded smokers"],a:1,e:"Publication bias: the longer follow-up that would have looked worse was simply not published."},
+{t:"Risk factors",q:"A genuine history of advanced periodontitis is:",o:["Protective","A consistent risk factor for peri-implantitis","Irrelevant","Only relevant in the maxilla"],a:1,e:"Real advanced periodontitis raises risk; but confirm it was truly advanced, since many implant patients didn\u2019t lose teeth that way."},
+{t:"Risk factors",q:"The counter-intuitive finding about soft-tissue thickness was that:",o:["Thin tissue causes more disease","Thicker tissue was associated with MORE mucositis","Thickness has no effect","Thick tissue prevents all disease"],a:1,e:"Thin tissue recedes and the pocket reduces; thick tissue keeps a deep pocket that hides inflammation \u2014 measured as more mucositis."},
+{t:"Risk factors",q:"Esposito\u2019s view on routine soft-tissue grafting around implants is that it is:",o:["Always essential","Overused \u2014 harder and less successful than around teeth; mainly justified for aesthetics","Never indicated","Required before every implant"],a:1,e:"It\u2019s less predictable around implants and can leave you worse off; aesthetics is the main legitimate indication."},
+{t:"Prevalence",q:"In the Swedish long-term data, peri-implant mucositis affected roughly:",o:["10% of patients","77% of patients (about half of implants)","100% of implants","None on machined surfaces"],a:1,e:"About 77% of patients and ~50% of implants had mucositis \u2014 even with machined surfaces and maintenance."},
+{t:"Prevalence",q:"A realistic estimate for peri-implantitis prevalence in subjects is about:",o:["1%","16\u201320% of subjects (~7\u201310% of implants)","60%","0%"],a:1,e:"Published ~16% of subjects/7% of implants; realistically ~20%/~10% \u2014 and these are optimistic figures."},
+{t:"Prevalence",q:"Why are even these prevalence numbers likely optimistic?",o:["They double-counted implants","Patients who dropped out after 5 years had MORE bone loss","They only studied young patients","They excluded mucositis"],a:1,e:"The non-returning patients were doing worse, so the reported averages understate the true burden."},
+{t:"Management",q:"An implant that failed to integrate (mobile, no infection) is managed by:",o:["Years of antibiotics","Simply unscrewing it and often placing a wider implant the same session","Immediate bone graft","Soft-tissue graft"],a:1,e:"A non-integrated implant is a quick fix \u2014 remove and replace; the real problem is peri-implantitis on an integrated implant."},
+{t:"Management",q:"The core mechanical aim of peri-implantitis therapy is to:",o:["Polish the crown","Reduce the bacterial load below the critical threshold (no plaque, no bleeding)","Tighten the abutment screw","Whiten the tissue"],a:1,e:"Get below the (unknown) critical bacterial threshold by mechanical cleaning \u2014 surgical or non-surgical depending on bone loss."},
+{t:"Management",q:"Across the treatment trials, how did the various instruments (laser, Vector, air-abrasive, curette) compare?",o:["Laser was clearly best","No single intervention proved superior \u2014 they performed similarly","Curettes were useless","Only air-abrasive worked"],a:1,e:"No method was shown superior; use what you are comfortable with, and intervene early."},
+{t:"Antibiotics",q:"How should chlorhexidine be used to actually work?",o:["On a plaque-covered surface to kill bacteria","Only AFTER cleaning, twice daily \u2014 it competes for surface attachment and has ~12 h substantivity","Four times daily on bleeding pockets","As a one-off rinse"],a:1,e:"It can\u2019t kill established plaque; applied to a clean surface it blocks re-colonisation. Proteins/blood inactivate it; ~12 h substantivity means twice daily."},
+{t:"Antibiotics",q:"In Esposito\u2019s 80-patient RCT of light-activated disinfection (LAD/PDT), the result was:",o:["A clear benefit","No benefit \u2014 failure, recurrence and bone loss were the same with or without it","Faster healing","Less pain only"],a:1,e:"The largest trial of its kind found no added benefit over mechanical cleaning \u2014 and the funding company refused to pay."}
+];
+
+const KEY='module5_day1_quiz2_state_v1';
+let state={answers:Array(QS.length).fill(null),idx:0,started:false};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.answers&&s.answers.length===QS.length)state=s;}catch(e){}
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function score(){return state.answers.reduce((n,a,i)=>n+(a===QS[i].a?1:0),0);}
+function answeredCount(){return state.answers.filter(a=>a!==null).length;}
+
+$('liveTotal').textContent=QS.length;
+if(state.started&&answeredCount()>0&&answeredCount()<QS.length){$('resumeBtn').classList.remove('hide');}
+
+$('startBtn').onclick=()=>{state={answers:Array(QS.length).fill(null),idx:0,started:true};save();begin();};
+$('resumeBtn').onclick=()=>{state.idx=state.answers.findIndex(a=>a===null);if(state.idx<0)state.idx=0;begin();};
+
+function begin(){$('intro').classList.add('hide');$('quiz').classList.remove('hide');$('navbar').classList.remove('hide');render();}
+
+function render(){
+  if(state.answers.every(a=>a!==null)&&state.idx>=QS.length){return showResults();}
+  const i=state.idx,Q=QS[i],chosen=state.answers[i];
+  $('qpos').textContent='Q'+(i+1);
+  $('progress').style.width=((i)/QS.length*100)+'%';
+  $('liveScore').textContent=score();
+  let html=`<div class="qcard"><div class="qtop"><span class="qnum">QUESTION ${i+1} / ${QS.length}</span><span class="qtopic">${Q.t}</span></div><div class="qtext">${Q.q}</div><div class="opts">`;
+  Q.o.forEach((opt,j)=>{html+=`<div class="opt" data-j="${j}"><span class="key">${String.fromCharCode(65+j)}</span><span>${opt}</span></div>`;});
+  html+=`</div><div class="explain" id="exp"><span class="lab"></span><span id="exptext"></span></div></div>`;
+  $('quiz').innerHTML=html;
+  const opts=[...document.querySelectorAll('.opt')];
+  if(chosen!==null){lockIn(chosen,false);}
+  else{opts.forEach(o=>o.onclick=()=>choose(parseInt(o.dataset.j)));}
+  const last=i===QS.length-1;
+  $('nextBtn').textContent=last?'See results':'Next';
+  $('nextBtn').disabled=chosen===null;
+}
+
+function choose(j){state.answers[state.idx]=j;save();lockIn(j,true);$('liveScore').textContent=score();$('nextBtn').disabled=false;}
+
+function lockIn(j,animate){
+  const Q=QS[state.idx],opts=[...document.querySelectorAll('.opt')];
+  opts.forEach(o=>{o.classList.add('disabled');const k=parseInt(o.dataset.j);
+    if(k===Q.a)o.classList.add('correct');
+    else if(k===j)o.classList.add('wrong');
+    else o.classList.add('dim');});
+  const exp=$('exp'),ok=j===Q.a;
+  exp.classList.add('show',ok?'ok':'no');
+  exp.querySelector('.lab').textContent=ok?'Correct':'Not quite';
+  $('exptext').innerHTML=(ok?'':`<b style="color:#fff">Answer: ${String.fromCharCode(65+Q.a)}.</b> `)+Q.e;
+}
+
+$('nextBtn').onclick=()=>{
+  if(state.idx>=QS.length-1){state.idx=QS.length;save();showResults();}
+  else{state.idx++;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+};
+
+function showResults(){
+  $('quiz').classList.add('hide');$('navbar').classList.add('hide');$('results').classList.remove('hide');
+  $('progress').style.width='100%';
+  const sc=score(),pct=Math.round(sc/QS.length*100);
+  let grade,msg;
+  if(pct>=85){grade='Distinction';msg='Excellent command of peri-implant diagnosis and management \u2014 you can prevent, detect early and treat with the evidence behind you.';}
+  else if(pct>=70){grade='Strong pass';msg='A confident grasp of the disease and its treatment. Revisit the weaker topics below to refine the detail.';}
+  else if(pct>=50){grade='Pass';msg='The essentials are in place. Re-run Lecture 2 \u2014 especially the topics below \u2014 then retry.';}
+  else{grade='Review needed';msg='Worth another pass through Lecture 2. Focus on probing, surfaces, prevalence and treatment, then come back.';}
+  const topics={};QS.forEach((Q,i)=>{topics[Q.t]=topics[Q.t]||{c:0,t:0};topics[Q.t].t++;if(state.answers[i]===Q.a)topics[Q.t].c++;});
+  let brk='';Object.entries(topics).forEach(([k,v])=>{const col=v.c===v.t?'var(--ok)':v.c/v.t>=0.5?'var(--warn)':'var(--danger)';brk+=`<div class="brow"><span>${k}</span><b style="color:${col}">${v.c}/${v.t}</b></div>`;});
+  const C=2*Math.PI*78,off=C*(1-sc/QS.length);
+  $('results').innerHTML=`<div class="result">
+    <svg class="ring" viewBox="0 0 180 180"><circle cx="90" cy="90" r="78" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="90" cy="90" r="78" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 90 90)" id="ringFill"/><text x="90" y="84" text-anchor="middle" font-family="Fraunces" font-weight="900" font-size="38" fill="#E8EEF2">${sc}</text><text x="90" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="var(--muted)">/ ${QS.length}</text></svg>
+    <div class="grade">${grade} \u00b7 ${pct}%</div>
+    <h2>Quiz 2 complete</h2>
+    <p>${msg}</p>
+    <div class="breakdown"><div class="brow" style="color:var(--muted2);border:none"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em">TOPIC BREAKDOWN</span><span></span></div>${brk}</div>
+    <div class="result-cta"><button class="btn" id="retry">Retake quiz</button><button class="btn ghost" id="review">Review answers</button></div>
+  </div>`;
+  setTimeout(()=>{$('ringFill').style.transition='stroke-dashoffset 1s cubic-bezier(.22,1,.36,1)';$('ringFill').style.strokeDashoffset=off;},100);
+  $('retry').onclick=()=>{state={answers:Array(QS.length).fill(null),idx:0,started:true};save();$('results').classList.add('hide');begin();};
+  $('review').onclick=()=>{state.idx=0;$('results').classList.add('hide');$('quiz').classList.remove('hide');$('navbar').classList.remove('hide');render();window.scrollTo({top:0,behavior:'smooth'});};
+}
+</script>
+</body>
+</html>

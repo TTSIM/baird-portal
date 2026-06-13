@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2 — Peri-Implant Disease: Diagnosis & Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1822; --bg2:#0a121a; --surface:#16232F; --surface2:#1d2f3d;
+  --line:#2a3f50; --accent:#F0A868; --accent-dim:#a86a37; --gold:#C9A961;
+  --text:#E8EEF2; --muted:#8FA3B0; --muted2:#5f7585;
+  --danger:#E87A6B; --ok:#6FCF8E; --warn:#F0C36A; --cyan:#4FD1C5;
+  --display:'Fraunces',serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{height:100vh;width:100vw;position:relative;overflow:hidden}
+.topbar{position:fixed;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:60;background:linear-gradient(180deg,rgba(10,18,26,.95),rgba(10,18,26,0));pointer-events:none}
+.brand{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.brand b{color:var(--accent)}
+.counter{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.counter b{color:var(--text);font-size:14px}
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:70;transition:width .4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px var(--accent)}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:84px 7vw 92px;opacity:0;transition:opacity .45s ease}
+.slide.active{display:flex;opacity:1;animation:fadeUp .5s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.slide.scroll{justify-content:flex-start;overflow-y:auto}
+.slide.scroll::-webkit-scrollbar{width:8px}.slide.scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2.1rem,5.4vw,4.4rem);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.015em;margin-bottom:18px}
+.lead{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--muted);max-width:60ch;line-height:1.6}
+p.body{font-size:clamp(1rem,1.3vw,1.12rem);line-height:1.65;color:#cdd9e1;max-width:64ch;margin-bottom:14px}
+.hl{color:var(--accent);font-weight:600}.hl-gold{color:var(--gold);font-weight:600}.hl-cyan{color:var(--cyan);font-weight:600}
+strong{color:#fff;font-weight:600}
+.quote{font-family:var(--display);font-style:italic;font-size:clamp(1.4rem,2.8vw,2.2rem);line-height:1.3;max-width:26ch}
+.title-wrap .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:26px}
+.title-meta{margin-top:38px;display:flex;gap:32px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.title-meta div b{display:block;color:var(--text);font-family:var(--body);font-size:15px;margin-top:4px}
+.grid{display:grid;gap:16px;width:100%;max-width:1100px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;overflow:hidden}
+.card .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em}
+.card h3{font-family:var(--display);font-weight:600;font-size:1.25rem;margin:8px 0}
+.card p{font-size:.95rem;line-height:1.55;color:var(--muted)}
+.card.accentbar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.callout{background:linear-gradient(135deg,rgba(240,168,104,.1),rgba(240,168,104,.02));border:1px solid var(--accent-dim);border-radius:14px;padding:22px 26px;max-width:780px}
+.callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+.callout p{margin-top:10px;font-size:1.05rem;line-height:1.55}
+ul.ticks{list-style:none;max-width:64ch}
+ul.ticks li{position:relative;padding-left:32px;margin-bottom:14px;font-size:1.02rem;line-height:1.5;color:#cdd9e1}
+ul.ticks li::before{content:"";position:absolute;left:0;top:7px;width:16px;height:16px;border-radius:50%;border:2px solid var(--accent)}
+ul.ticks li b{color:#fff}
+.btn{font-family:var(--body);font-weight:600;font-size:.92rem;background:var(--accent);color:#2a1605;border:none;padding:11px 20px;border-radius:10px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(240,168,104,.25)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none}
+.nav{position:fixed;bottom:20px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:60}
+.nav button{font-family:var(--mono);font-size:13px;background:var(--surface);border:1px solid var(--line);color:var(--text);width:46px;height:46px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s}
+.nav button:hover{border-color:var(--accent);color:var(--accent)}
+.nav button:disabled{opacity:.3;cursor:not-allowed}
+.dots{display:flex;gap:6px;align-items:center;max-width:46vw;overflow-x:auto;padding:6px}
+.dots::-webkit-scrollbar{display:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;flex:0 0 auto;transition:.2s}
+.dot.active{background:var(--accent);width:22px;border-radius:5px}.dot.seen{background:var(--accent-dim)}
+.hint{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:.1em;z-index:55}
+.svgwrap{display:flex;justify-content:center;align-items:center;width:100%}
+.fig-cap{font-family:var(--mono);font-size:11px;color:var(--muted2);text-align:center;margin-top:12px;letter-spacing:.06em}
+.take{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:12px;max-width:840px}
+.take .n{font-family:var(--mono);font-size:1.3rem;color:var(--accent);font-weight:600;line-height:1}
+.take p{font-size:1rem;line-height:1.5;color:#cdd9e1}.take p b{color:#fff}
+.end-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+
+/* compare toggle (mucositis vs peri-implantitis) */
+.compare{width:100%;max-width:900px}
+.cmp-tabs{display:flex;gap:10px;margin-bottom:16px}
+.cmp-tab{flex:1;text-align:center;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;transition:.2s}
+.cmp-tab.on{border-color:var(--accent);background:linear-gradient(135deg,rgba(240,168,104,.16),rgba(240,168,104,.03));color:var(--accent)}
+.cmp-body{display:none;animation:fadeUp .35s}
+.cmp-body.on{display:block}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp-cell{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.cmp-cell .k{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em}
+.cmp-cell .v{font-size:1rem;margin-top:6px;line-height:1.4}
+
+/* probing diagram interactive */
+.probe-ctrl{display:flex;gap:10px;margin-top:14px}
+.probe-ctrl button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-weight:600;transition:.2s}
+.probe-ctrl button.on{border-color:var(--accent);color:var(--accent);background:rgba(240,168,104,.08)}
+
+/* surface timeline cards */
+.surf-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;width:100%;max-width:1100px}
+.surf-row::-webkit-scrollbar{height:6px}.surf-row::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.surf-card{flex:0 0 230px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.2s}
+.surf-card:hover{border-color:var(--accent)}
+.surf-card .yr{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.surf-card h4{font-family:var(--display);font-size:1.15rem;margin:6px 0 10px}
+.surf-card .meter{height:7px;border-radius:4px;background:var(--bg2);overflow:hidden;margin:8px 0}
+.surf-card .meterfill{height:100%;border-radius:4px}
+.surf-card p{font-size:.85rem;color:var(--muted);line-height:1.45;margin-top:8px}
+.surf-legend{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:8px}
+
+/* prevalence stat counters */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;width:100%;max-width:760px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center}
+.stat .big{font-family:var(--display);font-weight:900;font-size:3rem;color:var(--accent);line-height:1}
+.stat .lbl{font-size:.9rem;color:var(--muted);margin-top:8px}
+.stat .sub{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:6px}
+
+/* aims hierarchy */
+.aim{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:10px;max-width:760px}
+.aim .rank{font-family:var(--display);font-weight:900;font-size:1.8rem;width:44px;text-align:center;color:var(--accent)}
+.aim .txt b{display:block;font-size:1.05rem}.aim .txt span{font-size:.88rem;color:var(--muted)}
+
+/* myth buster */
+.myth{width:100%;max-width:760px}
+.myth-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 24px;cursor:pointer;transition:.2s;margin-bottom:12px}
+.myth-card:hover{border-color:var(--accent-dim)}
+.myth-q{font-size:1.1rem;font-weight:600;display:flex;justify-content:space-between;gap:14px}
+.myth-q .toggle{font-family:var(--mono);color:var(--accent)}
+.myth-a{font-size:.95rem;color:var(--muted);line-height:1.55;margin-top:0;max-height:0;overflow:hidden;transition:max-height .35s,margin-top .35s}
+.myth-card.open .myth-a{max-height:240px;margin-top:14px}
+.myth-card.open .toggle{transform:rotate(45deg)}
+.myth-q .toggle{transition:transform .3s}
+
+/* treatment studies table */
+.stbl{width:100%;max-width:980px;border-collapse:collapse;font-size:.9rem}
+.stbl th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.stbl td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;color:#cdd9e1}
+.stbl tr:hover td{background:var(--surface)}
+.verdict-pill{font-family:var(--mono);font-size:.72rem;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.vp-none{border:1px solid var(--muted);color:var(--muted)}
+.vp-fail{border:1px solid var(--danger);color:var(--danger)}
+.vp-some{border:1px solid var(--warn);color:var(--warn)}
+
+/* decision tree */
+.tree{width:100%;max-width:820px}
+.tnode{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:8px}
+.tnode.q{border-color:var(--accent);background:linear-gradient(135deg,rgba(240,168,104,.1),transparent)}
+.tnode .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em}
+.tnode b{display:block;margin-top:4px;font-size:1.02rem}
+.tnode p{font-size:.9rem;color:var(--muted);margin-top:6px;line-height:1.45}
+.tbranch{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:880px){
+  .slide{padding:74px 6vw 96px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .cmp-grid,.tbranch{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .dots{max-width:38vw}
+  .stbl{font-size:.78rem}.stbl td,.stbl th{padding:8px}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="topbar">
+  <div class="brand">Implant Course · <b>Lecture 2</b></div>
+  <div class="counter"><b id="cnum">01</b> / <span id="ctot">30</span></div>
+</div>
+<div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide active title-wrap">
+  <div class="kicker">Module 5 · Peri-Implant Disease</div>
+  <h1>The complication<br>you'll meet weekly.</h1>
+  <p class="lead">Peri-implant mucositis and peri-implantitis — diagnosis, the real prevalence behind the optimistic numbers, and what the evidence does and doesn't say about treatment.</p>
+  <div class="title-meta">
+    <div>Lecturer<b>Prof. Marco Esposito</b></div>
+    <div>Affiliation<b>San Raffaele University, Milan</b></div>
+    <div>Part<b>2 of 2 · Morning Session</b></div>
+  </div>
+</section>
+
+<!-- 2 SCALE -->
+<section class="slide">
+  <div class="eyebrow">The scale of it</div>
+  <h2>You will see peri-implantitis<br>about once a week.</h2>
+  <p class="body">It is the commonest long-term implant complication. You must <span class="hl">recognise it, diagnose it, and understand the cause</span> — because the cause dictates the treatment.</p>
+  <div class="callout"><div class="tag">Set expectations</div><p>Nobody has the definitive answer. This lecture may raise as many questions as it settles — that's the honest state of the evidence.</p></div>
+</section>
+
+<!-- 3 FIRST CASE TIMELINE -->
+<section class="slide">
+  <div class="eyebrow">Where it started · Sweden, late 1980s</div>
+  <h2>The first case Esposito ever saw</h2>
+  <p class="body">A <span class="hl">machined (smooth) surface</span> implant, followed radiographically by rule. The timeline that defined the disease:</p>
+  <div class="svgwrap" style="margin-top:6px">
+    <svg viewBox="0 0 720 160" width="100%" style="max-width:760px" aria-label="Timeline of progressive bone loss">
+      <line x1="40" y1="80" x2="680" y2="80" stroke="var(--line)" stroke-width="2"/>
+      <g font-family="IBM Plex Mono" font-size="11" fill="var(--muted)">
+        <circle cx="120" cy="80" r="7" fill="var(--ok)"/><text x="120" y="115" text-anchor="middle">Placement</text><text x="120" y="55" text-anchor="middle" fill="var(--ok)">healthy</text>
+        <circle cx="320" cy="80" r="7" fill="var(--warn)"/><text x="320" y="115" text-anchor="middle">3 years</text><text x="320" y="55" text-anchor="middle" fill="var(--warn)">"acceptable"?</text>
+        <circle cx="540" cy="80" r="9" fill="var(--danger)"/><text x="540" y="115" text-anchor="middle">5 years</text><text x="540" y="55" text-anchor="middle" fill="var(--danger)">pathological</text>
+      </g>
+    </svg>
+  </div>
+  <p class="fig-cap">At 3 years it was dismissed as "physiological resorption." It wasn't — it was the unusual-then, typical-now failure pattern.</p>
+</section>
+
+<!-- 4 MUCOSITIS DEF -->
+<section class="slide">
+  <div class="eyebrow">Diagnosis · 1</div>
+  <h2>Peri-implant mucositis</h2>
+  <p class="body">A <span class="hl">plaque-induced, reversible</span> soft-tissue inflammation around a functioning implant, <strong>without appreciable bone loss</strong> — the implant equivalent of gingivitis.</p>
+  <ul class="ticks" style="margin-top:6px">
+    <li>Probing depth creeps <b>&gt;4 mm</b> (say 4–5 mm) with bleeding.</li>
+    <li>Radiograph shows little or no bone loss — but you must know the bone level <b>at crown placement</b> to judge.</li>
+    <li><b>Very common</b>, and we can't predict which cases progress — so we treat (remove plaque, keep clean).</li>
+  </ul>
+</section>
+
+<!-- 5 PERIIMPLANTITIS DEF -->
+<section class="slide">
+  <div class="eyebrow">Diagnosis · 2</div>
+  <h2>Peri-implantitis</h2>
+  <p class="body">Plaque-induced <span class="hl">progressive marginal bone loss</span> with clinical signs of infection — visible redness, recession, bleeding, sometimes pus.</p>
+  <div class="callout"><div class="tag">When it's frank</div><p>Sometimes the best decision is to <span class="hl">remove the implant early</span> — before it destroys the last of the bone — then choose between regrafting or a bridge. Diagnosed late, it's often too late to save.</p></div>
+</section>
+
+<!-- 6 COMPARE INTERACTIVE -->
+<section class="slide scroll">
+  <div class="eyebrow">Interactive · Side by side</div>
+  <h2>Mucositis vs peri-implantitis</h2>
+  <div class="compare">
+    <div class="cmp-tabs">
+      <div class="cmp-tab on" data-c="m">Mucositis</div>
+      <div class="cmp-tab" data-c="p">Peri-implantitis</div>
+    </div>
+    <div class="cmp-body on" data-b="m">
+      <div class="cmp-grid">
+        <div class="cmp-cell"><div class="k">BONE LOSS</div><div class="v">None appreciable</div></div>
+        <div class="cmp-cell"><div class="k">REVERSIBLE?</div><div class="v" style="color:var(--ok)">Yes — remove plaque, it resolves</div></div>
+        <div class="cmp-cell"><div class="k">ANALOGY</div><div class="v">Gingivitis around a tooth</div></div>
+        <div class="cmp-cell"><div class="k">SIGNS</div><div class="v">Bleeding on probing, &gt;4 mm pocket</div></div>
+        <div class="cmp-cell"><div class="k">PREVALENCE</div><div class="v">~77% of patients, ~50% of implants</div></div>
+        <div class="cmp-cell"><div class="k">ACTION</div><div class="v">Mechanical plaque removal, hygiene</div></div>
+      </div>
+    </div>
+    <div class="cmp-body" data-b="p">
+      <div class="cmp-grid">
+        <div class="cmp-cell"><div class="k">BONE LOSS</div><div class="v" style="color:var(--danger)">Progressive (&gt;~1.8–2 mm after yr 1)</div></div>
+        <div class="cmp-cell"><div class="k">REVERSIBLE?</div><div class="v" style="color:var(--danger)">No — arrest at best, unpredictable</div></div>
+        <div class="cmp-cell"><div class="k">ANALOGY</div><div class="v">Periodontitis around a tooth</div></div>
+        <div class="cmp-cell"><div class="k">SIGNS</div><div class="v">Redness, recession, bleeding, ± pus</div></div>
+        <div class="cmp-cell"><div class="k">PREVALENCE</div><div class="v">~16–20% patients, ~7–10% implants</div></div>
+        <div class="cmp-cell"><div class="k">ACTION</div><div class="v">Surgical/non-surgical debridement; sometimes remove</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 AETIOLOGY -->
+<section class="slide">
+  <div class="eyebrow">Cause</div>
+  <h2>An imbalance between host & bacteria</h2>
+  <p class="body">Bacterially induced — but it tips two ways:</p>
+  <div class="grid g2" style="margin-top:8px">
+    <div class="card accentbar"><h3>Bacteria win</h3><p>The plaque load overwhelms the host defence.</p></div>
+    <div class="card accentbar"><h3>Defence "wins" — destructively</h3><p>The host reaction is so aggressive it destroys its own tissue. In experiments, anti-inflammatories <b>delay</b> the disease — proof that inflammation drives the damage (<em>not</em> a prescription to give them).</p></div>
+  </div>
+</section>
+
+<!-- 8 OVERLOAD MYTH -->
+<section class="slide">
+  <div class="eyebrow">Myth check</div>
+  <h2>Occlusal overload does <em>not</em> cause peri-implantitis</h2>
+  <p class="body">Animal research never proved overload causes this bone loss — unless the overload actually <span class="hl">fractures</span> the implant. Physiological loading tends to <b>increase</b> bone density.</p>
+  <ul class="ticks" style="margin-top:6px">
+    <li>Excessive overload → you <b>fracture the implant</b>, or get <b>fibrous separation</b> (a thin non-healing line under continuous load) — a <em>different</em> failure pattern.</li>
+    <li>So "adjust the occlusion" was a dead end. In the original case it failed; the disease progressed.</li>
+  </ul>
+</section>
+
+<!-- 9 REVERSIBILITY -->
+<section class="slide">
+  <div class="eyebrow">Proof of cause · the Pontoriero experiment</div>
+  <h2>Stop brushing → mucositis. Resume → health.</h2>
+  <div class="svgwrap" style="margin-top:6px">
+    <svg viewBox="0 0 720 150" width="100%" style="max-width:760px" aria-label="Experimental mucositis reversibility">
+      <line x1="40" y1="75" x2="680" y2="75" stroke="var(--line)" stroke-width="2"/>
+      <path d="M120 75 Q 250 40 360 40" stroke="var(--danger)" stroke-width="3" fill="none"/>
+      <path d="M360 40 Q 500 60 660 75" stroke="var(--ok)" stroke-width="3" fill="none"/>
+      <g font-family="IBM Plex Mono" font-size="11" fill="var(--muted)">
+        <circle cx="120" cy="75" r="6" fill="var(--ok)"/><text x="120" y="105" text-anchor="middle">Day 0 · healthy</text>
+        <circle cx="360" cy="40" r="6" fill="var(--danger)"/><text x="360" y="28" text-anchor="middle" fill="var(--danger)">~1 month · mucositis</text>
+        <circle cx="660" cy="75" r="6" fill="var(--ok)"/><text x="640" y="105" text-anchor="middle">~3 months · healthy</text>
+      </g>
+    </svg>
+  </div>
+  <p class="body" style="margin-top:14px">The cause is <span class="hl">plaque</span>; removing the plaque removes the aetiology. Mucositis is reversible — peri-implantitis (with bone loss) is not.</p>
+</section>
+
+<!-- 10 DIAGNOSIS LOOK -->
+<section class="slide">
+  <div class="eyebrow">How to diagnose · 1</div>
+  <h2>Look first</h2>
+  <p class="body">Swelling, redness, bleeding, pus. Esposito doesn't probe routinely — only when he <span class="hl">suspects</span> a problem.</p>
+  <div class="callout"><div class="tag">The thick-tissue catch</div><p>A serious lesion can look calm externally — <span class="hl">thick tissue hides the inflammation</span>. It's still inflamed; it just doesn't show. Keep this in mind.</p></div>
+</section>
+
+<!-- 11 PROBING INTERACTIVE -->
+<section class="slide scroll">
+  <div class="eyebrow">How to diagnose · 2 · Interactive</div>
+  <h2>Probing an implant ≠ probing a tooth</h2>
+  <p class="body" style="margin-bottom:10px">Toggle between the two and see what the probe meets.</p>
+  <div class="svgwrap">
+    <svg viewBox="0 0 420 260" width="100%" style="max-width:440px" aria-label="Probing tooth vs implant">
+      <!-- bone -->
+      <rect x="0" y="170" width="420" height="90" fill="#1d2f3d"/>
+      <text x="210" y="250" fill="var(--muted2)" font-family="IBM Plex Mono" font-size="11" text-anchor="middle">alveolar bone</text>
+      <!-- TOOTH view -->
+      <g id="toothView">
+        <path d="M170 60 Q160 40 185 30 Q210 25 235 32 Q258 42 250 62 L240 200 Q210 215 180 200 Z" fill="#e8e2d4" stroke="#cbb98f" stroke-width="2"/>
+        <rect x="150" y="120" width="120" height="14" fill="rgba(111,207,142,.35)"/>
+        <text x="305" y="128" fill="var(--ok)" font-family="IBM Plex Mono" font-size="11">true attachment</text>
+        <rect x="196" y="55" width="6" height="80" rx="3" fill="var(--accent)"/>
+        <text x="210" y="48" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11" text-anchor="middle">probe stops at attachment</text>
+      </g>
+      <!-- IMPLANT view -->
+      <g id="implantView" style="display:none">
+        <rect x="190" y="40" width="40" height="150" rx="4" fill="#9fb0bd"/>
+        <g stroke="#6f8494" stroke-width="2">
+          <line x1="190" y1="60" x2="230" y2="55"/><line x1="190" y1="80" x2="230" y2="75"/><line x1="190" y1="100" x2="230" y2="95"/><line x1="190" y1="120" x2="230" y2="115"/><line x1="190" y1="140" x2="230" y2="135"/>
+        </g>
+        <rect x="234" y="60" width="50" height="70" fill="rgba(232,122,107,.18)"/>
+        <text x="300" y="100" fill="var(--danger)" font-family="IBM Plex Mono" font-size="11">no real attachment</text>
+        <rect x="178" y="50" width="6" height="120" rx="3" fill="var(--accent)"/>
+        <text x="150" y="44" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11">probe sinks past threads</text>
+      </g>
+    </svg>
+  </div>
+  <div class="probe-ctrl">
+    <button class="on" id="pbTooth">Tooth</button>
+    <button id="pbImplant">Implant</button>
+  </div>
+  <p class="body" id="probeMsg" style="margin-top:14px">A tooth has a true <span class="hl-cyan">periodontal attachment</span> that stops the probe. Switch to implant to see the difference.</p>
+</section>
+
+<!-- 12 PROBING INTERP -->
+<section class="slide">
+  <div class="eyebrow">How to diagnose · 3</div>
+  <h2>Interpret the number — don't just read it</h2>
+  <ul class="ticks" style="margin-top:6px">
+    <li>Threads <b>block the probe</b>, so you <b>underestimate</b> the lesion. Radiographs underestimate it too — opening the flap consistently reveals a <b>bigger</b> defect.</li>
+    <li>A 4–5 mm pocket round a <b>tooth</b> = disease. A <b>6–7 mm</b> pocket round a deep implant may just be mucositis — deep placement + abundant soft tissue.</li>
+    <li>Inflamed tissue is loose, so the probe sinks — not from lost attachment. Resolve inflammation → tissue firms up (no true "gain").</li>
+  </ul>
+  <p class="body" style="margin-top:6px;color:var(--accent)"><strong>The situation is usually worse than it appears.</strong></p>
+</section>
+
+<!-- 13 DEFECT SHAPE -->
+<section class="slide">
+  <div class="eyebrow">Reading the radiograph</div>
+  <h2>Crater or horizontal? Bone thickness decides</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card">
+      <svg viewBox="0 0 220 120" width="100%" style="max-width:240px"><rect x="0" y="60" width="220" height="60" fill="#1d2f3d"/><rect x="96" y="20" width="28" height="90" rx="3" fill="#9fb0bd"/><path d="M70 60 Q110 110 150 60" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/></svg>
+      <h3>Thick bone → crater</h3><p>A circumferential infrabony defect. Good for an augmentation/graft approach.</p>
+    </div>
+    <div class="card">
+      <svg viewBox="0 0 220 120" width="100%" style="max-width:240px"><rect x="0" y="85" width="220" height="35" fill="#1d2f3d"/><rect x="96" y="20" width="28" height="90" rx="3" fill="#9fb0bd"/><line x1="20" y1="85" x2="200" y2="85" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+      <h3>Thin bone → horizontal</h3><p>Flat loss all around. Less graftable — think resective or smoothing.</p>
+    </div>
+  </div>
+  <p class="fig-cap">Unlike periodontitis (often site-specific), peri-implantitis tends to lose bone all around. The shape guides therapy.</p>
+</section>
+
+<!-- 14 SURFACES INTERACTIVE -->
+<section class="slide scroll">
+  <div class="eyebrow">Implant surfaces · Interactive</div>
+  <h2>A history of surfaces — and risk</h2>
+  <p class="body" style="margin-bottom:12px">Scroll the cards. Bar = peri-implantitis risk once colonised.</p>
+  <div class="surf-row">
+    <div class="surf-card"><div class="yr">1980s</div><h4>Machined (smooth)</h4><div class="meter"><div class="meterfill" style="width:18%;background:var(--ok)"></div></div><span class="surf-legend">risk: low</span><p>Easy to clean; slow progression. May fail to integrate <b>early</b> — a problem you see immediately.</p></div>
+    <div class="surf-card"><div class="yr">historic</div><h4>Titanium plasma-sprayed</h4><div class="meter"><div class="meterfill" style="width:92%;background:var(--danger)"></div></div><span class="surf-legend">risk: very high</span><p>Very rough; integrates well but peri-implantitis <b>races</b> once colonised.</p></div>
+    <div class="surf-card"><div class="yr">historic</div><h4>Hollow-cylinder (holes)</h4><div class="meter"><div class="meterfill" style="width:88%;background:var(--danger)"></div></div><span class="surf-legend">risk: very high + weak</span><p>Structurally weak, fracture-prone. Once disease reaches the holes — game over. Extinct.</p></div>
+    <div class="surf-card"><div class="yr">peak then bought</div><h4>Steri-Oss / 3i-type</h4><div class="meter"><div class="meterfill" style="width:48%;background:var(--warn)"></div></div><span class="surf-legend">risk: moderate</span><p>Minimally rough. Integrates well; higher long-term risk than machined.</p></div>
+    <div class="surf-card"><div class="yr">trade-off</div><h4>The choice</h4><div class="meter"><div class="meterfill" style="width:60%;background:var(--accent)"></div></div><span class="surf-legend">depends on you</span><p>Rough = great early results, problems at ~5 yrs. Smoother = early integration risk, fewer late problems. <b>Planning to stay? Go smoother.</b></p></div>
+  </div>
+</section>
+
+<!-- 15 SURFACE EVIDENCE -->
+<section class="slide">
+  <div class="eyebrow">The evidence on roughness</div>
+  <h2>Rougher surface → ~20% more disease at 3 years</h2>
+  <p class="body">Individually the four 2014 studies were <span class="hl">non-significant</span> (small numbers). <b>Pooled</b>, the meta-analysis cleared the line: ~20% more peri-implantitis with truly rough surfaces at 3 years.</p>
+  <div class="callout"><div class="tag">Publication bias in action</div><p>These are <span class="hl">conservative</span> figures — the planned 5-year data were <strong>never published</strong> because the studies were stopped once problems mounted. The literature can't help you if the data is buried.</p></div>
+</section>
+
+<!-- 16 FAILED INTEGRATION -->
+<section class="slide">
+  <div class="eyebrow">Management distinction</div>
+  <h2>Failed-to-integrate is a 5-minute fix. Peri-implantitis is not.</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card"><h3 style="color:var(--ok)">Non-integrated implant</h3><p>Mobile, rotating, no real infection. Under existing anaesthesia: <b>unscrew it, place a wider-diameter implant same session.</b> No drama.</p></div>
+    <div class="card"><h3 style="color:var(--danger)">Integrated + peri-implantitis</h3><p>The real problem. Repeated treatment, possible removal — and the patient may have <b>run out of money</b>. Surgical cleaning (essentially just <em>time</em>, no graft) is cheaper and can save the implant for years.</p></div>
+  </div>
+</section>
+
+<!-- 17 PERIO HISTORY -->
+<section class="slide">
+  <div class="eyebrow">Risk factor</div>
+  <h2>A history of <em>real</em> periodontitis raises risk</h2>
+  <p class="body">Consistent across old and new studies. But be careful — many implant patients didn't lose teeth to true periodontitis.</p>
+  <div class="callout"><div class="tag">Esposito, bluntly</div><p>"You don't buy a Porsche treating mild periodontitis — you buy one by extracting the teeth and doing All-on-4." So establish whether it was genuinely <span class="hl">advanced</span> periodontitis (real risk) or not (near-normal prognosis).</p></div>
+</section>
+
+<!-- 18 THICK TISSUE PARADOX -->
+<section class="slide">
+  <div class="eyebrow">The counter-intuitive finding</div>
+  <h2>More (thicker) tissue → more mucositis</h2>
+  <p class="body">The opposite of the "graft more soft tissue" mantra — a finding the original authors quietly downplayed at conferences "to avoid having tomatoes thrown." It depends on diagnosis:</p>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card"><h3>Thin tissue</h3><p>Inflammation → <b>recession</b> → the pocket <b>reduces</b>. Less attractive, but shallower.</p></div>
+    <div class="card"><h3>Thick tissue</h3><p>Doesn't recede → the <b>pocket persists</b> and <b>hides</b> the inflammation. Measured as more mucositis.</p></div>
+  </div>
+</section>
+
+<!-- 19 GRAFTING OVERUSE -->
+<section class="slide">
+  <div class="eyebrow">Practice point</div>
+  <h2>Soft-tissue grafting is overused</h2>
+  <ul class="ticks" style="margin-top:6px">
+    <li>Around implants it's <b>harder and less successful</b> than around teeth.</li>
+    <li>Over-optimistic grafting (especially over active pathology) can leave you <b>worse</b> than you started.</li>
+    <li>The main legitimate indication is <b>aesthetics</b> — not "protection."</li>
+  </ul>
+</section>
+
+<!-- 20 MAINTENANCE BUSINESS -->
+<section class="slide">
+  <div class="eyebrow">The strategic point</div>
+  <h2>Maintenance <em>is</em> the business</h2>
+  <p class="body">Largely hygienist-delivered, near-zero material cost, small regular fee. Customise the recall:</p>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card accentbar"><h3>High-risk patient</h3><p>Advanced perio and/or smoker → <b>~3-monthly</b>.</p></div>
+    <div class="card accentbar"><h3>Normal, good cleaner</h3><p><b>6–12 monthly</b> is fine.</p></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><div class="tag">Why it wins</div><p>Early detection of mucositis is <span class="hl">simple</span> to treat; waiting until peri-implantitis is not. Most dentists ignore maintenance — periodontists don't.</p></div>
+</section>
+
+<!-- 21 PREVALENCE STATS -->
+<section class="slide scroll">
+  <div class="eyebrow">The real numbers · Swedish long-term, 9–14 yrs</div>
+  <h2>Behind the optimistic figures</h2>
+  <div class="stats">
+    <div class="stat"><div class="big">77%</div><div class="lbl">of patients had mucositis</div><div class="sub">~50% of implants affected</div></div>
+    <div class="stat"><div class="big">16%</div><div class="lbl">of subjects had peri-implantitis</div><div class="sub">7% of implants · published figure</div></div>
+    <div class="stat"><div class="big">~20%</div><div class="lbl">subjects — realistic estimate</div><div class="sub">~10% of implants</div></div>
+    <div class="stat"><div class="big">~10%</div><div class="lbl">of implants at 10 years</div><div class="sub">what you should expect</div></div>
+  </div>
+  <p class="body" style="margin-top:16px">These are <span class="hl">optimistic</span>: patients who didn't return after 5 years had <b>more</b> bone loss. Machined surfaces, realistic maintenance, cleanable prosthetics — and still this common.</p>
+</section>
+
+<!-- 22 AIMS -->
+<section class="slide">
+  <div class="eyebrow">Treatment · the goals</div>
+  <h2>Aims of therapy, in priority order</h2>
+  <div style="margin-top:6px;max-width:760px">
+    <div class="aim"><div class="rank">1</div><div class="txt"><b>Stop disease progression</b><span>Maintain implant function — the essential goal.</span></div></div>
+    <div class="aim"><div class="rank">2</div><div class="txt"><b>Restore healthy peri-implant tissue</b><span>Resolve the inflammation.</span></div></div>
+    <div class="aim"><div class="rank">3</div><div class="txt"><b>Regenerate lost tissue — if possible</b><span>The hardest, least predictable goal.</span></div></div>
+  </div>
+  <p class="body" style="margin-top:14px">Remember you're treating a <span class="hl">chronic infection</span> — not one treatment, but potentially many over years.</p>
+</section>
+
+<!-- 23 PRINCIPLES -->
+<section class="slide">
+  <div class="eyebrow">Treatment · principle</div>
+  <h2>Reduce the bacterial load — mechanically</h2>
+  <p class="body">Get below the (unknown) critical threshold: no visible plaque, no bleeding. The route depends on bone loss:</p>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card"><h3 style="color:var(--ok)">Non-surgical</h3><p>When bone loss is limited. Any instrument that works — they perform similarly.</p></div>
+    <div class="card"><h3 style="color:var(--accent)">Surgical (open flap)</h3><p>When threads/defect shape block blind cleaning. Often <b>implantoplasty</b> — but don't over-thin internally-connected implants (fracture/perforation risk).</p></div>
+  </div>
+</section>
+
+<!-- 24 ANTIBIOTICS -->
+<section class="slide">
+  <div class="eyebrow">Treatment · antibiotics</div>
+  <h2>Adjuncts, not solutions</h2>
+  <div class="grid g3" style="margin-top:6px">
+    <div class="card"><div class="num">systemic</div><h3>Amoxicillin</h3><p>Cheap; first choice (if no allergy) <b>after</b> surface cleaning, in selected/recurrent cases. Not a standard step.</p></div>
+    <div class="card"><div class="num">anti-anaerobic</div><h3>Metronidazole</h3><p>Not needed routinely — opening & oxygenating kills anaerobes. <b>Combine with amoxicillin only if there's an abscess.</b></p></div>
+    <div class="card"><div class="num">local</div><h3>Local antibiotics</h3><p>No systemic effect, more expensive, weak evidence. Only as an <b>adjunct</b> to mechanical debridement — alone, the effect lasts weeks then relapses.</p></div>
+  </div>
+</section>
+
+<!-- 25 CHLORHEXIDINE MYTH -->
+<section class="slide scroll">
+  <div class="eyebrow">Myth-buster · Interactive</div>
+  <h2>What chlorhexidine actually does</h2>
+  <div class="myth" id="mythBox">
+    <div class="myth-card"><div class="myth-q"><span>Does it kill established plaque bacteria?</span><span class="toggle">+</span></div><div class="myth-a"><b>No.</b> It <b>competes with bacteria for surface attachment</b>. Used on a plaque-covered surface, it just "showers the bacteria" — they stay put. With plaque present, nothing happens.</div></div>
+    <div class="myth-card"><div class="myth-q"><span>So when does it work?</span><span class="toggle">+</span></div><div class="myth-a">Only <b>after cleaning</b> — it binds the surface before bacteria can re-colonise. Use after surgery or after scaling/root planing, twice daily for ~1–2 weeks.</div></div>
+    <div class="myth-card"><div class="myth-q"><span>Why twice a day, not four times?</span><span class="toggle">+</span></div><div class="myth-a">Substantivity is ~<b>12 hours</b> — it then detaches, so you re-apply. More often is pointless.</div></div>
+    <div class="myth-card"><div class="myth-q"><span>What inactivates it?</span><span class="toggle">+</span></div><div class="myth-a"><b>Proteins (blood).</b> A bleeding pocket full of protein deactivates it. And H₂O₂ flushing? The dramatic bubbling makes people happy but <b>doesn't change the outcome</b>.</div></div>
+  </div>
+</section>
+
+<!-- 26 STUDIES TABLE -->
+<section class="slide scroll">
+  <div class="eyebrow">The systematic review · what 122 patients told us</div>
+  <h2>Treatment studies — the verdicts</h2>
+  <table class="stbl">
+    <thead><tr><th>Comparison</th><th>Design note</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Metronidazole gel vs ultrasonic (China)</td><td>Carbon tip, 15 s, 3-mo follow-up — too short</td><td><span class="verdict-pill vp-none">no difference</span></td></tr>
+      <tr><td>Ultrasonic vs manual (Denmark/Brazil)</td><td>Split-mouth, 2–3 min cleaning, 6 mo</td><td><span class="verdict-pill vp-none">no difference</span></td></tr>
+      <tr><td>Laser vs plastic curette</td><td>40 pts; but at 1 yr…</td><td><span class="verdict-pill vp-fail">~100% recurrence</span></td></tr>
+      <tr><td>Laser vs air-abrasive (Sweden)</td><td>6-mo follow-up (too short)</td><td><span class="verdict-pill vp-none">no difference</span></td></tr>
+      <tr><td>± Local antibiotic (Atridox) after scaling</td><td>&gt;50% bone loss</td><td><span class="verdict-pill vp-some">0.6 mm @4 mo only</span></td></tr>
+      <tr><td>Bio-Oss + barrier (GBR)</td><td>"Zero complications, no antibiotics" — recurrences excluded</td><td><span class="verdict-pill vp-some">graft favoured*</span></td></tr>
+      <tr><td>Implantoplasty + GBR; laser vs saline</td><td>All membranes exposed this time</td><td><span class="verdict-pill vp-none">no difference</span></td></tr>
+    </tbody>
+  </table>
+  <p class="fig-cap">No study at low risk of bias. *Believe the graft result cautiously — failures were deleted, and a barrier over infected sites exposes.</p>
+</section>
+
+<!-- 27 LAD STUDY -->
+<section class="slide">
+  <div class="eyebrow">Light-activated disinfection (LAD / PDT)</div>
+  <h2>The 80-patient study that found nothing</h2>
+  <p class="body">A blue photosensitiser + light + oxygen → reactive radicals that kill microbes without harming host cells. The company-funded Swiss study used the <span class="hl">least reliable</span> primary outcome (bleeding) "not by chance."</p>
+  <div class="callout"><div class="tag">Esposito's own RCT — the largest at the time</div><p>80 patients, 4 centres, bone loss ≥3 mm. Couldn't even use a placebo dye (every blue dye killed bacteria). Result: failure, recurrence, retreatment, bone loss (~0.1 mm) all the <span class="hl">same</span> with or without LAD. <strong>No benefit — and the company refused to pay.</strong></p></div>
+</section>
+
+<!-- 28 CONCLUSIONS -->
+<section class="slide scroll">
+  <div class="eyebrow">Treatment · the honest summary</div>
+  <h2>What the evidence concludes</h2>
+  <div style="margin-top:6px">
+    <div class="take"><div class="n">✓</div><p>Peri-implantitis <b>can be arrested</b> — but medium-to-long-term outcomes are <b>unpredictable</b>.</p></div>
+    <div class="take"><div class="n">✓</div><p><b>No single intervention is superior</b> — laser, Vector, air-abrasive, curette all perform similarly. Use what you like.</p></div>
+    <div class="take"><div class="n">✓</div><p><b>Don't wait</b> — intervene as soon as you notice it. Praying won't work.</p></div>
+    <div class="take"><div class="n">✓</div><p>The goal is to re-create tissue, implant and <b>prosthetic morphology that makes hygiene easy</b>.</p></div>
+    <div class="take"><div class="n">★</div><p><b>Prevention is paramount</b>: good prosthesis, good positioning, good hygiene, good maintenance.</p></div>
+  </div>
+</section>
+
+<!-- 29 PROTOCOL TREE -->
+<section class="slide scroll">
+  <div class="eyebrow">Esposito's personal protocol · opinion, evidence-informed</div>
+  <h2>Decide by bone loss</h2>
+  <div class="tree">
+    <div class="tnode"><div class="lbl">FIRST — always</div><b>Look for a modifiable cause</b><p>Submucosal cement · abutment/prosthesis gaps (misfit) · implant fracture. Correct the prosthesis & give detailed hygiene instruction.</p></div>
+    <div class="tnode q"><div class="lbl">DECISION</div><b>How much bone loss?</b></div>
+    <div class="tbranch">
+      <div class="tnode"><div class="lbl">EARLY · 2–4 mm</div><b>Non-surgical</b><p>Ultrasonic scaling, <b>metal tip</b> (titanium acceptable). That's it.</p></div>
+      <div class="tnode"><div class="lbl">&gt; 4 mm</div><b>Open flap</b><p>Metal-tip scaling + implantoplasty. Graft <b>only if</b> sure the surface is truly clean. Prefer no graft to a poor result.</p></div>
+    </div>
+    <div class="tnode"><div class="lbl">IF GRAFTING</div><b>Always antibiotic <em>treatment</em> cover</b><p>Not prophylaxis — start the day before, continue ≥1 week, to maximise eradication.</p></div>
+  </div>
+</section>
+
+<!-- 30 END -->
+<section class="slide" style="align-items:center;text-align:center">
+  <div class="eyebrow" style="justify-content:center">End of Lecture 2</div>
+  <h1 style="font-size:clamp(2rem,4.6vw,3.6rem)">Prevent. Detect early.<br>Keep it simple.</h1>
+  <p class="lead" style="margin:0 auto">You've completed the peri-implant disease module — diagnosis, prevalence and management.</p>
+  <div class="end-cta" style="justify-content:center">
+    <button class="btn" onclick="go(0)">Restart lecture</button>
+    <button class="btn ghost" id="clearProg">Reset progress</button>
+  </div>
+  <p class="fig-cap" style="margin-top:24px">Now test yourself: <b>Quiz 1</b> (evidence &amp; appraisal) and <b>Quiz 2</b> (peri-implant disease).</p>
+</section>
+
+</div>
+<div class="hint" id="hint">Use ← → arrows, or swipe</div>
+<div class="nav">
+  <button id="prev" aria-label="Previous">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="Next">›</button>
+</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];const total=slides.length;let cur=0;
+const KEY='module5_day1_lec2_progress_v1';const seen=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
+document.getElementById('ctot').textContent=String(total).padStart(2,'0');
+const dotsWrap=document.getElementById('dots');
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);dotsWrap.appendChild(d);});
+const dots=[...document.querySelectorAll('.dot')];
+function render(){slides.forEach((s,i)=>s.classList.toggle('active',i===cur));
+  dots.forEach((d,i)=>{d.classList.toggle('active',i===cur);d.classList.toggle('seen',seen.has(i)&&i!==cur);});
+  document.getElementById('cnum').textContent=String(cur+1).padStart(2,'0');
+  document.getElementById('progress').style.width=((cur+1)/total*100)+'%';
+  document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===total-1;
+  dots[cur]?.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+  seen.add(cur);localStorage.setItem(KEY,JSON.stringify([...seen]));
+  const sc=slides[cur];if(sc.classList.contains('scroll'))sc.scrollTop=0;}
+function go(i){cur=Math.max(0,Math.min(total-1,i));render();}
+function next(){go(cur+1);}function prev(){go(cur-1);}
+document.getElementById('next').onclick=next;document.getElementById('prev').onclick=prev;
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
+let tx=0;document.getElementById('deck').addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+document.getElementById('deck').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60){dx<0?next():prev();}},{passive:true});
+setTimeout(()=>{const h=document.getElementById('hint');h.style.transition='opacity .8s';h.style.opacity='0';},3500);
+document.getElementById('clearProg').onclick=()=>{localStorage.removeItem(KEY);seen.clear();render();};
+
+/* compare tabs */
+document.querySelectorAll('.cmp-tab').forEach(t=>{t.onclick=()=>{
+  document.querySelectorAll('.cmp-tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  document.querySelectorAll('.cmp-body').forEach(b=>b.classList.toggle('on',b.dataset.b===t.dataset.c));};});
+
+/* probing toggle */
+const tv=document.getElementById('toothView'),iv=document.getElementById('implantView'),pm=document.getElementById('probeMsg');
+document.getElementById('pbTooth').onclick=function(){this.classList.add('on');document.getElementById('pbImplant').classList.remove('on');tv.style.display='block';iv.style.display='none';pm.innerHTML='A tooth has a true <span class="hl-cyan">periodontal attachment</span> that stops the probe at a predictable depth.';};
+document.getElementById('pbImplant').onclick=function(){this.classList.add('on');document.getElementById('pbTooth').classList.remove('on');tv.style.display='none';iv.style.display='block';pm.innerHTML='An implant has <span class="hl">no true attachment</span> — only weak hemidesmosomal contact. The probe is blocked by threads yet sinks through loose inflamed tissue. <strong>Interpret, don\'t just measure.</strong>';};
+
+/* myth cards */
+document.querySelectorAll('#mythBox .myth-card').forEach(c=>c.onclick=()=>c.classList.toggle('open'));
+
+render();
+</script>
+</body>
+</html>

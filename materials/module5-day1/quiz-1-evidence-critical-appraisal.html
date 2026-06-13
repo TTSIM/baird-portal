@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 — Evidence & Critical Appraisal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1822;--bg2:#0a121a;--surface:#16232F;--surface2:#1d2f3d;--line:#2a3f50;
+  --accent:#4FD1C5;--accent-dim:#2f8a82;--gold:#C9A961;--text:#E8EEF2;--muted:#8FA3B0;--muted2:#5f7585;
+  --danger:#E87A6B;--ok:#6FCF8E;--warn:#F0C36A;
+  --display:'Fraunces',serif;--body:'Inter',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:30px 22px 120px}
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:50;transition:width .4s;box-shadow:0 0 12px var(--accent)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;padding-top:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.05;margin-top:8px}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.7}
+.meta b{color:var(--text);font-size:15px}
+
+/* intro */
+.intro{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px}
+.intro p{color:#cdd9e1;line-height:1.6;margin-bottom:14px}
+.intro ul{list-style:none;margin:12px 0}
+.intro li{padding-left:26px;position:relative;margin-bottom:9px;color:var(--muted)}
+.intro li::before{content:"›";position:absolute;left:6px;color:var(--accent);font-weight:700}
+.btn{font-family:var(--body);font-weight:600;font-size:1rem;background:var(--accent);color:#06231f;border:none;padding:14px 28px;border-radius:12px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(79,209,197,.25)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* question card */
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.qnum{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.12em}
+.qtopic{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;border-radius:20px}
+.qtext{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.3;margin:10px 0 22px}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:flex-start;gap:13px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:15px 17px;cursor:pointer;transition:.18s;font-size:1rem;line-height:1.4}
+.opt:hover{border-color:var(--accent-dim);background:var(--surface2)}
+.opt .key{font-family:var(--mono);font-size:.85rem;color:var(--muted);border:1px solid var(--line);border-radius:7px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;transition:.18s}
+.opt.correct{border-color:var(--ok);background:rgba(111,207,142,.1)}
+.opt.correct .key{border-color:var(--ok);color:var(--ok);background:rgba(111,207,142,.15)}
+.opt.wrong{border-color:var(--danger);background:rgba(232,122,107,.1)}
+.opt.wrong .key{border-color:var(--danger);color:var(--danger)}
+.opt.disabled{pointer-events:none;opacity:.85}
+.opt.dim{opacity:.5}
+.explain{margin-top:18px;border-left:3px solid var(--accent);background:var(--bg2);border-radius:0 12px 12px 0;padding:15px 18px;font-size:.95rem;line-height:1.55;color:#cdd9e1;display:none}
+.explain.show{display:block;animation:fade .3s}
+.explain .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.explain.ok{border-color:var(--ok)}.explain.ok .lab{color:var(--ok)}
+.explain.no{border-color:var(--danger)}.explain.no .lab{color:var(--danger)}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--bg) 60%,transparent);padding:18px 22px 24px;display:flex;justify-content:center}
+.navinner{max-width:720px;width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.scoreline{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.scoreline b{color:var(--accent)}
+
+/* results */
+.result{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:40px 28px;animation:fade .4s}
+.ring{width:180px;height:180px;margin:0 auto 20px}
+.result h2{font-family:var(--display);font-weight:900;font-size:2rem;margin-bottom:8px}
+.result .grade{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.result p{color:var(--muted);line-height:1.6;max-width:48ch;margin:0 auto 10px}
+.breakdown{text-align:left;margin:24px 0;border-top:1px solid var(--line);padding-top:18px}
+.brow{display:flex;justify-content:space-between;font-size:.9rem;padding:8px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.brow b{font-family:var(--mono)}
+.result-cta{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.hide{display:none}
+@media(max-width:560px){.qtext{font-size:1.15rem}.wrap{padding:24px 16px 120px}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="wrap">
+  <div class="head">
+    <div><div class="eyebrow">Implant Course · Quiz 1</div><h1>Evidence &amp;<br>Critical Appraisal</h1></div>
+    <div class="meta" id="meta"><b id="qpos">—</b><br>30 questions</div>
+  </div>
+
+  <div id="intro" class="intro">
+    <p>This quiz tests <b>Lecture 1</b> — how to think about evidence rather than what to believe: study design, levels of evidence, blinding, dropouts, outcomes, and appraising the literature.</p>
+    <ul>
+      <li>30 single-answer questions across 8 topics</li>
+      <li>Instant feedback and an explanation after each answer</li>
+      <li>Your progress is saved if you close the tab</li>
+      <li>A scored breakdown by topic at the end</li>
+    </ul>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn" id="startBtn">Start quiz</button>
+      <button class="btn ghost hide" id="resumeBtn">Resume</button>
+    </div>
+  </div>
+
+  <div id="quiz" class="hide"></div>
+  <div id="results" class="hide"></div>
+</div>
+
+<div class="navbar hide" id="navbar">
+  <div class="navinner">
+    <div class="scoreline">Score <b id="liveScore">0</b> / <span id="liveTotal">30</span></div>
+    <button class="btn" id="nextBtn" disabled>Next</button>
+  </div>
+</div>
+
+<script>
+const QS=[
+{t:"Philosophy",q:"Esposito sums up his approach with which borrowed line?",o:["\u201CTrust, but verify\u201D","\u201CI don\u2019t want to believe \u2014 I want to know\u201D","\u201CFirst, do no harm\u201D","\u201CThe evidence speaks for itself\u201D"],a:1,e:"His whole message is to understand HOW something works rather than accept the recipe \u2014 to know, not merely believe."},
+{t:"Evidence-based",q:"Evidence-based dentistry is the integration of best research evidence with which two other elements?",o:["Cost and convenience","Clinical skill and patient needs","Guidelines and indemnity","Mentor opinion and tradition"],a:1,e:"All three must overlap: best research evidence + clinical skill + the patient\u2019s actual needs."},
+{t:"AI",q:"What is the main limitation of current AI when appraising the dental literature?",o:["It cannot read PDFs","It reports the literature without truly appraising it, and can hallucinate","It only knows old studies","It refuses clinical questions"],a:1,e:"AI appraises better than the average dentist but still fabricates answers and counts conclusions without judging study quality."},
+{t:"Clinical judgement",q:"Why does Esposito describe some highly skilled operators as \u2018dangerous\u2019?",o:["They charge too much","Their hands outrun their critical judgement, so they attempt complex surgery confidently and get into trouble","They never refer","They avoid courses"],a:1,e:"Skill can develop faster than judgement; confidence in the hands without critical thinking leads to over-ambitious surgery."},
+{t:"Clinical judgement",q:"The key question to ask before choosing any therapy is:",o:["Is it the newest technique?","What did my mentor do?","If this goes wrong, what is Plan B?","Will the patient pay?"],a:2,e:"Always have a Plan B \u2014 sometimes realising there isn\u2019t one should change your decision."},
+{t:"Clinical judgement",q:"\u201CSolve the patient\u2019s problem, not the problem in your mind\u201D warns against:",o:["Under-treating","Chasing perfect aesthetics the patient doesn\u2019t want","Using guides","Referring complex cases"],a:1,e:"The 60-year-old man may just want function; multiple aesthetic interventions solve the dentist\u2019s problem, not his."},
+{t:"Levels of evidence",q:"For a \u2018what works best?\u2019 therapy question, the highest level of evidence is:",o:["A confident expert\u2019s opinion","A large case series","An up-to-date systematic review of RCTs / Cochrane review","An in vitro study"],a:2,e:"A well-conducted, current systematic review of RCTs sits at the top; Cochrane reviews are the most reliable if done properly."},
+{t:"Levels of evidence",q:"Expert opinion sits where on the evidence hierarchy?",o:["At the top","In the middle with RCTs","At the bottom \u2014 the weakest evidence","It is not evidence at all"],a:2,e:"It is the weakest level \u2014 yet what most clinicians actually rely on."},
+{t:"Study design",q:"Why can\u2019t you claim a \u2018100% success rate\u2019 from an uncontrolled study?",o:["The sample is always too small","Success is meaningless without a comparison group","Ethics forbid it","It needs animal data first"],a:1,e:"Without a proper control (no-therapy, placebo or gold standard) the claim is uninterpretable."},
+{t:"Study design",q:"Esposito\u2019s view on a consensus recommendation based on a dog (ligature) study is:",o:["It is acceptable if peer-reviewed","\u2018Throw it out the window\u2019 \u2014 animal data don\u2019t set human protocol","It is the gold standard","It only applies to grafting"],a:1,e:"Animal models hint at mechanism; they cannot dictate clinical treatment (\u2018have you seen a pig brush its teeth?\u2019)."},
+{t:"Study design",q:"The fatal flaw of the so-called \u2018controlled clinical trial\u2019 is:",o:["No control group","The clinician allocates patients, introducing selection bias","No statistician","Too many patients"],a:1,e:"When the clinician chooses who goes where, the best-prognosis patients drift into the favoured arm \u2014 biasing the result."},
+{t:"Study design",q:"What does randomisation primarily achieve?",o:["Larger samples","Removes selection bias and balances known AND unknown factors","Blinds the patient","Speeds recruitment"],a:1,e:"Randomly allocating patients balances groups for everything \u2014 including factors we don\u2019t even know about."},
+{t:"Study design",q:"How does sample size relate to group balance after randomisation?",o:["Smaller samples balance better","Sample size is irrelevant once randomised","Larger samples balance better; small ones can swing by chance","Only blinding affects balance"],a:2,e:"Small randomised samples can still be unbalanced by chance; larger samples self-correct."},
+{t:"Study design",q:"A small treatment difference (vs a large one) requires:",o:["Fewer patients","About 20 per group","Many more patients \u2014 often thousands","No control"],a:2,e:"Large effects show with small numbers; small effects need large samples, which is why we pool studies."},
+{t:"Study design",q:"Which factor canNOT be randomised?",o:["Which antibiotic a patient receives","Whether a patient smokes","Implant length used","Type of graft material"],a:1,e:"You can\u2019t ethically assign smoking; such exposures need observational designs."},
+{t:"Blinding",q:"Which person is arguably the MOST important to blind, and usually can be?",o:["The surgeon","The patient","The outcome assessor","The receptionist"],a:2,e:"The outcome assessor should be independent and blinded even when the surgeon cannot be."},
+{t:"Blinding",q:"Blinding the patient guards against which paired effects?",o:["Type I and Type II error","Placebo and nocebo","Bias and confounding","Sensitivity and specificity"],a:1,e:"An unblinded patient may feel better (placebo) or worse (nocebo) purely from expectation."},
+{t:"Blinding",q:"Why is the surgeon often impossible to blind in implant trials?",o:["They refuse","You can\u2019t unsee placing a long vs short implant or doing a graft","Ethics committees forbid it","They aren\u2019t involved in outcomes"],a:1,e:"The operator inevitably knows the intervention performed; drugs, by contrast, can be placebo-blinded."},
+{t:"Dropouts",q:"A trial that excludes patients who later recur is guilty of:",o:["Good housekeeping","Deleting failures to fake success","Intention-to-treat analysis","Proper blinding"],a:1,e:"Removing the failures manufactures an artificially positive result \u2014 a classic abuse."},
+{t:"Dropouts",q:"When a patient drops out, what must the study establish?",o:["Their postcode","WHY they left \u2014 a treatment failure differs from an unrelated reason","Their next appointment","Their insurance status"],a:1,e:"\u2018Didn\u2019t return because of pain\u2019 is a failure; \u2018ran off with a younger partner\u2019 is not. The reason matters."},
+{t:"Dropouts",q:"A study that began with 150 patients but reports on 20 should prompt you to:",o:["Trust the strong result","Reconcile the missing numbers before believing it","Assume the rest were healthy","Cite it confidently"],a:1,e:"Unexplained missing data is a major red flag; always account for everyone enrolled."},
+{t:"Outcomes",q:"Which is a PRIMARY (patient-centred) outcome?",o:["Bleeding on probing","A functioning prosthesis and ability to chew","Probing pocket depth","Radiographic bone level to 0.1 mm"],a:1,e:"Primary outcomes are what the patient feels \u2014 function, quality of life, longevity. The rest are surrogates."},
+{t:"Outcomes",q:"Why be sceptical of a paper emphasising a 0.1\u20130.2 mm bone-level difference?",o:["It\u2019s impossible to measure","It\u2019s a surrogate the patient would never notice \u2014 clinical relevance is doubtful","Bone loss is always benign","It proves causation"],a:1,e:"Statistical significance on a tiny surrogate is not clinical importance \u2014 \u2018I can\u2019t even see 0.1 mm with my glasses.\u2019"},
+{t:"Outcomes",q:"Surrogate outcomes (plaque, bleeding, pockets) are used to:",o:["Replace patient-centred outcomes","Predict \u2014 imperfectly \u2014 who may develop problems","Guarantee implant survival","Measure cost"],a:1,e:"They predict poorly: some patients with all the signs never fail; some \u2018clean\u2019 patients deteriorate."},
+{t:"Reviews",q:"A narrative review differs from a systematic review because it:",o:["Always uses RCTs","Follows no scientific method and is often invited/opinion-led","Includes a meta-analysis","Is more rigorous"],a:1,e:"Narrative reviews lack systematic method \u2014 fine for mechanism, but bin them for \u2018what works best\u2019."},
+{t:"Reviews",q:"A meta-analysis is best described as:",o:["A synonym for systematic review","A statistical technique pooling quantitative data to increase precision","A type of narrative review","An expert consensus"],a:1,e:"The systematic review is the process; the meta-analysis is the optional statistical pooling step within it."},
+{t:"Reviews",q:"In the surface-roughness example, what did pooling four non-significant studies reveal?",o:["Still no difference","About 20% more peri-implantitis with rough surfaces at 3 years","Rough surfaces were safer","An error in the data"],a:1,e:"Individually underpowered, the pooled meta-analysis crossed into significance \u2014 the value of combining data."},
+{t:"Reviews",q:"Why must systematic reviews be kept up to date, when good trials may not?",o:["Trials expire legally","New studies accumulate; a 20-year-old review usually no longer reflects the evidence","Reviews are less reliable","Journals demand it"],a:1,e:"A solid old trial can still hold, but the body of evidence moves on, so reviews go stale."},
+{t:"Metrics",q:"The h-index and journal impact factor primarily measure:",o:["Scientific quality","Popularity / citation counts \u2014 not truth","Risk of bias","Sample size"],a:1,e:"A paper can be heavily cited because it\u2019s wrong or merely agrees with belief \u2014 popularity isn\u2019t quality."},
+{t:"Metrics",q:"Publication bias means that:",o:["All trials get published","Negative results often go unpublished, especially company-funded ones","Reviews are always biased","Positive results are suppressed"],a:1,e:"\u2018The literature can\u2019t help you if the data isn\u2019t published\u2019 \u2014 buried negative data distorts the evidence base."}
+];
+
+const KEY='module5_day1_quiz1_state_v1';
+let state={answers:Array(QS.length).fill(null),idx:0,started:false};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.answers&&s.answers.length===QS.length)state=s;}catch(e){}
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function score(){return state.answers.reduce((n,a,i)=>n+(a===QS[i].a?1:0),0);}
+function answeredCount(){return state.answers.filter(a=>a!==null).length;}
+
+$('liveTotal').textContent=QS.length;
+if(state.started&&answeredCount()>0&&answeredCount()<QS.length){$('resumeBtn').classList.remove('hide');}
+
+$('startBtn').onclick=()=>{state={answers:Array(QS.length).fill(null),idx:0,started:true};save();begin();};
+$('resumeBtn').onclick=()=>{state.idx=state.answers.findIndex(a=>a===null);if(state.idx<0)state.idx=0;begin();};
+
+function begin(){$('intro').classList.add('hide');$('quiz').classList.remove('hide');$('navbar').classList.remove('hide');render();}
+
+function render(){
+  if(state.answers.every(a=>a!==null)&&state.idx>=QS.length){return showResults();}
+  const i=state.idx,Q=QS[i],chosen=state.answers[i];
+  $('qpos').textContent='Q'+(i+1);
+  $('progress').style.width=((i)/QS.length*100)+'%';
+  $('liveScore').textContent=score();
+  let html=`<div class="qcard"><div class="qtop"><span class="qnum">QUESTION ${i+1} / ${QS.length}</span><span class="qtopic">${Q.t}</span></div><div class="qtext">${Q.q}</div><div class="opts">`;
+  Q.o.forEach((opt,j)=>{html+=`<div class="opt" data-j="${j}"><span class="key">${String.fromCharCode(65+j)}</span><span>${opt}</span></div>`;});
+  html+=`</div><div class="explain" id="exp"><span class="lab"></span><span id="exptext"></span></div></div>`;
+  $('quiz').innerHTML=html;
+  const opts=[...document.querySelectorAll('.opt')];
+  if(chosen!==null){lockIn(chosen,false);}
+  else{opts.forEach(o=>o.onclick=()=>choose(parseInt(o.dataset.j)));}
+  const last=i===QS.length-1;
+  $('nextBtn').textContent=last?'See results':'Next';
+  $('nextBtn').disabled=chosen===null;
+}
+
+function choose(j){
+  state.answers[state.idx]=j;save();lockIn(j,true);
+  $('liveScore').textContent=score();
+  $('nextBtn').disabled=false;
+}
+
+function lockIn(j,animate){
+  const Q=QS[state.idx],opts=[...document.querySelectorAll('.opt')];
+  opts.forEach(o=>{o.classList.add('disabled');const k=parseInt(o.dataset.j);
+    if(k===Q.a)o.classList.add('correct');
+    else if(k===j)o.classList.add('wrong');
+    else o.classList.add('dim');});
+  const exp=$('exp'),ok=j===Q.a;
+  exp.classList.add('show',ok?'ok':'no');
+  exp.querySelector('.lab').textContent=ok?'Correct':'Not quite';
+  $('exptext').innerHTML=(ok?'':`<b style="color:#fff">Answer: ${String.fromCharCode(65+Q.a)}.</b> `)+Q.e;
+}
+
+$('nextBtn').onclick=()=>{
+  if(state.idx>=QS.length-1){state.idx=QS.length;save();showResults();}
+  else{state.idx++;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+};
+
+function showResults(){
+  $('quiz').classList.add('hide');$('navbar').classList.add('hide');$('results').classList.remove('hide');
+  $('progress').style.width='100%';
+  const sc=score(),pct=Math.round(sc/QS.length*100);
+  let grade,msg;
+  if(pct>=85){grade='Distinction';msg='Excellent critical eye \u2014 you appraise like an editor. You\u2019re ready to interrogate any speaker, paper or sales pitch.';}
+  else if(pct>=70){grade='Strong pass';msg='A solid grasp of study design and appraisal. Revisit the slides on the topics below to sharpen the edges.';}
+  else if(pct>=50){grade='Pass';msg='The foundations are there. Re-run Lecture 1 \u2014 especially the weaker topics below \u2014 then retry.';}
+  else{grade='Review needed';msg='Worth another pass through Lecture 1. Focus on randomisation, blinding, dropouts and outcomes, then come back.';}
+  const topics={};QS.forEach((Q,i)=>{topics[Q.t]=topics[Q.t]||{c:0,t:0};topics[Q.t].t++;if(state.answers[i]===Q.a)topics[Q.t].c++;});
+  let brk='';Object.entries(topics).forEach(([k,v])=>{const col=v.c===v.t?'var(--ok)':v.c/v.t>=0.5?'var(--warn)':'var(--danger)';brk+=`<div class="brow"><span>${k}</span><b style="color:${col}">${v.c}/${v.t}</b></div>`;});
+  const C=2*Math.PI*78,off=C*(1-sc/QS.length);
+  $('results').innerHTML=`<div class="result">
+    <svg class="ring" viewBox="0 0 180 180"><circle cx="90" cy="90" r="78" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="90" cy="90" r="78" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 90 90)" id="ringFill"/><text x="90" y="84" text-anchor="middle" font-family="Fraunces" font-weight="900" font-size="38" fill="#E8EEF2">${sc}</text><text x="90" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="var(--muted)">/ ${QS.length}</text></svg>
+    <div class="grade">${grade} · ${pct}%</div>
+    <h2>Quiz 1 complete</h2>
+    <p>${msg}</p>
+    <div class="breakdown"><div class="brow" style="color:var(--muted2);border:none"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em">TOPIC BREAKDOWN</span><span></span></div>${brk}</div>
+    <div class="result-cta"><button class="btn" id="retry">Retake quiz</button><button class="btn ghost" id="review">Review answers</button></div>
+  </div>`;
+  setTimeout(()=>{$('ringFill').style.transition='stroke-dashoffset 1s cubic-bezier(.22,1,.36,1)';$('ringFill').style.strokeDashoffset=off;},100);
+  $('retry').onclick=()=>{state={answers:Array(QS.length).fill(null),idx:0,started:true};save();$('results').classList.add('hide');begin();};
+  $('review').onclick=()=>{state.idx=0;$('results').classList.add('hide');$('quiz').classList.remove('hide');$('navbar').classList.remove('hide');render();window.scrollTo({top:0,behavior:'smooth'});};
+}
+</script>
+</body>
+</html>

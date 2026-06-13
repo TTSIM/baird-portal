@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1 — Evidence-Based Implant Dentistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1822; --bg2:#0a121a; --surface:#16232F; --surface2:#1d2f3d;
+  --line:#2a3f50; --accent:#4FD1C5; --accent-dim:#2f8a82; --gold:#C9A961;
+  --text:#E8EEF2; --muted:#8FA3B0; --muted2:#5f7585;
+  --danger:#E87A6B; --ok:#6FCF8E; --warn:#F0C36A;
+  --display:'Fraunces',serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{height:100vh;width:100vw;position:relative;overflow:hidden}
+
+/* progress + topbar */
+.topbar{position:fixed;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:60;background:linear-gradient(180deg,rgba(10,18,26,.95),rgba(10,18,26,0));pointer-events:none}
+.brand{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;pointer-events:auto}
+.brand b{color:var(--accent)}
+.counter{font-family:var(--mono);font-size:12px;color:var(--muted);pointer-events:auto}
+.counter b{color:var(--text);font-size:14px}
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:70;transition:width .4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px var(--accent)}
+
+/* slides */
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:84px 7vw 92px;opacity:0;transition:opacity .45s ease}
+.slide.active{display:flex;opacity:1;animation:fadeUp .5s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.slide.scroll{justify-content:flex-start;overflow-y:auto}
+.slide.scroll::-webkit-scrollbar{width:8px}
+.slide.scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2.1rem,5.4vw,4.4rem);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:-.015em;margin-bottom:18px}
+.lead{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--muted);max-width:60ch;line-height:1.6}
+p.body{font-size:clamp(1rem,1.3vw,1.12rem);line-height:1.65;color:#cdd9e1;max-width:64ch;margin-bottom:14px}
+.hl{color:var(--accent);font-weight:600}
+.hl-gold{color:var(--gold);font-weight:600}
+strong{color:#fff;font-weight:600}
+.quote{font-family:var(--display);font-style:italic;font-size:clamp(1.4rem,2.8vw,2.2rem);line-height:1.3;color:var(--text);max-width:24ch}
+.quote-by{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:24px}
+
+/* title slide */
+.title-wrap{max-width:none}
+.title-wrap .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:26px}
+.title-meta{margin-top:38px;display:flex;gap:32px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.05em}
+.title-meta div b{display:block;color:var(--text);font-family:var(--body);font-size:15px;letter-spacing:0;margin-top:4px}
+
+/* cards / grids */
+.grid{display:grid;gap:16px;width:100%;max-width:1100px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px;position:relative;overflow:hidden}
+.card .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em}
+.card h3{font-family:var(--display);font-weight:600;font-size:1.25rem;margin:8px 0 8px}
+.card p{font-size:.95rem;line-height:1.55;color:var(--muted)}
+.card.accentbar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+
+.callout{background:linear-gradient(135deg,rgba(79,209,197,.1),rgba(79,209,197,.02));border:1px solid var(--accent-dim);border-radius:14px;padding:22px 26px;max-width:760px}
+.callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+.callout p{margin-top:10px;font-size:1.05rem;line-height:1.55}
+
+ul.ticks{list-style:none;max-width:62ch}
+ul.ticks li{position:relative;padding-left:32px;margin-bottom:14px;font-size:1.02rem;line-height:1.5;color:#cdd9e1}
+ul.ticks li::before{content:"";position:absolute;left:0;top:7px;width:16px;height:16px;border-radius:50%;border:2px solid var(--accent)}
+ul.ticks li b{color:#fff}
+
+/* interactive: buttons */
+.btn{font-family:var(--body);font-weight:600;font-size:.92rem;background:var(--accent);color:#06231f;border:none;padding:11px 20px;border-radius:10px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(79,209,197,.25)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none}
+
+/* nav */
+.nav{position:fixed;bottom:20px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:60}
+.nav button{font-family:var(--mono);font-size:13px;background:var(--surface);border:1px solid var(--line);color:var(--text);width:46px;height:46px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s}
+.nav button:hover{border-color:var(--accent);color:var(--accent)}
+.nav button:disabled{opacity:.3;cursor:not-allowed}
+.dots{display:flex;gap:6px;align-items:center;max-width:46vw;overflow-x:auto;padding:6px}
+.dots::-webkit-scrollbar{display:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;flex:0 0 auto;transition:.2s}
+.dot.active{background:var(--accent);width:22px;border-radius:5px}
+.dot.seen{background:var(--accent-dim)}
+.hint{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:.1em;z-index:55}
+
+/* evidence pyramid */
+.pyramid{display:flex;flex-direction:column;gap:6px;align-items:center;width:100%;max-width:620px}
+.pyr-row{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:13px 18px;text-align:center;cursor:pointer;transition:.2s;font-size:.95rem;position:relative}
+.pyr-row:hover{border-color:var(--accent);background:var(--surface2)}
+.pyr-row.lit{border-color:var(--accent);background:linear-gradient(135deg,rgba(79,209,197,.16),rgba(79,209,197,.03))}
+.pyr-row .lvl{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em}
+.pyr-row b{color:#fff}
+.pyr-detail{margin-top:14px;min-height:48px;font-size:.95rem;color:var(--muted);max-width:620px;text-align:center;line-height:1.5}
+
+/* coin sim */
+.simwrap{display:flex;gap:30px;flex-wrap:wrap;align-items:center}
+.coinbox{text-align:center}
+.coin{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a3f50,#16232F);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.6rem;font-weight:900;color:var(--gold);margin:0 auto 12px;transition:transform .4s}
+.coin.flip{animation:spin .5s}
+@keyframes spin{50%{transform:rotateY(180deg) scale(1.1)}}
+.bars{display:flex;gap:20px}
+.barcol{text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.bartrack{width:60px;height:160px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column-reverse;overflow:hidden;margin-bottom:8px}
+.barfill{width:100%;transition:height .4s}
+.barA{background:var(--accent)}.barB{background:var(--gold)}
+.balance{font-family:var(--mono);font-size:.85rem;color:var(--muted);margin-top:6px}
+
+/* flip cards (blinding) */
+.flipgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;max-width:1000px}
+.flip{perspective:1000px;height:188px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.flip.on .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:center;background:var(--surface)}
+.flip-front .who{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.12em}
+.flip-front h4{font-family:var(--display);font-size:1.3rem;margin-top:6px}
+.flip-front .tap{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:auto;letter-spacing:.1em}
+.flip-back{transform:rotateY(180deg);background:linear-gradient(135deg,var(--surface2),var(--surface));font-size:.9rem;line-height:1.45;color:#cdd9e1}
+
+/* forest plot */
+.forest{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.fp-row{display:grid;grid-template-columns:130px 1fr;align-items:center;gap:14px;margin-bottom:14px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.fp-track{position:relative;height:26px}
+.fp-mid{position:absolute;left:50%;top:-6px;bottom:-6px;width:1px;background:var(--muted2);border-left:1px dashed var(--muted2)}
+.fp-ci{position:absolute;top:50%;height:2px;background:var(--muted);transform:translateY(-50%)}
+.fp-pt{position:absolute;top:50%;width:11px;height:11px;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);background:var(--muted)}
+.fp-row.pooled .fp-ci{background:var(--accent);height:3px}
+.fp-row.pooled .fp-pt{background:var(--accent);width:14px;height:14px}
+.fp-row.pooled{color:var(--accent)}
+.fp-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:8px;padding-left:144px}
+
+/* risk toggles */
+.risk-row{display:flex;flex-direction:column;gap:12px;width:100%;max-width:680px}
+.risk{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;cursor:pointer;transition:.2s}
+.risk:hover{border-color:var(--accent-dim)}
+.risk .label{display:flex;flex-direction:column}
+.risk .label b{font-size:1.02rem}
+.risk .label span{font-size:.82rem;color:var(--muted)}
+.risk .verdict{font-family:var(--mono);font-size:.8rem;text-align:right;max-width:46%;opacity:0;transition:.3s;color:var(--accent)}
+.risk.open .verdict{opacity:1}
+.risk .pill{font-family:var(--mono);font-size:.72rem;padding:3px 9px;border-radius:20px;border:1px solid var(--accent);color:var(--accent);margin-left:10px}
+
+/* takeaways */
+.take{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:12px;max-width:820px}
+.take .n{font-family:var(--mono);font-size:1.3rem;color:var(--accent);font-weight:600;line-height:1}
+.take p{font-size:1rem;line-height:1.5;color:#cdd9e1}
+.take p b{color:#fff}
+
+.svgwrap{display:flex;justify-content:center;align-items:center;width:100%}
+.fig-cap{font-family:var(--mono);font-size:11px;color:var(--muted2);text-align:center;margin-top:12px;letter-spacing:.06em}
+
+.end-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+
+@media(max-width:880px){
+  .slide{padding:74px 6vw 96px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .flipgrid{grid-template-columns:1fr 1fr}
+  .flip{height:170px}
+  .simwrap{gap:18px}
+  .fp-row{grid-template-columns:88px 1fr;font-size:10px}
+  .fp-axis{padding-left:102px}
+  .dots{max-width:38vw}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="topbar">
+  <div class="brand">Implant Course · <b>Lecture 1</b></div>
+  <div class="counter"><b id="cnum">01</b> / <span id="ctot">30</span></div>
+</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide active title-wrap">
+  <div class="kicker">Module 5 · Evidence-Based Implant Dentistry</div>
+  <h1>How to think,<br>not what to&nbsp;believe.</h1>
+  <p class="lead">Critical appraisal for the implant clinician — study design, levels of evidence, and the difference between a fact and a confidently-stated opinion.</p>
+  <div class="title-meta">
+    <div>Lecturer<b>Prof. Marco Esposito</b></div>
+    <div>Affiliation<b>San Raffaele University, Milan</b></div>
+    <div>Part<b>1 of 2 · Morning Session</b></div>
+  </div>
+</section>
+
+<!-- 2 WHY -->
+<section class="slide">
+  <div class="eyebrow">Why this matters</div>
+  <h2>You will not just be an operator.<br>You have to be a thinker.</h2>
+  <p class="body">Every clinical question deserves an evidence-based answer. Information reaches you constantly — from colleagues, speakers, salespeople and now AI — and most of it is <span class="hl">opinion wearing the costume of fact</span>.</p>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card accentbar"><div class="num">01</div><h3>The harder cases are coming</h3><p>The easy implants will increasingly be done by someone else. You'll inherit the atrophic, the complicated and the failing.</p></div>
+    <div class="card accentbar"><div class="num">02</div><h3>Complications are routine</h3><p>You'll meet peri-implantitis roughly <b style="color:var(--accent)">once a week</b>. Nobody has the definitive answer — so you must reason from the evidence yourself.</p></div>
+  </div>
+</section>
+
+<!-- 3 OPINION VS EVIDENCE -->
+<section class="slide">
+  <div class="eyebrow">Two ways to plan</div>
+  <h2>Opinion-based vs evidence-based</h2>
+  <div class="grid g2" style="margin-top:8px">
+    <div class="card"><h3 style="color:var(--warn)">Opinion bias</h3><p>The commonest approach — not because it's right, but because information is incomplete. You read, then <b>reinforce what you already think</b>. With experience this hardens into "that's just how it is" — sometimes correct, sometimes confidently wrong.</p></div>
+    <div class="card"><h3 style="color:var(--accent)">Evidence-based</h3><p>The ideal: all the information you need, appraised critically. In reality you only ever have <b>part</b> of it — the skill is using that part well, and knowing what you don't know.</p></div>
+  </div>
+  <div class="callout" style="margin-top:18px"><div class="tag">Watch for</div><p>Surgeons evolve over decades — most become <span class="hl">less invasive</span>, not more. Today's certainty is tomorrow's outdated technique.</p></div>
+</section>
+
+<!-- 4 QUOTE -->
+<section class="slide" style="align-items:flex-start">
+  <div class="eyebrow">Philosophy</div>
+  <blockquote class="quote">"I don't want to believe — I want to know."</blockquote>
+  <p class="body" style="margin-top:26px">Most people just want the recipe: <em>do this, then this, like cooking spaghetti.</em> But you need to understand <span class="hl">how it works</span> — because in implant dentistry, things are very often not as they seem.</p>
+</section>
+
+<!-- 5 DEFINITION VENN -->
+<section class="slide">
+  <div class="eyebrow">Definition</div>
+  <h2>Evidence-based dentistry</h2>
+  <p class="body">The integration of three things — not research alone. Hover or tap each ring.</p>
+  <div class="svgwrap" style="margin-top:6px">
+    <svg viewBox="0 0 460 320" width="100%" style="max-width:520px" id="venn" aria-label="Three overlapping circles: research evidence, clinical skill, patient needs">
+      <circle class="vc" data-k="r" cx="180" cy="130" r="105" fill="rgba(79,209,197,.10)" stroke="#4FD1C5" stroke-width="2"/>
+      <circle class="vc" data-k="s" cx="280" cy="130" r="105" fill="rgba(201,169,97,.10)" stroke="#C9A961" stroke-width="2"/>
+      <circle class="vc" data-k="p" cx="230" cy="210" r="105" fill="rgba(111,207,142,.10)" stroke="#6FCF8E" stroke-width="2"/>
+      <text x="135" y="100" fill="#4FD1C5" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">Best research</text>
+      <text x="135" y="118" fill="#4FD1C5" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">evidence</text>
+      <text x="325" y="100" fill="#C9A961" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">Clinical</text>
+      <text x="325" y="118" fill="#C9A961" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">skill</text>
+      <text x="230" y="250" fill="#6FCF8E" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">Patient</text>
+      <text x="230" y="268" fill="#6FCF8E" font-family="IBM Plex Mono" font-size="13" text-anchor="middle">needs</text>
+      <circle cx="230" cy="155" r="6" fill="#fff"/>
+    </svg>
+  </div>
+  <div class="pyr-detail" id="venndetail">Click a ring — all three must overlap for a decision to be truly evidence-based.</div>
+</section>
+
+<!-- 6 AI -->
+<section class="slide">
+  <div class="eyebrow">A new tool, a new risk</div>
+  <h2>AI appraises better than the average dentist — and still invents things</h2>
+  <div class="grid g2" style="margin-top:10px">
+    <div class="card"><h3 style="color:var(--accent)">The upside</h3><p>It condenses huge literature in seconds and writes clearly. Esposito uses it to soften blunt emails so colleagues aren't offended.</p></div>
+    <div class="card"><h3 style="color:var(--danger)">The trap</h3><p>It <b>hallucinates</b> — fabricating answers "to be helpful." It currently <b>reports</b> the literature without truly <b>appraising</b> it, and counts conclusions ("seven papers say impossible, so it's impossible") even when the conclusion is wrong.</p></div>
+  </div>
+  <div class="callout" style="margin-top:16px"><div class="tag">The deeper danger</div><p>Critical-skill <span class="hl">atrophy</span> — a generation that goes straight to the answer without learning how to reach it, with shrinking concentration spans.</p></div>
+</section>
+
+<!-- 7 PLAN B -->
+<section class="slide">
+  <div class="eyebrow">Adapt to your skill</div>
+  <h2>Always have a Plan B</h2>
+  <p class="body">Skill develops — but some highly skilled operators are <span class="hl">dangerous</span>: they attempt sophisticated surgery confidently because the hands are ready before the <em>judgement</em> is. If your skill isn't there yet, a simpler therapy can work very well.</p>
+  <ul class="ticks" style="margin-top:8px">
+    <li>You don't <b>have</b> to do vertical augmentation — most attempts fail before you eventually stop trying.</li>
+    <li>When choosing any therapy, ask: <b>"If this goes wrong, what is Plan B?"</b> Sometimes there isn't one — and that should change your decision.</li>
+  </ul>
+</section>
+
+<!-- 8 PATIENT PROBLEM -->
+<section class="slide" style="align-items:flex-start">
+  <div class="eyebrow">The cardinal error</div>
+  <blockquote class="quote">Solve the patient's problem — not the problem in your mind.</blockquote>
+  <p class="body" style="margin-top:24px">The conference/social-media reflex is to chase perfect aesthetics across multiple interventions. But the 60-year-old man in the chair just wants something that <span class="hl">works</span>. Treat the patient, not the photograph.</p>
+</section>
+
+<!-- 9 PYRAMID -->
+<section class="slide">
+  <div class="eyebrow">What should you read?</div>
+  <h2>Levels of evidence</h2>
+  <p class="body" style="margin-bottom:16px">For a "what works best?" question, climb the pyramid. Tap a tier to see why it sits there.</p>
+  <div class="pyramid" id="pyramid">
+    <div class="pyr-row" data-d="The gold standard for therapy questions. A well-conducted systematic review of RCTs — kept up to date — pools the best evidence. Cochrane reviews are the most reliable, if done properly."><span class="lvl">LEVEL 1</span> &nbsp; <b>Systematic review of RCTs / Cochrane review</b></div>
+    <div class="pyr-row" data-d="Randomisation removes selection bias. A single good RCT can be excellent — but it's one treatment in one setting, not a summary."><span class="lvl">LEVEL 2</span> &nbsp; <b>Randomised controlled trial (RCT)</b></div>
+    <div class="pyr-row" data-d="Cohort and case-control studies: useful where you can't randomise (e.g. smoking), but vulnerable to confounding."><span class="lvl">LEVEL 3</span> &nbsp; Observational studies</div>
+    <div class="pyr-row" data-d="No control group. For a therapy question — bin it. You cannot claim success without a comparison."><span class="lvl">LEVEL 4</span> &nbsp; Case series / uncontrolled studies</div>
+    <div class="pyr-row" data-d="The weakest evidence — yet what most clinicians actually rely on. A guru's confidence is not data."><span class="lvl">LEVEL 5</span> &nbsp; Expert opinion</div>
+  </div>
+  <div class="pyr-detail" id="pyrdetail">Tap a tier above.</div>
+</section>
+
+<!-- 10 CONTROL -->
+<section class="slide">
+  <div class="eyebrow">Study design · 1</div>
+  <h2>You cannot claim success without a control</h2>
+  <p class="body">"100% success rate" means nothing on its own. Any study of efficacy needs a <span class="hl">proper comparison</span> — against no therapy, a placebo, or the gold standard.</p>
+  <div class="grid g3" style="margin-top:12px">
+    <div class="card"><div class="num">vs nothing</div><h3>No-therapy control</h3><p>Needed where the natural course is unknown — e.g. an asymptomatic periapical radiolucency: treat or watch?</p></div>
+    <div class="card"><div class="num">vs placebo</div><h3>Placebo control</h3><p>Possible for drugs; hard for surgery (you can't fake placing an implant).</p></div>
+    <div class="card"><div class="num">vs best</div><h3>Gold-standard control</h3><p>e.g. grafts tested against autogenous bone. In peri-implantitis, no clear gold standard exists.</p></div>
+  </div>
+</section>
+
+<!-- 11 ANIMAL -->
+<section class="slide">
+  <div class="eyebrow">Study design · 2</div>
+  <h2>It must be in humans</h2>
+  <p class="body">There are many <span class="hl">ligature-induced</span> peri-implantitis studies in dogs. Esposito once arrived at a consensus meeting to find a draft recommending treatment <em>"based on this animal study."</em></p>
+  <div class="callout"><div class="tag">His verdict</div><p>"Throw it out the window. Have you seen a pig brush its teeth — or smoke?" Animal work hints at mechanism; it does not set clinical protocol.</p></div>
+</section>
+
+<!-- 12 CCT BIAS -->
+<section class="slide">
+  <div class="eyebrow">Study design · 3</div>
+  <h2>The "controlled clinical trial" is a dentist's invention</h2>
+  <p class="body">Methodologists don't recognise the term. Its fatal flaw: the <span class="hl">clinician allocates the patients</span> — and will, consciously or not, steer the best-prognosis cases into the treatment they favour.</p>
+  <div class="svgwrap" style="margin-top:6px">
+    <svg viewBox="0 0 640 220" width="100%" style="max-width:680px" aria-label="Biased allocation diagram">
+      <rect x="20" y="80" width="120" height="60" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="80" y="106" fill="#E8EEF2" font-family="Inter" font-size="13" text-anchor="middle">Patient pool</text>
+      <text x="80" y="124" fill="#8FA3B0" font-family="IBM Plex Mono" font-size="10" text-anchor="middle">mixed risk</text>
+      <path d="M140 100 C 220 60, 280 50, 360 50" stroke="#6FCF8E" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <path d="M140 120 C 220 160, 280 170, 360 170" stroke="#E87A6B" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <rect x="360" y="22" width="240" height="56" rx="10" fill="rgba(111,207,142,.08)" stroke="#6FCF8E"/>
+      <text x="480" y="46" fill="#6FCF8E" font-family="Inter" font-size="13" text-anchor="middle">Favoured treatment</text>
+      <text x="480" y="64" fill="#8FA3B0" font-family="IBM Plex Mono" font-size="10" text-anchor="middle">gets the healthy patients</text>
+      <rect x="360" y="142" width="240" height="56" rx="10" fill="rgba(232,122,107,.08)" stroke="#E87A6B"/>
+      <text x="480" y="166" fill="#E87A6B" font-family="Inter" font-size="13" text-anchor="middle">Comparison</text>
+      <text x="480" y="184" fill="#8FA3B0" font-family="IBM Plex Mono" font-size="10" text-anchor="middle">gets the diabetics &amp; smokers</text>
+      <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#8FA3B0"/></marker></defs>
+    </svg>
+  </div>
+  <p class="fig-cap">Selection bias built in: the result is decided before treatment begins.</p>
+</section>
+
+<!-- 13 RANDOMISATION SIM -->
+<section class="slide scroll">
+  <div class="eyebrow">Study design · 4 · Interactive</div>
+  <h2>Randomisation: let the coin decide</h2>
+  <p class="body">Remove the clinician's choice. Flip a coin → heads to Group A, tails to Group B. Watch how the groups balance.</p>
+  <div class="simwrap" style="margin-top:10px">
+    <div class="coinbox">
+      <div class="coin" id="coin">?</div>
+      <button class="btn" id="flip1">Flip once</button>
+      <button class="btn ghost" id="flip50" style="margin-top:8px">Flip ×50</button>
+      <button class="btn ghost" id="flipReset" style="margin-top:8px">Reset</button>
+    </div>
+    <div class="bars">
+      <div class="barcol"><div class="bartrack"><div class="barfill barA" id="fillA" style="height:0%"></div></div>A: <span id="aCount">0</span></div>
+      <div class="barcol"><div class="bartrack"><div class="barfill barB" id="fillB" style="height:0%"></div></div>B: <span id="bCount">0</span></div>
+    </div>
+    <div class="callout" style="max-width:330px"><div class="tag">The principle</div><p id="balanceMsg">Small samples swing wildly. The <span class="hl">larger</span> the sample, the more balanced the groups — for known <em>and</em> unknown factors alike.</p></div>
+  </div>
+</section>
+
+<!-- 14 SAMPLE SIZE -->
+<section class="slide">
+  <div class="eyebrow">Study design · 5</div>
+  <h2>Sample size & the limits of randomising</h2>
+  <ul class="ticks" style="margin-top:6px">
+    <li>A <b>big difference</b> between treatments may show with ~20 per group; a <b>small difference</b> may need <b>thousands</b> — which is why we pool studies in meta-analyses.</li>
+    <li>Balanced groups differ only in the <b>treatment</b> — so the treatment alone explains the result.</li>
+    <li>You <b>can't randomise everything</b>: you can't randomly assign smoking. Those questions need different designs.</li>
+  </ul>
+</section>
+
+<!-- 15 BLINDING FLIP -->
+<section class="slide scroll">
+  <div class="eyebrow">Study design · 6 · Interactive</div>
+  <h2>The four people to blind</h2>
+  <p class="body" style="margin-bottom:14px">Tap each card to reveal why — and how hard it is in implant trials.</p>
+  <div class="flipgrid" id="flipgrid">
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><span class="who">PERSON 1</span><h4>Surgeon</h4><span class="tap">tap to flip</span></div>
+      <div class="flip-face flip-back">Often <b>impossible</b> — you can't unsee placing a long vs short implant. Drugs can still be placebo-blinded.</div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><span class="who">PERSON 2</span><h4>Patient</h4><span class="tap">tap to flip</span></div>
+      <div class="flip-face flip-back">Blind so expectation doesn't create a <b>placebo</b> (feels better) or <b>nocebo</b> (feels worse) effect.</div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><span class="who">PERSON 3</span><h4>Outcome assessor</h4><span class="tap">tap to flip</span></div>
+      <div class="flip-face flip-back">Arguably <b>most important</b>. Should be independent and blinded — even if not the operator.</div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><span class="who">PERSON 4</span><h4>Statistician</h4><span class="tap">tap to flip</span></div>
+      <div class="flip-face flip-back">Analyses "A vs B" without knowing which is antibiotic and which is placebo — so the maths isn't nudged.</div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 16 DROPOUTS -->
+<section class="slide">
+  <div class="eyebrow">Study design · 7</div>
+  <h2>Where the failures go to hide</h2>
+  <p class="body">A favourite trick: <span class="hl">remove the patients who recur</span>. "This works… if you delete the failures." These papers get published and read uncritically.</p>
+  <div class="grid g3" style="margin-top:10px">
+    <div class="card accentbar"><h3>Dropouts</h3><p>Patients who don't return. You must know <b>why</b> — angry from pain? Or "ran off with a younger partner"? Only one is a treatment failure.</p></div>
+    <div class="card accentbar"><h3>Withdrawals</h3><p>Must be justified. Beware exclusions on flimsy pretexts ("smoked 11, not ≤10 — out") that quietly change the result.</p></div>
+    <div class="card accentbar"><h3>Missing data</h3><p>Began with 150, reports on 20 — where are the other 130? Always reconcile the numbers.</p></div>
+  </div>
+</section>
+
+<!-- 17 OUTCOMES -->
+<section class="slide">
+  <div class="eyebrow">Study design · 8</div>
+  <h2>Primary vs secondary outcomes</h2>
+  <div class="grid g2" style="margin-top:8px">
+    <div class="card"><h3 style="color:var(--accent)">Primary — what the patient feels</h3><p>A functioning prosthesis, the ability to chew, quality of life, longevity of the treatment. <b>This is what success means.</b></p></div>
+    <div class="card"><h3 style="color:var(--warn)">Secondary — surrogate measures</h3><p>Bleeding, pocket depth, 0.1 mm of bone. The patient <b>doesn't notice</b> these — we use them only to <em>predict</em>.</p></div>
+  </div>
+</section>
+
+<!-- 18 0.1mm TRAP -->
+<section class="slide">
+  <div class="eyebrow">The surrogate trap</div>
+  <h2>"I can't even see 0.1&nbsp;mm with my glasses."</h2>
+  <p class="body">Surrogate outcomes predict imperfectly: some patients with plaque, bleeding and pockets <span class="hl">never</span> lose the implant; some stable ones deteriorate. Useful — but not reliable.</p>
+  <div class="callout"><div class="tag">Reading rule</div><p>Beware papers building drama on a <span class="hl-gold">0.1–0.2 mm</span> difference. Ask: would the patient ever notice this? If not, how "significant" is it really?</p></div>
+</section>
+
+<!-- 19 REVIEW TYPES -->
+<section class="slide">
+  <div class="eyebrow">Reading the literature</div>
+  <h2>Narrative ≠ systematic ≠ meta-analysis</h2>
+  <div class="grid g3" style="margin-top:8px">
+    <div class="card"><h3 style="color:var(--danger)">Narrative review</h3><p>No scientific method. Fine for mechanisms — <b>bin it</b> for "what works best." Often published on invitation; popular, not rigorous.</p></div>
+    <div class="card"><h3 style="color:var(--warn)">Systematic review</h3><p>A <b>process</b>: find all studies, appraise risk of bias, base therapy questions on RCTs. Harder than running a trial.</p></div>
+    <div class="card"><h3 style="color:var(--accent)">Meta-analysis</h3><p>A <b>statistical technique</b> pooling quantitative data to increase precision. Only done when combining is valid — not a synonym for systematic review.</p></div>
+  </div>
+</section>
+
+<!-- 20 FOREST PLOT -->
+<section class="slide scroll">
+  <div class="eyebrow">Interactive · How pooling works</div>
+  <h2>Reading a forest plot</h2>
+  <p class="body" style="margin-bottom:14px">Each line is a study's confidence interval. Cross the centre line = no significant difference. <b>Tap "Pool"</b> to combine them.</p>
+  <div class="forest">
+    <div class="fp-row"><span>Study 1 (n=40)</span><div class="fp-track"><div class="fp-mid"></div><div class="fp-ci" style="left:24%;width:60%"></div><div class="fp-pt" style="left:54%"></div></div></div>
+    <div class="fp-row"><span>Study 2 (n=48)</span><div class="fp-track"><div class="fp-mid"></div><div class="fp-ci" style="left:30%;width:52%"></div><div class="fp-pt" style="left:58%"></div></div></div>
+    <div class="fp-row"><span>Study 3 (n=44)</span><div class="fp-track"><div class="fp-mid"></div><div class="fp-ci" style="left:26%;width:58%"></div><div class="fp-pt" style="left:55%"></div></div></div>
+    <div class="fp-row"><span>Study 4 (n=50)</span><div class="fp-track"><div class="fp-mid"></div><div class="fp-ci" style="left:32%;width:50%"></div><div class="fp-pt" style="left:60%"></div></div></div>
+    <div class="fp-row pooled" id="pooledRow" style="display:none"><span>POOLED</span><div class="fp-track"><div class="fp-mid"></div><div class="fp-ci" style="left:58%;width:22%"></div><div class="fp-pt" style="left:69%"></div></div></div>
+    <div class="fp-axis"><span>← favours rough</span><span>no difference</span><span>favours machined →</span></div>
+  </div>
+  <div style="margin-top:16px;display:flex;gap:12px;align-items:center">
+    <button class="btn" id="poolBtn">Pool the studies</button>
+    <p class="body" id="poolMsg" style="margin:0;opacity:0;transition:.4s">Individually: not significant. Pooled: the CI clears the line — <span class="hl">~20% more peri-implantitis with rough surfaces at 3 years.</span></p>
+  </div>
+</section>
+
+<!-- 21 COCHRANE -->
+<section class="slide">
+  <div class="eyebrow">Reliability & decay</div>
+  <h2>Even good reviews go stale</h2>
+  <ul class="ticks" style="margin-top:6px">
+    <li><b>Cochrane reviews</b> are the most reliable level — <em>if done properly.</em> A flawed review yields completely wrong conclusions.</li>
+    <li>A 20-year-old <b>trial</b> may still hold. A 20-year-old <b>review</b> usually won't — reviews must be updated.</li>
+    <li>The UK exposes you far more to methodology and Cochrane than most countries — use that advantage.</li>
+  </ul>
+</section>
+
+<!-- 22 POPULARITY -->
+<section class="slide">
+  <div class="eyebrow">Metrics that mislead</div>
+  <h2>Popularity is not quality</h2>
+  <p class="body">The <span class="hl">h-index</span> and <span class="hl">impact factor</span> measure citations and popularity — not truth. A paper can be cited heavily precisely because it's wrong, or merely because it agrees with prevailing belief.</p>
+  <div class="callout"><div class="tag">Analogy</div><p>"Being popular doesn't mean you're intelligent." Likes ≠ rigour — for a person or for a journal.</p></div>
+</section>
+
+<!-- 23 RISK FACTORS INTERACTIVE -->
+<section class="slide scroll">
+  <div class="eyebrow">Applying judgement · Interactive</div>
+  <h2>Risk factors: refuse, or customise?</h2>
+  <p class="body" style="margin-bottom:12px">Tap each. A risk factor raises probability — it is rarely an automatic "no."</p>
+  <div class="risk-row" id="riskRow">
+    <div class="risk" data-v="2–3× higher failure — but customise maintenance, don't refuse."><div class="label"><b>Smoker</b><span>Higher failure rate</span></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">tap</span></div></div>
+    <div class="risk" data-v="Want them controlled; extra caution for infection at surgery & over time. You can't predict future control."><div class="label"><b>Diabetic</b><span>Metabolic risk</span></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">tap</span></div></div>
+    <div class="risk" data-v="Lose more implants over time → shorter recall (e.g. 3-monthly). Confirm it was truly advanced perio."><div class="label"><b>History of periodontitis</b><span>Higher prevalence of peri-implantitis</span></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">tap</span></div></div>
+    <div class="risk" data-v="Often have the need AND the means — be open-minded, take precautions, treat."><div class="label"><b>Elderly (85–90)</b><span>Slower healing</span></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">tap</span></div></div>
+    <div class="risk" data-v="The real red flag. Lost teeth through neglect → worst prognosis. Remember: a compromised tooth often beats an implant."><div class="label"><b>Non-collaborative / poor hygiene</b><span>Behavioural</span></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">tap</span></div></div>
+  </div>
+</section>
+
+<!-- 24 MENTORSHIP -->
+<section class="slide">
+  <div class="eyebrow">How we learn</div>
+  <h2>Beware single-technique teaching</h2>
+  <p class="body">For a 5 mm ridge over the nerve, each guru teaches a <span class="hl">different</span> technique — and, followed faithfully, each "works." <b>Istvan Urban</b> teaches one; others use interposition grafts or onlay blocks. They can't all be equally right.</p>
+  <div class="callout"><div class="tag">The bias</div><p>Every master promotes the technique they invented. Textbooks have the same flaw — a book by one author won't fairly present a rival's method. Get <span class="hl">1–2 mentors</span>, but keep appraising.</p></div>
+</section>
+
+<!-- 25 COMMUNICATION -->
+<section class="slide" style="align-items:flex-start">
+  <div class="eyebrow">The first skill</div>
+  <blockquote class="quote">The first skill of a successful dentist is not the hands — it's communication.</blockquote>
+  <p class="body" style="margin-top:24px">Highly skilled operators who can't communicate don't succeed; modest operators who communicate brilliantly do. Patients now arrive <span class="hl">pre-informed</span> (and sometimes trying to trap you) — so this will only matter more.</p>
+</section>
+
+<!-- 26 SOCIAL MEDIA -->
+<section class="slide">
+  <div class="eyebrow">Information hygiene</div>
+  <h2>Social media feeds you what you already believe</h2>
+  <p class="body">The algorithm maximises your time online (for advertising) by serving what you <span class="hl">want</span> to hear. Be aware of it. The "best case by the dentist" is never what they do every day — and it has been curated, edited, and now AI-enhanced.</p>
+  <div class="callout"><div class="tag">Publication bias</div><p>Negative results often go unpublished — especially company-funded ones. <span class="hl">The literature can't help you if the data isn't published.</span></p></div>
+</section>
+
+<!-- 27 RECAP INTERACTIVE -->
+<section class="slide scroll">
+  <div class="eyebrow">Self-check · Interactive</div>
+  <h2>Spot the appraisal flaw</h2>
+  <p class="body" style="margin-bottom:14px">Read each claim. Decide: trust, or interrogate? Tap to reveal.</p>
+  <div class="risk-row" id="selfRow">
+    <div class="risk" data-v="INTERROGATE — no control group. 'Success' is meaningless without comparison."><div class="label"><b>"My technique has a 100% success rate."</b></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">reveal</span></div></div>
+    <div class="risk" data-v="INTERROGATE — animal model. Hints at mechanism only; doesn't set human protocol."><div class="label"><b>"A dog study proves this is the best treatment."</b></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">reveal</span></div></div>
+    <div class="risk" data-v="INTERROGATE — 3 months is too short. Recurrence shows after ~1 year."><div class="label"><b>"No difference at 3-month follow-up, so they're equal."</b></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">reveal</span></div></div>
+    <div class="risk" data-v="INTERROGATE — surrogate drama. Would a patient ever notice 0.2 mm?"><div class="label"><b>"Group A lost 0.2 mm more bone — clearly worse."</b></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">reveal</span></div></div>
+    <div class="risk" data-v="TRUST (cautiously) — Level 1 evidence, IF appraised for risk of bias and kept up to date."><div class="label"><b>"An up-to-date Cochrane review of RCTs found…"</b></div><div style="display:flex;align-items:center"><span class="verdict"></span><span class="pill">reveal</span></div></div>
+  </div>
+</section>
+
+<!-- 28 TAKEAWAYS -->
+<section class="slide scroll">
+  <div class="eyebrow">Consolidate</div>
+  <h2>Five things to carry into clinic</h2>
+  <div style="margin-top:6px">
+    <div class="take"><div class="n">1</div><p><b>Question everything.</b> Information is opinion until appraised — including the confident speaker and the polished AI answer.</p></div>
+    <div class="take"><div class="n">2</div><p><b>No control, no claim.</b> Demand a comparison, in humans, with adequate numbers and ≥1-year follow-up.</p></div>
+    <div class="take"><div class="n">3</div><p><b>Randomisation beats allocation.</b> If the clinician chose the groups, suspect the result.</p></div>
+    <div class="take"><div class="n">4</div><p><b>Follow the dropouts.</b> Reconcile the numbers; deleted failures fake success.</p></div>
+    <div class="take"><div class="n">5</div><p><b>Treat the patient, not the photo.</b> The primary outcome is the one the patient can feel.</p></div>
+  </div>
+</section>
+
+<!-- 29 BRIDGE -->
+<section class="slide">
+  <div class="eyebrow">Up next</div>
+  <h2>From appraisal to the clinic</h2>
+  <p class="body">You now have the lens. Lecture 2 turns it on the complication you'll meet weekly — <span class="hl">peri-implant mucositis and peri-implantitis</span> — diagnosis, the real prevalence data, and what the evidence does (and doesn't) say about treatment.</p>
+  <div class="callout" style="margin-top:8px"><div class="tag">Carry this question</div><p>For every treatment claim in Lecture 2, ask: <span class="hl">what's the control, how long the follow-up, and where did the failures go?</span></p></div>
+</section>
+
+<!-- 30 END -->
+<section class="slide" style="align-items:center;text-align:center">
+  <div class="eyebrow" style="justify-content:center">End of Lecture 1</div>
+  <h1 style="font-size:clamp(2rem,4.6vw,3.6rem)">Don't believe.<br>Know.</h1>
+  <p class="lead" style="margin:0 auto">You've completed the evidence & critical-appraisal module.</p>
+  <div class="end-cta" style="justify-content:center">
+    <button class="btn" onclick="go(0)">Restart lecture</button>
+    <button class="btn ghost" id="clearProg">Reset progress</button>
+  </div>
+  <p class="fig-cap" style="margin-top:24px">Then open <b>Quiz 1 — Evidence &amp; Critical Appraisal</b> to test yourself.</p>
+</section>
+
+</div><!-- /deck -->
+
+<div class="hint" id="hint">Use ← → arrows, or swipe</div>
+<div class="nav">
+  <button id="prev" aria-label="Previous">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="Next">›</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const total=slides.length;
+let cur=0;
+const KEY='module5_day1_lec1_progress_v1';
+const seen=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
+document.getElementById('ctot').textContent=String(total).padStart(2,'0');
+
+const dotsWrap=document.getElementById('dots');
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);dotsWrap.appendChild(d);});
+const dots=[...document.querySelectorAll('.dot')];
+
+function render(){
+  slides.forEach((s,i)=>s.classList.toggle('active',i===cur));
+  dots.forEach((d,i)=>{d.classList.toggle('active',i===cur);d.classList.toggle('seen',seen.has(i)&&i!==cur);});
+  document.getElementById('cnum').textContent=String(cur+1).padStart(2,'0');
+  document.getElementById('progress').style.width=((cur+1)/total*100)+'%';
+  document.getElementById('prev').disabled=cur===0;
+  document.getElementById('next').disabled=cur===total-1;
+  dots[cur]?.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+  seen.add(cur);localStorage.setItem(KEY,JSON.stringify([...seen]));
+  const sc=slides[cur];if(sc.classList.contains('scroll'))sc.scrollTop=0;
+}
+function go(i){cur=Math.max(0,Math.min(total-1,i));render();}
+function next(){go(cur+1);}function prev(){go(cur-1);}
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
+let tx=0;document.getElementById('deck').addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+document.getElementById('deck').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60){dx<0?next():prev();}},{passive:true});
+setTimeout(()=>{const h=document.getElementById('hint');h.style.transition='opacity .8s';h.style.opacity='0';},3500);
+document.getElementById('clearProg').onclick=()=>{localStorage.removeItem(KEY);seen.clear();render();};
+
+/* Venn */
+const vd={r:'Best research evidence — appraised, current, the right study type for the question.',s:'Clinical skill — your hands, your judgement, and honest Plan B if skill isn\'t there.',p:'Patient needs — what THEY want solved, their risk profile, budget and wishes.'};
+document.querySelectorAll('.vc').forEach(c=>{
+  const set=()=>document.getElementById('venndetail').textContent=vd[c.dataset.k];
+  c.addEventListener('mouseenter',()=>{c.setAttribute('fill-opacity','1');set();});
+  c.addEventListener('click',set);
+});
+
+/* Pyramid */
+document.querySelectorAll('#pyramid .pyr-row').forEach(r=>{
+  r.onclick=()=>{document.querySelectorAll('#pyramid .pyr-row').forEach(x=>x.classList.remove('lit'));r.classList.add('lit');document.getElementById('pyrdetail').textContent=r.dataset.d;};
+});
+
+/* Coin sim */
+let a=0,b=0;
+function bars(){const t=a+b||1;document.getElementById('fillA').style.height=(a/Math.max(a,b,1)*100)+'%';document.getElementById('fillB').style.height=(b/Math.max(a,b,1)*100)+'%';document.getElementById('aCount').textContent=a;document.getElementById('bCount').textContent=b;
+  const diff=Math.abs(a-b),msg=document.getElementById('balanceMsg');
+  if(a+b===0){msg.innerHTML='Small samples swing wildly. The <span class="hl">larger</span> the sample, the more balanced the groups.';}
+  else if(diff<=Math.max(2,(a+b)*0.08)){msg.innerHTML='<span class="hl">Well balanced.</span> With enough flips the groups even out — for known and unknown factors alike.';}
+  else{msg.innerHTML='Currently <span class="hl-gold">unbalanced</span> by '+diff+'. Keep flipping — large samples self-correct.';}
+}
+function flip(n){const coin=document.getElementById('coin');coin.classList.remove('flip');void coin.offsetWidth;coin.classList.add('flip');for(let i=0;i<n;i++){Math.random()<0.5?a++:b++;}setTimeout(()=>{coin.textContent=(a>=b)?'A':'B';bars();},200);}
+document.getElementById('flip1').onclick=()=>flip(1);
+document.getElementById('flip50').onclick=()=>flip(50);
+document.getElementById('flipReset').onclick=()=>{a=0;b=0;document.getElementById('coin').textContent='?';bars();};
+
+/* Flip cards */
+document.querySelectorAll('#flipgrid .flip').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+
+/* Forest plot */
+document.getElementById('poolBtn').onclick=function(){document.getElementById('pooledRow').style.display='grid';document.getElementById('poolMsg').style.opacity='1';this.disabled=true;this.textContent='Pooled ✓';};
+
+/* Risk + self-check toggles */
+function wireToggle(sel){document.querySelectorAll(sel+' .risk').forEach(r=>{r.onclick=()=>{r.classList.toggle('open');r.querySelector('.verdict').textContent=r.dataset.v;};});}
+wireToggle('#riskRow');wireToggle('#selfRow');
+
+render();
+</script>
+</body>
+</html>
