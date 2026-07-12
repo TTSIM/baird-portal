@@ -109,6 +109,14 @@
     justify-content: flex-end;
   }
 
+  .topbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+
   .tab-btn {
     border: 1px solid var(--line);
     background: var(--surface);
@@ -119,11 +127,29 @@
     transition: all 0.18s ease;
   }
 
+  .ask-dr-hassan-link {
+    border: 1px solid rgba(54, 214, 181, 0.38);
+    background: rgba(54, 214, 181, 0.08);
+    color: var(--accent2);
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: all 0.18s ease;
+  }
+
   .tab-btn:hover,
   .tab-btn.active {
     background: linear-gradient(135deg, var(--accent), var(--accent3));
     color: #fff;
     border-color: rgba(167, 139, 250, 0.7);
+    transform: translateY(-1px);
+  }
+
+  .ask-dr-hassan-link:hover,
+  .ask-dr-hassan-link:focus-visible {
+    color: #07110f;
+    background: var(--accent2);
+    border-color: var(--accent2);
     transform: translateY(-1px);
   }
 
@@ -538,6 +564,10 @@
       justify-content: flex-start;
     }
 
+    .topbar-actions {
+      justify-content: flex-start;
+    }
+
     .hero-stats {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -575,10 +605,13 @@
         <div class="brand-title" id="course-title">Loading...</div>
         <div class="brand-subtitle" id="course-subtitle"></div>
       </div>
-      <nav class="tabs" role="tablist" aria-label="Portal sections">
-        <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
-        <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
-      </nav>
+      <div class="topbar-actions">
+        <nav class="tabs" role="tablist" aria-label="Portal sections">
+          <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
+          <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
+        </nav>
+        <a class="ask-dr-hassan-link" href="ask-dr-hassan.html">Ask Dr Hassan</a>
+      </div>
     </header>
 
     <section class="hero">
