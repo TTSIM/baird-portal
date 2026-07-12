@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 · Treatment Planning | Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg-0:#08090b; --bg-1:#101216; --bg-2:#171a1f; --line:#2a2d33;
+  --gold:#c9a86a; --gold-bright:#e6c98a; --accent:#c98a6f; --accent-dim:#6e4a3d;
+  --text:#e8e6df; --text-dim:#9b9b93; --text-faint:#6a6a64; --danger:#c96a6a; --good:#7fc98a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:radial-gradient(ellipse at top, #12151a 0%, var(--bg-0) 60%); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh;}
+.wrap{max-width:820px; margin:0 auto; padding:32px 24px 80px;}
+.head{text-align:center; margin-bottom:28px;}
+.brand{font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.2em; color:var(--accent); text-transform:uppercase;}
+h1{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:2.4rem; margin:6px 0;}
+h1 .g{color:var(--gold);}
+.sub{color:var(--text-dim); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:1.05rem;}
+.bar{position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg-0),rgba(8,9,11,.92)); backdrop-filter:blur(6px); padding:12px 0 10px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+.bar-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+.progress-track{flex:1; height:6px; background:var(--bg-2); border-radius:4px; overflow:hidden;}
+.progress-fill{height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--gold)); width:0%; transition:width .3s;}
+.counter{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-dim); white-space:nowrap;}
+.score-pill{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--gold-bright); white-space:nowrap;}
+.q-card{background:var(--bg-1); border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin-bottom:18px; animation:fade .3s;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1;}}
+.q-num{font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;}
+.q-topic{float:right; font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--text-faint); border:1px solid var(--line); padding:2px 8px; border-radius:12px;}
+.q-text{font-size:1.12rem; font-weight:500; margin-bottom:16px; line-height:1.45;}
+.opts{display:flex; flex-direction:column; gap:9px;}
+.opt{background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:12px 15px; cursor:pointer; font-size:.98rem; display:flex; gap:11px; align-items:flex-start; transition:.14s; color:var(--text);}
+.opt:hover:not(.locked){border-color:var(--accent-dim); background:#1c2026;}
+.opt .letter{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-faint); border:1px solid var(--line); border-radius:5px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.opt.correct{border-color:var(--good); background:rgba(127,201,138,.09);}
+.opt.correct .letter{border-color:var(--good); color:var(--good);}
+.opt.wrong{border-color:var(--danger); background:rgba(201,106,106,.09);}
+.opt.wrong .letter{border-color:var(--danger); color:var(--danger);}
+.opt.locked{cursor:default;}
+.opt.dim{opacity:.55;}
+.explain{margin-top:14px; border-left:3px solid var(--accent); background:var(--bg-2); padding:12px 16px; border-radius:0 8px 8px 0; font-size:.92rem; line-height:1.55; display:none;}
+.explain.show{display:block; animation:fade .3s;}
+.explain .lbl{font-family:'JetBrains Mono',monospace; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:5px;}
+.explain.ok{border-left-color:var(--good);} .explain.ok .lbl{color:var(--good);}
+.explain.no{border-left-color:var(--danger);} .explain.no .lbl{color:var(--danger);}
+.controls{display:flex; justify-content:space-between; margin-top:8px; gap:12px;}
+.btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.03em; background:var(--bg-2); border:1px solid var(--line); color:var(--text); padding:11px 26px; border-radius:8px; cursor:pointer; font-size:.95rem; transition:.15s;}
+.btn:hover:not(:disabled){border-color:var(--gold); color:var(--gold-bright);}
+.btn:disabled{opacity:.35; cursor:default;}
+.btn.primary{background:linear-gradient(120deg,var(--accent-dim),var(--accent)); border:none; color:#08090b; font-weight:700;}
+.result{background:var(--bg-1); border:1px solid var(--gold); border-radius:14px; padding:34px; text-align:center; display:none;}
+.result.show{display:block; animation:fade .4s;}
+.result .big{font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:700; color:var(--gold-bright); line-height:1;}
+.result .outof{font-size:1.2rem; color:var(--text-dim);}
+.grade{font-family:'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:.85rem; margin:14px 0; padding:6px 16px; border-radius:20px; display:inline-block;}
+.review-list{text-align:left; margin-top:24px;}
+.review-item{font-size:.85rem; padding:9px 12px; border-radius:7px; margin-bottom:6px; background:var(--bg-2); border-left:3px solid var(--line); cursor:pointer;}
+.review-item.wrong{border-left-color:var(--danger);}
+.review-item.right{border-left-color:var(--good);}
+.review-item .ri-q{color:var(--text-dim);}
+.topic-breakdown{text-align:left; margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.tb-row{font-size:.8rem; display:flex; justify-content:space-between; padding:6px 10px; background:var(--bg-2); border-radius:6px;}
+.tb-row .tb-score{font-family:'JetBrains Mono',monospace; color:var(--gold-bright);}
+@media(max-width:600px){.topic-breakdown{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Baird Implant Course · Assessment</div>
+    <h1>Quiz 1 · <span class="g">Treatment Planning</span></h1>
+    <div class="sub">30 questions on assessment, sizing, anatomy and consent</div>
+  </div>
+  <div class="bar">
+    <div class="bar-inner">
+      <div class="counter" id="counter">Q1 / 30</div>
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <div class="score-pill" id="scorePill">Score 0</div>
+    </div>
+  </div>
+  <div id="quizArea"></div>
+  <div class="controls" id="controls">
+    <button class="btn" id="prevBtn">← Back</button>
+    <button class="btn primary" id="nextBtn" disabled>Next →</button>
+  </div>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const STORAGE_KEY='module5_weekend_quiz1_planning_state_v1';
+const questions=[
+{topic:"Assessment",q:"Why must you always establish WHY the patient lost the tooth being replaced?",opts:["It affects the implant brand you choose","If lost to periodontal disease, you must document a higher peri-implantitis risk in consent","It determines the anaesthetic dose","It has no clinical relevance"],a:1,e:"A tooth lost to periodontal disease means the same disease process can affect the implant, so a higher peri-implantitis risk must be documented in consent. A tooth lost to caries or fracture carries a normal risk profile."},
+{topic:"Assessment",q:"If a patient's oral hygiene is noted to be poor at assessment, what is the correct action?",opts:["Note it and proceed to surgery","Book a hygiene appointment before surgery and document it","Cancel implant treatment permanently","Ignore it as irrelevant to implants"],a:1,e:"Identifying a problem without acting looks incomplete. Book (and document) a pre-surgical hygiene appointment — 'given OHI and booked with hygienist' is a very different note from 'OH not great'."},
+{topic:"Assessment",q:"How should the smile line be classified?",opts:["A single rating for the whole mouth","High/medium/low, assessed for each arch separately","Only for the upper arch","It cannot be classified"],a:1,e:"Classify smile line high/medium/low for both arches separately — e.g. a low lower smile line means low aesthetic demand in that arch regardless of the upper."},
+{topic:"Assessment",q:"When measuring keratinised tissue, what is the correct terminology distinction?",opts:["It is always called gingiva","Gingiva around natural teeth; mucosa on an edentulous ridge","It is always called mucosa","The terms are interchangeable"],a:1,e:"Around natural teeth it's gingiva; on an edentulous ridge it's mucosa. Don't conflate them — take a retracted photo to show the mucogingival line and measure from there."},
+{topic:"Assessment",q:"Why does gingival phenotype (thick vs thin) matter for planning?",opts:["It changes the implant length","Thin phenotype carries higher recession/necrosis risk and should push toward conservative flap choices","It only affects colour matching","It has no effect on surgery"],a:1,e:"A thin phenotype carries a higher recession and flap-necrosis risk with certain flap designs, so it should steer you toward more conservative flap choices."},
+{topic:"Measurement",q:"What is the ideal minimum mesiodistal space for a single posterior implant tooth?",opts:["≥3mm","≥7mm","≥12mm","≥20mm"],a:1,e:"Ideally ≥7mm mesiodistally for a single posterior tooth — and you should record the actual figure, not just state 'sufficient'."},
+{topic:"Measurement",q:"In the 3mm rule, what does a mucosa-to-bone measurement of MORE than 3mm indicate?",opts:["The site is ideal","Roughly 1mm of potential recession per additional mm — warn the patient","The implant will fail","Nothing needs to be disclosed"],a:1,e:"3mm or less is favourable (tissue re-drapes). Beyond 3mm, roughly each additional millimetre is a millimetre of potential recession to warn the patient about."},
+{topic:"Measurement",q:"Which two options were described to REDUCE recession risk (not just disclose it)?",opts:["Wider implant and shorter crown","Enamel matrix derivative (e.g. Emdogain) and a connective tissue graft","A longer healing abutment and more antibiotics","Bicortical fixation and implantoplasty"],a:1,e:"Enamel matrix derivative applied to the root surface can improve attachment, and a connective tissue graft thickens the flap — both reduce recession risk rather than simply accepting it."},
+{topic:"Measurement",q:"A projected clinical crown longer than ~14–16mm raises the risk of what — and is it a failure risk?",opts:["Implant failure — yes, survival is reduced","Screw loosening/fracture from greater lateral force — a technical complication, NOT reduced survival","Nerve damage — yes","Sinus perforation — yes"],a:1,e:"A long crown generates greater lateral force at the implant-abutment connection, raising screw loosening/fracture risk. This is a technical/mechanical complication — implant survival itself isn't affected by crown height the way a natural tooth's is."},
+{topic:"Timing",q:"What does a Type 1 placement refer to?",opts:["A fully healed ridge","Immediate placement into a fresh extraction socket","Placement after 6 months","A grafted-only site"],a:1,e:"Type 1 is immediate placement into a fresh extraction socket. Type 2/3 are early (partially healed), and Type 4 is delayed/late (fully healed ridge)."},
+{topic:"Timing",q:"In a Type 2/3 site where freehand placement can't stay perfectly central, how should you drift?",opts:["Always mesially","Toward the root with denser, more supportive bone, keeping the implant upright","Always distally","Tilt the implant as well as drifting"],a:1,e:"Drift deliberately toward the denser, more supportive bone, and keep the implant upright — don't add angular tilt on top of drift in soft bone. Drift changes position; tilt changes angle."},
+{topic:"Sizing",q:"Why should you NOT plan your implant at the widest diameter the bone appears to allow?",opts:["Wider implants are more expensive","It leaves no room to under-prepare for extra stability if bone is softer than expected on the day","Narrow implants are always better","The guide won't fit"],a:1,e:"Planning at the ceiling leaves no wider option in reserve as a Plan B, and no room to under-prepare for stability. Plan a size or two below the max — e.g. plan 4.4mm where 4.8mm is possible, keeping 4.8mm as Plan B."},
+{topic:"Sizing",q:"When choosing between a wider or a longer implant, which is generally preferred where anatomy allows, and why?",opts:["Wider — it removes more bone which is good","Longer — a wider implant removes more buccal bone, while longer (within safe limits) preserves the plate","They are identical","Neither matters"],a:1,e:"Prefer longer over wider where anatomy allows: a wider implant removes more buccal bone, whereas a longer implant within safe anatomical limits typically preserves more of the surrounding plate."},
+{topic:"Sizing",q:"What does the SAC classification stand for and what is its purpose?",opts:["Surgical Aseptic Control — infection grading","Straightforward/Advanced/Complex — an overall case difficulty rating","Sinus-Alveolar-Crestal — anatomy zones","Soft/Average/Compact — bone types"],a:1,e:"SAC (Straightforward/Advanced/Complex) synthesises bone density, anatomical proximity, aesthetic demand and prosthetic complexity into a single case difficulty rating — include it explicitly in your presentation."},
+{topic:"Anatomy",q:"How far around its exit point does the mental nerve give off soft-tissue branches you must respect?",opts:["1mm","Roughly 5mm","2cm","It has no branches"],a:1,e:"The mental nerve gives off soft-tissue branches roughly 5mm around its exit — you don't need to cut the trunk to cause numbness, so flap design must respect this zone, not just avoid the foramen."},
+{topic:"Anatomy",q:"In the lower anterior, how should you angle the drill to avoid perforating the lingual concavity?",opts:["Straight down, perpendicular to the crest","Following the inclination of the labial plate on the sagittal CBCT, standing at 12 o'clock","Angled sharply lingually","At 45° buccally"],a:1,e:"Stand at 12 o'clock behind the patient's head and follow the labial plate's inclination as seen on the sagittal CBCT — drilling 'straight down' perpendicular to the crest is what causes lingual perforation."},
+{topic:"Anatomy",q:"A notch seen on CBCT near the lower midline is most likely which structure?",opts:["The lingual artery","The incisive canal","The mental foramen","The maxillary sinus"],a:1,e:"It's more likely the incisive canal. The lingual artery runs in soft tissue outside the bone and is rarely visible on CBCT (better on MRI). Perforating the incisive canal area usually causes temporary numbness that resolves, not major bleeding."},
+{topic:"Anatomy",q:"What is the maximum distance an implant apex may extend into the maxillary sinus cavity?",opts:["No limit","1mm","5mm","10mm"],a:1,e:"No more than 1mm into the sinus cavity. Within that, the lining heals back over the apex (bicortical fixation). Beyond 1mm, the lining tends to grow around the implant instead — withdraw it back within the limit if you've gone deeper."},
+{topic:"Anatomy",q:"What is 'bicortical fixation' in the posterior maxilla?",opts:["Using two implants","Engaging cortical bone coronally AND the cortical sinus floor apically, with cancellous bone between","Two membranes stacked","A double-length healing abutment"],a:1,e:"Bicortical fixation engages cortical bone coronally and the cortical sinus floor apically (cancellous bone in between) for extra stability when posterior maxillary bone is limited — permitted up to 1mm into the sinus."},
+{topic:"Anatomy",q:"What is the minimum implant length that should be engaged in bone for basic mechanical stability, even in space-limited cases?",opts:["At least 2mm","At least 8mm","At least 15mm","There is no minimum"],a:0,e:"As an absolute minimum for basic mechanical stability, aim for at least 2mm of implant length engaged in bone even in the most space-limited cases."},
+{topic:"Grafting",q:"How do short implants compare to vertical bone augmentation?",opts:["Vertical augmentation is safer and more predictable","Short implants are safer and more predictable long-term; the trade-off is a longer crown","They are equivalent in risk","Short implants always fail"],a:1,e:"Short implants are consistently described as safer and more predictable long-term than vertical augmentation — which has the highest complication rate of the grafting procedures discussed. The trade-off for short implants is a longer clinical crown."},
+{topic:"Grafting",q:"In the layered GBR technique, what is placed directly against the implant threads?",opts:["Xenograft","Allograft","The membrane","Nothing"],a:1,e:"Allograft goes directly against the implant threads/exposed surface, with xenograft layered on top, then a membrane over both (pinned where possible), followed by tension-free closure."},
+{topic:"Grafting",q:"If a sulcular (papilla-involving) flap is used for GBR, how far should it extend?",opts:["Just to the edge of the defect","Two teeth beyond the defect on each side","One tooth mesially only","The whole arch"],a:1,e:"Extend a papilla-involving flap two teeth beyond the defect on each side — a flap sized just to the defect won't give adequate access or allow tension-free closure."},
+{topic:"Flap",q:"'Paracrestal' and 'remote palatal' incisions describe what shared concept, and why is it used?",opts:["Two different techniques with opposite goals","The same concept — incising away from the crest (often palatally) to relocate keratinised mucosa buccally","Cutting directly through the crest","A type of suture"],a:1,e:"Both describe incising away from the crest, usually palatally. This lets you relocate the existing keratinised mucosa band to the buccal aspect during closure, improving the long-term soft-tissue seal."},
+{topic:"Flap",q:"If you use a vertical relieving incision, how many papillae typically need to be involved for adequate access?",opts:["Both papillae","One papilla is enough with a vertical release; without one you'd typically need two","Neither","Three"],a:1,e:"With a vertical release, one involved papilla gives adequate access; without a release you'd typically need two papillae involved. Don't design something halfway between the two — it compromises blood supply without the access benefit."},
+{topic:"Flap",q:"When drawing a planned flap design digitally, why use a dotted line rather than a solid one?",opts:["It looks neater","It lets you and the examiner see the anatomy underneath the planned incision","Solid lines are not allowed","It indicates the incision is optional"],a:1,e:"A dotted line lets you see the underlying anatomy beneath the planned incision, rather than obscuring it — useful for both planning and presentation."},
+{topic:"Consent",q:"Why should you document baseline recession and restorations photographically BEFORE surgery?",opts:["It is a legal formality only","So that if a patient later reports new recession, you can show it pre-existed — protecting patient understanding and your record","To bill more","It isn't necessary"],a:1,e:"A documented baseline lets you demonstrate a finding was already present if a patient later attributes it to your surgery. This is standard good practice, protecting both the patient's understanding and your record."},
+{topic:"Consent",q:"For a medically complex or immunosuppressed patient, which general adjustments apply?",opts:["Proceed exactly as normal","Liaise with their specialist, anticipate altered healing, strict asepsis, prioritise primary stability and tension-free closure","Avoid all implants permanently","Use more antibiotics only"],a:1,e:"Regardless of the specific condition: liaise with the relevant specialist for status/bloods, anticipate slower healing, use strict asepsis with minimal trauma, and prioritise primary stability and genuinely tension-free closure — all of which matter more in a compromised healing environment."},
+{topic:"Digital",q:"What is described as the single most error-prone step in digital guide planning?",opts:["Taking the CBCT","The STL-to-CBCT merge — if inaccurate, everything built on it is wrong despite looking polished","Choosing the implant colour","Printing the guide"],a:1,e:"An inaccurate STL-to-CBCT merge makes the guide and implant position wrong even though the polished output looks precise. You must personally confirm the plan — 'the lab planned it' is not a defence."},
+{topic:"Digital",q:"Below roughly what implant diameter is implantoplasty contraindicated, and why?",opts:["Below 6.0mm — too much bone loss","Below ~4.0mm — removing surface material risks weakening the wall to fracture","Below 2.0mm — aesthetic reasons","There is no limit"],a:1,e:"Avoid implantoplasty on implants narrower than ~4.0mm — removing surface material from a narrow implant risks weakening the wall to the point of fracture. Note this as a limitation when placing narrow-diameter implants."},
+];
+
+let idx=0, answered={}, chosen={};
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({idx,answered,chosen})); }
+function loadState(){ try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ const d=JSON.parse(r); idx=d.idx||0; answered=d.answered||{}; chosen=d.chosen||{}; } }catch(e){} }
+function score(){ return Object.keys(answered).filter(k=>answered[k]).length; }
+function letter(i){ return String.fromCharCode(65+i); }
+function render(){
+  const area=document.getElementById('quizArea');
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('controls').style.display='flex';
+  const q=questions[idx];
+  const isAns = chosen[idx]!==undefined;
+  document.getElementById('counter').textContent=`Q${idx+1} / ${questions.length}`;
+  document.getElementById('pfill').style.width=((Object.keys(chosen).length)/questions.length*100)+'%';
+  document.getElementById('scorePill').textContent=`Score ${score()}`;
+  area.innerHTML=`
+    <div class="q-card">
+      <span class="q-topic">${q.topic}</span>
+      <div class="q-num">Question ${idx+1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts" id="opts">
+        ${q.opts.map((o,i)=>`<div class="opt" data-i="${i}"><span class="letter">${letter(i)}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="explain" id="explain"><div class="lbl">Explanation</div>${q.e}</div>
+    </div>`;
+  area.querySelectorAll('.opt').forEach(el=>{
+    el.onclick=()=>{
+      if(chosen[idx]!==undefined) return;
+      const pick=+el.dataset.i;
+      chosen[idx]=pick; answered[idx]=(pick===q.a);
+      lockAndShow(); saveState();
+    };
+  });
+  if(isAns) lockAndShow();
+  document.getElementById('prevBtn').disabled = idx===0;
+  const nb=document.getElementById('nextBtn');
+  nb.disabled = !isAns;
+  nb.textContent = idx===questions.length-1 ? 'See Results ✓' : 'Next →';
+}
+function lockAndShow(){
+  const q=questions[idx]; const pick=chosen[idx];
+  document.querySelectorAll('.opt').forEach(el=>{
+    const i=+el.dataset.i; el.classList.add('locked');
+    if(i===q.a) el.classList.add('correct');
+    if(i===pick && pick!==q.a) el.classList.add('wrong');
+    if(i!==q.a && i!==pick) el.classList.add('dim');
+  });
+  const ex=document.getElementById('explain');
+  ex.classList.add('show'); ex.classList.add(pick===q.a?'ok':'no');
+  document.getElementById('nextBtn').disabled=false;
+  document.getElementById('scorePill').textContent=`Score ${score()}`;
+}
+document.getElementById('prevBtn').onclick=()=>{ if(idx>0){idx--; render(); saveState();} };
+document.getElementById('nextBtn').onclick=()=>{ if(idx===questions.length-1){ showResult(); } else { idx++; render(); saveState(); } };
+function showResult(){
+  document.getElementById('controls').style.display='none';
+  document.getElementById('quizArea').innerHTML='';
+  const s=score(), n=questions.length, pct=Math.round(s/n*100);
+  let grade,gcol;
+  if(pct>=85){grade='Case-planning ready';gcol='var(--good)';}
+  else if(pct>=70){grade='Solid — revise the misses';gcol='var(--gold-bright)';}
+  else if(pct>=50){grade='Review the lecture again';gcol='var(--gold)';}
+  else{grade='Re-study before planning';gcol='var(--danger)';}
+  const topics={};
+  questions.forEach((q,i)=>{ if(!topics[q.topic])topics[q.topic]={c:0,t:0}; topics[q.topic].t++; if(answered[i])topics[q.topic].c++; });
+  const res=document.getElementById('result');
+  res.classList.add('show');
+  res.innerHTML=`
+    <div class="brand" style="color:var(--accent)">Quiz 1 Complete</div>
+    <div class="big">${s}<span class="outof">/${n}</span></div>
+    <div class="grade" style="background:${gcol}22;color:${gcol};border:1px solid ${gcol}">${grade} · ${pct}%</div>
+    <div class="topic-breakdown">
+      ${Object.entries(topics).map(([t,v])=>`<div class="tb-row"><span>${t}</span><span class="tb-score">${v.c}/${v.t}</span></div>`).join('')}
+    </div>
+    <div class="review-list">
+      ${questions.map((q,i)=>`<div class="review-item ${answered[i]?'right':'wrong'}" onclick="jumpTo(${i})"><strong>Q${i+1}.</strong> <span class="ri-q">${q.q}</span></div>`).join('')}
+    </div>
+    <div style="margin-top:24px; display:flex; gap:12px; justify-content:center;">
+      <button class="btn" onclick="restart()">Retake Quiz</button>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function jumpTo(i){ idx=i; document.getElementById('result').classList.remove('show'); render(); window.scrollTo({top:0,behavior:'smooth'}); saveState(); }
+function restart(){ idx=0; answered={}; chosen={}; saveState(); document.getElementById('result').classList.remove('show'); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+loadState(); render();
+</script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1 · Treatment Planning & Case Readiness | Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg-0:#08090b; --bg-1:#101216; --bg-2:#171a1f; --line:#2a2d33;
+  --gold:#c9a86a; --gold-bright:#e6c98a;
+  --accent:#c98a6f; --accent-dim:#6e4a3d;
+  --text:#e8e6df; --text-dim:#9b9b93; --text-faint:#6a6a64;
+  --danger:#c96a6a; --good:#7fc98a; --amber:#d5a94a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{background:radial-gradient(ellipse at top left, #12151a 0%, var(--bg-0) 60%); color:var(--text); font-family:'Rajdhani',sans-serif; overflow:hidden;}
+.app{display:grid; grid-template-columns:260px 1fr; height:100vh;}
+.sidebar{background:var(--bg-1); border-right:1px solid var(--line); padding:28px 20px; display:flex; flex-direction:column; overflow-y:auto;}
+.sidebar-title{font-family:'Cormorant Garamond',serif; font-weight:700; font-style:italic; color:var(--gold); font-size:1.3rem; letter-spacing:.02em; margin-bottom:2px;}
+.sidebar-sub{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:26px;}
+.progress-ring-wrap{display:flex; align-items:center; gap:12px; margin-bottom:26px; padding:14px; background:var(--bg-2); border:1px solid var(--line); border-radius:8px;}
+.progress-num{font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:var(--accent);}
+.progress-label{font-size:.65rem; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase;}
+.module-nav{flex:1; display:flex; flex-direction:column; gap:2px;}
+.module-item{font-size:.78rem; padding:8px 10px; border-radius:5px; color:var(--text-dim); cursor:pointer; border-left:2px solid transparent; transition:.15s; line-height:1.35;}
+.module-item:hover{background:var(--bg-2); color:var(--text);}
+.module-item.active{color:var(--gold-bright); border-left-color:var(--gold); background:var(--bg-2);}
+.module-item.done::before{content:"✓ "; color:var(--good);}
+.sidebar-footer{margin-top:20px; padding-top:16px; border-top:1px solid var(--line); font-size:.65rem; color:var(--text-faint); letter-spacing:.04em; line-height:1.6;}
+.main{position:relative; display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 44px 0 44px;}
+.kicker{font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.12em; color:var(--accent); text-transform:uppercase;}
+.slide-count{font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--text-faint);}
+.progressbar{height:2px; background:var(--line); margin:14px 44px 0 44px; border-radius:2px; overflow:hidden;}
+.progressbar-fill{height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--gold)); width:3.3%; transition:width .35s ease;}
+.slide-viewport{flex:1; overflow-y:auto; padding:26px 44px 40px 44px;}
+.slide{max-width:900px; animation:fadein .4s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+h1.slide-title{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:2.5rem; color:var(--text); margin-bottom:6px; letter-spacing:.01em;}
+h1.slide-title .accent-word{color:var(--gold);}
+.slide-strap{font-size:1rem; color:var(--text-dim); font-style:italic; font-family:'Cormorant Garamond',serif; margin-bottom:22px;}
+.slide-body{font-size:1.02rem; line-height:1.65; color:var(--text);}
+.slide-body p{margin-bottom:14px;}
+.slide-body ul, .slide-body ol{margin:10px 0 16px 22px;}
+.slide-body li{margin-bottom:8px;}
+.slide-body strong{color:var(--gold-bright); font-weight:600;}
+.callout{border-left:3px solid var(--accent); background:var(--bg-2); padding:14px 18px; border-radius:0 6px 6px 0; margin:16px 0; font-size:.95rem;}
+.callout.warn{border-left-color:var(--danger);}
+.callout.gold{border-left-color:var(--gold);}
+.callout.good{border-left-color:var(--good);}
+.callout-label{font-family:'JetBrains Mono',monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;}
+.callout.warn .callout-label{color:var(--danger);}
+.callout.gold .callout-label{color:var(--gold);}
+.callout.good .callout-label{color:var(--good);}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin:16px 0;}
+.card{background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:16px 18px;}
+.card-h{font-family:'Rajdhani',sans-serif; font-weight:700; color:var(--gold-bright); font-size:.92rem; letter-spacing:.03em; text-transform:uppercase; margin-bottom:8px;}
+table.dtab{width:100%; border-collapse:collapse; margin:14px 0; font-size:.92rem;}
+table.dtab th{text-align:left; padding:8px 10px; color:var(--gold-bright); border-bottom:1px solid #5a4c2e; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;}
+table.dtab td{padding:8px 10px; border-bottom:1px solid var(--line); color:var(--text-dim);}
+table.dtab tr:hover td{color:var(--text); background:var(--bg-2);}
+.svg-wrap{background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:14px; margin:16px 0; display:flex; justify-content:center;}
+.tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.68rem; padding:3px 9px; border-radius:20px; background:var(--bg-2); border:1px solid var(--line); color:var(--accent); margin-right:6px; margin-bottom:6px;}
+.reveal-btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.04em; background:transparent; color:var(--accent); border:1px solid var(--accent-dim); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:.85rem; margin:8px 0; transition:.15s;}
+.reveal-btn:hover{background:var(--accent-dim); color:var(--text);}
+.reveal-content{max-height:0; overflow:hidden; transition:max-height .4s ease;}
+.reveal-content.open{max-height:800px; margin-top:10px;}
+.check-item{display:flex; align-items:flex-start; gap:10px; padding:8px 0; cursor:pointer; user-select:none;}
+.check-box{width:18px; height:18px; border:1px solid var(--accent-dim); border-radius:4px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--gold);}
+.check-item.checked .check-box{background:var(--accent-dim); border-color:var(--accent);}
+.check-item.checked span.ct{color:var(--text-faint); text-decoration:line-through;}
+.opt-pick{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0;}
+.opt{background:var(--bg-2); border:1px solid var(--line); padding:8px 14px; border-radius:20px; font-size:.85rem; cursor:pointer; color:var(--text-dim);}
+.opt.correct{border-color:var(--good); color:var(--good);}
+.opt.wrong{border-color:var(--danger); color:var(--danger);}
+/* interactive slider */
+.islider{width:100%; margin:10px 0; -webkit-appearance:none; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--good) 0%,var(--good) 37.5%,var(--amber) 37.5%,var(--amber) 62.5%,var(--danger) 62.5%); outline:none;}
+.islider::-webkit-slider-thumb{-webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--gold-bright); border:2px solid var(--bg-0); cursor:pointer;}
+.islider::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:var(--gold-bright); border:2px solid var(--bg-0); cursor:pointer;}
+.slider-readout{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:.8rem; margin-top:6px;}
+/* gate walker */
+.gate-row{display:flex; gap:10px; margin:14px 0; flex-wrap:wrap;}
+.gate{flex:1; min-width:150px; background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:14px; cursor:pointer; transition:.15s; text-align:center;}
+.gate:hover{border-color:var(--accent);}
+.gate.pass{border-color:var(--good); background:rgba(127,201,138,.08);}
+.gate.fail{border-color:var(--danger); background:rgba(201,106,106,.08);}
+.gate .g-num{font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--text-faint);}
+.gate .g-name{font-weight:700; color:var(--gold-bright); margin:4px 0; font-size:1rem;}
+.gate .g-q{font-size:.8rem; color:var(--text-dim);}
+.gate .g-state{font-family:'JetBrains Mono',monospace; font-size:.72rem; margin-top:8px; letter-spacing:.05em;}
+.gate.pass .g-state{color:var(--good);} .gate.fail .g-state{color:var(--danger);}
+.gate-verdict{text-align:center; font-family:'JetBrains Mono',monospace; font-size:.9rem; padding:12px; border-radius:8px; margin-top:8px; border:1px solid var(--line);}
+/* readiness board */
+.rb-factor{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; background:var(--bg-2); border:1px solid var(--line); border-radius:8px; margin-bottom:8px;}
+.rb-name{font-size:.92rem;}
+.rb-light{display:flex; gap:6px;}
+.rb-dot{width:22px; height:22px; border-radius:50%; border:2px solid var(--line); cursor:pointer; opacity:.3; transition:.15s;}
+.rb-dot.g{background:var(--good);} .rb-dot.a{background:var(--amber);} .rb-dot.r{background:var(--danger);}
+.rb-dot.on{opacity:1; transform:scale(1.1); box-shadow:0 0 8px currentColor;}
+.rb-verdict{text-align:center; padding:16px; border-radius:10px; margin-top:12px; font-family:'JetBrains Mono',monospace; letter-spacing:.05em; border:1px solid var(--line); font-size:.95rem;}
+.navbar{display:flex; align-items:center; justify-content:space-between; padding:14px 44px; border-top:1px solid var(--line); background:var(--bg-1);}
+.nav-btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.03em; background:var(--bg-2); border:1px solid var(--line); color:var(--text); padding:10px 22px; border-radius:6px; cursor:pointer; font-size:.9rem; display:flex; align-items:center; gap:8px; transition:.15s;}
+.nav-btn:hover:not(:disabled){border-color:var(--gold); color:var(--gold-bright);}
+.nav-btn:disabled{opacity:.3; cursor:default;}
+.nav-btn.primary{background:linear-gradient(120deg,var(--accent-dim),var(--accent)); border:none; color:#0a0d10; font-weight:700;}
+.nav-btn.primary:hover{filter:brightness(1.1);}
+.dots{display:flex; gap:5px;}
+.dot{width:6px; height:6px; border-radius:50%; background:var(--line); cursor:pointer;}
+.dot.active{background:var(--gold); width:18px; border-radius:3px;}
+.dot.done{background:var(--accent-dim);}
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg-1);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+@media(max-width:900px){.app{grid-template-columns:1fr;} .sidebar{display:none;} .grid2,.grid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-title">Baird Implant Course</div>
+    <div class="sidebar-sub">Lecture 1 · Planning & Readiness</div>
+    <div class="progress-ring-wrap">
+      <div class="progress-num" id="pctNum">0%</div>
+      <div><div class="progress-label">Complete</div><div style="font-size:.7rem;color:var(--text-dim);" id="pctSlides">0 / 30 slides</div></div>
+    </div>
+    <nav class="module-nav" id="moduleNav"></nav>
+    <div class="sidebar-footer">Treatment-planning weekend transcript<br>Structured to get you ready to place</div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div class="kicker" id="kicker">Module —</div><div class="slide-count" id="slideCount">01 / 30</div></div>
+    <div class="progressbar"><div class="progressbar-fill" id="pbFill"></div></div>
+    <div class="slide-viewport" id="viewport"></div>
+    <div class="navbar">
+      <button class="nav-btn" id="prevBtn">← Prev</button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'module5_weekend_lecture1_planning_v1';
+
+const modules = [
+  {name:"Your First-Case Mindset", range:[0,3]},
+  {name:"Assessing the Patient", range:[3,7]},
+  {name:"Measuring the Site", range:[7,11]},
+  {name:"Classifying & Sizing", range:[11,16]},
+  {name:"Anatomy & Hazards", range:[16,21]},
+  {name:"Flap Design & Consent", range:[21,26]},
+  {name:"Digital, Readiness & Summary", range:[26,30]},
+];
+
+function svgTConcept(){
+  return `<svg viewBox="0 0 420 260" width="420" height="260">
+  <line x1="60" y1="180" x2="360" y2="180" stroke="#2a2d33" stroke-width="2"/>
+  <text x="210" y="200" text-anchor="middle" font-size="10" fill="#6a6a64" font-family="Rajdhani">Crestal bone level</text>
+  <line x1="210" y1="180" x2="210" y2="100" stroke="#c98a6f" stroke-width="2"/>
+  <line x1="170" y1="100" x2="250" y2="100" stroke="#c98a6f" stroke-width="2"/>
+  <text x="255" y="60" font-size="11" fill="#e6c98a" font-family="Rajdhani" font-weight="700">Vertical arm:</text>
+  <text x="255" y="76" font-size="10" fill="#9b9b93" font-family="Rajdhani">zenith, midline between roots</text>
+  <text x="60" y="130" font-size="11" fill="#e6c98a" font-family="Rajdhani" font-weight="700">Horizontal arm:</text>
+  <text x="60" y="146" font-size="10" fill="#9b9b93" font-family="Rajdhani">~3mm mucosa-to-bone</text>
+  <circle cx="210" cy="100" r="5" fill="#e6c98a"/>
+  <text x="210" y="90" text-anchor="middle" font-size="9" fill="#6a6a64" font-family="JetBrains Mono">T-point</text></svg>`;
+}
+function svgSinus(){
+  return `<svg viewBox="0 0 380 240" width="380" height="240">
+  <rect x="60" y="20" width="260" height="55" fill="#171a1f" stroke="#2a2d33"/>
+  <text x="190" y="52" text-anchor="middle" font-size="11" fill="#9b9b93" font-family="Rajdhani">Maxillary sinus (air space)</text>
+  <rect x="60" y="75" width="260" height="9" fill="#3d5a4a" stroke="#2a2d33"/>
+  <rect x="60" y="84" width="260" height="120" fill="#171a1f" stroke="#2a2d33"/>
+  <text x="190" y="195" text-anchor="middle" font-size="11" fill="#9b9b93" font-family="Rajdhani">Alveolar bone</text>
+  <rect x="180" y="88" width="20" height="120" fill="#c9a86a"/>
+  <line x1="180" y1="88" x2="200" y2="88" stroke="#e6c98a" stroke-width="2" stroke-dasharray="2 2"/>
+  <text x="240" y="90" font-size="9" fill="#e6c98a" font-family="JetBrains Mono">≤1mm apex into sinus = OK</text></svg>`;
+}
+function svgLingual(){
+  return `<svg viewBox="0 0 340 250" width="340" height="250">
+  <path d="M 100 210 Q 90 130 130 55" fill="none" stroke="#c9a86a" stroke-width="3"/>
+  <text x="55" y="55" font-size="10" fill="#e6c98a" font-family="Rajdhani" font-weight="700">Labial plate</text>
+  <path d="M 100 210 Q 180 195 170 55" fill="none" stroke="#3d4148" stroke-width="2" stroke-dasharray="3 3"/>
+  <text x="200" y="65" font-size="10" fill="#9b9b93" font-family="Rajdhani">Lingual plate</text>
+  <line x1="110" y1="200" x2="128" y2="60" stroke="#7fa9c9" stroke-width="3"/>
+  <text x="55" y="235" font-size="10" fill="#7fa9c9" font-family="Rajdhani">Drill parallel to labial plate inclination</text></svg>`;
+}
+function svgGBR(){
+  return `<svg viewBox="0 0 380 190" width="380" height="190">
+  <rect x="40" y="120" width="300" height="35" fill="#171a1f" stroke="#2a2d33"/>
+  <text x="190" y="143" text-anchor="middle" font-size="10" fill="#9b9b93" font-family="Rajdhani">Native bone / implant surface</text>
+  <rect x="60" y="97" width="260" height="23" fill="#6e4a3d" stroke="#c98a6f" opacity="0.85"/>
+  <text x="190" y="112" text-anchor="middle" font-size="9" fill="#e6c98a" font-family="Rajdhani">Allograft — against implant threads</text>
+  <rect x="55" y="72" width="270" height="23" fill="#3d5a4a" stroke="#7fc98a" opacity="0.85"/>
+  <text x="190" y="87" text-anchor="middle" font-size="9" fill="#e6c98a" font-family="Rajdhani">Xenograft — layered on top</text>
+  <line x1="50" y1="67" x2="330" y2="67" stroke="#e6c98a" stroke-width="2" stroke-dasharray="4 2"/>
+  <text x="190" y="58" text-anchor="middle" font-size="10" fill="#e6c98a" font-family="Rajdhani" font-weight="700">Membrane</text></svg>`;
+}
+
+const slides = [
+// ============ MODULE 0: MINDSET ============
+// 0
+{mod:0, kicker:"Your First-Case Mindset", title:"Treatment Planning &<br><span class='accent-word'>Case Readiness</span>", strap:"Lecture 1 of 2 · Everything that turns a patient in your chair into a safe, defensible plan",
+body:`
+<p>You're preparing to place your first implants under supervision. Before any of the measurements and anatomy, start from the right frame:</p>
+<div class="callout gold"><div class="callout-label">The aim of your first case</div>Your goal is <strong>controlled success — not independence.</strong> Success is placing the planned implant safely, <em>or</em> making a sound, well-reasoned decision not to place it. Both count. Choosing not to place, for the right reason, is a pass — never a failure.</div>
+<p>This lecture builds the plan the same way your <strong>final case presentation</strong> is judged: patient → disease control → prosthesis → anatomy → delivery, contingency and review. Good surgical hands can't rescue a poorly planned case, which is why this half matters most.</p>
+<p style="color:var(--text-faint); font-size:.85rem;">Use the sidebar or arrow keys. Your place saves automatically.</p>
+`},
+// 1
+{mod:0, kicker:"Your First-Case Mindset", title:"Choosing a Good First Case", strap:"Stack the odds in your favour — and know what to defer",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">✓ A forgiving first case</div>Healed posterior site · generous bone and restorative space · clear distance from critical anatomy · low aesthetic demand · stable perio · cooperative, medically straightforward patient · a simple single-unit restoration · more than one safe implant option.</div>
+<div class="card"><div class="card-h">✕ Defer or escalate</div>High-aesthetic anterior · immediate placement with a facial defect · major GBR or vertical augmentation · sinus augmentation · severe ridge deficiency · close nerve proximity · restricted opening · active disease · significant medical complexity.</div>
+</div>
+<div class="callout warn"><div class="callout-label">The principle</div>A first implant is not the place to prove a difficult case is technically possible. <strong>Escalate whenever any single factor materially reduces your margin for error</strong> — one red flag is enough to change the case or defer it to your mentor.</div>
+`},
+// 2  INTERACTIVE gate walker
+{mod:0, kicker:"Your First-Case Mindset", title:"Interactive: The Four Acceptance Gates", strap:"Tap each gate — a single 'no' means optimise, change the plan, or refer",
+body:`
+<p>Before committing, run every case through four gates. Tap each to set it Pass or Fail and see the combined verdict.</p>
+<div class="gate-row" id="gateRow">
+  <div class="gate" data-k="patient" onclick="toggleGate('patient')"><div class="g-num">Gate 1</div><div class="g-name">Patient</div><div class="g-q">Stable, informed, suitable?</div><div class="g-state" id="gs-patient">— tap —</div></div>
+  <div class="gate" data-k="prosth" onclick="toggleGate('prosth')"><div class="g-num">Gate 2</div><div class="g-name">Prosthesis</div><div class="g-q">Simple and maintainable?</div><div class="g-state" id="gs-prosth">— tap —</div></div>
+  <div class="gate" data-k="anat" onclick="toggleGate('anat')"><div class="g-num">Gate 3</div><div class="g-name">Anatomy</div><div class="g-q">Forgiving safety envelope?</div><div class="g-state" id="gs-anat">— tap —</div></div>
+  <div class="gate" data-k="op" onclick="toggleGate('op')"><div class="g-num">Gate 4</div><div class="g-name">Operator</div><div class="g-q">Within supervised competence?</div><div class="g-state" id="gs-op">— tap —</div></div>
+</div>
+<div class="gate-verdict" id="gateVerdict">Set all four gates to see the verdict.</div>
+<div class="callout"><div class="callout-label">Why gates, not a score</div>These aren't weighted points to average — any single failed gate stops the case. A perfect prosthesis doesn't compensate for anatomy that's too tight, and forgiving anatomy doesn't compensate for an unstable patient.</div>
+`},
+// ============ MODULE 1: ASSESS ============
+// 3
+{mod:1, kicker:"Assessing the Patient", title:"Ask Why the Tooth Was Lost", strap:"One question that changes your consent form",
+body:`
+<p>Always establish <strong>why</strong> the patient lost the tooth you're replacing — it directly changes the risk you must disclose.</p>
+<div class="grid2">
+<div class="card"><div class="card-h">Lost to periodontal disease</div>Document a <strong>higher risk of peri-implantitis</strong> in your consent — the same disease process that took the natural tooth can affect the implant.</div>
+<div class="card"><div class="card-h">Lost to caries / fracture</div>Normal implant risk profile — no additional periodontal risk loading needed in consent.</div>
+</div>
+<div class="callout gold"><div class="callout-label">Practical takeaway</div>This single question, asked and documented at first assessment, is what lets you write an accurate, defensible consent form later.</div>
+`},
+// 4
+{mod:1, kicker:"Assessing the Patient", title:"Extraoral & Intraoral Exam", strap:"The unglamorous findings that still matter",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Extraoral</div>TMJ — clicking, crepitus, deviation on opening. Muscles of mastication. Any skin lesions.</div>
+<div class="card"><div class="card-h">Intraoral</div>Signs of parafunction. Soft-tissue findings (e.g. amalgam tattoos). General oral hygiene status.</div>
+</div>
+<div class="callout warn"><div class="callout-label">If oral hygiene isn't great, act — don't just note it</div>Identifying a problem without acting on it looks incomplete in a case presentation. Book a <strong>hygiene appointment before surgery</strong> and document it — "patient given OHI and booked with hygienist" is a very different note from "OH not great."</div>
+`},
+// 5
+{mod:1, kicker:"Assessing the Patient", title:"Occlusion: What You're Looking For", strap:"Because it shapes the restoration, not just the surgery",
+body:`
+<ul>
+<li><strong>Incisal relationship</strong> (class I/II/III) and skeletal base.</li>
+<li><strong>Overjet and overbite</strong> in mm.</li>
+<li><strong>Guidance pattern</strong> — canine-guided vs group function, and on which side(s).</li>
+<li><strong>Working- and non-working-side interferences</strong>, and any isolated protrusive contacts.</li>
+<li>Signs of <strong>parafunction</strong> — these change risk disclosure and sometimes implant number/size.</li>
+</ul>
+<div class="callout"><div class="callout-label">Why it matters for planning</div>Guidance pattern affects your restorative plan directly — if a patient is canine-guided on both sides and you're not replacing a canine, you're conforming to an existing scheme rather than designing a new one.</div>
+`},
+// 6
+{mod:1, kicker:"Assessing the Patient", title:"Smile Line & Gingival Phenotype", strap:"Two findings that set your aesthetic risk ceiling",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Smile line</div>Classify high / medium / low, for <strong>both arches separately</strong> — a low lower smile line means low aesthetic demand there even if the upper is medium or high.</div>
+<div class="card"><div class="card-h">Phenotype</div>Thick vs thin. Thin phenotype carries higher recession and necrosis risk with certain flap designs, and should push you toward more conservative flap choices.</div>
+</div>
+<div class="callout gold"><div class="callout-label">Measuring keratinised tissue correctly</div>Around natural teeth it's <strong>gingiva</strong>; on an edentulous ridge it's <strong>mucosa</strong> — don't conflate them. Take a retracted photo to show the mucogingival line and measure attached mucosa from there.</div>
+`},
+// ============ MODULE 2: MEASURE ============
+// 7
+{mod:2, kicker:"Measuring the Site", title:"The Three Numbers You Always Need", strap:"Mesiodistal, buccolingual, vertical",
+body:`
+<table class="dtab">
+<tr><th>Dimension</th><th>What you're checking</th></tr>
+<tr><td>Mesiodistal</td><td>Ideally ≥7mm for a single posterior tooth — record the actual figure, not "sufficient"</td></tr>
+<tr><td>Buccolingual</td><td>Ridge width for placement without dehiscence</td></tr>
+<tr><td>Vertical</td><td>Restorative space from ridge to opposing occlusion</td></tr>
+</table>
+<div class="callout gold"><div class="callout-label">Why the exact number, not just "enough"</div>13–14mm and 8mm are both "more than 7mm" but carry different risk (next slides). Recording the real number is what lets you reason about it in front of an examiner or a patient.</div>
+`},
+// 8  INTERACTIVE 3mm slider
+{mod:2, kicker:"Measuring the Site", title:"Interactive: The 3mm Rule", strap:"Drag the probe depth — watch the predicted recession",
+body:`
+<div class="svg-wrap">${svgTConcept()}</div>
+<p>Measure from the <strong>margin of the mucosa to the crestal bone</strong> at your planned position. Drag the slider to set that depth:</p>
+<input type="range" min="0" max="8" value="2" step="0.5" class="islider" id="mmSlider" oninput="update3mm(this.value)">
+<div class="slider-readout"><span>0mm</span><span style="color:var(--gold-bright)" id="mmVal">2.0mm mucosa-to-bone</span><span>8mm</span></div>
+<div class="callout" id="mmVerdict" style="margin-top:14px;"></div>
+<p>The <strong>T-concept</strong> combines this horizontal 3mm reference with a vertical reference (the zenith / midline between neighbouring roots) to set implant depth and to show the patient — via a digital wax-up — what the final tooth will look like before they consent.</p>
+`, init:'update3mm'},
+// 9
+{mod:2, kicker:"Measuring the Site", title:"Reducing Recession — Not Just Disclosing It", strap:"Two options worth offering",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Enamel matrix derivative</div>Applied to the root surface (e.g. Emdogain), it can improve attachment and reduce recession risk.</div>
+<div class="card"><div class="card-h">Connective tissue graft</div>Thickens the flap, reducing recession risk — particularly valuable in a thin phenotype.</div>
+</div>
+<div class="callout"><div class="callout-label">The mindset</div>When the 3mm rule predicts recession, treat it as something to <strong>mitigate and discuss</strong>, not just an inevitability to warn about. Offering options is what a complete plan looks like.</div>
+`},
+// 10  INTERACTIVE assess-site
+{mod:2, kicker:"Measuring the Site", title:"Crown Height & Interactive Site Check", strap:"The 14–16mm technical-complication threshold",
+body:`
+<p>If vertical bone loss means your final crown will exceed roughly <strong>14–16mm</strong>, a long crown generates greater <strong>lateral force</strong> at the implant-abutment connection — raising the risk of <strong>screw loosening or fracture</strong>. This is a technical complication, <em>not</em> reduced implant survival.</p>
+<div class="grid2">
+<div class="card"><div class="card-h">Site A — mucosa-to-bone 2mm, crown 11mm</div>
+<button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('open')">Assess it</button>
+<div class="reveal-content">Favourable both ways: tissue re-drapes (≤3mm) and crown is well under threshold. Routine consent only.</div></div>
+<div class="card"><div class="card-h">Site B — mucosa-to-bone 6mm, crown 15mm</div>
+<button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('open')">Assess it</button>
+<div class="reveal-content">Two disclosures: ~3mm potential recession (offer EMD / CTG), and increased screw-loosening/fracture risk from the 15mm crown. Show both on a digital wax-up before consent.</div></div>
+</div>
+`},
+// ============ MODULE 3: CLASSIFY & SIZE ============
+// 11
+{mod:3, kicker:"Classifying & Sizing", title:"Placement Timing: Types 1–4", strap:"Read the socket, not just the calendar",
+body:`
+<table class="dtab">
+<tr><th>Type</th><th>Socket status</th></tr>
+<tr><td><strong>Type 1</strong></td><td>Immediate — placed into a fresh extraction socket</td></tr>
+<tr><td><strong>Type 2 / 3</strong></td><td>Early — socket partially healed; often some immature bone visible on CBCT, still usable</td></tr>
+<tr><td><strong>Type 4</strong></td><td>Delayed/late — ridge fully healed, socket outline gone</td></tr>
+</table>
+<div class="callout gold"><div class="callout-label">Why this changes technique</div>Type 2/3 bone is often thinner and softer than a healed ridge — exactly when freehand placement tends to <strong>drift</strong> (next slide).</div>
+`},
+// 12
+{mod:3, kicker:"Classifying & Sizing", title:"When You Have to Drift: Do It Deliberately", strap:"Choose which root to drift toward, and stay upright",
+body:`
+<p>In a Type 2/3 site with thin, immature bone, freehand placement often can't stay perfectly central. The decision isn't whether to drift — it's <strong>how</strong>.</p>
+<ul>
+<li>Drift toward whichever neighbouring root has the <strong>denser, more supportive bone</strong> — a deliberate choice, not a default toward mesial or distal.</li>
+<li>Keep the implant <strong>upright</strong> rather than adding an angular tilt on top of the drift.</li>
+</ul>
+<div class="callout"><div class="callout-label">Rule of thumb</div>Drift changes <em>where</em> the implant sits; tilt changes its <em>angle</em>. In compromised bone, control one variable (position) and hold the other (angle) constant.</div>
+`},
+// 13
+{mod:3, kicker:"Classifying & Sizing", title:"Reading Bone Density for Planning", strap:"What CBCT colour tells you about timing",
+body:`
+<ul>
+<li>Freshly grafted / freshly extracted → <strong>soft, immature (woven) bone</strong>; expect lower primary stability, plan sizing conservatively.</li>
+<li>Grafted site after ~6–8 weeks+ → denser, more mature (lamellar) bone — but confirm by feel on the day.</li>
+<li>Well-integrated sinus graft at 7–8 months (30+ weeks) → typically uniformly dense; a useful sign the graft has taken.</li>
+</ul>
+<div class="callout warn"><div class="callout-label">Don't over-rely on an old scan</div>If the CBCT is several weeks old, treat its density as a starting expectation, not a guarantee — bone remodels between scan and surgery.</div>
+`},
+// 14
+{mod:3, kicker:"Classifying & Sizing", title:"Sizing Logic: Never Plan the Widest", strap:"Leave yourself room to go up, not just down",
+body:`
+<p>When you plan diameter, <strong>don't default to the widest the bone appears to allow.</strong></p>
+<div class="callout gold"><div class="callout-label">Why</div>If you plan at the ceiling and the bone is softer than expected on the day, you have no room to <strong>under-prepare</strong> for stability and no wider option in reserve. Plan a size or two below max — e.g. plan around <strong>4.4mm</strong> where the site could take 4.8mm, keeping 4.8mm as your documented Plan B.</div>
+<p>Where anatomy allows, also prefer going <strong>longer over wider</strong> — a wider implant removes more buccal bone, while a longer one (within safe limits) preserves more of the plate.</p>
+`},
+// 15
+{mod:3, kicker:"Classifying & Sizing", title:"The SAC Classification", strap:"A structured difficulty rating",
+body:`
+<p>The <strong>SAC classification</strong> (Straightforward / Advanced / Complex) synthesises everything you've gathered — bone density, anatomical proximity, aesthetic demand, prosthetic complexity — into a single case-difficulty rating.</p>
+<div class="callout"><div class="callout-label">Practical takeaway</div>Include your SAC rating explicitly in your presentation. It shows an examiner you can synthesise findings into one risk judgement, not just list them. For a first case, you're aiming squarely at <strong>Straightforward</strong>.</div>
+`},
+// ============ MODULE 4: ANATOMY ============
+// 16
+{mod:4, kicker:"Anatomy & Hazards", title:"The Mental Nerve: Your Safety Margin", strap:"Respect it, don't just avoid it",
+body:`
+<p>The mental nerve gives off soft-tissue branches roughly <strong>5mm</strong> around its exit. You don't need to cut the trunk to cause numbness — cutting one branch is enough.</p>
+<div class="callout warn"><div class="callout-label">Implication for flap design</div>Papilla position controls part of your flap design; the <strong>mental nerve position controls the rest</strong>. A vertical relieving incision that's fine one tooth forward may not be safe once you're close to the nerve. Mark the foramen on CBCT and on your flap plan before choosing incision lines.</div>
+`},
+// 17
+{mod:4, kicker:"Anatomy & Hazards", title:"Lower Anterior: The Lingual Concavity", strap:"A drilling-angle problem, not just a flap problem",
+body:`
+<div class="svg-wrap">${svgLingual()}</div>
+<p>In the lower anterior, the lingual plate often undercuts more than the labial. Drilling "straight down" is what causes lingual perforation.</p>
+<div class="callout gold"><div class="callout-label">The fix</div>Stand at <strong>12 o'clock, behind the patient's head</strong>, and align your drilling angle to <strong>follow the labial-plate inclination</strong> on the sagittal CBCT — not perpendicular to the crest.</div>
+<p>A notch near the midline on CBCT is more likely the <strong>incisive canal</strong> than the lingual artery (which runs in soft tissue outside bone, rarely visible on CBCT). Perforating the incisive canal area usually causes temporary numbness that resolves, not major bleeding.</p>
+`},
+// 18
+{mod:4, kicker:"Anatomy & Hazards", title:"Sinus Floor: The Bicortical Rule", strap:"You may perforate it — deliberately, within limits",
+body:`
+<div class="svg-wrap">${svgSinus()}</div>
+<p>When posterior maxillary bone is limited, you may let the apex <strong>perforate the sinus floor and engage its cortical plate</strong> for stability — <strong>bicortical fixation</strong> (cortical coronally, cortical sinus floor apically, cancellous between).</p>
+<div class="callout gold"><div class="callout-label">The limit</div>No more than <strong>1mm</strong> into the sinus cavity — within that, the lining heals over the apex; beyond it, the lining grows <em>around</em> the implant. As an absolute minimum for basic stability, engage at least <strong>2mm of implant length in bone</strong>.</div>
+`},
+// 19
+{mod:4, kicker:"Anatomy & Hazards", title:"Short Implants vs Vertical Augmentation", strap:"A trade-off you'll explain to patients",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Vertical augmentation</div>The most technically demanding graft, with the <strong>highest complication rate</strong> of any grafting discussed on this course.</div>
+<div class="card"><div class="card-h">Short implants</div><strong>Safer and more predictable long-term</strong> — the trade-off is a longer clinical crown, with the technical (not survival) risks from earlier.</div>
+</div>
+<div class="callout"><div class="callout-label">Framing the choice</div>Age and aesthetic demand drive it: a younger patient in an aesthetic zone may accept augmentation's higher risk; an older patient posteriorly is often better served by a short implant. Document the discussion and the patient's choice.</div>
+`},
+// 20
+{mod:4, kicker:"Anatomy & Hazards", title:"GBR: The Layered Technique", strap:"What you'll observe your mentor do",
+body:`
+<div class="svg-wrap">${svgGBR()}</div>
+<ol>
+<li><strong>Allograft</strong> directly against the implant threads.</li>
+<li><strong>Xenograft</strong> layered on top.</li>
+<li><strong>Membrane</strong> over both, pinned where possible — fixation is harder in dense bone, so expect this to take longer in a Type 4 site.</li>
+<li><strong>Tension-free closure</strong> via periosteal releasing incisions, or by shortening the healing abutment if stability allows.</li>
+</ol>
+<div class="callout gold"><div class="callout-label">Sizing your flap for GBR</div>If the flap involves the papillae (sulcular), extend it <strong>two teeth beyond the defect on each side</strong> — a flap sized to the defect alone won't give access or tension-free closure.</div>
+`},
+// ============ MODULE 5: FLAP & CONSENT ============
+// 21
+{mod:5, kicker:"Flap Design & Consent", title:"Choosing Your Incision Line", strap:"Paracrestal / remote-palatal vs crestal",
+body:`
+<p>"Paracrestal" and "remote palatal" describe the <strong>same concept</strong>: incising away from the crest rather than through it, usually palatally.</p>
+<div class="callout gold"><div class="callout-label">Why move off the crest</div>If keratinised tissue is deficient buccally, a remote-palatal incision lets you <strong>relocate the keratinised band to the buccal aspect</strong> at closure — improving the long-term soft-tissue seal, sometimes even leaving the palatal donor area to re-epithelialise.</div>
+<p>Draw flap designs with a <strong>dotted line</strong>, not solid — it lets you and your examiner see the anatomy underneath the planned incision.</p>
+`},
+// 22
+{mod:5, kicker:"Flap Design & Consent", title:"Vertical Relieving Incisions", strap:"Pick one approach — don't go halfway",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">With a vertical release</div>One papilla involved is enough for access.</div>
+<div class="card"><div class="card-h">Without a release</div>You'll typically need <strong>two papillae</strong> involved for equivalent access.</div>
+</div>
+<div class="callout warn"><div class="callout-label">Don't go halfway</div>A design that partly involves a papilla and partly extends toward a release compromises blood supply without the access benefit of either. Choose one and commit. Two factors steer placement: <strong>phenotype</strong> (thin → safer with a release) and <strong>mental-nerve proximity</strong>.</div>
+`},
+// 23
+{mod:5, kicker:"Flap Design & Consent", title:"Document the Baseline First", strap:"Protecting yourself and the patient",
+body:`
+<p>Before any intervention, record — in writing and photographically — pre-existing:</p>
+<ul>
+<li>Recession on neighbouring teeth (with a measurement in mm).</li>
+<li>Restorations on adjacent teeth, including any already leaking or defective.</li>
+<li>Papilla loss or shrinkage near the site.</li>
+</ul>
+<div class="callout gold"><div class="callout-label">Why</div>If a patient later reports "more recession since your surgery," a documented baseline shows it pre-existed — protecting both the patient's understanding and your record. Standard practice, not defensive paperwork.</div>
+`},
+// 24
+{mod:5, kicker:"Flap Design & Consent", title:"Medically Complex Patients", strap:"General principles when there's a significant history",
+body:`
+<ul>
+<li><strong>Liaise with the relevant specialist</strong> for a current status check and bloods before setting a date.</li>
+<li>Anticipate <strong>slower or altered healing</strong>; plan postoperative monitoring.</li>
+<li>Apply <strong>strict asepsis</strong> and minimal surgical trauma.</li>
+<li>Prioritise <strong>primary stability</strong> and genuinely <strong>tension-free closure</strong> — both matter more, not less, in a compromised healer.</li>
+</ul>
+<div class="callout warn"><div class="callout-label">Have the conversation before surgery, not during</div>If there's a realistic chance you won't achieve stability or find adequate bone, tell the patient <strong>beforehand</strong> the plan may become staged — graft now, place later. A pre-warned patient takes a change of plan far better.</div>
+`},
+// 25
+{mod:5, kicker:"Flap Design & Consent", title:"Always Present a Plan B", strap:"Build the contingency into the case, not just the surgery",
+body:`
+<p>Every case in your presentation includes a documented <strong>Plan B</strong>. Typical variations:</p>
+<ul>
+<li>A longer implant instead of a wider one, where apical extension is limited (e.g. by the sinus).</li>
+<li>A slightly different diameter kept in reserve rather than used as the primary plan.</li>
+<li>A staged approach — graft first, place later — where stability is genuinely in doubt.</li>
+</ul>
+<div class="callout"><div class="callout-label">Plan B is not "try harder"</div>It's a pre-decided, specific alternative you can execute calmly on the day. If your only contingency is effort, you don't have a Plan B yet.</div>
+`},
+// ============ MODULE 6: DIGITAL, READINESS, SUMMARY ============
+// 26
+{mod:6, kicker:"Digital, Readiness & Summary", title:"Reviewing a Digitally Planned Guide", strap:"Trust, but verify — every time",
+body:`
+<p>Digital planning merges an intraoral scan (STL) with the CBCT via shared reference points; a wax-up then sets implant position relative to the final restoration.</p>
+<div class="callout warn"><div class="callout-label">The single most error-prone step</div>If the <strong>STL-to-CBCT merge</strong> is inaccurate, everything built on it — guide, implant position — is wrong, even though the output looks polished.</div>
+<div class="callout gold"><div class="callout-label">Non-negotiable</div>"The lab planned it" is not a defence. <strong>You personally confirm the plan</strong>, ideally via a walkthrough video of the implant relative to critical structures, before accepting it — however good the lab or AI tool.</div>
+`},
+// 27
+{mod:6, kicker:"Digital, Readiness & Summary", title:"Implantoplasty: Know the Limit", strap:"A peri-implantitis tool with a hard diameter cut-off",
+body:`
+<p>Implantoplasty — smoothing exposed threads for hygiene access — is sometimes used in peri-implantitis management.</p>
+<div class="callout warn"><div class="callout-label">Contraindication to know</div>Do not consider it on implants narrower than roughly <strong>4.0mm</strong> — removing surface material from a narrow implant risks weakening the wall to fracture.</div>
+<p>If you place a narrow implant (e.g. 3.3mm in a lower incisor), note in your presentation that implantoplasty would <strong>not</strong> be an available future option — a legitimate part of long-term risk discussion.</p>
+`},
+// 28  INTERACTIVE readiness board
+{mod:6, kicker:"Digital, Readiness & Summary", title:"Interactive: Your Case Readiness Board", strap:"Set each factor — any red means the case isn't ready",
+body:`
+<p>Before you present, rate each factor green (ready), amber (needs work), or red (blocking). Tap the lights:</p>
+<div id="readinessBoard"></div>
+<div class="rb-verdict" id="rbVerdict">Set all factors to see your overall readiness.</div>
+<div class="callout"><div class="callout-label">How to read it</div>This mirrors the acceptance gates: readiness is <strong>not an average</strong>. One red factor makes the whole case red — you optimise that factor, change the plan, or defer, before you place.</div>
+`, init:'buildReadiness'},
+// 29
+{mod:6, kicker:"Digital, Readiness & Summary", title:"Lecture 1 Summary", strap:"Planning is where most cases are won or lost",
+body:`
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">My first case is genuinely forgiving — it passes all four acceptance gates</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">I've recorded why the tooth was lost and adjusted consent risk</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Smile line and phenotype documented for each arch separately</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Real mesiodistal/buccolingual/vertical numbers, not "sufficient"</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">3mm rule applied; any crown over ~14mm flagged</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Placement timing (Type 1–4) read from CBCT, not assumed</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Primary size isn't the widest possible; longer preferred over wider</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Mental nerve / sinus floor / lingual concavity mapped to my osteotomy</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Baseline documented; genuine Plan B in place; guide personally verified</span></div>
+<div class="callout gold" style="margin-top:20px;"><div class="callout-label">Next</div>Lecture 2 takes this plan into <strong>surgery</strong> — the placement-day workflow, mentor checkpoints, and the Continue / Pause / Ask / Stop decision language. A 30-question quiz accompanies each lecture.</div>
+`},
+];
+
+let current=0; const total=slides.length; let visitedSet=new Set();
+function saveProgress(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({current, visited:[...visitedSet]})); }
+function loadProgress(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); current=Math.min(d.current||0,total-1); visitedSet=new Set(d.visited||[]); } }catch(e){} }
+function buildSidebar(){ document.getElementById('moduleNav').innerHTML = modules.map((m,i)=>`<div class="module-item" data-mod="${i}" onclick="jumpToModule(${i})">${m.name}</div>`).join(''); }
+function jumpToModule(i){ current=modules[i].range[0]; render(); }
+function currentModule(){ return modules.findIndex(m=>current>=m.range[0] && current<m.range[1]); }
+function buildDots(){ document.getElementById('dots').innerHTML = slides.map((_,i)=>`<div class="dot" data-i="${i}" onclick="goTo(${i})"></div>`).join(''); }
+function goTo(i){ current=Math.max(0,Math.min(total-1,i)); visitedSet.add(current); render(); }
+function render(){
+  const s=slides[current];
+  document.getElementById('kicker').textContent=s.kicker;
+  document.getElementById('slideCount').textContent=String(current+1).padStart(2,'0')+' / '+total;
+  document.getElementById('pbFill').style.width=((current+1)/total*100)+'%';
+  document.getElementById('viewport').innerHTML=`<div class="slide"><h1 class="slide-title">${s.title}</h1><div class="slide-strap">${s.strap}</div><div class="slide-body">${s.body}</div></div>`;
+  document.getElementById('viewport').scrollTop=0;
+  const activeMod=currentModule();
+  document.querySelectorAll('.module-item').forEach((el,i)=>{ el.classList.toggle('active', i===activeMod); el.classList.toggle('done', modules[i].range[1]<=Math.max(...visitedSet,0)+1); });
+  document.querySelectorAll('.dot').forEach((d,i)=>{ d.classList.toggle('active', i===current); d.classList.toggle('done', visitedSet.has(i) && i!==current); });
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').textContent = current===total-1 ? 'Finish ✓' : 'Next →';
+  const pct=Math.round((visitedSet.size/total)*100);
+  document.getElementById('pctNum').textContent=pct+'%';
+  document.getElementById('pctSlides').textContent=visitedSet.size+' / '+total+' slides';
+  if(s.init && typeof window[s.init]==='function'){ window[s.init](); }
+  saveProgress();
+}
+document.getElementById('prevBtn').onclick=()=>goTo(current-1);
+document.getElementById('nextBtn').onclick=()=>{ if(current===total-1){ window.scrollTo(0,0); return; } goTo(current+1); };
+document.addEventListener('keydown', e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowRight') goTo(current+1); if(e.key==='ArrowLeft') goTo(current-1); });
+
+// ---- interactive: gates ----
+let gateState={};
+function toggleGate(k){
+  gateState[k] = gateState[k]==='pass' ? 'fail' : (gateState[k]==='fail' ? null : 'pass');
+  const el=document.querySelector(`.gate[data-k="${k}"]`);
+  const st=document.getElementById('gs-'+k);
+  el.classList.remove('pass','fail');
+  if(gateState[k]==='pass'){ el.classList.add('pass'); st.textContent='● PASS'; }
+  else if(gateState[k]==='fail'){ el.classList.add('fail'); st.textContent='● FAIL'; }
+  else { st.textContent='— tap —'; }
+  const keys=['patient','prosth','anat','op'];
+  const set=keys.filter(x=>gateState[x]);
+  const v=document.getElementById('gateVerdict');
+  if(set.length<4){ v.style.borderColor='var(--line)'; v.style.color='var(--text-dim)'; v.textContent=`${set.length} / 4 gates set…`; return; }
+  if(keys.some(x=>gateState[x]==='fail')){ v.style.borderColor='var(--danger)'; v.style.color='var(--danger)'; v.textContent='✕ CASE STOPS — a failed gate means optimise, change the plan, or refer. Do not place.'; }
+  else { v.style.borderColor='var(--good)'; v.style.color='var(--good)'; v.textContent='✓ ALL GATES PASS — proceed to detailed planning.'; }
+}
+// ---- interactive: 3mm slider ----
+function update3mm(v){
+  v=parseFloat(v);
+  const val=document.getElementById('mmVal'); if(!val) return;
+  val.textContent=v.toFixed(1)+'mm mucosa-to-bone';
+  const rec=Math.max(0, v-3);
+  const vd=document.getElementById('mmVerdict');
+  if(v<=3){ vd.className='callout good'; vd.innerHTML='<div class="callout-label">Favourable</div>At '+v.toFixed(1)+'mm (≤3mm), soft tissue will re-drape back to roughly where it started, whatever you do surgically. Routine consent.'; }
+  else { vd.className='callout warn'; vd.innerHTML='<div class="callout-label">Warn the patient</div>At '+v.toFixed(1)+'mm you are '+rec.toFixed(1)+'mm past the favourable threshold — expect up to <strong>~'+rec.toFixed(1)+'mm of potential recession</strong>. Discuss enamel matrix derivative and/or a connective tissue graft as mitigation.'; }
+}
+// ---- interactive: readiness board ----
+const rbFactors=['Patient suitability','Disease control','Prosthetic simplicity','Bone volume & density','Anatomical clearance','Digital plan verified','Plan B defined','Your supervised competence'];
+let rbState={};
+function buildReadiness(){
+  const b=document.getElementById('readinessBoard'); if(!b) return;
+  b.innerHTML=rbFactors.map((f,i)=>`<div class="rb-factor"><span class="rb-name">${f}</span><div class="rb-light">
+    <div class="rb-dot g ${rbState[i]==='g'?'on':''}" onclick="setRB(${i},'g')"></div>
+    <div class="rb-dot a ${rbState[i]==='a'?'on':''}" onclick="setRB(${i},'a')"></div>
+    <div class="rb-dot r ${rbState[i]==='r'?'on':''}" onclick="setRB(${i},'r')"></div>
+  </div></div>`).join('');
+  updateRBVerdict();
+}
+function setRB(i,c){ rbState[i]=c; buildReadiness(); }
+function updateRBVerdict(){
+  const v=document.getElementById('rbVerdict'); if(!v) return;
+  const set=Object.keys(rbState).length;
+  if(set<rbFactors.length){ v.style.borderColor='var(--line)'; v.style.color='var(--text-dim)'; v.textContent=`${set} / ${rbFactors.length} factors set…`; return; }
+  const vals=Object.values(rbState);
+  if(vals.includes('r')){ v.style.borderColor='var(--danger)'; v.style.color='var(--danger)'; v.textContent='● RED — not ready. Resolve the blocking factor(s) before placing.'; }
+  else if(vals.includes('a')){ v.style.borderColor='var(--amber)'; v.style.color='var(--amber)'; v.textContent='● AMBER — optimise the flagged factor(s) with your mentor before the day.'; }
+  else { v.style.borderColor='var(--good)'; v.style.color='var(--good)'; v.textContent='● GREEN — case is ready to present for sign-off.'; }
+}
+
+loadProgress(); visitedSet.add(current); buildSidebar(); buildDots(); render();
+</script>
+</body>
+</html>

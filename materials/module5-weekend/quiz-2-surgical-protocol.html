@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2 · Surgical Protocol | Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg-0:#08090b; --bg-1:#101216; --bg-2:#171a1f; --line:#2a2d33;
+  --gold:#c9a86a; --gold-bright:#e6c98a; --accent:#7fa9c9; --accent-dim:#3d5a6e;
+  --text:#e8e6df; --text-dim:#9b9b93; --text-faint:#6a6a64; --danger:#c96a6a; --good:#7fc98a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:radial-gradient(ellipse at top, #12151a 0%, var(--bg-0) 60%); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh;}
+.wrap{max-width:820px; margin:0 auto; padding:32px 24px 80px;}
+.head{text-align:center; margin-bottom:28px;}
+.brand{font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.2em; color:var(--accent); text-transform:uppercase;}
+h1{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:2.4rem; margin:6px 0;}
+h1 .g{color:var(--gold);}
+.sub{color:var(--text-dim); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:1.05rem;}
+.bar{position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg-0),rgba(8,9,11,.92)); backdrop-filter:blur(6px); padding:12px 0 10px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+.bar-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+.progress-track{flex:1; height:6px; background:var(--bg-2); border-radius:4px; overflow:hidden;}
+.progress-fill{height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--gold)); width:0%; transition:width .3s;}
+.counter{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-dim); white-space:nowrap;}
+.score-pill{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--gold-bright); white-space:nowrap;}
+.q-card{background:var(--bg-1); border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin-bottom:18px; animation:fade .3s;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1;}}
+.q-num{font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;}
+.q-topic{float:right; font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--text-faint); border:1px solid var(--line); padding:2px 8px; border-radius:12px;}
+.q-text{font-size:1.12rem; font-weight:500; margin-bottom:16px; line-height:1.45;}
+.opts{display:flex; flex-direction:column; gap:9px;}
+.opt{background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:12px 15px; cursor:pointer; font-size:.98rem; display:flex; gap:11px; align-items:flex-start; transition:.14s; color:var(--text);}
+.opt:hover:not(.locked){border-color:var(--accent-dim); background:#1c2026;}
+.opt .letter{font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-faint); border:1px solid var(--line); border-radius:5px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.opt.correct{border-color:var(--good); background:rgba(127,201,138,.09);}
+.opt.correct .letter{border-color:var(--good); color:var(--good);}
+.opt.wrong{border-color:var(--danger); background:rgba(201,106,106,.09);}
+.opt.wrong .letter{border-color:var(--danger); color:var(--danger);}
+.opt.locked{cursor:default;}
+.opt.dim{opacity:.55;}
+.explain{margin-top:14px; border-left:3px solid var(--accent); background:var(--bg-2); padding:12px 16px; border-radius:0 8px 8px 0; font-size:.92rem; line-height:1.55; display:none;}
+.explain.show{display:block; animation:fade .3s;}
+.explain .lbl{font-family:'JetBrains Mono',monospace; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:5px;}
+.explain.ok{border-left-color:var(--good);} .explain.ok .lbl{color:var(--good);}
+.explain.no{border-left-color:var(--danger);} .explain.no .lbl{color:var(--danger);}
+.controls{display:flex; justify-content:space-between; margin-top:8px; gap:12px;}
+.btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.03em; background:var(--bg-2); border:1px solid var(--line); color:var(--text); padding:11px 26px; border-radius:8px; cursor:pointer; font-size:.95rem; transition:.15s;}
+.btn:hover:not(:disabled){border-color:var(--gold); color:var(--gold-bright);}
+.btn:disabled{opacity:.35; cursor:default;}
+.btn.primary{background:linear-gradient(120deg,var(--accent-dim),var(--accent)); border:none; color:#08090b; font-weight:700;}
+.result{background:var(--bg-1); border:1px solid var(--gold); border-radius:14px; padding:34px; text-align:center; display:none;}
+.result.show{display:block; animation:fade .4s;}
+.result .big{font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:700; color:var(--gold-bright); line-height:1;}
+.result .outof{font-size:1.2rem; color:var(--text-dim);}
+.grade{font-family:'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; font-size:.85rem; margin:14px 0; padding:6px 16px; border-radius:20px; display:inline-block;}
+.review-list{text-align:left; margin-top:24px;}
+.review-item{font-size:.85rem; padding:9px 12px; border-radius:7px; margin-bottom:6px; background:var(--bg-2); border-left:3px solid var(--line); cursor:pointer;}
+.review-item.wrong{border-left-color:var(--danger);}
+.review-item.right{border-left-color:var(--good);}
+.review-item .ri-q{color:var(--text-dim);}
+.topic-breakdown{text-align:left; margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.tb-row{font-size:.8rem; display:flex; justify-content:space-between; padding:6px 10px; background:var(--bg-2); border-radius:6px;}
+.tb-row .tb-score{font-family:'JetBrains Mono',monospace; color:var(--gold-bright);}
+a.lecture-link{color:var(--accent); text-decoration:none; border-bottom:1px dotted var(--accent-dim);}
+@media(max-width:600px){.topic-breakdown{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Baird Implant Course · Assessment</div>
+    <h1>Quiz 2 · <span class="g">Surgical Protocol</span></h1>
+    <div class="sub">30 questions on the placement-day workflow — from scrubbing in to discharge</div>
+  </div>
+  <div class="bar">
+    <div class="bar-inner">
+      <div class="counter" id="counter">Q1 / 30</div>
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <div class="score-pill" id="scorePill">Score 0</div>
+    </div>
+  </div>
+  <div id="quizArea"></div>
+  <div class="controls" id="controls">
+    <button class="btn" id="prevBtn">← Back</button>
+    <button class="btn primary" id="nextBtn" disabled>Next →</button>
+  </div>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const STORAGE_KEY='module5_weekend_quiz2_surgery_state_v1';
+const questions=[
+{topic:"Pre-op",q:"Why is the high-dose preoperative antibiotic given in the surgery rather than sent home with the patient?",opts:["It is cheaper to administer in-house","It confirms the patient took it, allows chairside management of the small raised anaphylaxis risk, and buys the team setup time","Home administration is illegal for amoxicillin","It avoids the need for the patient to consent"],a:1,e:"Three reasons: it confirms the dose was actually taken, the small increase in anaphylaxis risk from a high dose is better managed with emergency drugs to hand, and the window doubles as team setup time."},
+{topic:"Pre-op",q:"What is the standard preoperative antibiotic regimen described, and the alternative if the high dose is declined?",opts:["1g amoxicillin in-surgery; no alternative","2g amoxicillin in-surgery; or a normal dose taken 48 hours before","500mg three times daily for a week beforehand only","Clindamycin only, always"],a:1,e:"2g amoxicillin is given in-surgery on arrival. If the patient declines the high dose, a normal dose taken 48 hours before surgery is the accepted alternative."},
+{topic:"Sterility",q:"After scrubbing, in which direction should water run from your hands, and what must you dry with?",opts:["Elbow toward fingers; any clean towel","Fingers toward elbow; sterile towels only","It doesn't matter; paper towels","Fingers toward elbow; air-dry only"],a:1,e:"Wash so dirty water runs from the (clean) fingers toward the (dirtier) elbow, never the reverse, and dry hands-up using sterile towels only — an ordinary towel breaks sterility immediately."},
+{topic:"Sterility",q:"Once scrubbed and gowned, where must your hands stay?",opts:["Below the waist to avoid contamination","Above the waist and in front of the body","Resting on the sterile tray at all times","Behind your back when not operating"],a:1,e:"Once scrubbed, hands stay above the waist and in front of the body at all times, and nothing that isn't sterile-draped may be touched."},
+{topic:"Sterility",q:"How should the patient's facial skin be cleaned with chlorhexidine gauze?",opts:["Back-and-forth wiping over the whole face","Small circles expanding outward from the centre","A single downward stroke","In circles moving inward toward the mouth"],a:1,e:"Clean in small, expanding circles moving outward — this keeps you moving clean→dirty→clean away from the site. Back-and-forth wiping drags bacteria back into the clean field."},
+{topic:"Sterility",q:"Which piece of PPE is highlighted as non-negotiable due to a real GDC complaint involving a dropped bur?",opts:["A surgical hat","Eye protection","Double gloves","A lead apron"],a:1,e:"Eye protection is emphasised as non-negotiable — a dropped bur caused a real GDC complaint following inadequate eye protection."},
+{topic:"Anaesthesia",q:"Why is local infiltration preferred over an inferior dental (ID) block for most implant surgery?",opts:["It lasts longer than a block","It is a blind technique so is more accurate","Among other reasons, it preserves a pain 'safety net' near the ID nerve that a block would mask","Blocks are not permitted in implant surgery"],a:2,e:"Infiltration is preferred because a block isn't usually needed, the block is a blind technique, infiltration gives haemostasis, it's more reproducible, and crucially an incompletely-numb nerve lets a patient warn you if a drill strays close — a warning a block can mask."},
+{topic:"Anaesthesia",q:"The six-point infiltration technique places anaesthetic at how many buccal and how many lingual/palatal points?",opts:["Two buccal, two lingual","Three buccal, three lingual/palatal","One buccal, five palatal","Six buccal only"],a:1,e:"Three buccal (mesio-, mid-, disto-) and three lingual/palatal equivalents — this also numbs the suturing area, which infiltrating around the tooth alone often misses."},
+{topic:"Anaesthesia",q:"Pain, bleeding and regenerative potential in the surgical field come primarily from which structure?",opts:["The cortical bone itself","The periosteum","The dental pulp","The enamel"],a:1,e:"Bone away from the nerve canal is not innervated — the periosteum is the source of pain, bleeding and regenerative capacity, which is why flaps must stay mucoperiosteal."},
+{topic:"Imaging",q:"On the CBCT density colour map used in planning, what do red and blue broadly represent?",opts:["Red = dense, blue = soft","Red = soft, blue = dense","Red = nerve, blue = sinus","Both indicate infection"],a:1,e:"Broadly, red indicates soft bone and blue indicates dense bone. This is reviewed for every case before surgery."},
+{topic:"Imaging",q:"In very dense (blue) bone, what visible sign warns you that overheating is occurring?",opts:["The bone turns bright red","Pale/white bone debris packs onto the drill flutes","The drill stops spinning","The saline turns green"],a:1,e:"In dense bone, overheating can occur before an obvious colour change — pale/white debris packing onto the flutes is a heat warning sign, not just a 'clean' drill."},
+{topic:"Imaging",q:"How should irrigation saline be stored and delivered when drilling dense bone?",opts:["Warm, from above the guide","Cold (fridge), from beneath the drill","Room temperature, poured freely","It shouldn't be used in dense bone"],a:1,e:"Cold (fridge-stored) saline, irrigating from beneath the drill/under the guide, because guide-directed irrigation can hit the shank rather than the hotter tip. Syringes are prepared in advance to avoid mid-procedure delay."},
+{topic:"Flap",q:"Which blade is preferred for its manoeuvrability into socket sites?",opts:["15C","12D","11","Beaver blade"],a:0,e:"A 15C blade is preferred for its manoeuvrability into socket sites."},
+{topic:"Flap",q:"What should you do before picking up a blade to design your flap?",opts:["Nothing — go straight to incision","Probe the site with your mentor to check papilla status and confirm the incision line","Take the CBCT only after incision","Administer the ID block"],a:1,e:"Periodontally probe the site with your mentor first to check papilla status and confirm the planned incision line — and document it."},
+{topic:"Flap",q:"When elevating the flap, where should your force be directed?",opts:["Pushing on the mucosa","Scraping against the bone to detach periosteum, with gentle tension on the flap","Cutting deeper with the blade only","Pulling the flap sharply away"],a:1,e:"Apply gentle tension with the non-dominant hand while scraping the bone (not pushing the mucosa) to cleanly detach periosteum — never force or perforate the flap."},
+{topic:"Positioning",q:"What is the default operator position (clock face) for a right-handed operator on a supine patient?",opts:["12 o'clock","9 o'clock","3 o'clock","6 o'clock"],a:1,e:"9 o'clock is the default, giving control of the mesiodistal drilling angle, with the assistant at 12 o'clock controlling buccolingual angulation."},
+{topic:"Positioning",q:"Where should a right-handed operator move for a lower-LEFT quadrant implant?",opts:["Stay at 9 o'clock","Move to 3 o'clock","Move to 6 o'clock","Move to 11 o'clock"],a:1,e:"Lower-left is the exception where the operator moves to 3 o'clock. (Anterior cases move to 12 o'clock.)"},
+{topic:"Positioning",q:"Which two clock positions are specifically to be AVOIDED, and why?",opts:["3 and 9 — too far from the patient","11 and 1 — neither drilling plane is reliably controlled","6 and 12 — behind the patient","They are all equally fine"],a:1,e:"11 and 1 o'clock are avoided because from there neither the mesiodistal nor buccolingual plane is under reliable independent control."},
+{topic:"Positioning",q:"The core principle behind operator/assistant positioning is that they should sit how far apart?",opts:["Side by side (0°)","90° apart, each controlling one plane of angulation","Directly opposite (180°)","It doesn't matter"],a:1,e:"Operator and assistant sit 90° apart so each independently controls one plane of the drill's angulation — this is what prevents drift, not raw skill alone."},
+{topic:"Osteotomy",q:"What is the core principle of the freehand osteotomy sequence?",opts:["Jump straight to the final diameter to save time","Prepare gradually through diameters, avoiding large single jumps","Always skip the pilot drill","Use only one drill for the whole osteotomy"],a:1,e:"Prepare gradually — large single jumps from a narrow pilot to a much wider final drill increase heat and mechanical resistance. A deliberate exception is skipping a step to collect bone for grafting."},
+{topic:"Osteotomy",q:"How does the guided drill sequence differ from freehand at the very start?",opts:["It uses an extra marking drill","It has no lance/marking drill — it starts with an initial then second drill","It starts with the widest drill","It uses no irrigation"],a:1,e:"The guided sequence has no separate lance/marking drill; it begins directly with an initial drill, then a second drill, and packs up to guide-engaging length in stages."},
+{topic:"Osteotomy",q:"Why must you 'pack up to guide-engaging length in stages' rather than drilling straight to final length with a narrow drill?",opts:["To save drills","To keep the drill inside the guide sleeve throughout cutting, minimising deviation","Because narrow drills are banned","To generate more heat deliberately"],a:1,e:"Working up to the barrel-engaging length in stages keeps the drill within the guide sleeve as it cuts, which minimises deviation from the planned trajectory."},
+{topic:"Osteotomy",q:"What is the approximate practical speed ceiling for the initial guided drill?",opts:["100–200 rpm","Around 600–800 rpm","1500 rpm","3000 rpm"],a:1,e:"Around 600–800 rpm is the practical ceiling for the initial drill; going meaningfully higher increases frictional heat delivered to bone. The overall range spans roughly 300–800 rpm by bone density."},
+{topic:"Insertion",q:"During guided implant insertion, what two visual checks confirm correct seating?",opts:["The carrier is fully hidden and the drill stops","One flat side visible in the window AND the green line level with the top of the guide","The implant is bleeding and torque is zero","Only the green line — nothing else"],a:1,e:"Both must be true at once: one flat side of the octagonal carrier fully visible in the rectangular window, and the green line level with the top of the guide."},
+{topic:"Insertion",q:"Why are the final turns of implant insertion typically done BY HAND rather than with the handpiece?",opts:["The handpiece is too weak","For finer control over final rotational orientation and torque feel","To avoid using the torque wrench","Hand insertion is faster"],a:1,e:"Hand-finishing gives finer control at the most critical part of seating, where final rotational orientation (for the restorative connection) and torque feel both matter most."},
+{topic:"Torque",q:"What are the two direct clinical implications of the recorded insertion torque?",opts:["The implant colour and brand","Whether the implant is buried/engaged, and how long healing should take","The anaesthetic dose and the flap size","Nothing — it is purely academic"],a:1,e:"Torque marks how deeply engaged the implant is in stable bone, and lower torque (softer bone) means a longer healing time before loading is considered."},
+{topic:"Torque",q:"At roughly 20 Ncm, what minimum healing times are given for mandible vs maxilla?",opts:["2 weeks vs 4 weeks","8 weeks (mandible) vs 12 weeks (maxilla)","6 months for both","No healing needed"],a:1,e:"Around 20 Ncm, the illustrative minimums are roughly 8 weeks in the mandible and 12 weeks in the maxilla. Torque nearer 15 Ncm or below extends this further. (Treated as clinical experience, not rigid guideline.)"},
+{topic:"Post-op",q:"Why is the first 72 hours after surgery singled out in patient instructions?",opts:["It is when antibiotics stop working","It is the window where the fibrin clot stabilises or the wound dehisces","It is when sutures dissolve","Nothing important happens then"],a:1,e:"The 72-hour window is when the fibrin clot and collagen either stabilise the wound or are disrupted, leading to dehiscence — instructions are framed to protect it (no mouthwash, gel only, no hot food, minimal spitting)."},
+{topic:"Post-op",q:"What should the patient use to clean the wound area during the first 72 hours?",opts:["Standard alcohol mouthwash","Gel only (no mouthwash), applied 3–5 times daily","A hard-bristled brush","Nothing at all"],a:1,e:"During the first 72 hours: gel only, applied 3–5 times daily, and NO mouthwash. Mouthwash and gentle site brushing resume after 72 hours."},
+{topic:"Post-op",q:"What should you tell the patient to expect about swelling the day AFTER surgery?",opts:["It will have fully resolved","It is expected to worsen, peaking around 24 hours, before improving","It means the surgery failed","They should return to A&E immediately"],a:1,e:"Warn the patient in advance that swelling typically worsens and peaks around 24 hours post-op before settling — this prevents unnecessary alarm and calls. Ibuprofen is avoided if there's a history of stomach ulcers."},
+];
+
+let idx=0, answered={}, chosen={};
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({idx,answered,chosen})); }
+function loadState(){ try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ const d=JSON.parse(r); idx=d.idx||0; answered=d.answered||{}; chosen=d.chosen||{}; } }catch(e){} }
+function score(){ return Object.keys(answered).filter(k=>answered[k]).length; }
+function letter(i){ return String.fromCharCode(65+i); }
+
+function render(){
+  const area=document.getElementById('quizArea');
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('controls').style.display='flex';
+  const q=questions[idx];
+  const isAns = chosen[idx]!==undefined;
+  document.getElementById('counter').textContent=`Q${idx+1} / ${questions.length}`;
+  document.getElementById('pfill').style.width=((Object.keys(chosen).length)/questions.length*100)+'%';
+  document.getElementById('scorePill').textContent=`Score ${score()}`;
+  area.innerHTML=`
+    <div class="q-card">
+      <span class="q-topic">${q.topic}</span>
+      <div class="q-num">Question ${idx+1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts" id="opts">
+        ${q.opts.map((o,i)=>`<div class="opt" data-i="${i}"><span class="letter">${letter(i)}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="explain" id="explain"><div class="lbl">Explanation</div>${q.e}</div>
+    </div>`;
+  const optEls=area.querySelectorAll('.opt');
+  optEls.forEach(el=>{
+    el.onclick=()=>{
+      if(chosen[idx]!==undefined) return;
+      const pick=+el.dataset.i;
+      chosen[idx]=pick; answered[idx]=(pick===q.a);
+      lockAndShow();
+      saveState();
+    };
+  });
+  if(isAns) lockAndShow();
+  document.getElementById('prevBtn').disabled = idx===0;
+  const nb=document.getElementById('nextBtn');
+  nb.disabled = !isAns;
+  nb.textContent = idx===questions.length-1 ? 'See Results ✓' : 'Next →';
+}
+function lockAndShow(){
+  const q=questions[idx]; const pick=chosen[idx];
+  const optEls=document.querySelectorAll('.opt');
+  optEls.forEach(el=>{
+    const i=+el.dataset.i; el.classList.add('locked');
+    if(i===q.a) el.classList.add('correct');
+    if(i===pick && pick!==q.a) el.classList.add('wrong');
+    if(i!==q.a && i!==pick) el.classList.add('dim');
+  });
+  const ex=document.getElementById('explain');
+  ex.classList.add('show'); ex.classList.add(pick===q.a?'ok':'no');
+  document.getElementById('nextBtn').disabled=false;
+  document.getElementById('scorePill').textContent=`Score ${score()}`;
+}
+document.getElementById('prevBtn').onclick=()=>{ if(idx>0){idx--; render(); saveState();} };
+document.getElementById('nextBtn').onclick=()=>{
+  if(idx===questions.length-1){ showResult(); }
+  else { idx++; render(); saveState(); }
+};
+function showResult(){
+  document.getElementById('controls').style.display='none';
+  document.getElementById('quizArea').innerHTML='';
+  const s=score(), n=questions.length, pct=Math.round(s/n*100);
+  let grade,gcol;
+  if(pct>=85){grade='Ready to scrub in';gcol='var(--good)';}
+  else if(pct>=70){grade='Solid — revise the misses';gcol='var(--gold-bright)';}
+  else if(pct>=50){grade='Review the lecture again';gcol='var(--gold)';}
+  else{grade='Re-study before placement';gcol='var(--danger)';}
+  const topics={};
+  questions.forEach((q,i)=>{ if(!topics[q.topic])topics[q.topic]={c:0,t:0}; topics[q.topic].t++; if(answered[i])topics[q.topic].c++; });
+  const res=document.getElementById('result');
+  res.classList.add('show');
+  res.innerHTML=`
+    <div class="brand" style="color:var(--accent)">Quiz 2 Complete</div>
+    <div class="big">${s}<span class="outof">/${n}</span></div>
+    <div class="grade" style="background:${gcol}22;color:${gcol};border:1px solid ${gcol}">${grade} · ${pct}%</div>
+    <div class="topic-breakdown">
+      ${Object.entries(topics).map(([t,v])=>`<div class="tb-row"><span>${t}</span><span class="tb-score">${v.c}/${v.t}</span></div>`).join('')}
+    </div>
+    <div class="review-list">
+      ${questions.map((q,i)=>`<div class="review-item ${answered[i]?'right':'wrong'}" onclick="jumpTo(${i})"><strong>Q${i+1}.</strong> <span class="ri-q">${q.q}</span></div>`).join('')}
+    </div>
+    <div style="margin-top:24px; display:flex; gap:12px; justify-content:center;">
+      <button class="btn" onclick="restart()">Retake Quiz</button>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function jumpTo(i){ idx=i; document.getElementById('result').classList.remove('show'); render(); window.scrollTo({top:0,behavior:'smooth'}); saveState(); }
+function restart(){ idx=0; answered={}; chosen={}; saveState(); document.getElementById('result').classList.remove('show'); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+loadState(); render();
+</script>
+</body>
+</html>
