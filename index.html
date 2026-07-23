@@ -3,18 +3,73 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b8f">
+  <meta name="description" content="Secure sign-in for the BAIRD implant dentistry learning portal.">
   <title>Sign in | BAIRD Learning Portal</title>
+  <link rel="preload" href="assets/login-clinical.webp" as="image" type="image/webp">
   <link rel="stylesheet" href="assets/auth.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <main class="login-card">
-    <p class="kicker">BAIRD Academy</p>
-    <h1>Learning Portal</h1>
-    <p>Sign in with the Google account approved for your course.</p>
-    <div id="google-button" class="google-button"></div>
-    <p class="status" id="login-status" role="status"></p>
-    <p class="help">Access is created by a BAIRD administrator or owner. Contact the academy if your email has not been approved.</p>
+  <main class="auth-layout">
+    <section class="brand-scene" aria-labelledby="scene-title">
+      <img
+        class="brand-scene__image"
+        src="assets/login-clinical.webp"
+        alt=""
+        width="1280"
+        height="1600"
+        fetchpriority="high"
+      >
+      <div class="brand-scene__shade"></div>
+      <div class="brand-scene__content">
+        <p class="scene-kicker">BAIRD Learning</p>
+        <div>
+          <h2 id="scene-title">Implant dentistry.<br>Studied with intent.</h2>
+          <p>A private learning space for BAIRD delegates, faculty and alumni.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sign-in">
+      <div class="sign-in__inner">
+        <header class="brand-lockup">
+          <img
+            src="assets/baird-logo.webp"
+            alt="BAIRD, The British Academy of Implant and Restorative Dentistry"
+            width="820"
+            height="209"
+          >
+        </header>
+
+        <div class="welcome">
+          <p class="kicker">Member access</p>
+          <h1>Welcome to the<br>Learning Portal</h1>
+          <p>Sign in with the Google account approved for your course.</p>
+        </div>
+
+        <div class="auth-action">
+          <div class="google-button-shell" id="google-button-shell" aria-busy="true">
+            <div class="button-skeleton" aria-hidden="true">
+              <span class="button-skeleton__mark"></span>
+              <span class="button-skeleton__line"></span>
+            </div>
+            <div id="google-button" class="google-button"></div>
+          </div>
+          <p class="status" id="login-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <aside class="access-note">
+          <p class="access-note__title">Your access is protected</p>
+          <p>Only approved BAIRD accounts can enter. Contact the academy if your email has not been registered.</p>
+        </aside>
+      </div>
+
+      <footer class="sign-in__footer">
+        <span>BAIRD Academy</span>
+        <span>Private education portal</span>
+      </footer>
+    </section>
   </main>
   <script type="module" src="assets/login.js"></script>
 </body>
