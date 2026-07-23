@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 4 — Anatomy, Health Monitoring &amp; Advanced Flap Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--surface:#141e27;--border:#1e3040;--gold:#c9a84c;--teal:#2dd4bf;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--sky:#0ea5e9}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  #header{background:rgba(8,12,16,.98);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .h-left .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+  .h-left .title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-weight:300}
+  .score-display{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);text-align:right}
+  .score-display span{color:var(--sky);font-size:18px;font-weight:400}
+  #progress-outer{height:3px;background:var(--border);flex-shrink:0}
+  #progress-inner{height:100%;background:linear-gradient(90deg,var(--sky),var(--teal));transition:width .4s ease;width:0%}
+  #main{flex:1;overflow-y:auto;padding:32px 60px;max-width:900px;margin:0 auto;width:100%}
+  .screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center}
+  .screen .big-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--text);margin-bottom:12px}
+  .screen .big-title em{color:var(--gold);font-style:italic}
+  .screen .desc{font-size:16px;color:var(--text2);margin-bottom:32px;max-width:560px;line-height:1.7}
+  .btn-primary{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(14,165,233,.05));border:1px solid var(--sky);color:var(--sky);padding:14px 40px;cursor:pointer;transition:all .2s}
+  .btn-primary:hover{background:rgba(14,165,233,.2);box-shadow:0 0 20px rgba(14,165,233,.15)}
+  .q-card{background:var(--surface);border:1px solid var(--border);padding:28px 32px;margin-bottom:20px}
+  .q-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .q-topic{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.25);color:var(--sky)}
+  .q-text{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:20px;font-weight:500}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left}
+  .opt:hover:not(.disabled){border-color:var(--sky);background:rgba(14,165,233,.05)}
+  .opt.selected{border-color:var(--sky);background:rgba(14,165,233,.08)}
+  .opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.08)!important}
+  .opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.08)!important}
+  .opt.disabled{cursor:default}
+  .opt-letter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);min-width:20px;flex-shrink:0;margin-top:1px}
+  .opt.correct .opt-letter{color:var(--green)}
+  .opt.wrong .opt-letter{color:var(--red)}
+  .opt.selected:not(.correct):not(.wrong) .opt-letter{color:var(--sky)}
+  .opt-text{font-size:15px;color:var(--text2);line-height:1.5}
+  .opt.correct .opt-text{color:var(--text)}
+  .explanation{margin-top:16px;padding:14px 16px;background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.15);font-size:14px;color:var(--text2);line-height:1.6;display:none}
+  .explanation.show{display:block}
+  .explanation strong{color:var(--sky)}
+  .q-footer{margin-top:16px;display:flex;justify-content:flex-end}
+  .btn-next{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s;display:none}
+  .btn-next.show{display:block}
+  .btn-next:hover{border-color:var(--sky);color:var(--sky)}
+  .result-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative}
+  .result-inner{background:var(--bg);width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .result-pct{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1}
+  .result-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em}
+  .result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:400px;margin:20px auto}
+  .rb-box{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+  .rb-val{font-family:'Cormorant Garamond',serif;font-size:32px}
+  .rb-val.correct{color:var(--green)}
+  .rb-val.wrong{color:var(--red)}
+  .rb-label{font-size:12px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+  .grade-badge{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.2em;padding:8px 24px;border:1px solid;margin-bottom:16px;display:inline-block}
+  .grade-badge.pass{border-color:var(--green);color:var(--green)}
+  .grade-badge.merit{border-color:var(--teal);color:var(--teal)}
+  .grade-badge.dist{border-color:var(--gold);color:var(--gold)}
+  .grade-badge.fail{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="h-left">
+    <div class="label">Baird Implant Course · Assessment</div>
+    <div class="title">Quiz 4 — Anatomy, Health Monitoring &amp; Advanced Flap Reference</div>
+  </div>
+  <div class="score-display">Q <span id="q-cur">0</span>/30 &nbsp;|&nbsp; Score <span id="score">0</span></div>
+</div>
+<div id="progress-outer"><div id="progress-inner"></div></div>
+<div id="main">
+
+<div id="start-screen" class="screen">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sky);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(14,165,233,.3);padding:4px 16px;display:inline-block">Quiz 4 of 4</div>
+  <div class="big-title">Anatomy, Health<br><em>Monitoring</em> &amp;<br>Advanced Flap Reference</div>
+  <p class="desc">30 questions covering oral anatomy, peri-implant vs natural tooth differences, BAIRD probing protocol, annual check-up, X-ray guidance, XLA bone biology, 10 biology facts, and advanced flap design details.</p>
+  <button class="btn-primary" onclick="startQuiz()">Begin Quiz</button>
+</div>
+
+<div id="quiz-area" style="display:none"></div>
+<div id="end-screen" class="screen" style="display:none"></div>
+
+</div>
+<script>
+const questions=[
+  {topic:"Oral Anatomy",q:"After tooth extraction, what happens to the free gingiva?",opts:["It remains intact and forms a stable tissue collar around the implant","It collapses and merges with surrounding gingival tissue, effectively disappearing","It converts to attached gingiva within 4 weeks","It migrates apically to form the mucogingival junction"],ans:1,exp:"Once a tooth is removed, the free gingiva collapses. As healing progresses, it <strong>merges with the surrounding gingival tissue and effectively disappears</strong>. This is why pre-extraction tissue assessment is critical — the free gingiva is lost after extraction."},
+  {topic:"Oral Anatomy",q:"Which of the following best describes the attached gingiva?",opts:["Thin, flexible tissue allowing lip and cheek movement","Firmly bound to alveolar bone, resistant to mechanical forces, acts as a bacterial barrier","Loosely connected to underlying bone, non-keratinized","Found only on the palate and lingual surfaces"],ans:1,exp:"The <strong>attached gingiva</strong> is firmly bound to the alveolar bone, providing stability and protection. It withstands mechanical forces of chewing and brushing and acts as a bacterial barrier protecting periodontal structures from infection."},
+  {topic:"Peri-implant Tissue",q:"How does the direction of connective tissue fibres differ between implants and natural teeth?",opts:["Both run perpendicular to the surface","Both run parallel to the surface","Implants: parallel; teeth: perpendicular","Implants: perpendicular; teeth: parallel"],ans:2,exp:"Around implants, connective tissue fibres run <strong>parallel</strong> to the implant surface. Around natural teeth, fibres run <strong>perpendicular</strong> (Sharpey's fibres anchored in cementum). Parallel fibres create a weaker connective tissue attachment — a fundamental difference in peri-implant biology."},
+  {topic:"Peri-implant Tissue",q:"Compared to natural teeth, the junctional epithelium around implants is:",opts:["Less permeable — providing better bacterial protection","More permeable — allowing easier bacterial penetration","Identical in permeability","Absent — there is no junctional epithelium around implants"],ans:1,exp:"The junctional epithelium around implants is <strong>more permeable</strong> than around natural teeth. This increased permeability means bacteria can penetrate more easily toward the crestal zone, contributing to peri-implant disease susceptibility."},
+  {topic:"Probing Protocol",q:"BAIRD recommends probing around dental implants by:",opts:["Inserting the probe to full pocket depth to assess disease severity","Inserting the probe 1–2mm and moving it in a lateral movement to check for bleeding","Avoiding all probing around implants — it always causes harm","Using a plastic probe rather than metal to avoid disrupting attachment"],ans:1,exp:"BAIRD recommends inserting the probe <strong>1–2mm only</strong> and performing a <strong>lateral movement</strong> to assess for bleeding. Inflamed mucosa will bleed; healthy mucosa will not. BAIRD does not recommend probing for pocket depth as they consider it irrelevant."},
+  {topic:"Probing Protocol",q:"BAIRD's position on assessing pocket depth around dental implants is:",opts:["Essential — 4mm or more indicates peri-implant disease","Useful as a secondary parameter — checked annually","Not recommended — considered irrelevant to implant assessment","Mandatory at every check-up visit"],ans:2,exp:"BAIRD does <strong>not recommend</strong> using the probe to check pocket depth around implants — they consider it <strong>irrelevant</strong>. Instead, they recommend checking for loss of attachment at the implant level, and only after removing the prosthesis when BOP is detected."},
+  {topic:"Annual Check-Up",q:"At the annual implant check-up, how should discharge be assessed?",opts:["With a blunt probe inserted to bone level","By applying pressure using the back of the dental mirror handle","With a periodontal probe at 4–6mm depth","By asking the patient if they have noticed any discharge"],ans:1,exp:"Discharge on pressure is assessed using the <strong>back of the dental mirror handle</strong> to apply gentle pressure to the peri-implant mucosa. Pus or exudate indicates active disease. This is a specific BAIRD protocol — not general probing."},
+  {topic:"Annual Check-Up",q:"Regarding pockets at the annual implant check-up, BAIRD advises:",opts:["Always measure 6-point pocket charting","Pockets are debatable — instead check for loss of attachment at the implant level","Measure pockets only if bleeding is present","Pockets should be measured with a metal probe at full depth"],ans:1,exp:"BAIRD states that pockets are <strong>debatable</strong> for implant assessment. The recommended approach is to check for <strong>loss of attachment at the implant level</strong> rather than measuring pocket depth, which can give misleading readings around implant components."},
+  {topic:"Annual Check-Up",q:"Which FOUR components should stability be assessed on at the annual implant check-up?",opts:["Crown, abutment, implant, and bone level radiographically","Crown, abutment, implant, and occlusion","Crown, abutment, implant — stability of all three components","Implant only — the crown and abutment are checked at the restorative visit"],ans:2,exp:"Stability should be assessed on three components: the <strong>crown</strong>, the <strong>abutment</strong>, and the <strong>implant</strong> itself. Occlusion is a separate check. Any mobility at any component level requires investigation."},
+  {topic:"X-ray Protocol",q:"When should a post-operative periapical X-ray be taken after implant treatment?",opts:["At 3 months post-surgery to assess early osseointegration","At the prosthesis fitting visit — to confirm seating, baseline bone levels, and absence of abnormalities","Only if the patient reports discomfort","One year post-placement"],ans:1,exp:"A post-operative periapical X-ray should be taken <strong>at the prosthesis fitting visit</strong>. This establishes baseline marginal bone levels and confirms full seating with absence of abnormalities. Without this baseline, future bone loss cannot be reliably detected."},
+  {topic:"X-ray Protocol",q:"If an implant is stable and there are no signs of complications after the first year, how often does BAIRD recommend periapical X-rays?",opts:["Every 6 months","Annually","Every 2 years","Only when symptoms arise"],ans:2,exp:"BAIRD recommends periapical X-rays <strong>every 2 years</strong> for stable implants with no signs of complications. More frequent imaging is indicated if risk factors are present (smoking, periodontal history, systemic disease) or if signs of disease arise."},
+  {topic:"XLA Bone Changes",q:"In thin biotype, what happens to the facial bone wall after tooth extraction?",opts:["It thickens due to compensatory bone remodelling","It is rapidly resorbed, facilitating ingrowth of facial soft tissue","It maintains its dimensions for up to 6 months","It converts to woven bone and then lamellar bone predictably"],ans:1,exp:"In thin biotype, the thin facial bone wall is <strong>rapidly resorbed</strong> after extraction. This resorption facilitates the ingrowth of facial soft tissue cells, which then occupy the majority of available socket space — promoting soft tissue thickening but at the cost of the labial bone architecture."},
+  {topic:"XLA Bone Changes",q:"In thick biotype, the thick facial bone wall after extraction acts as:",opts:["A barrier that allows the alveolus to remain as a self-contained bony defect","A scaffold that is gradually replaced by soft tissue","A source of osteoclast activity causing significant bone loss","An obstacle to socket healing that requires surgical removal"],ans:0,exp:"In thick biotype, the thick facial bone wall <strong>represents a barrier</strong> that allows the extraction alveolus to remain as a <strong>self-contained bony defect</strong>. This morphology favours ingrowth of cells from the bony socket walls and surrounding bone marrow spaces — minimal facial bone resorption, predictable healing."},
+  {topic:"XLA Bone Changes",q:"After extraction, a thin biotype patient can be expected to lose what volume of ridge?",opts:["5–20% volume loss","25–35% volume loss","Over 50% volume loss — in an apical and lingual direction","Up to 10% volume loss only"],ans:2,exp:"Thin biotype extraction results in <strong>over 50% volume loss</strong>, occurring in an apical and lingual direction. This is in stark contrast to thick biotype which shows only 5–20% volume loss. This difference determines the need for grafting and timing of implant placement."},
+  {topic:"10 Biology Facts",q:"Biology Fact 2 states that surgical elevation of the interdental papilla to access intrabony defects:",opts:["Is always safe and has no impact on papilla healing","Interferes with papillary blood supply and may impair healing — possibly preventing primary closure","Improves access without affecting papilla vascularity","Is required in all GBR cases"],ans:1,exp:"Biology Fact 2: surgical elevation of the interdental papilla <strong>interferes with the papillary blood supply</strong> and can impair the healing process — possibly even preventing primary closure in the early healing phase. This is why papilla preservation requires such careful assessment."},
+  {topic:"10 Biology Facts",q:"Biology Fact 6: in the maxilla, what type of crestal incision is recommended and why?",opts:["Mid-crestal — for equal keratinized mucosa distribution","Remote (para-crestal) incision — to move KM labially, place incision on sound bone, and enable quality re-epithelialisation if dehiscence occurs","Intrasulcular — to avoid any crestal tissue disruption","Envelope only — no crestal incision in the maxilla"],ans:1,exp:"Biology Fact 6: in the maxilla, a <strong>remote (para-crestal) incision</strong> is recommended. It moves keratinized mucosa labially, places the incision line on sound bone (not on the titanium cover screw), and if dehiscence occurs both sides of the flap are keratinized mucosa — enabling good re-epithelialisation."},
+  {topic:"10 Biology Facts",q:"Biology Fact 7: why is a mid-crestal incision recommended in the mandible, rather than a palatal offset equivalent?",opts:["The mandible has no equivalent keratinized tissue on the lingual side comparable to the maxillary palate","Mid-crestal incisions in the mandible heal faster than in the maxilla","Lingual tissue in the mandible is thicker and easier to manage","The mandibular nerve is at risk from any offset incision"],ans:0,exp:"The mandible's lingual flap has <strong>very limited keratinized mucosa</strong> compared to the palatal flap in the maxilla. A lingual-offset incision in the mandible would therefore move the incision onto non-keratinized mobile tissue — unhelpful. Mid-crestal provides equal, if modest, KM labially and lingually."},
+  {topic:"10 Biology Facts",q:"Biology Fact 8 states: if interproximal bony peaks are more than 3mm from the papilla, what should be expected after papilla elevation?",opts:["Papilla will fully recover within 3 months","Papillary recession and possible root exposure of adjacent teeth","No change — only soft tissue changes occur","The papilla will become thicker as a healing response"],ans:1,exp:"When interproximal bony peaks are <strong>more than 3mm from the papilla</strong>, elevation will cause papillary recession and exposure of the root of adjacent teeth. The papilla behaves like normal mucosa in the absence of a contact area — biological width re-establishment causes it to recede to the level supportable by the bone."},
+  {topic:"5 Papillary Growth Factors",q:"Which of the five papillary growth factors specifically names smoking as a risk?",opts:["Bone sounding distance","Presence or absence of a contact area","Blood supply to the papillary mucosa","Oral hygiene and absence of plaque"],ans:2,exp:"Factor 4 — <strong>Blood supply to the papillary mucosa</strong> — specifically states that 'smokers will have reduced blood supply'. Smoking directly compromises papillary vascularity, increasing the risk of recession after elevation even where other factors are favourable."},
+  {topic:"5 Papillary Growth Factors",q:"Without a contact area between adjacent teeth or restorations, the papilla will behave like:",opts:["Attached keratinized gingiva — stable and resistant","Normal (flat) mid-labial mucosa — no papilla height maintained","Scar tissue — firm but unpredictable","Healthy papilla — contact area has no influence on papilla height"],ans:1,exp:"Without a contact area, <strong>the papilla acts in a similar way to normal mid-labial mucosa</strong> — it has no anatomical reference to maintain its height. A contact area between adjacent teeth or crowns provides the spatial reference point for papilla formation and maintenance."},
+  {topic:"Golf Club Incision",q:"The oblique extension of the Golf Club incision should run in which direction?",opts:["Parallel to the long axis of the implant","Toward the mesial tooth, parallel to the mesial curvature of the posterior tooth","Perpendicular to the crest — directly into mobile mucosa","Along the maximum convexity of the mesial root"],ans:1,exp:"The oblique extension of the Golf Club incision runs <strong>toward the mesial tooth, parallel to the mesial curvature of the posterior tooth</strong>. This specific anatomical guidance ensures the oblique line follows the natural tissue contours while leaving the 3mm papilla island intact."},
+  {topic:"Golf Club Incision",q:"The vertical shaft of the Golf Club incision is positioned at:",opts:["The maximum convexity of the adjacent tooth root","The midpoint of the mesio-distal width of the base of the papilla, on the flat surface between roots","3mm mesial to the papilla tip","Adjacent to the implant healing abutment"],ans:1,exp:"The vertical shaft of the Golf Club incision is positioned on the flat surface between two roots, at the <strong>middle of the mesio-distal width of the base of the papilla</strong>. This avoids the maximum convexity and keeps clear of the papilla's primary blood supply entering from the papilla base."},
+  {topic:"Papillary Preserving with GBR",q:"The 'step/clefting effect' with a papillary-preserving flap and GBR occurs because:",opts:["The GBR membrane creates a physical barrier preventing suturing","The central flap is elevated by the graft volume while the preserved papillae remain at a lower, flatter level — creating a height discrepancy at the junction","The papillae always recede after GBR regardless of flap design","Sutures through the papilla base are required for GBR closure"],ans:1,exp:"The step/clefting effect occurs because <strong>GBR material elevates the central flap portion</strong> while the preserved papillae remain at their original lower, flatter level. This height discrepancy creates a prominent scar step at the junction between the elevated central section and the flat preserved papillae."},
+  {topic:"Two-Sided Flap",q:"In a two-sided flap, placing the relieving incision anteriorly (rather than posteriorly) is preferred because:",opts:["It produces less visible scarring in the aesthetic zone","It increases vision and access, and makes suturing easier at the end of the procedure","It avoids the frenum attachment","It produces a more predictable periosteal release"],ans:1,exp:"The anterior position is preferred because it <strong>increases vision and access</strong> to the surgical field and <strong>makes suturing easier</strong> at the end of the procedure. The exception is in the aesthetic zone, where a posterior incision may be preferred to keep scars away from the visible anterior area."},
+  {topic:"Mandible vs Maxilla",q:"Why does the mandible use mid-crestal rather than a lingual-offset incision for implant surgery?",opts:["The lingual nerve runs directly beneath the lingual gingiva in all patients","The lingual flap in the mandible has very limited keratinized mucosa — a lingual offset would move the incision onto non-keratinized mobile tissue","Mid-crestal incisions heal faster in the mandible than in the maxilla","Lingual tissue in the mandible cannot be sutured reliably"],ans:1,exp:"The mandibular lingual flap has <strong>very limited keratinized mucosa</strong>, unlike the maxillary palatal flap which is generous. A lingual-offset incision would therefore move the line onto non-keratinized mobile tissue — the opposite of the desired effect achieved by the palatal offset in the maxilla."},
+  {topic:"Suturing",q:"BAIRD Biology Fact 10 specifies which technical suturing requirements?",opts:["Large needle, widely spaced sutures, heavy thread for secure closure","Small needle size, sufficient distance between sutures, small thread size — for minimally traumatic closure","Resorbable sutures only — non-resorbable always removed before full healing","Sutures placed 1mm from wound margin for maximum strength"],ans:1,exp:"Biology Fact 10: suturing must be under no tension and minimally traumatic. This requires: <strong>small needle size, sufficient distance between adjacent sutures, and small thread size</strong> — allowing optimal flap margin closure without tissue strangulation or excessive inflammatory response."},
+  {topic:"Three-Sided Flap",q:"The three-sided flap is also called:",opts:["The papillary-preserving flap","The trapezoid flap","The apically repositioned flap","The coronal advancement flap"],ans:2,exp:"The three-sided flap is also known as the <strong>apically repositioned flap</strong>. This name refers to the ability to reposition the flap margin at a more apical level after closure, and to the coronal advancement capability that this flap design uniquely provides."},
+  {topic:"Probing Protocol",q:"If bleeding on probing is detected around a dental implant, BAIRD recommends:",opts:["Prescribe antiseptic mouthwash and review in 3 months","Remove the prosthesis and use the periodontal probe to check for loss of attachment at the implant level","Immediately refer for implant removal","Take a periapical X-ray only — no further probing"],ans:1,exp:"BAIRD recommends <strong>removal of the prosthesis</strong> when BOP is detected, then using the periodontal probe to check for <strong>loss of attachment at the implant level</strong> and planning treatment accordingly. Probing through a crown gives false negatives and cannot assess true attachment levels."},
+  {topic:"XLA Bone Changes",q:"In thick biotype after extraction, cells for new bone formation primarily come from:",opts:["The facial cortical bone plate","The bony socket walls and surrounding bone marrow spaces","Soft tissue cells migrating from the gingiva","The periosteum of adjacent teeth"],ans:1,exp:"In thick biotype, the self-contained bony defect favours ingrowth of cells from the <strong>bony socket walls and surrounding bone marrow spaces</strong>. The thick facial bone acts as a barrier, preventing soft tissue ingrowth from the facial aspect — allowing bone-forming cells to fill the socket from multiple walls."},
+  {topic:"Keratinized Mucosa",q:"A patient has 0mm of keratinized mucosa around their implant but maintains excellent oral hygiene and reports no pain on brushing. The correct management is:",opts:["Immediately schedule FGG — 0mm KM always requires surgery","Assess individually — some patients with no KM and good hygiene may not require surgical intervention","Prescribe antibiotics as a first step","Extract and re-place the implant with a wider diameter"],ans:1,exp:"<strong>Not all patients with minimal KM require surgical intervention.</strong> Some patients who maintain careful cleaning habits, use a soft toothbrush, and exhibit good oral hygiene may manage well without grafting. Individual assessment is required — the decision is not solely based on KM width."},
+  {topic:"10 Biology Facts",q:"Biology Fact 5 states that a surgical approach that splits the papilla causes:",opts:["Improved access with predictable papilla recovery","Shrinkage and decrease in interdental papilla height — leading to interproximal embrasure exposure","No long-term change if vertical mattress sutures are placed","Better healing due to increased blood supply from both sides of the incision"],ans:1,exp:"Biology Fact 5: splitting the papilla <strong>contributes to shrinkage and decrease in the height of the interdental papilla</strong>, leading to exposure of the interproximal embrasures. This is why vertical incisions must either include or exclude the papilla — never split it through its midpoint."}
+];
+
+let current=0,score=0;
+function startQuiz(){
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQ();
+}
+function renderQ(){
+  const q=questions[current];
+  const L=['A','B','C','D'];
+  document.getElementById('q-cur').textContent=current+1;
+  document.getElementById('progress-inner').style.width=((current/30)*100)+'%';
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="q-card">
+      <div class="q-meta"><span class="q-num">QUESTION ${current+1} / 30</span><span class="q-topic">${q.topic}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})" id="o${i}"><span class="opt-letter">${L[i]}</span><span class="opt-text">${o}</span></button>`).join('')}
+      </div>
+      <div class="explanation" id="exp"><strong>Explanation:</strong> ${q.exp}</div>
+      <div class="q-footer"><button class="btn-next" id="nb" onclick="nextQ()">${current===29?'See Results':'Next Question →'}</button></div>
+    </div>`;
+}
+function pick(i){
+  if(document.querySelector('.opt.correct')||document.querySelector('.opt.wrong'))return;
+  const q=questions[current];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+  document.getElementById('o'+i).classList.add('selected');
+  if(i===q.ans){document.getElementById('o'+i).classList.add('correct');score++;document.getElementById('score').textContent=score;}
+  else{document.getElementById('o'+i).classList.add('wrong');document.getElementById('o'+q.ans).classList.add('correct');}
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nb').classList.add('show');
+}
+function nextQ(){
+  if(current<29){current++;renderQ();}else showResults();
+}
+function showResults(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('progress-inner').style.width='100%';
+  const end=document.getElementById('end-screen');
+  end.style.display='flex';
+  const pct=Math.round((score/30)*100);
+  let grade,gc;
+  if(pct>=85){grade='DISTINCTION';gc='dist';}
+  else if(pct>=70){grade='MERIT';gc='merit';}
+  else if(pct>=60){grade='PASS';gc='pass';}
+  else{grade='NEEDS REVIEW';gc='fail';}
+  const deg=Math.round((score/30)*360);
+  end.innerHTML=`
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);margin-bottom:8px">Quiz Complete</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em">ANATOMY, HEALTH MONITORING &amp; ADVANCED FLAP REFERENCE</div>
+    <div class="result-ring" style="background:conic-gradient(var(--sky) ${deg}deg, var(--border) ${deg}deg)">
+      <div class="result-inner"><div class="result-pct">${pct}%</div><div class="result-lbl">SCORE</div></div>
+    </div>
+    <div class="grade-badge ${gc}">${grade}</div>
+    <div class="result-breakdown">
+      <div class="rb-box"><div class="rb-val correct">${score}</div><div class="rb-label">CORRECT</div></div>
+      <div class="rb-box"><div class="rb-val wrong">${30-score}</div><div class="rb-label">INCORRECT</div></div>
+    </div>
+    <p style="font-size:15px;color:var(--text2);max-width:500px;line-height:1.7;margin-bottom:28px">
+      ${pct>=85?'Excellent — comprehensive command of the full Baird course material. All four modules complete.':pct>=70?'Good understanding. Review the BAIRD probing protocol and XLA bone biology sections if any questions arose.':pct>=60?'Passing standard. Revisit Lecture 4, focusing on the 10 biology facts, XLA bone changes, and mandible vs maxilla incision rationale.':'Review Lecture 4 in full before retaking. Focus on peri-implant tissue differences, BAIRD protocols, and the Golf Club oblique component detail.'}
+    </p>
+    <button class="btn-primary" onclick="location.reload()">Retake Quiz</button>`;
+}
+</script>
+</body>
+</html>

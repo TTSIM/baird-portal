@@ -1,0 +1,16 @@
+[build]
+command = "npm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "20"
+
+[context.deploy-preview.environment]
+COMMUNITY_ENABLED = "true"
+
+[functions]
+directory = "netlify/functions"
+node_bundler = "esbuild"
+
+[[plugins]]
+package = "@netlify/plugin-emails"

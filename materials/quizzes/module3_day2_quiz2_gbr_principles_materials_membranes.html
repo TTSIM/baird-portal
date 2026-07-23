@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2 — GBR: Materials & Membranes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d14;--surface:#111420;--card:#161b2e;--border:#1e2540;--gold:#c9a84c;--gold-light:#e8c97e;--gold-dim:rgba(201,168,76,0.15);--text:#e8e4dc;--muted:#8891aa;--subtle:#4a5270;--blue:#4a90d9;--teal:#3dbdac;--rose:#d96a6a;--amber:#e8a44a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.nav-home{color:var(--gold);text-decoration:none;font-size:13px;opacity:0.8;}.nav-home:hover{opacity:1;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:17px;}
+.nav-badge{font-size:11px;background:var(--gold-dim);color:var(--gold);padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.3);}
+.score-display{font-size:14px;color:var(--muted);}
+.score-display strong{color:var(--gold);}
+.progress-track{height:4px;background:var(--border);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.4s;}
+.container{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+.quiz-header{text-align:center;margin-bottom:48px;}
+.quiz-header h1{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;margin-bottom:10px;}
+.quiz-header h1 em{color:var(--gold);font-style:italic;}
+.quiz-header p{color:var(--muted);font-size:15px;}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:24px;transition:border-color 0.3s;}
+.question-card.correct-card{border-color:rgba(61,189,172,0.4);}
+.question-card.wrong-card{border-color:rgba(217,106,106,0.3);}
+.q-num{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.q-text{font-size:16px;line-height:1.65;margin-bottom:22px;}
+.options{display:grid;gap:10px;}
+.opt-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:13px 18px;border-radius:9px;cursor:pointer;text-align:left;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;line-height:1.5;}
+.opt-btn:hover:not(:disabled){border-color:var(--gold);background:rgba(201,168,76,0.05);}
+.opt-btn:disabled{cursor:default;}
+.opt-btn.selected-correct{background:rgba(61,189,172,0.12);border-color:var(--teal);color:var(--teal);}
+.opt-btn.selected-wrong{background:rgba(217,106,106,0.1);border-color:var(--rose);color:var(--rose);}
+.opt-btn.reveal-correct{background:rgba(61,189,172,0.08);border-color:rgba(61,189,172,0.4);color:var(--teal);}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:9px;font-size:13px;line-height:1.65;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(61,189,172,0.08);border:1px solid rgba(61,189,172,0.25);color:#7dd5c8;}
+.feedback.wrong{background:rgba(217,106,106,0.07);border:1px solid rgba(217,106,106,0.22);color:#cc8888;}
+.results-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;margin-top:32px;display:none;}
+.results-panel.show{display:block;}
+.results-score{font-family:'Cormorant Garamond',serif;font-size:72px;color:var(--gold);line-height:1;}
+.results-label{font-size:16px;color:var(--muted);margin:8px 0 24px;}
+.results-grade{font-size:22px;font-family:'Cormorant Garamond',serif;margin-bottom:16px;}
+.results-bar{background:var(--border);border-radius:8px;height:12px;margin:20px 0;overflow:hidden;}
+.results-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 1s ease;}
+.action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.btn{padding:12px 26px;border-radius:9px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all 0.2s;border:1px solid var(--border);color:var(--text);background:transparent;}
+.btn:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:#0a0d14;font-weight:500;}
+.btn-primary:hover{background:var(--gold-light);}
+.sticky-score{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;gap:16px;}
+.sticky-score .s-correct{color:var(--teal);}
+.sticky-score .s-wrong{color:var(--rose);}
+.sticky-score .s-remain{color:var(--muted);}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="nav-home">← Back</a>
+    <div class="nav-title">GBR — Materials &amp; Membranes</div>
+    <div class="nav-badge">Quiz 2</div>
+  </div>
+  <div class="score-display">Score: <strong id="liveScore">0</strong> / <span id="liveTotal">0</span></div>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="container">
+  <div class="quiz-header">
+    <h1>Quiz 2 — <em>GBR &amp; Membranes</em></h1>
+    <p>30 questions · Select the best answer · Explanations provided after each question</p>
+  </div>
+  <div id="quizBody"></div>
+  <div class="results-panel" id="resultsPanel">
+    <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Quiz Complete</div>
+    <div class="results-score" id="finalScore">0</div>
+    <div class="results-label">out of 30 correct</div>
+    <div class="results-grade" id="finalGrade"></div>
+    <div class="results-bar"><div class="results-fill" id="resultsFill" style="width:0%"></div></div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.7;" id="finalMsg"></p>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="quiz3.html" class="btn">Quiz 3 →</a>
+      <a href="lecture2.html" class="btn">Review Lecture 2</a>
+      <a href="index.html" class="btn">Course Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-score" id="stickyScore">
+  <span class="s-correct">✓ <span id="sCorrect">0</span></span>
+  <span class="s-wrong">✗ <span id="sWrong">0</span></span>
+  <span class="s-remain">⬜ <span id="sRemain">30</span></span>
+</div>
+
+<script>
+const questions = [
+  {q:"What is the minimum buccal bone thickness required to protect a dental implant from bacterial microleakage-related bone loss?",opts:["0.5mm","1mm","2mm","3mm"],correct:2,exp:"2mm is the minimum. Research shows that bacterial leakage from the implant-abutment microgap reaches the bone at 100% concentration when bone is less than 2mm thick — causing predictable resorption. With 2mm+ the bacteria arrive diluted, causing less damage."},
+  {q:"A patient has adequate buccal bone coverage of 2.5mm but a flat ridge profile. What should you do?",opts:["No grafting needed — bone coverage is sufficient","Graft to build convexity for aesthetic and hygienic reasons","Extract and replace after further bone loss","Only graft if the patient complains of aesthetics"],correct:1,exp:"2mm ensures implant protection — but convexity is needed for aesthetics and prosthetic design. Without a convex ridge, the final crown will look flat or the lab will use a ridge-lap design. Grafting the convexity (xenograft or CTG) is the Level 2–3 approach."},
+  {q:"Which bone grafting material is the ONLY one that is both osteogenic AND osteoinductive AND osteoconductive?",opts:["Allograft","Xenograft","Alloplast","Autogenous"],correct:3,exp:"Only autogenous bone has all three properties: osteogenic (living cells that form bone directly), osteoinductive (growth factors that stimulate bone formation), and osteoconductive (scaffold for bone cell migration). This is why it is the gold standard."},
+  {q:"In the layering technique, what material should go DIRECTLY against exposed implant threads?",opts:["Xenograft only","Allograft or autogenous","50/50 xenograft and allograft mix","Alloplast (synthetic)"],correct:1,exp:"Autogenous or allograft goes against exposed threads because these materials promote vital bone formation. Xenograft is osteoconductive only and resorbs very slowly — it does not reliably stimulate new bone formation directly on the titanium surface."},
+  {q:"What is the outer layer in the layering technique primarily responsible for?",opts:["Vital bone formation around the implant","Long-term volume stability and ridge convexity","Preventing membrane collapse","Providing growth factors"],correct:1,exp:"The outer layer (xenograft) is chosen specifically for its long-term volume stability. It maintains the ridge contour for years due to its slow resorption. It does not need to form vital bone — it just needs to hold the shape."},
+  {q:"Cerabone (xenograft) is heated to what temperature during processing?",opts:["400°C","800°C","1200°C","1500°C"],correct:2,exp:"Cerabone is heated to 1200°C — the highest temperature processing available. This deproteinises the bone completely, removing all organics, prions, viruses, and bacteria while creating very hard, stable hydroxyapatite particles with excellent volume stability."},
+  {q:"What unique property does cerabone have that aids its handling and clinical use?",opts:["It is radiopaque under X-ray","It is hydrophilic — absorbs blood uniformly","It releases growth factors on resorption","It has antibiotic properties"],correct:1,exp:"Cerabone is hydrophilic — it absorbs blood and saline uniformly, allowing homogeneous hydration of all particles. Other xenografts absorb unevenly, requiring mixing. The hydrophilic property also means it stays on the spatula even at 180° tilt."},
+  {q:"When using Cerabone Plus (7+), what percentage of saline should be used for mixing?",opts:["60%","50%","40%","30%"],correct:2,exp:"40% saline is the current recommendation for Cerabone Plus (7+). At 50% (previous recommendation), the material became too wet when placed in a blood-filled socket and would float out. At 40%, it achieves 'chewing gum consistency' that becomes perfectly sticky in the socket."},
+  {q:"What does the sodium hyaluronate in Cerabone Plus (7+) provide?",opts:["Volume stability","Colour coding for identification","Improved healing, angiogenesis, and inflammation control","Surface roughness for osteoblast attachment"],correct:2,exp:"Sodium hyaluronate (the powder form of hyaluronic acid) provides several biological benefits: it improves healing, controls inflammation, improves angiogenesis (new capillary formation), and gives a 'kick-start' to the healing process. Orthopaedics has used hyaluronic acid for these properties for decades."},
+  {q:"The allograft product recommended in the course is:",opts:["Bio-Oss (Geistlich)","Max graft (Botiss)","OsteoBiol (Teknimed)","Puros (Zimmer)"],correct:1,exp:"Max graft from Botiss is recommended as 'without being biased, the best allograft in the market.' It is available in cancellous, cortical, and corticocancellous forms."},
+  {q:"A defect around an immediate implant has mesial bone, distal bone, and an intact labial plate. How many walls does this defect have?",opts:["1 wall","2 walls","3 walls","4 walls"],correct:2,exp:"Three walls: mesial, distal, and labial. This is a 'highly favourable' defect — excellent blood supply from all three walls and good mechanical stability for graft particles. Simultaneous GBR will work well."},
+  {q:"A defect around an implant has only mesial and distal bone peaks — no labial wall. Can simultaneous GBR be performed?",opts:["No — always requires staged approach","Yes — usually favourable as long as some bone height provides stability","Only if a titanium-reinforced membrane is used","Only if no infection is present"],correct:1,exp:"A 2-wall defect (mesial + distal peaks only) is usually still favourable for simultaneous GBR, provided the peaks are at least 3mm tall to provide stability for the blood clot and graft particles. The missing labial wall is a common scenario with immediate implants."},
+  {q:"Why does decortication improve GBR outcomes, especially in the mandible?",opts:["It increases bone density","Perforations through dense cortical bone release marrow blood, stem cells, and growth factors","It creates a rougher surface for membrane adhesion","It reduces the risk of infection"],correct:1,exp:"Decortication perforates the dense cortical bone to access the medullary cavity. This allows blood, stem cells, and growth factors to flow up into the graft site — providing the angiogenesis and biological stimulus needed for bone regeneration."},
+  {q:"What is the key functional difference between resorbable and non-resorbable membranes when exposed to the oral environment?",opts:["Non-resorbable membranes cause more bone formation","Resorbable membranes resorb if exposed — no scaffold for biofilm. Non-resorbable membranes trap bacteria if exposed.","Resorbable membranes need titanium pins; non-resorbable do not","There is no clinical difference"],correct:1,exp:"If a collagen membrane is exposed, saliva resorbs it quickly — it provides no platform for biofilm colonisation, and only localised bone loss results. If ePTFE is exposed, bacteria immediately colonise its porous structure, spreading to the graft below — requiring full removal."},
+  {q:"Which collagen membrane is naturally cross-linked (not chemically) and preferred for slow degradation?",opts:["Bio-Gide (Geistlich)","Mamluk (Biohorizons)","Jason (Botiss)","Tezos (synthetic)"],correct:2,exp:"Jason (Botiss) is derived from pericardium and is naturally cross-linked — not chemically treated. This gives it a slow, controlled degradation without the tissue inflammation associated with chemical cross-linkers like glutaraldehyde. It is the preferred membrane for slow degradation in this course."},
+  {q:"What is the key disadvantage of synthetic resorbable membranes (e.g. Tezos) during the degradation phase?",opts:["They resorb too quickly","Chemical degradation triggers tissue inflammation, giant cells, and bone loss","They are too expensive","They cannot be sutured"],correct:1,exp:"As synthetic membranes degrade, they release chemicals that trigger an inflammatory response — including multinucleate giant cells — which causes bone loss in the area. This is a significant disadvantage compared to collagen membranes, which degrade via enzymatic reaction without inflammation."},
+  {q:"The Novel Mag (magnesium membrane) releases which gas during resorption that requires attention to wound closure?",opts:["Oxygen","Carbon dioxide","Hydrogen","Nitrogen"],correct:2,exp:"The magnesium membrane releases hydrogen gas as it resorbs. If the flap is not perfectly tension-free and well-sealed, this gas can cause wound dehiscence. This is why excellent suturing technique is essential when using this membrane type."},
+  {q:"For non-resorbable membranes, what minimum distance must be maintained from neighbouring tooth roots?",opts:["0.5mm","1.0mm","1.5mm","2.0mm"],correct:2,exp:"Non-resorbable membranes must be kept at least 1.5mm from adjacent tooth roots. The papilla and flap require vital bone at that margin for their blood supply. Covering the root surface blocks blood supply to the papilla — leading to dehiscence and recession over the neighbouring tooth."},
+  {q:"How does GBR work when a collagen membrane is exposed during healing?",opts:["The entire GBR fails and must be redone","The collagen resorbs rapidly via saliva — localised bone loss only, no implant failure","It must be removed surgically immediately","The patient must take antibiotics for 6 months"],correct:1,exp:"Collagen membranes are biologically forgiving in exposure. Saliva enzymatically resorbs the exposed membrane quickly, leaving no platform for biofilm. The result is localised bone loss at the exposure site — but not a catastrophic GBR failure. This is one of the biggest advantages of resorbable membranes."},
+  {q:"The 'bridge between two mountains' analogy in GBR refers to:",opts:["The arch of the membrane","The role of bony walls in providing blood supply and stability for the graft","The prosthetic arch of the final bridge","The suture technique"],correct:1,exp:"The two 'mountains' are the bony walls flanking a defect. You cannot build a bridge (bone graft) between a mountain and infinity — you need walls on both sides for stability and blood supply. This is why 0-wall defects cannot be managed with simultaneous GBR."},
+  {q:"Level 1 GBR understanding (practised by ~90% of clinicians) is best described as:",opts:["Grafting whenever buccal bone is less than 2mm","Grafting anterior AND posterior cases for hygienic emergence","Only grafting when threads are visibly exposed","Grafting pontic sites as well as implant sites"],correct:2,exp:"Level 1 is the most basic: 'if I see exposed threads, I'll graft; if I don't, no need.' This ignores the 2mm rule and the convexity principle entirely. Most clinicians operate at this level — it is below adequate modern practice."},
+  {q:"Level 3 GBR understanding (practised by ~25% of implantologists) includes which additional element not found in Levels 1 or 2?",opts:["Using titanium-reinforced membranes","Grafting posterior cases for hygienic ridge contouring AND pontic sites","Using collagen membranes","Performing digital planning"],correct:1,exp:"Level 3 grafts ALL cases — anterior and posterior — and also grafts pontic sites in bridge spans. The purpose is a perfectly hygienic, ideal emergence profile for every restoration, not just aesthetic anterior cases. This puts the prosthetic outcome at the centre of every planning decision."},
+  {q:"How does implant angulation relative to the crown axis affect peri-implantitis risk?",opts:["Greater angulation reduces risk","Angulation has no proven effect on peri-implantitis","Greater offset angle correlates with higher peri-implantitis risk","Only off-axis angles below 15° matter"],correct:2,exp:"Studies show that the greater the angle between the implant long axis and the crown long axis, the higher the risk of peri-implantitis. Placing implants in the centre of the prosthetic envelope (not the ridge) eliminates the problem — even if it requires GBR to create the bone."},
+  {q:"Why should you add a pontic site graft in a three-unit implant bridge case?",opts:["The pontic site will also receive an implant later","Without grafting, the pontic site resorbs and forces a ridge-lap design — unhygienic and unaesthetic","Pontic grafting provides primary stability","It prevents bone loss around adjacent implants"],correct:1,exp:"An ungrafted pontic site undergoes progressive resorption, creating a concavity. This forces the lab to use a ridge-lap pontic design that traps food and is impossible to clean properly. Grafting the pontic site (xenograft) maintains a convex, ovate pontic profile — hygienic and aesthetic."},
+  {q:"Which statement about autogenous bone from slow drilling (flute collection) is TRUE?",opts:["White bone chips from the drill flutes indicate good vitality","The first drill can be used for bone collection at any speed","Red bone chips are good quality; white bone chips are overheated and necrotic","Speed must be above 200 rpm for best collection"],correct:2,exp:"Red bone chips from drill flutes indicate vital, non-overheated bone — use them. White chips indicate the bone was overheated and is necrotic — discard and abandon the technique for that osteotomy. Slow drilling (50–100 rpm, no saline) applies to the 2nd, 3rd, and 4th drills only — never the first drill."},
+  {q:"The H-incision for stage 2 exposure is preferred over a punch technique when:",opts:["The punch technique is always preferred","Keratinized mucosa is abundant buccally","Limited keratinized mucosa exists — the H-incision redistributes it from the crest to buccal and lingual aspects","Only for mandibular cases"],correct:2,exp:"When buccal keratinized mucosa is limited, using a punch throws away (discards) the crest mucosa. The H-incision instead redistributes it — moving keratinized tissue from the crest to both the buccal and lingual aspects — giving ≥2mm of keratinized mucosa around the healing abutment."},
+  {q:"A biopsy from a site grafted with xenograft shows 'large remaining particles with little vital bone.' This indicates:",opts:["GBR failure requiring repeat surgery","Normal — xenograft particles are volume-fillers, not meant to become fully vital","Infection of the graft site","The wrong membrane was used"],correct:1,exp:"This is the expected and normal histological finding for xenograft. Cerabone particles are designed to provide long-term volume stability — they remain as slow-resorbing hydroxyapatite particles. Only a minority of the space becomes vital bone. This is precisely why xenograft is NOT used against exposed threads."},
+  {q:"What does the press release periosteal incision specifically prevent?",opts:["Membrane exposure to oral bacteria","Flap dehiscence from tension pulling the wound open","Bone particle migration","Excessive bleeding"],correct:1,exp:"The press release creates a periosteal releasing incision that allows the flap to advance coronally without tension. Without it, the flap pulls back during healing, causing dehiscence over the GBR site — the single most preventable GBR complication."},
+  {q:"For GBR under a non-resorbable PTFE membrane, how long should autogenous bone be allowed to heal before implant placement (staged)?",opts:["8–12 weeks","12–16 weeks","24 weeks","9 months"],correct:2,exp:"Even autogenous bone under a non-resorbable PTFE membrane requires approximately 24 weeks. The PTFE prevents the periosteum from contributing to bone healing — significantly slowing even the fastest-healing material. Without PTFE, autogenous heals in 12–16 weeks."},
+  {q:"The Botiss Cerabone Plus product was launched in which year?",opts:["2015","2019","2021","2023"],correct:2,exp:"Cerabone Plus (7+) was launched by Botiss in 2021 — combining 80% cerabone xenograft with 20% sodium hyaluronate. This was the first time sodium hyaluronate was added to a xenograft material to improve biological outcomes and handling."},
+  {q:"What is the correct management if a freshly placed implant has an axial movement when the healing cap is tested?",opts:["Tighten the healing cap and wait 12 weeks","Leave for 20 more weeks — this is normal woven bone","Remove the implant — axial movement indicates fibrous healing failure","Immediately prescribe antibiotics and review in 2 weeks"],correct:2,exp:"Axial movement of the implant (movement up and down along its long axis) is the definitive sign of fibrous healing — the implant has osseointegrated into fibrous connective tissue, not bone. It will not achieve primary stability and must be removed. Rotational movement alone (no axial) indicates woven bone — leave it longer."}
+];
+
+let answered = JSON.parse(localStorage.getItem('q2_answers') || '{}');
+let correct = 0, wrong = 0;
+
+function buildQuiz(){
+  const body = document.getElementById('quizBody');
+  body.innerHTML = '';
+  correct = 0; wrong = 0;
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card-' + i;
+    const prev = answered[i];
+    const isAnswered = prev !== undefined;
+    if(isAnswered){ if(prev === q.correct) correct++; else wrong++; }
+    card.innerHTML = `
+      <div class="q-num">Question ${i+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((o,oi)=>`<button class="opt-btn" id="opt-${i}-${oi}" onclick="answer(${i},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-${i}"></div>`;
+    body.appendChild(card);
+    if(isAnswered) restoreAnswer(i, prev, q);
+  });
+  updateStats();
+}
+
+function answer(qi, opt){
+  const q = questions[qi];
+  if(answered[qi] !== undefined) return;
+  answered[qi] = opt;
+  localStorage.setItem('q2_answers', JSON.stringify(answered));
+  if(opt === q.correct) correct++; else wrong++;
+  restoreAnswer(qi, opt, q);
+  updateStats();
+  if(Object.keys(answered).length === questions.length) setTimeout(showResults, 600);
+}
+
+function restoreAnswer(qi, opt, q){
+  const card = document.getElementById('card-'+qi);
+  const isCorrect = opt === q.correct;
+  card.classList.add(isCorrect ? 'correct-card' : 'wrong-card');
+  for(let i=0;i<q.opts.length;i++){
+    const btn = document.getElementById('opt-'+qi+'-'+i);
+    btn.disabled = true;
+    if(i === opt) btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+    if(!isCorrect && i === q.correct) btn.classList.add('reveal-correct');
+  }
+  const fb = document.getElementById('fb-'+qi);
+  fb.textContent = (isCorrect ? '✓ Correct — ' : '✗ Incorrect — ') + q.exp;
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+}
+
+function updateStats(){
+  const total = Object.keys(answered).length;
+  document.getElementById('liveScore').textContent = correct;
+  document.getElementById('liveTotal').textContent = total;
+  document.getElementById('progressFill').style.width = (total/questions.length*100)+'%';
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sWrong').textContent = wrong;
+  document.getElementById('sRemain').textContent = questions.length - total;
+}
+
+function showResults(){
+  const pct = Math.round(correct/questions.length*100);
+  document.getElementById('finalScore').textContent = correct;
+  document.getElementById('resultsFill').style.width = pct+'%';
+  let grade, msg;
+  if(pct>=90){grade='Excellent — Distinction Level';msg='Outstanding. You have strong command of GBR biology, material selection, and membrane principles.';}
+  else if(pct>=75){grade='Good — Merit Level';msg='Well done. Review any areas you missed and revisit the relevant Lecture 2 slides.';}
+  else if(pct>=60){grade='Pass Level';msg='Satisfactory. Consolidate the layering technique, membrane selection, and defect classification before clinical application.';}
+  else{grade='Needs Improvement';msg='Please review Lecture 2 thoroughly before retaking. Focus on the 2mm rule, layering technique, and membrane types.';}
+  document.getElementById('finalGrade').textContent = grade;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('resultsPanel').classList.add('show');
+  localStorage.setItem('quiz2_done','1');
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
+}
+
+function retakeQuiz(){
+  answered = {};
+  localStorage.removeItem('q2_answers');
+  correct = 0; wrong = 0;
+  document.getElementById('resultsPanel').classList.remove('show');
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildQuiz();
+if(Object.keys(answered).length === questions.length) showResults();
+</script>
+</body>
+</html>

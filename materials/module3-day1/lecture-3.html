@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L3 · Flap Design &amp; Decision-Making — Baird Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+:root{--bg:#080c10;--surface:#121a24;--surface2:#1a2738;--border:#1d2e40;--gold:#c9a84c;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--accent:#f97316;--accent2:#fb923c}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow:hidden}
+#cnav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:5px 20px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(16px);min-height:36px;overflow-x:auto}
+.nb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.ns{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.nl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.ng{display:flex;gap:4px}
+.np{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border:1px solid var(--border);color:var(--text3);text-decoration:none;border-radius:2px;transition:all .2s;white-space:nowrap}
+.np:hover{border-color:var(--text2);color:var(--text)}
+.np.here{border-color:var(--accent);color:var(--accent);background:rgba(249,115,22,.08)}
+.np.qhov:hover{border-color:var(--gold);color:var(--gold)}
+#hdr{position:fixed;top:36px;left:0;right:0;z-index:200;background:linear-gradient(rgba(8,12,16,.98),rgba(8,12,16,.88));border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+.hl .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+.hl .ttl{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--gold);font-weight:300}
+.hr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+#pgb{position:fixed;top:96px;left:0;right:0;z-index:199;height:2px;background:var(--border)}
+#pgf{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .4s ease}
+#sc{position:fixed;top:98px;bottom:52px;left:0;right:0;overflow:hidden}
+.slide{position:absolute;top:0;left:0;right:0;bottom:0;padding:32px 52px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateX(56px);transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide.prev{opacity:0;transform:translateX(-56px)}
+.tslide{justify-content:center;align-items:center;text-align:center;background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(249,115,22,.07) 0%,transparent 70%)}
+.ttag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.3em;text-transform:uppercase;border:1px solid rgba(249,115,22,.3);padding:3px 14px;display:inline-block;margin-bottom:20px}
+.th1{font-family:'Cormorant Garamond',serif;font-size:50px;font-weight:300;line-height:1.1;margin-bottom:14px}
+.th1 em{color:var(--gold);font-style:italic}
+.trule{width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:0 auto 20px}
+.tsub{font-size:13px;color:var(--text2);letter-spacing:.15em;margin-bottom:8px}
+.tmod{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+.tcta{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.bp{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.12);border:1px solid var(--accent);color:var(--accent);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bp:hover{background:rgba(249,115,22,.22)}
+.bo{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bo:hover{border-color:var(--text2);color:var(--text)}
+.sh{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--gold);margin-bottom:4px;line-height:1.2}
+.ss{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:22px}
+.b2{display:flex;gap:28px;flex:1;align-items:flex-start}
+.b2.col{flex-direction:column}
+.cc{flex:1;min-width:0}.dc{flex:0 0 290px}
+p.ld{font-size:17px;color:var(--text);line-height:1.7;margin-bottom:14px}
+p.bd{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.c{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 18px;margin-bottom:12px;border-radius:2px}
+.c .ct{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px}
+.c p{font-size:14px;color:var(--text2);line-height:1.6}
+.c.a{border-left-color:var(--accent)}.c.a .ct{color:var(--accent)}
+.c.r{border-left-color:var(--red)}.c.r .ct{color:var(--red)}
+.c.g{border-left-color:var(--green)}.c.g .ct{color:var(--green)}
+.kr{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);padding:18px 22px;margin:14px 0;text-align:center}
+.kr .krt{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);font-style:italic}
+.bl{list-style:none}
+.bl li{display:flex;gap:10px;margin-bottom:10px;font-size:15px;color:var(--text);line-height:1.5}
+.bl li::before{content:'▸';color:var(--accent);flex-shrink:0;margin-top:2px;font-size:11px}
+.bl li b{color:var(--gold)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.cmp{background:var(--surface);border:1px solid var(--border);padding:14px}
+.cmp .ct{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.cmp.gd .ct{color:var(--green)}.cmp.bd .ct{color:var(--red)}.cmp.a .ct{color:var(--accent)}.cmp.b .ct{color:var(--gold)}
+.cmp ul{list-style:none}.cmp ul li{font-size:13px;color:var(--text2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}
+.cmp ul li:last-child{border-bottom:none}
+.sb{background:linear-gradient(135deg,rgba(249,115,22,.06),rgba(249,115,22,.02));border:1px solid rgba(249,115,22,.2);padding:16px 20px;margin:12px 0}
+.sb .st{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+.wb{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);padding:12px 16px;margin:10px 0}
+.wb .wt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}
+.wb p{font-size:14px;color:var(--text2);line-height:1.5}
+.oi{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.oi:last-child{border-bottom:none}
+.on{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);opacity:.4;flex-shrink:0;line-height:1;min-width:28px}
+.ot{font-size:16px;color:var(--text2);line-height:1.6}
+.ot strong{color:var(--text)}
+.stat{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+.stat .sv{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold);line-height:1}
+.stat .su{font-size:12px;color:var(--accent)}
+.stat .sd{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.4}
+/* Tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tb{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:7px 14px;background:var(--surface);border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:all .2s}
+.tb.on,.tb:hover{border-color:var(--accent);color:var(--accent);background:rgba(249,115,22,.06)}
+.tp{display:none}.tp.show{display:block}
+/* Accordion */
+.ah{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;transition:all .2s;margin-bottom:1px}
+.ah:hover,.ah.open{border-color:var(--accent);color:var(--accent);background:rgba(249,115,22,.05)}
+.ah .ar{transition:transform .25s;font-size:12px;color:var(--text3)}
+.ah.open .ar{transform:rotate(180deg);color:var(--accent)}
+.ab{display:none;background:var(--surface2);border:1px solid var(--border);border-top:none;padding:14px 16px;font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:8px}
+.ab.open{display:block}
+/* Scenario */
+.sc{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.25);padding:16px 20px;margin:12px 0}
+.sc .slb{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.25em;text-transform:uppercase;margin-bottom:6px}
+.sc p{font-size:15px;color:var(--text);line-height:1.6}
+/* Four Yeses interactive cards */
+.ycard{background:var(--surface);border:1px solid var(--border);padding:16px 18px;margin-bottom:10px;transition:all .2s;border-radius:2px}
+.ycard .yt{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
+.ycard .yb{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.ybtns{display:flex;gap:8px}
+.ybtn{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);background:none;cursor:pointer;transition:all .2s;border-radius:2px}
+.ybtn.y:hover{border-color:var(--green);color:var(--green)}
+.ybtn.n:hover{border-color:var(--red);color:var(--red)}
+.ycard.yyes{border-color:var(--green);background:rgba(34,197,94,.05)}
+.ycard.yno{border-color:var(--red);background:rgba(239,68,68,.05)}
+.ycard.yyes .yt{color:var(--green)}
+.ycard.yno .yt{color:var(--red)}
+.yres{display:none;font-size:13px;padding:8px 10px;margin-top:8px;border-radius:2px}
+.ycard.yyes .yres.yr-yes{display:block;color:var(--green);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)}
+.ycard.yno .yres.yr-no{display:block;color:var(--red);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)}
+/* Flap selector */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fcard{background:var(--surface);border:1px solid var(--border);padding:14px 16px;cursor:pointer;transition:all .2s}
+.fcard:hover{border-color:var(--accent)}
+.fcard.sel{border-color:var(--accent);background:rgba(249,115,22,.05)}
+.fcard .fn{font-size:15px;color:var(--text);font-weight:600;margin-bottom:5px}
+.fcard .fd{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.ftags{display:flex;gap:5px;flex-wrap:wrap}
+.ftag{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:2px}
+.ftag.p{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.ftag.n{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+#fdetail{background:var(--surface2);border:1px solid var(--border);padding:14px 16px;margin-top:12px;font-size:14px;color:var(--text2);line-height:1.6;display:none}
+/* Decision tree */
+.dtnode{background:var(--surface);border:1px solid var(--border);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.dtnq{font-size:14px;color:var(--text);line-height:1.4;flex:1}
+.dtny{font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace;padding:3px 7px;border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
+.dtnn{font-size:11px;color:var(--red);font-family:'JetBrains Mono',monospace;padding:3px 7px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06)}
+/* Nav */
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(8,12,16,.96);border-top:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+.nvb{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:7px 20px;cursor:pointer;transition:all .2s}
+.nvb:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.nvb:disabled{opacity:.2;cursor:default}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:50vw}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;flex-shrink:0}
+.dot.on{background:var(--accent);transform:scale(1.5)}
+@media(max-width:768px){#cnav{gap:8px}.nl{display:none}#hdr{padding:6px 16px}.hl .ttl{font-size:14px}#pgb{top:88px}#sc{top:90px;bottom:48px}.slide{padding:20px 18px}.sh{font-size:26px}.th1{font-size:36px}.b2{flex-direction:column;gap:16px}.dc{flex:none;width:100%}.g2,.g3{grid-template-columns:1fr}#nav{padding:6px 16px}.nvb{padding:5px 14px;font-size:11px}.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- ═══ COURSE NAVIGATION BAR (consistent across all 6 files) ═══ -->
+<nav id="cnav" aria-label="Course navigation">
+  <span class="nb">🦷 Baird Implant</span><div class="ns"></div>
+  <span class="nl">Lectures</span>
+  <div class="ng">
+    <a href="lecture-1.html" class="np">L1 Fundamentals</a>
+    <a href="lecture-2.html" class="np">L2 Management</a>
+    <a href="lecture-3.html" class="np here" aria-current="page">L3 Flap Design</a>
+  </div>
+  <div class="ns"></div><span class="nl">Quizzes</span>
+  <div class="ng">
+    <a href="quiz-1.html" class="np qhov">Q1</a>
+    <a href="quiz-2.html" class="np qhov">Q2</a>
+    <a href="quiz-3.html" class="np qhov">Q3</a>
+  </div>
+</nav>
+<header id="hdr">
+  <div class="hl"><div class="lbl">Baird Implant Course · Module 2</div><div class="ttl">Lecture 3 — Flap Design &amp; Surgical Decision-Making</div></div>
+  <div class="hr">Slide <span id="cur">1</span> / <span id="tot">30</span></div>
+</header>
+<div id="pgb" role="progressbar" aria-valuemin="1" aria-valuemax="30" aria-valuenow="1"><div id="pgf"></div></div>
+<main id="sc" aria-live="polite">
+
+<!-- S1 -->
+<div class="slide tslide active" data-slide="1">
+  <div class="ttag">Baird Implant Course · Lecture Series</div>
+  <div class="th1">Flap Design &amp;<br><em>Surgical</em><br>Decision-Making</div>
+  <div class="trule"></div>
+  <div class="tsub">LECTURE 3 OF 3 · FOUR YESES · THREE QUESTIONS · GOLF CLUB · INCISION RULES</div>
+  <div class="tmod">Module 2 · Day 2 · Surgical Skills</div>
+  <div class="tcta"><button class="bp" onclick="goTo(2)">Start Lecture →</button><a href="quiz-3.html" class="bo">Go to Quiz 3</a></div>
+</div>
+
+<!-- S2 -->
+<div class="slide" data-slide="2">
+  <div class="sh">Learning Objectives</div><div class="ss">What you will master in this lecture</div>
+  <div class="oi"><div class="on">01</div><div class="ot">Name the <strong>four basic flap designs</strong> and identify their indications and contraindications</div></div>
+  <div class="oi"><div class="on">02</div><div class="ot">Apply the <strong>Three Questions Framework</strong> to design any implant flap scientifically</div></div>
+  <div class="oi"><div class="on">03</div><div class="ot">Use the <strong>Four Yeses System</strong> to determine whether a papilla can safely be elevated</div></div>
+  <div class="oi"><div class="on">04</div><div class="ot">Perform <strong>bone sounding</strong> and interpret findings in flap design decisions</div></div>
+  <div class="oi"><div class="on">05</div><div class="ot">Position <strong>vertical incisions</strong> using the Golf Club technique and all six scarring rules</div></div>
+  <div class="oi"><div class="on">06</div><div class="ot">Explain the rationale and five advantages of the <strong>remote palatal incision</strong></div></div>
+</div>
+
+<!-- S3 WHY FLAP DESIGN IS EVERYTHING -->
+<div class="slide" data-slide="3">
+  <div class="sh">Why Flap Design Is Everything</div><div class="ss">The single most consequential surgical decision you make</div>
+  <div class="b2 col">
+    <p class="ld">Wrong flap design causes the most embarrassing outcomes in implant dentistry — not failed implants. Failed implants can often be managed. Permanent recession on adjacent natural teeth cannot easily be corrected.</p>
+    <div class="g3">
+      <div class="c r"><div class="ct">The Worst Outcome</div><p>Patient comes for an implant. You use the wrong flap and cause recession or black triangles on adjacent <em>natural</em> teeth. "I came to fix one tooth and you ruined the others." Permanent, career-damaging, litigation risk.</p></div>
+      <div class="c"><div class="ct">Failed Implant vs Wrong Flap</div><p>A failed implant: manageable — even implant manufacturers replace failed fixtures. Tissue damage from poor flap design: permanent aesthetic consequences no manufacturer can fix.</p></div>
+      <div class="c a"><div class="ct">The Solution</div><p>A scientific, evidence-based decision framework — not habit or Instagram trends. One size does NOT fit all. Every case demands individual analysis of its specific biology.</p></div>
+    </div>
+    <div class="kr"><div class="krt">"One size does not fit all."</div></div>
+  </div>
+</div>
+
+<!-- S4 FOUR BASIC FLAPS (INTERACTIVE SELECTOR) -->
+<div class="slide" data-slide="4">
+  <div class="sh">The Four Basic Flap Designs</div><div class="ss">All complex designs derive from these four — click each to explore</div>
+  <div class="b2 col">
+    <div class="fgrid" id="fgrid">
+      <div class="fcard" onclick="selectFlap(this,'env')">
+        <div class="fn">1. Envelope (Sulcular) Flap</div>
+        <div class="fd">Sulcular incision only. No vertical lines. Extends each side of the surgical site.</div>
+        <div class="ftags"><span class="ftag p">No scars</span><span class="ftag p">Blood supply preserved</span><span class="ftag n">Not for thin phenotype</span></div>
+      </div>
+      <div class="fcard" onclick="selectFlap(this,'pap')">
+        <div class="fn">2. Papillary-Preserving (Golf Club)</div>
+        <div class="fd">3mm papilla island preserved. Vertical shaft + oblique extension parallel to posterior tooth curvature.</div>
+        <div class="ftags"><span class="ftag p">Preserves papilla</span><span class="ftag n">Small GBR field</span><span class="ftag n">Step/cleft risk with GBR</span></div>
+      </div>
+      <div class="fcard" onclick="selectFlap(this,'three')">
+        <div class="fn">3. Three-Sided Flap</div>
+        <div class="fd">Envelope + two vertical releasing incisions. Also called apically repositioned flap.</div>
+        <div class="ftags"><span class="ftag p">Best GBR access</span><span class="ftag p">Coronal advancement</span><span class="ftag n">Two scar lines</span></div>
+      </div>
+      <div class="fcard" onclick="selectFlap(this,'two')">
+        <div class="fn">4. Two-Sided Flap</div>
+        <div class="fd">Envelope + one vertical releasing incision (preferably anteriorly; posteriorly for aesthetics).</div>
+        <div class="ftags"><span class="ftag p">Better access than envelope</span><span class="ftag p">One scar only</span><span class="ftag n">Limited for large GBR</span></div>
+      </div>
+    </div>
+    <div id="fdetail"></div>
+  </div>
+</div>
+
+<!-- S5 THREE QUESTIONS FRAMEWORK -->
+<div class="slide" data-slide="5">
+  <div class="sh">The Three Questions Framework</div><div class="ss">Answer these in order for every implant flap — no exceptions</div>
+  <div class="b2 col">
+    <div class="oi">
+      <div class="on" style="color:var(--accent);opacity:1;font-size:32px">Q1</div>
+      <div class="ot"><strong>Raise this papilla — or preserve it?</strong><br>Use the Four Yeses system. Assess each papilla individually. If one NO: preserve. If four YESes: raise. This is the single most important question.</div>
+    </div>
+    <div class="oi">
+      <div class="on" style="color:var(--accent);opacity:1;font-size:32px">Q2</div>
+      <div class="ot"><strong>How big does my flap need to be?</strong><br>Simple implant only: 1 unit each side. Implant + GBR: 2 units each side. Advanced augmentation: extend further. Match flap size to surgical need — never over-extend unnecessarily.</div>
+    </div>
+    <div class="oi">
+      <div class="on" style="color:var(--accent);opacity:1;font-size:32px">Q3</div>
+      <div class="ot"><strong>Do I need vertical lines — and where?</strong><br>Apply all six scarring rules. Use Golf Club technique. No vertical in mobile mucosa. No horizontal in attached gingiva. No incision over maximum root convexity.</div>
+    </div>
+    <div class="sb"><div class="st">The Principle</div><p style="font-size:14px;color:var(--text2)">Answer Q1 for each papilla individually — different answers are possible on the same case. Apply the biology; not aesthetic preference for symmetry.</p></div>
+  </div>
+</div>
+
+<!-- S6 FOUR YESES (INTERACTIVE) -->
+<div class="slide" data-slide="6">
+  <div class="sh">The Four Yeses System</div><div class="ss">All four must be YES to safely raise a papilla — tap to assess each factor</div>
+  <div class="b2 col" style="overflow-y:auto">
+    <p class="bd" style="margin-bottom:12px">Apply to each papilla individually. One NO = preserve that papilla. Bone sounding (the first factor) is most important — assessed first.</p>
+    <div class="ycard" id="yc1">
+      <div class="yt">Most Important: Bone Sounding at Papilla Base (Mesial/Distal)</div>
+      <div class="yb">Bone sound the papilla. Mucosa crest to bone: ≤3mm = favourable (YES). &gt;3mm = unfavourable (NO — stop here, preserve regardless of other factors).</div>
+      <div class="ybtns"><button class="ybtn y" onclick="setYes('yc1','yes')">YES — ≤3mm</button><button class="ybtn n" onclick="setYes('yc1','no')">NO — &gt;3mm</button></div>
+      <div class="yres yr-yes">✓ Favourable bone sounding — continue to factor 2</div>
+      <div class="yres yr-no">✗ STOP — Preserve this papilla. Bone cannot support the papilla coronal to 3mm. If elevated, recession is guaranteed.</div>
+    </div>
+    <div class="ycard" id="yc2">
+      <div class="yt">2nd: Mid-Labial Bone Sounding of Adjacent Teeth</div>
+      <div class="yb">Bone sound the mid-labial of the neighbouring tooth. ≤3mm = YES. &gt;3mm = NO. Unfavourable here = recession on the adjacent tooth from the flap elevation.</div>
+      <div class="ybtns"><button class="ybtn y" onclick="setYes('yc2','yes')">YES — ≤3mm</button><button class="ybtn n" onclick="setYes('yc2','no')">NO — &gt;3mm</button></div>
+      <div class="yres yr-yes">✓ Adjacent teeth will not be harmed — continue to factor 3</div>
+      <div class="yres yr-no">✗ STOP — Raising flap here will cause mid-labial recession on the adjacent tooth.</div>
+    </div>
+    <div class="ycard" id="yc3">
+      <div class="yt">3rd: Neighbour Quality</div>
+      <div class="yb">Is the adjacent tooth/restoration healthy? Good crown = YES. Leaking crown / inflamed tissue = NO. Adjacent implant = ALWAYS NO (no PDL = no blood supply to papilla).</div>
+      <div class="ybtns"><button class="ybtn y" onclick="setYes('yc3','yes')">YES — Good neighbour</button><button class="ybtn n" onclick="setYes('yc3','no')">NO — Compromised / Implant</button></div>
+      <div class="yres yr-yes">✓ Neighbour favourable — continue to factor 4</div>
+      <div class="yres yr-no">✗ STOP — Compromised neighbour reduces papilla healing capacity. Adjacent implant = always NO.</div>
+    </div>
+    <div class="ycard" id="yc4">
+      <div class="yt">Least Important: Phenotype</div>
+      <div class="yb">Thick phenotype = YES (fibrous, vascular, good healing). Thin phenotype = NO (fragile, recession risk). Even with 3 other YESes, thin phenotype requires care.</div>
+      <div class="ybtns"><button class="ybtn y" onclick="setYes('yc4','yes')">YES — Thick phenotype</button><button class="ybtn n" onclick="setYes('yc4','no')">NO — Thin phenotype</button></div>
+      <div class="yres yr-yes">✓ FOUR YESES — Safe to elevate this papilla. Predictable recovery expected.</div>
+      <div class="yres yr-no">✗ Even with 3 other YESes: thin phenotype papilla remains at risk. Strongly consider preserving.</div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 FOUR YESES DECISION TREE -->
+<div class="slide" data-slide="7">
+  <div class="sh">Four Yeses — Decision Tree</div><div class="ss">Visual decision pathway from most to least important factor</div>
+  <div class="b2 col">
+    <div class="dtnode"><div class="dtnq"><strong>START: Bone sound mesial/distal papilla base</strong><br><span style="font-size:13px;color:var(--text3)">Is the distance from mucosa crest to bone ≤3mm?</span></div><div class="dtny">YES → next</div><div class="dtnn">NO → PRESERVE</div></div>
+    <div style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+      <div class="dtnode"><div class="dtnq"><strong>Bone sound mid-labial of adjacent teeth</strong><br><span style="font-size:13px;color:var(--text3)">Is mid-labial distance ≤3mm (no recession risk)?</span></div><div class="dtny">YES → next</div><div class="dtnn">NO → PRESERVE</div></div>
+      <div style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+        <div class="dtnode"><div class="dtnq"><strong>Assess the neighbour</strong><br><span style="font-size:13px;color:var(--text3)">Healthy natural tooth? (Not an implant, not leaking)</span></div><div class="dtny">YES → next</div><div class="dtnn">NO → PRESERVE</div></div>
+        <div style="padding-left:20px">
+          <div class="dtnode"><div class="dtnq"><strong>Phenotype</strong><br><span style="font-size:13px;color:var(--text3)">Thick phenotype confirmed?</span></div><div class="dtny">YES → RAISE</div><div class="dtnn">NO → CONSIDER PRESERVING</div></div>
+          <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.25);padding:12px 14px;margin-left:0;margin-top:6px"><div style="font-size:12px;color:var(--green);font-family:'JetBrains Mono',monospace;margin-bottom:4px">✓ FOUR YESES — SAFE TO RAISE</div><div style="font-size:13px;color:var(--text2)">All four criteria met. Elevate papilla with confidence. Document your decision rationale.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8 BONE SOUNDING -->
+<div class="slide" data-slide="8">
+  <div class="sh">Bone Sounding Technique</div><div class="ss">The essential pre-surgical examination — perform at the consultation, not in theatre</div>
+  <div class="b2">
+    <div class="cc">
+      <p class="bd">Bone sounding measures the distance from the soft tissue crest to underlying bone by passing a probe through the junctional epithelium and connective tissue.</p>
+      <div class="c"><div class="ct">Phenotype Assessment (No Anaesthesia)</div><p>Insert probe <strong>1mm</strong> into sulcus — visible metal shadow = thin phenotype. No anaesthesia needed. This only probes the sulcus, not through tissue.</p></div>
+      <div class="c a"><div class="ct">Bone Sounding (Anaesthesia Required)</div><p>Probe penetrates through junctional epithelium and CT to contact bone. <strong>Must have anaesthesia.</strong> Measure from tissue crest to bone: ≤3mm = favourable, &gt;3mm = unfavourable.</p></div>
+      <div class="c r"><div class="ct">Two Sites to Measure Every Time</div><p><strong>1. Mesial/distal papilla base</strong> — can this papilla be safely elevated?<br><strong>2. Mid-labial of adjacent teeth</strong> — will the flap cause recession on neighbours?</p></div>
+      <div class="wb"><div class="wt">Most Common Clinical Oversight</div><p>Forgetting to bone sound the mid-labial of adjacent teeth. This is how recession ends up on a tooth that was never the patient's complaint — and the source of the most difficult clinical conversations in implant practice.</p></div>
+    </div>
+    <div class="dc">
+      <div class="c a"><div class="ct">Why ≤3mm = Favourable</div><p>Bone supplies blood to approximately 3mm of soft tissue above it. Within 3mm: after papilla elevation, biological width re-establishes at the same level. The papilla heals and returns.<br><br>&gt;3mm: the tissue above 3mm has inadequate blood supply. After elevation, it necroses. The papilla does not return. <strong>This is not reversible.</strong></p></div>
+      <div class="c" style="margin-top:8px"><div class="ct">CBCT as Adjunct</div><p>CBCT shows bone levels and soft tissue thickness. Bone peaks visible on periapical radiograph. However, bone sounding is still required — imaging cannot tell you the actual soft tissue-to-bone distance precisely enough for clinical decision-making.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9 THE NEIGHBOUR RULE -->
+<div class="slide" data-slide="9">
+  <div class="sh">The Neighbour Rule</div><div class="ss">Adjacent tooth quality determines papilla blood supply and healing capacity</div>
+  <div class="b2 col">
+    <p class="ld">The neighbouring tooth is the primary blood supply to the interdental papilla on that side. A compromised neighbour = a compromised papilla — regardless of phenotype or bone sounding.</p>
+    <div class="g3">
+      <div class="c g"><div class="ct">Good Neighbour — YES</div><p>Healthy natural tooth with intact periodontal ligament. PDL provides blood supply to papilla. Well-seated, non-leaking crown. Papilla is genuinely vascularised and will heal after careful elevation.</p></div>
+      <div class="c r"><div class="ct">Bad Neighbour — NO</div><p>Leaking or poorly-designed crown. Inflamed periapical tissue. Inflammatory cells present in the papilla → reduced healing capacity. Elevating this papilla risks lasting recession even if you do everything else perfectly.</p></div>
+      <div class="c r"><div class="ct">Implant Neighbour — ALWAYS NO</div><p>No PDL → no blood supply to papilla from the implant side. What appears as a papilla between two implants is functionally scar tissue. Elevate it and you will lose it permanently. No exceptions.</p></div>
+    </div>
+    <div class="sb" style="margin-top:10px"><div class="st">Lesson from Clinical Experience</div><p style="font-size:14px;color:var(--text2)">Case: placed implant in 2009, returned in 2012 to place an adjacent implant. Raised a large flap to "check the old bone graft." Disturbed the papilla next to the old implant. Lost the papilla permanently. The four yeses system was created precisely to prevent this mistake from being repeated.</p></div>
+  </div>
+</div>
+
+<!-- S10 BONE SOUNDING FAVOURABLE vs UNFAVOURABLE -->
+<div class="slide" data-slide="10">
+  <div class="sh">Bone Sounding — Clinical Interpretation</div><div class="ss">Understanding the biology behind the 3mm threshold</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp a"><div class="ct">≤3mm — Favourable</div><ul><li>Bone can supply blood to full papilla height</li><li>After elevation: biological width re-establishes at same or similar level</li><li>Papilla heals and returns to original position</li><li>Safe to elevate — predictable outcome</li><li>Document and proceed with appropriate care</li></ul></div>
+      <div class="cmp bd"><div class="ct">&gt;3mm — Unfavourable</div><ul><li>Tissue above 3mm from bone: inadequate blood supply</li><li>Appears as papilla but is essentially scar tissue</li><li>After elevation: BW re-establishes at 3mm from bone</li><li>Coronal tissue above this has no supply → necrosis</li><li>Papilla recession is permanent and irreversible</li></ul></div>
+    </div>
+    <div class="c r" style="margin-top:10px"><div class="ct">Don't Be Deceived by Appearance</div><p>A papilla that looks healthy and full may have &gt;3mm bone sounding. It looks like a papilla because it was never disturbed. The moment you elevate it, its apparent height will be permanently lost. You cannot assess the bone sounding by looking — you must probe. Assess before you plan.</p></div>
+  </div>
+</div>
+
+<!-- S11 PHENOTYPE AND FLAP DESIGN -->
+<div class="slide" data-slide="11">
+  <div class="sh">Phenotype &amp; Flap Strategy</div><div class="ss">How tissue type governs every incision choice</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp a"><div class="ct">Thick Phenotype — Flap Strategy</div><ul><li>Papillae: robust, recover well after elevation</li><li>Envelope flap: generally safe</li><li>If vertical lines needed: expect visible scarring (acceptable)</li><li>Inform patient about scar risk pre-operatively</li><li>Scars fade over 3–5 years</li><li>Priority: avoid black triangles &gt; avoid scars</li></ul></div>
+      <div class="cmp bd"><div class="ct">Thin Phenotype — Flap Strategy</div><ul><li>Papillae: fragile, high recession risk</li><li>Papillary-preserving flap strongly preferred</li><li>Vertical lines: actually less scarring (minimal fibrous tissue)</li><li>High risk: black triangles after papilla elevation</li><li>Priority: preserve papillae at all costs</li><li>If vertical lines needed: place away from implant</li></ul></div>
+    </div>
+    <div class="c" style="margin-top:10px"><div class="ct">Scarring vs Black Triangles — Which Is Worse?</div><p>Vertical scars in a high-smile-line patient: uncomfortable and visible but fade over 3–5 years. Black triangles: permanent, aesthetically devastating, extremely difficult to correct. When forced to choose between these two outcomes — <strong>scars are always preferable to black triangles.</strong> Always inform the patient of scar risk before surgery.</p></div>
+  </div>
+</div>
+
+<!-- S12 FLAP EXTENT -->
+<div class="slide" data-slide="12">
+  <div class="sh">Extent of the Flap</div><div class="ss">Question 2 of 3: match flap size precisely to the procedure</div>
+  <div class="b2 col">
+    <div class="tabs" role="tablist">
+      <button class="tb on" onclick="showTab('fe1',this)">Flapless</button>
+      <button class="tb" onclick="showTab('fe2',this)">Simple Implant</button>
+      <button class="tb" onclick="showTab('fe3',this)">GBR</button>
+      <button class="tb" onclick="showTab('fe4',this)">Coronal Advancement</button>
+    </div>
+    <div id="fe1" class="tp show"><div class="c a"><div class="ct">Flapless Surgery — Most Conservative</div><p>Tissue punch only. No flap. Zero papilla disruption. Best outcome for tissue architecture. <strong>Appropriate only when:</strong> bone is adequate (CBCT-confirmed ≥2mm all surfaces), no GBR needed, no tissue augmentation required. Contraindicated if any bone or soft tissue augmentation is needed.</p></div></div>
+    <div id="fe2" class="tp"><div class="c a"><div class="ct">Simple Implant — 1 Unit Each Side</div><p>Minimum papilla involvement. Extend 1 unit each side. Do not over-extend "to see more" — each extra unit disturbs more papillae. Match the flap size to what the surgery actually requires.</p></div></div>
+    <div id="fe3" class="tp"><div class="c a"><div class="ct">GBR — 2 Units Each Side Minimum</div><p>Larger flap ensures membrane can be placed away from flap margins (which must rest on vital bone). Provides adequate access for correct GBR technique. Periosteal release mandatory. Better access = better GBR technique = better outcomes.</p></div></div>
+    <div id="fe4" class="tp"><div class="c a"><div class="ct">Coronal Advancement — Wider Flap Required</div><p>Cases requiring coronal flap advancement (extensive grafting) benefit from a wider flap to allow less tension on closure after advancement. The wider base means the periosteal release is more effective. Also: in aesthetic zone, extend the flap to keep vertical incisions more distal — away from centre of aesthetic zone.</p></div></div>
+  </div>
+</div>
+
+<!-- S13 VERTICAL INCISION RULES -->
+<div class="slide" data-slide="13">
+  <div class="sh">Vertical Incision Rules</div><div class="ss">Six rules that govern every incision placement decision</div>
+  <div class="b2 col">
+    <div class="g3">
+      <div class="c r"><div class="ct">Rule 1</div><p><strong>No vertical incisions on convex surfaces.</strong> Root convexity = guaranteed mid-labial recession at the scar site. Place incisions on flat surfaces between convexities only.</p></div>
+      <div class="c r"><div class="ct">Rule 2</div><p><strong>Do not split the papilla.</strong> Incision must include or exclude the papilla entirely. Splitting it causes shrinkage and embrasure exposure. The Golf Club design prevents splitting.</p></div>
+      <div class="c a"><div class="ct">Rule 3</div><p><strong>Vertical lines heal better than curved ones.</strong> Rationale for transitioning to oblique (straighter) rather than curved at the MGJ.</p></div>
+    </div>
+    <div class="g3" style="margin-top:10px">
+      <div class="c r"><div class="ct">Rule 4</div><p><strong>Make vertical lines away from the implant site.</strong> Minimum 3mm from implant margin. Prevents GBR membrane exposure through the scar line.</p></div>
+      <div class="c r"><div class="ct">Rule 5</div><p><strong>No vertical lines in mobile mucosa.</strong> They scar badly. Transition to oblique at the MGJ. Never continue straight vertical beyond attached gingiva.</p></div>
+      <div class="c r"><div class="ct">Rule 6</div><p><strong>No horizontal lines in attached/keratinized gingiva.</strong> They scar worst of all — prominent step scar for 5–7 years. Absolute prohibition.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S14 GOLF CLUB TECHNIQUE -->
+<div class="slide" data-slide="14">
+  <div class="sh">The Golf Club Technique</div><div class="ss">Full anatomy — vertical shaft + oblique extension — the complete design</div>
+  <div class="b2">
+    <div class="cc">
+      <p class="bd">The Golf Club incision has two components that together form the characteristic shape. Both must be correctly placed.</p>
+      <div class="c a"><div class="ct">Component 1 — The Vertical Shaft</div><p>Placed on the flat surface between two roots, at the <strong>middle of the mesio-distal width of the papilla base</strong>. Away from maximum root convexity. ≥3mm clearance from the implant margin.</p></div>
+      <div class="c a"><div class="ct">Component 2 — The Oblique Extension (Club Head)</div><p>From the base of the papilla, an oblique line runs toward the mesial tooth, <strong>parallel to the mesial curvature of the posterior tooth</strong>. This is the "club head." It directs the incision away from the papilla vascular supply.</p></div>
+      <div class="c"><div class="ct">The 3mm Papilla Island</div><p>The combined effect leaves a <strong>minimum 3mm island of papilla</strong> behind the oblique line — adequate tissue for suturing and vascularity for the retained papilla.</p></div>
+      <div class="c grn"><div class="ct">Signs of Correct Golf Club</div><p>✓ Papilla blood supply untouched<br>✓ Flat bone under incision line<br>✓ 3mm papilla island remaining<br>✓ Scar hidden in natural root crease<br>✓ ≥3mm clearance from implant<br>✓ Oblique transition at MGJ</p></div>
+    </div>
+    <div class="dc">
+      <svg viewBox="0 0 240 290" width="100%" aria-hidden="true">
+        <text x="120" y="14" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">GOLF CLUB INCISION</text>
+        <ellipse cx="70" cy="90" rx="42" ry="80" fill="rgba(200,180,130,.07)" stroke="rgba(200,180,130,.18)"/>
+        <ellipse cx="175" cy="90" rx="42" ry="80" fill="rgba(200,180,130,.07)" stroke="rgba(200,180,130,.18)"/>
+        <text x="70" y="88" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Root</text>
+        <text x="175" y="88" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Root</text>
+        <!-- Papilla -->
+        <path d="M 112 178 Q 122 158 132 178" fill="rgba(200,100,100,.15)" stroke="rgba(200,150,150,.5)" stroke-width="1.5"/>
+        <!-- MD midpoint label -->
+        <line x1="112" y1="190" x2="132" y2="190" stroke="rgba(249,115,22,.3)" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="122" y="202" fill="#4a6a80" font-family="Rajdhani" font-size="9" text-anchor="middle">MD midpoint</text>
+        <!-- Vertical shaft -->
+        <line x1="122" y1="155" x2="122" y2="185" stroke="rgba(249,115,22,.9)" stroke-width="2.5"/>
+        <!-- Oblique extension - parallel to posterior root curvature -->
+        <path d="M 122 178 Q 103 183 90 173" fill="none" stroke="rgba(249,115,22,.9)" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="138" y="168" fill="#f97316" font-family="Rajdhani" font-size="10">Vertical</text>
+        <text x="138" y="180" fill="#f97316" font-family="Rajdhani" font-size="10">shaft</text>
+        <text x="58" y="162" fill="#f97316" font-family="Rajdhani" font-size="10">Oblique</text>
+        <text x="58" y="174" fill="#f97316" font-family="Rajdhani" font-size="10">extension</text>
+        <!-- 3mm island -->
+        <path d="M 90 173 Q 100 165 112 178" fill="rgba(34,197,94,.15)" stroke="rgba(34,197,94,.4)" stroke-width="1"/>
+        <text x="72" y="195" fill="#22c55e" font-family="JetBrains Mono" font-size="8">3mm</text>
+        <!-- Parallel curvature hint -->
+        <path d="M 47 145 Q 60 122 74 107" fill="none" stroke="rgba(201,168,76,.35)" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="28" y="140" fill="#c9a84c" font-family="Rajdhani" font-size="9">Mesial</text>
+        <text x="28" y="152" fill="#c9a84c" font-family="Rajdhani" font-size="9">curvature</text>
+        <!-- Max convexity -->
+        <circle cx="70" cy="22" r="4" fill="rgba(239,68,68,.4)"/>
+        <circle cx="175" cy="22" r="4" fill="rgba(239,68,68,.4)"/>
+        <text x="120" y="240" fill="#ef4444" font-family="Rajdhani" font-size="10" text-anchor="middle">Never incise over MAX convexity</text>
+        <text x="120" y="255" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Flat zone between roots = correct target</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- S15 REMOTE PALATAL INCISION -->
+<div class="slide" data-slide="15">
+  <div class="sh">Remote Palatal Incision</div><div class="ss">Five advantages of a palatally-offset crestal incision in the maxilla</div>
+  <div class="b2 col">
+    <div class="g3">
+      <div class="c a"><div class="ct">Advantage 1</div><p>If dehiscence occurs, the opening is <strong>away from the implant and graft</strong>. Not directly over the surgical site — reducing bacterial contamination of the graft.</p></div>
+      <div class="c a"><div class="ct">Advantage 2</div><p>Any dehiscence is flanked by <strong>keratinized mucosa on both sides</strong> (palatal KM + buccal KM). Rapid, quality re-epithelialisation.</p></div>
+      <div class="c a"><div class="ct">Advantage 3</div><p>A <strong>long healing abutment at high torque (≥25Ncm)</strong> pushes palatal keratinized mucosa buccally — natural FGG effect, potentially eliminating a separate graft.</p></div>
+    </div>
+    <div class="g2" style="margin-top:10px">
+      <div class="c"><div class="ct">Advantage 4</div><p>When working in an early healing socket: a mid-crestal incision falls on granulation tissue (knife drops in). The palatal offset places the incision on <strong>sound healthy bone</strong>.</p></div>
+      <div class="c"><div class="ct">Advantage 5</div><p>The palatal flap elevation brings extra soft tissue thickness buccally — if granulation tissue in the socket is kept attached to the flap, it <strong>increases mucosal thickness on the buccal aspect</strong>.</p></div>
+    </div>
+    <div class="sb"><div class="st">Mandible Note</div><p style="font-size:14px;color:var(--text2)">In the mandible: use mid-crestal incision (equal KM labially and lingually). The lingual mandible has very limited KM — a lingual offset would move the incision onto non-keratinized mobile tissue, which is counterproductive.</p></div>
+  </div>
+</div>
+
+<!-- S16 ASYMMETRIC FLAP DESIGN -->
+<div class="slide" data-slide="16">
+  <div class="sh">Asymmetric Flap Design</div><div class="ss">Different designs for mesial and distal aspects of the same case</div>
+  <div class="b2 col">
+    <p class="ld">The four yeses may give different answers for each papilla of the same surgical site — your flap design should reflect this asymmetry.</p>
+    <div class="c a"><div class="ct">Clinical Example</div><p>Bone sounding mesial papilla = 2.5mm (favourable). Distal papilla = 4mm (unfavourable).<br><br>Correct flap: <strong>elevate mesial papilla, preserve distal papilla.</strong> The incision is asymmetric — not a mirror image. This is biologically correct, not aesthetically inconsistent.</p></div>
+    <div class="g2" style="margin-top:10px">
+      <div class="c"><div class="ct">Benefits of Asymmetric Design</div><p>• Minimises trauma to the compromised papilla<br>• Maximises access where biology allows<br>• Scar line offset from implant on at least one side<br>• Optimal tissue management at each anatomical site individually</p></div>
+      <div class="c r"><div class="ct">Common Error — Symmetry for Symmetry's Sake</div><p>Flap design follows biology, not aesthetics. A flap that looks "tidy and symmetrical" but ignores bone sounding findings will produce a worse result than an asymmetric, biologically-justified design.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- S17–S29: Condensed reference slides -->
+<div class="slide" data-slide="17">
+  <div class="sh">Envelope Flap — Full Profile</div><div class="ss">Complete BAIRD characterisation including GBR extension rules</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp gd"><div class="ct">Envelope Flap — When Correct</div><ul><li>Simple implant, no GBR</li><li>Thick phenotype (papillae recover well)</li><li>All four yeses confirmed for all papillae involved</li><li>High smile line (no vertical scar lines needed)</li><li>Extend 2 units each side if GBR required</li></ul></div>
+      <div class="cmp bd"><div class="ct">Envelope Flap — Wrong When</div><ul><li>Thin phenotype — elevated papillae won't return</li><li>Adjacent implant — papilla between implants = scar tissue</li><li>Bone sounding unfavourable at papilla base</li><li>Adjacent compromised crown with inflammation</li><li>Large GBR with inadequate access</li></ul></div>
+    </div>
+    <div class="wb" style="margin-top:10px"><div class="wt">Most Common Flap Design Error</div><p>"I always do envelope flap" is not an acceptable rationale. The envelope flap that involves thin phenotype papillae, or a papilla adjacent to an implant, will consistently produce permanent aesthetic damage. Apply the four yeses system every time — no exceptions.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="18">
+  <div class="sh">Papillary Preserving — Full Profile</div><div class="ss">Golf Club design with GBR step/clefting limitation</div>
+  <div class="b2 col">
+    <p class="bd">The papillary-preserving flap provides access without disturbing papillae where the four yeses assessment was unfavourable.</p>
+    <div class="g2">
+      <div class="cmp gd"><div class="ct">Three Advantages</div><ul><li>Minimises risk of papillary loss and black triangles</li><li>Less interproximal bone loss (papilla blood supply preserved)</li><li>Minimal disruption to flap vascularisation</li></ul></div>
+      <div class="cmp bd"><div class="ct">Three Limitations</div><ul><li>Small surgical field — limited GBR access</li><li>Visible scarring in thick phenotype cases</li><li>Step/cleft effect when GBR within the field (central flap elevated by graft; papillae at lower level → step scar at junction)</li></ul></div>
+    </div>
+    <div class="c a" style="margin-top:8px"><div class="ct">3mm Minimum — Baird Specification</div><p>Leave a minimum <strong>3mm island</strong> of papilla at the base. Less than 3mm compromises blood supply to the retained tissue and provides inadequate tissue for suturing.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="19">
+  <div class="sh">Three-Sided Flap — Full Profile</div><div class="ss">The apically repositioned flap — maximum access and advancement capability</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp a"><div class="ct">Four Advantages</div><ul><li>Best access and reflection of all four designs</li><li>Ideal for GBR and bone block grafting</li><li>Easiest periosteal release — wider surface area</li><li>Coronal advancement of flap margins when needed</li></ul></div>
+      <div class="cmp bd"><div class="ct">Trade-offs</div><ul><li>Two vertical incision lines = two scar sites</li><li>Both must follow Golf Club rules and all six scarring rules</li><li>In thin phenotype: less scarring risk than thick, but still apply rules</li><li>Careful positioning essential to avoid visible scars</li></ul></div>
+    </div>
+    <div class="c" style="margin-top:8px"><div class="ct">When to Choose Three-Sided Over Two-Sided</div><p>Bone block grafting. Large GBR defects requiring maximum closure advancement. Cases where coronal advancement is planned. When the extent of surgery cannot be accommodated by an envelope or two-sided design.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="20">
+  <div class="sh">Two-Sided Flap — Anterior vs Posterior</div><div class="ss">Where to place the single relieving incision — and why it matters</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp a"><div class="ct">Anterior Relieving Incision — Standard</div><ul><li>Recommended in most cases</li><li>Increases vision and access anteriorly</li><li>Easier to suture at end of procedure</li><li>Suturing accessible anteriorly</li><li>Default position</li></ul></div>
+      <div class="cmp b"><div class="ct">Posterior Relieving Incision — Aesthetic Exception</div><ul><li>Used only in the aesthetic zone</li><li>Places scar away from the visible anterior area</li><li>Scar from posterior incision less visible in smile</li><li>Trade-off: reduced access anteriorly</li><li>Justified only when anterior scar visibility is the priority</li></ul></div>
+    </div>
+    <div class="c a" style="margin-top:8px"><div class="ct">Decision Rule</div><p>Anterior is the default because it gives better access and easier suturing. Move to posterior only when cosmesis explicitly demands it — typically high smile line + thick phenotype patients where a visible anterior scar would be the primary aesthetic concern.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="21">
+  <div class="sh">Flapless Surgery</div><div class="ss">The most conservative approach — when it is and isn't appropriate</div>
+  <div class="b2 col">
+    <div class="g2">
+      <div class="cmp gd"><div class="ct">✓ Flapless Appropriate When</div><ul><li>Adequate bone volume confirmed by CBCT</li><li>≥2mm bone on all surfaces</li><li>No GBR needed</li><li>No soft tissue augmentation needed</li><li>Simple single-tooth case</li><li>Adjacent papillae not to be disturbed</li></ul></div>
+      <div class="cmp bd"><div class="ct">✗ Flapless Contraindicated When</div><ul><li>Bone grafting required</li><li>Bone volume assessment unclear</li><li>Simultaneous soft tissue grafting needed</li><li>Thick soft tissue obscures bone landmarks</li><li>Complex 3D implant positioning required</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="22">
+  <div class="sh">Implant Position — T-Concept</div><div class="ss">Why correct 3D positioning underpins every soft tissue strategy</div>
+  <div class="b2 col">
+    <p class="ld">No flap design saves an implant in the wrong position. Position is the non-negotiable foundation on which all soft tissue management rests.</p>
+    <div class="g3">
+      <div class="c a"><div class="ct">Apicocoronal (Depth)</div><p>3–4mm below future gingival margin. Thin phenotype: 4mm. Thick phenotype: 3mm. Never compromise depth for bone concerns.</p></div>
+      <div class="c a"><div class="ct">Mesiodistal</div><p>≥1.5mm from adjacent tooth roots. ≥3mm between adjacent implants. Closer than this: interdental bone resorbs → papilla lost.</p></div>
+      <div class="c a"><div class="ct">Buccopalatal (T-Concept)</div><p>As palatal as possible — aimed at the cingulum. Protects the labial plate and creates the jumping gap for labial grafting.</p></div>
+    </div>
+    <div class="wb" style="margin-top:10px"><div class="wt">Wrong Position = Inevitable Bone Loss</div><p>An implant placed at bone crest with 2mm of thin mucosa above it will lose bone through biological width re-establishment. No flap design, no graft, no technique prevents this. Correct position at placement is the only solution.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="23">
+  <div class="sh">Smile Line &amp; Flap Decisions</div><div class="ss">How the patient's smile display affects every incision choice</div>
+  <div class="b2 col">
+    <div class="g3">
+      <div class="c r"><div class="ct">High Smile Line</div><p>Full gingival display. Any scars, recession, or black triangles immediately visible. Prioritise: avoid black triangles &gt; avoid scars. Thin phenotype: papillary-preserving essential. Every incision placement is critical.</p></div>
+      <div class="c"><div class="ct">Average Smile Line</div><p>Papillae visible but not mid-labial mucosa. Papilla aesthetics still important. Some scar tolerance. Balance between papilla preservation and access. Four yeses system still strictly applied.</p></div>
+      <div class="c g"><div class="ct">Low Smile Line</div><p>Minimal gingival display. Aesthetics less critical — tissue health is the priority. Black triangles may be intentionally acceptable if they improve hygiene access. Scars not visible.</p></div>
+    </div>
+    <div class="c a" style="margin-top:10px"><div class="ct">Intentional Black Triangles</div><p>For a patient with a very low smile line, multiple implants, and poor oral hygiene potential — intentional black triangles can be the <em>correct</em> clinical choice. They improve cleaning access and are not visible in the smile. Overengineering aesthetics at the expense of hygiene access is the wrong priority for this patient.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="24">
+  <div class="sh">Case Walkthrough — Adjacent Implant</div><div class="ss">The most challenging scenario: implant next to an existing implant</div>
+  <div class="b2 col">
+    <p class="bd">Existing implant at UR3. Adjacent tooth UR2 failing — needs extraction and new implant. The neighbour is an existing implant.</p>
+    <div class="sc"><div class="slb">Case Scenario</div><p>How do you plan the flap design and soft tissue management for this adjacent implant case?</p></div>
+    <div class="ah" onclick="tAcc(this)" aria-expanded="false">Reveal Full Analysis <span class="ar">▾</span></div>
+    <div class="ab"><strong>Step 1: Fixed temporisation before extraction.</strong> Fabricate 2-unit temporary bridge on existing implant BEFORE removing the failing tooth. Fit immediately post-extraction. Papilla supported throughout.<br><br><strong>Step 2: Flap design.</strong> The papilla between old implant and new implant site = scar tissue (implant neighbour = always NO). Always papillary-preserving flap on the implant side. Distal side: assess with four yeses independently.<br><br><strong>Step 3: Surgery.</strong> Papillary-preserving mesially. GBR with bone graft + membrane if needed. Refit temporary bridge to support papilla and tissue contour during healing.<br><br><strong>Outcome at 5+ years:</strong> Both implants stable with papilla preserved between them. No recession.</div>
+  </div>
+</div>
+
+<div class="slide" data-slide="25">
+  <div class="sh">Maintain vs Obtain</div><div class="ss">The hierarchy of soft tissue management</div>
+  <div class="b2 col">
+    <p class="ld">"Maintain rather than lose and obtain" — the principle that governs every soft tissue decision in implant surgery.</p>
+    <div class="g2">
+      <div class="cmp gd"><div class="ct">MAINTAIN (Easiest, Most Predictable)</div><ul><li>Fixed temporisation before extraction</li><li>Correct flap design preserving vulnerable papillae</li><li>Papillary-preserving flap for at-risk papillae</li><li>Tension-free closure to prevent dehiscence</li><li>Frenectomy before surgery if needed</li></ul></div>
+      <div class="cmp bd"><div class="ct">OBTAIN (Harder, More Morbidity)</div><ul><li>FGG to regain lost KM</li><li>CTG for lost tissue volume</li><li>Papilla reconstruction (very unpredictable)</li><li>GBR for lost bone support</li><li>Multiple staged procedures over 12–18 months</li></ul></div>
+    </div>
+    <div class="kr" style="margin-top:10px"><div class="krt">"Prevention is always better than reconstruction."</div></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="26">
+  <div class="sh">Common Flap Design Errors</div><div class="ss">The six most preventable mistakes — all with permanent consequences</div>
+  <div class="b2 col">
+    <div class="g3">
+      <div class="c r"><div class="ct">Error 1 — Skip Bone Sounding</div><p>Not bone sounding the mid-labial of adjacent teeth. Result: recession on the neighbouring tooth. Patient says "you ruined the tooth that was fine."</p></div>
+      <div class="c r"><div class="ct">Error 2 — Raise Implant Papilla</div><p>Elevating the papilla adjacent to an existing implant. That papilla is scar tissue. Elevate it and it never comes back.</p></div>
+      <div class="c r"><div class="ct">Error 3 — Incise Over Convexity</div><p>Vertical incision over maximum root convexity. Result: mid-labial recession at every follow-up. Particularly devastating in high smile-line patients.</p></div>
+    </div>
+    <div class="g3" style="margin-top:10px">
+      <div class="c r"><div class="ct">Error 4 — Horizontal in KM</div><p>Horizontal incision in attached mucosa. Creates a permanent step scar. Fades poorly. Can persist 5–7 years.</p></div>
+      <div class="c r"><div class="ct">Error 5 — No Periosteal Release</div><p>Closing GBR without periosteal release → tension → dehiscence → graft contamination. Most preventable catastrophic complication in GBR.</p></div>
+      <div class="c r"><div class="ct">Error 6 — One-Size Approach</div><p>"I always do envelope flap" or "I always preserve papillae" — neither is universally correct. Only biology determines the right design.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="27">
+  <div class="sh">Pre-Surgical Checklist</div><div class="ss">Everything to confirm before your first incision</div>
+  <div class="b2 col">
+    <div class="dtnode"><div class="dtnq">Bone sounding: mesial and distal papillae — both documented?</div><div class="dtny">YES</div><div class="dtnn">DO IT FIRST</div></div>
+    <div class="dtnode"><div class="dtnq">Bone sounding: mid-labial of ALL adjacent teeth — documented?</div><div class="dtny">YES</div><div class="dtnn">DO IT NOW</div></div>
+    <div class="dtnode"><div class="dtnq">Neighbour assessment: any implants, leaking crowns, or inflamed tissue adjacent?</div><div class="dtny">YES → preserve affected papilla</div><div class="dtnn">NO → proceed</div></div>
+    <div class="dtnode"><div class="dtnq">Phenotype confirmed — thick or thin?</div><div class="dtny">YES</div><div class="dtnn">ASSESS</div></div>
+    <div class="dtnode"><div class="dtnq">Flap design selected based on four yeses, GBR needs, and smile line?</div><div class="dtny">YES</div><div class="dtnn">PLAN FIRST</div></div>
+    <div class="dtnode"><div class="dtnq">Fresh blade prepared for periosteal release (not the incision blade)?</div><div class="dtny">YES</div><div class="dtnn">CHANGE BLADE</div></div>
+    <div class="dtnode"><div class="dtnq">Prominent frenum — frenectomy performed ≥4 weeks ago if indicated?</div><div class="dtny">YES</div><div class="dtnn">PLAN &amp; RESCHEDULE</div></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="28">
+  <div class="sh">Flap Design Reference Table</div><div class="ss">All four flaps at a glance — for quick consultation</div>
+  <div class="b2 col">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em">Flap</th>
+          <th style="text-align:left;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em">Key Feature</th>
+          <th style="text-align:left;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em">Best For</th>
+          <th style="text-align:left;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em">Avoid When</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)"><td style="padding:8px 10px;color:var(--text)">Envelope</td><td style="padding:8px 10px;color:var(--text2)">No vertical lines</td><td style="padding:8px 10px;color:var(--text2)">Thick phenotype, high smile line, all yeses confirmed</td><td style="padding:8px 10px;color:var(--text2)">Thin phenotype, implant neighbours</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)"><td style="padding:8px 10px;color:var(--text)">Papillary Preserving</td><td style="padding:8px 10px;color:var(--text2)">3mm Golf Club island</td><td style="padding:8px 10px;color:var(--text2)">Thin phenotype, implant neighbours, unfavourable bone sounding</td><td style="padding:8px 10px;color:var(--text2)">Large GBR (step/cleft risk)</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)"><td style="padding:8px 10px;color:var(--text)">Two-Sided</td><td style="padding:8px 10px;color:var(--text2)">One vertical (anterior preferred)</td><td style="padding:8px 10px;color:var(--text2)">Moderate access needed, one papilla preserved</td><td style="padding:8px 10px;color:var(--text2)">Very large GBR requiring maximum advancement</td></tr>
+          <tr><td style="padding:8px 10px;color:var(--text)">Three-Sided</td><td style="padding:8px 10px;color:var(--text2)">Two verticals, max access</td><td style="padding:8px 10px;color:var(--text2)">GBR, bone block, coronal advancement</td><td style="padding:8px 10px;color:var(--text2)">When aesthetics cannot tolerate two scar lines</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="29">
+  <div class="sh">Clinical Scenarios</div><div class="ss">Applying the complete flap design framework to real cases</div>
+  <div class="b2 col">
+    <div class="sc"><div class="slb">Scenario A</div><p>Upper central incisor missing 3 months. Young patient, high smile line. Bone sounding mesial 2mm, distal 2.5mm. Adjacent teeth healthy. Thick phenotype confirmed. GBR required.</p></div>
+    <div class="ah" onclick="tAcc(this)" aria-expanded="false">Reveal Analysis <span class="ar">▾</span></div>
+    <div class="ab">Q1: Four yeses confirmed on both sides (bone sounding ≤3mm, healthy neighbours, thick phenotype) → raise both papillae → envelope flap appropriate. Q2: GBR required → extend 2 units each side. Q3: Vertical lines needed for adequate access → Golf Club technique, oblique at MGJ, ≥3mm from implant margin. Periosteal release mandatory for GBR closure. Result at 5+ years: both papillae preserved, GBR successful.</div>
+    <div class="sc" style="margin-top:12px"><div class="slb">Scenario B</div><p>UR2 implant already placed. UR1 root fracture → needs extraction and implant. How do you approach the mesial papilla (adjacent to existing implant)?</p></div>
+    <div class="ah" onclick="tAcc(this)" aria-expanded="false">Reveal Analysis <span class="ar">▾</span></div>
+    <div class="ab">The UR2 implant is the mesial neighbour. <strong>Adjacent implant = always NO.</strong> The papilla between UR1 and UR2 implants has no PDL blood supply from the UR2 side. Papillary-preserving flap on the mesial side is mandatory regardless of bone sounding result. Distal side: assess four yeses independently. Fabricate fixed temporary bridge on UR2 implant before extracting UR1 to maintain papilla support throughout.</div>
+  </div>
+</div>
+
+<!-- S30 SUMMARY -->
+<div class="slide tslide" data-slide="30">
+  <div class="ttag">Lecture 3 Complete</div>
+  <div class="th1" style="font-size:38px">Key <em>Takeaways</em></div>
+  <div class="trule"></div>
+  <div style="text-align:left;max-width:680px;margin:0 auto 16px">
+    <ul class="bl">
+      <li>The <b>Four Basic Flaps</b>: envelope, papillary-preserving, two-sided, three-sided — chosen by biology, never by habit</li>
+      <li><b>Three Questions</b>: raise papilla? → extent? → vertical lines? — answer in order, each papilla assessed individually</li>
+      <li><b>Four Yeses</b>: mesial/distal bone sounding → mid-labial sounding → neighbour quality → phenotype. One NO = preserve.</li>
+      <li><b>Bone sounding ≤3mm</b> = favourable. >3mm = necrosis above biological width after elevation</li>
+      <li><b>Golf Club</b>: vertical shaft at MD midpoint between roots + oblique extension parallel to posterior tooth curvature, leaving 3mm island</li>
+      <li><b>Adjacent implant neighbour</b>: always a NO — that papilla is scar tissue with no PDL blood supply</li>
+      <li>Maintain &gt; Lose and Obtain — <b>prevention is always easier than reconstruction</b></li>
+    </ul>
+  </div>
+  <div class="tcta">
+    <a href="quiz-3.html" class="bp">Take Quiz 3 →</a>
+    <a href="quiz-1.html" class="bo">Back to Quiz 1</a>
+  </div>
+</div>
+
+</main>
+<nav id="nav" aria-label="Slide navigation">
+  <button class="nvb" id="pvb" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <div class="dots" id="dots"></div>
+  <button class="nvb" id="nvb" onclick="changeSlide(1)">Next →</button>
+</nav>
+
+<!-- ═══ SLIDE ENGINE + INTERACTIVE COMPONENT SCRIPTS ═══ -->
+<script>
+/* slide navigation: goTo()/changeSlide() drive dots, buttons and arrow keys */
+let cur=1;const TOT=30;
+document.getElementById('tot').textContent=TOT;
+const dc=document.getElementById('dots');
+for(let i=1;i<=TOT;i++){const d=document.createElement('button');d.className='dot'+(i===1?' on':'');d.setAttribute('aria-label','Go to slide '+i);d.onclick=()=>goTo(i);dc.appendChild(d);}
+function uUI(){document.getElementById('cur').textContent=cur;document.getElementById('pgf').style.width=(cur/TOT*100)+'%';document.getElementById('pvb').disabled=cur===1;document.getElementById('nvb').disabled=cur===TOT;document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i+1===cur));}
+function goTo(n){if(n===cur||n<1||n>TOT)return;const p=document.querySelector('.slide.active'),nx=document.querySelector('[data-slide="'+n+'"]');if(!p||!nx)return;p.classList.remove('active');if(n>cur)p.classList.add('prev');nx.classList.remove('prev');nx.classList.add('active');setTimeout(()=>p.classList.remove('prev'),500);cur=n;uUI();}
+function changeSlide(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+function showTab(id,btn){document.querySelectorAll('.tp').forEach(p=>p.classList.remove('show'));document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));const p=document.getElementById(id);if(p)p.classList.add('show');if(btn)btn.classList.add('on');}
+function tAcc(h){const b=h.nextElementSibling;const o=b.classList.contains('open');b.classList.toggle('open',!o);h.classList.toggle('open',!o);h.setAttribute('aria-expanded',String(!o));}
+function setYes(id,val){const c=document.getElementById(id);c.classList.remove('yyes','yno');c.classList.add(val==='yes'?'yyes':'yno');}
+const flapData={
+  env:'Envelope (Sulcular) Flap: sulcular incision only, no vertical lines. Requires sufficient length for adequate reflection and visualisation. If GBR needed: extend 2 units each side. Advantage: no scarring — useful for high smile line + thick phenotype. NOT recommended for thin phenotype or adjacent implant cases.',
+  pap:'Papillary-Preserving Flap: designed to access the surgical field without disturbing adjacent papillae where the four yeses were unfavourable. Golf Club incision: vertical shaft at MD midpoint between roots + oblique extension parallel to posterior tooth curvature, leaving ≥3mm papilla island. Limitations: small field, visible scarring in thick phenotype, step/cleft effect when GBR is performed within the field.',
+  three:'Three-Sided (Apically Repositioned) Flap: envelope + relieving incisions anteriorly AND posteriorly. Best access and reflection. Ideal for GBR and bone block grafting. Allows easier periosteal release and coronal advancement of flap margins when needed. Both vertical incisions must follow Golf Club rules and all six scarring rules.',
+  two:'Two-Sided Flap: envelope + one relieving incision. Preferably placed anteriorly (better vision + easier suturing). In aesthetic zone: posteriorly to hide scar. More appropriate than envelope for moderate GBR or cases needing better access on one side, while preserving the papilla on the other side.'
+};
+function selectFlap(card,type){document.querySelectorAll('.fcard').forEach(c=>c.classList.remove('sel'));card.classList.add('sel');const d=document.getElementById('fdetail');d.style.display='block';d.textContent=flapData[type];}
+uUI();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE PROGRESS SYSTEM  (identical block in all 6 files)
+     Stores progress in localStorage under one shared key so the
+     3 lectures + 3 quizzes behave as a single connected course:
+       · ✓ ticks and quiz best-scores in the top course nav
+       · a 6-segment course completion meter in the nav bar
+       · lectures remember your furthest slide ("Resume")
+       · quizzes remember best score, attempts and pass status
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── 1 · Page identity (edited per file) ─────────────────────── */
+var CP_PAGE = 'l3';        // key for THIS file: l1/l2/l3/q1/q2/q3
+var CP_PASS = 60;              // pass mark (%) — matches quiz grading
+
+/* ── 2 · Storage helpers ─────────────────────────────────────── */
+var KEY = 'bairdM2D2Progress';
+function cpLoad(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function cpSave(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+
+/* ── 3 · Injected styles (nav ticks, chips, meter, resume btn) ─ */
+var st = document.createElement('style');
+st.textContent =
+  '.cp-tick{color:var(--green);margin-left:4px;font-size:10px;font-weight:700}' +
+  '.cp-chip{font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gold);margin-left:5px;opacity:.9}' +
+  '.cp-meter{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;padding-left:10px}' +
+  '.cp-meter-lbl{font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;white-space:nowrap}' +
+  '.cp-segs{display:flex;gap:3px}' +
+  '.cp-seg{width:13px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}' +
+  '.cp-seg.done{background:linear-gradient(90deg,var(--accent),var(--gold))}' +
+  '.cp-resume{font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}' +
+  '.cp-resume:hover{background:rgba(201,168,76,.22);box-shadow:0 0 20px rgba(201,168,76,.18)}' +
+  '.cp-note{font-family:JetBrains Mono,monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-top:14px}' +
+  '.cp-note .ok{color:var(--green)}.cp-note .gold{color:var(--gold)}' +
+  '.cp-best-line{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text2);letter-spacing:.06em;margin:0 auto 18px;max-width:500px}' +
+  '.cp-best-line .gold{color:var(--gold)}.cp-best-line .ok{color:var(--green)}' +
+  '@media(max-width:768px){.cp-meter-lbl{display:none}.cp-seg{width:9px}}';
+document.head.appendChild(st);
+
+/* ── 4 · Decorate the course nav (ticks, best scores, meter) ─── */
+var ORDER = ['l1','q1','l2','q2','l3','q3'];   // course sequence
+var HREF  = { 'lecture-1.html':'l1','lecture-2.html':'l2','lecture-3.html':'l3',
+              'quiz-1.html':'q1','quiz-2.html':'q2','quiz-3.html':'q3' };
+
+function decorateNav(){
+  var p = cpLoad();
+  var nav = document.getElementById('course-nav') || document.getElementById('cnav');
+  if(!nav) return;
+
+  /* ticks + score chips on each pill */
+  nav.querySelectorAll('a').forEach(function(a){
+    var k = HREF[a.getAttribute('href')]; if(!k) return;
+    a.querySelectorAll('.cp-tick,.cp-chip').forEach(function(n){ n.remove(); });
+    var d = p[k]; if(!d) return;
+    if(k.charAt(0)==='q' && typeof d.best === 'number'){
+      var chip = document.createElement('span');
+      chip.className = 'cp-chip'; chip.textContent = d.best + '%';
+      a.appendChild(chip);
+    }
+    if(d.done){
+      var t = document.createElement('span');
+      t.className = 'cp-tick'; t.textContent = '✓';
+      t.setAttribute('aria-label','completed');
+      a.appendChild(t);
+    }
+  });
+
+  /* 6-segment completion meter, right-aligned in the nav */
+  var meter = nav.querySelector('.cp-meter');
+  if(!meter){
+    meter = document.createElement('div');
+    meter.className = 'cp-meter';
+    meter.innerHTML = '<span class="cp-meter-lbl"></span><div class="cp-segs"></div>';
+    nav.appendChild(meter);
+  }
+  var doneN = ORDER.filter(function(k){ return p[k] && p[k].done; }).length;
+  meter.querySelector('.cp-meter-lbl').textContent = 'Course ' + doneN + '/6';
+  meter.setAttribute('role','img');
+  meter.setAttribute('aria-label','Course progress: ' + doneN + ' of 6 parts complete');
+  var segs = meter.querySelector('.cp-segs'); segs.innerHTML = '';
+  ORDER.forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'cp-seg' + (p[k] && p[k].done ? ' done' : '');
+    segs.appendChild(s);
+  });
+}
+decorateNav();
+
+/* ── 5 · LECTURE HOOKS ───────────────────────────────────────── */
+var CP_QUIZ = 'q3';            // matching quiz for this lecture
+var CP_QUIZ_NAME = 'Quiz 3';
+
+/* total slides, read from the existing header counter */
+var totEl = document.getElementById('tot');
+var TOTL  = totEl ? parseInt(totEl.textContent, 10) : 30;
+
+/* record furthest slide reached; mark lecture done on final slide */
+function onSlideShown(){
+  var curEl = document.getElementById('cur');
+  var n = curEl ? parseInt(curEl.textContent, 10) : 1;
+  var p = cpLoad();
+  var d = p[CP_PAGE] || {};
+  d.slide = Math.max(d.slide || 1, n);
+  d.total = TOTL;
+  if(n >= TOTL) d.done = true;
+  p[CP_PAGE] = d; cpSave(p);
+  if(n >= TOTL) decorateNav();   // refresh tick the moment it completes
+}
+
+/* wrap the existing goTo() (dots, buttons and arrow keys all route
+   through it) — no changes needed to the original slide engine    */
+if(typeof window.goTo === 'function'){
+  var _goTo = window.goTo;
+  window.goTo = function(n){ _goTo(n); onSlideShown(); };
+}
+
+/* "Resume" button + quiz status line on the title slide */
+function setupTitleSlide(){
+  var p = cpLoad();
+  var cta = document.querySelector('.t-cta, .tcta');
+  if(!cta) return;
+  var d = p[CP_PAGE];
+  if(d && d.slide > 1 && d.slide < TOTL){
+    var b = document.createElement('button');
+    b.className = 'cp-resume';
+    b.textContent = 'Resume at slide ' + d.slide + ' →';
+    b.onclick = function(){ window.goTo(d.slide); };
+    cta.insertBefore(b, cta.firstChild);
+  }
+  var note = document.createElement('div');
+  note.className = 'cp-note';
+  var q = p[CP_QUIZ];
+  var bits = [];
+  if(d && d.done) bits.push('<span class="ok">✓ Lecture completed</span>');
+  if(q && typeof q.best === 'number'){
+    bits.push(CP_QUIZ_NAME + ' personal best: <span class="gold">' + q.best + '%</span>' +
+              (q.done ? ' <span class="ok">· passed</span>' : ''));
+  } else {
+    bits.push(CP_QUIZ_NAME + ' not attempted yet — take it after this lecture');
+  }
+  note.innerHTML = bits.join(' &nbsp;·&nbsp; ');
+  cta.insertAdjacentElement('afterend', note);
+}
+setupTitleSlide();
+
+})();
+</script>
+</body>
+</html>

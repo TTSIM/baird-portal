@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1 — Timing of Implant Placement & the ITI Classification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F1EA; --slide:#FBFAF6; --ink:#16231F; --ink-soft:#445048;
+  --teal:#15564A; --teal-2:#1F7A66; --teal-ghost:#E2EEE9;
+  --gold:#C29A45; --gold-soft:#E6D9B4;
+  --rim:#9E3B33; --pink:#E7B7AE; --pink-soft:#F3D9D3;
+  --bone:#EFE6D2; --bone-line:#CDB98C; --void:#2C2622; --granule:#D98C7E;
+  --line:#DFD8C8; --shadow:0 18px 50px -24px rgba(20,40,34,.45);
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden;
+  -webkit-font-smoothing:antialiased}
+.deck{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* progress */
+.topbar{height:4px;background:var(--teal-ghost);position:relative;z-index:30;flex:0 0 auto}
+.topbar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal),var(--teal-2));width:0;transition:width .4s cubic-bezier(.5,0,.1,1)}
+
+/* stage */
+.stage{flex:1 1 auto;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(20px,4.5vw,76px);opacity:0;visibility:hidden;transform:translateY(14px) scale(.992);
+  transition:opacity .5s ease,transform .5s ease,visibility .5s;overflow-y:auto}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide-inner{width:100%;max-width:1060px;margin:auto}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal-2);display:flex;align-items:center;gap:.6em;margin-bottom:1.1rem}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--gold)}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,5.4vw,4rem);line-height:1.03;letter-spacing:-.015em}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.55rem,3.6vw,2.55rem);line-height:1.08;letter-spacing:-.01em;margin-bottom:.5em}
+h3{font-family:var(--sans);font-weight:700;font-size:1.02rem;letter-spacing:-.005em;margin-bottom:.35em}
+p{font-size:clamp(1rem,1.4vw,1.16rem);line-height:1.6;color:var(--ink-soft);max-width:64ch}
+p strong,li strong{color:var(--ink);font-weight:600}
+.lead{font-size:clamp(1.12rem,1.7vw,1.4rem);color:var(--ink)}
+.muted{color:var(--ink-soft)}
+.grid{display:grid;gap:clamp(14px,2vw,28px)}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.center{align-items:center}
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:.65rem;margin-top:.4rem}
+ul.clean li{position:relative;padding-left:1.6rem;font-size:clamp(.98rem,1.35vw,1.12rem);line-height:1.5;color:var(--ink-soft)}
+ul.clean li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:2px;
+  background:var(--gold);transform:rotate(45deg)}
+.card{background:var(--slide);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,26px);box-shadow:var(--shadow)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.32em .7em;border-radius:99px;background:var(--teal-ghost);color:var(--teal)}
+.tag.gold{background:var(--gold-soft);color:#7c5e16}
+.pull{font-family:var(--serif);font-size:clamp(1.3rem,2.4vw,1.9rem);line-height:1.25;color:var(--teal);font-weight:500}
+.kbd{font-family:var(--mono);font-size:.78rem;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:.1em .5em;color:var(--ink-soft)}
+
+/* nav */
+.navbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px clamp(16px,3vw,40px);background:rgba(251,250,246,.86);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);z-index:30}
+.navbar .title{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:var(--ink-soft);
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn{font-family:var(--sans);font-weight:600;font-size:.9rem;border:1px solid var(--teal);
+  background:var(--teal);color:#fff;border-radius:10px;padding:.55em 1em;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:.4em}
+.btn:hover{background:var(--teal-2);border-color:var(--teal-2)}
+.btn.ghost{background:transparent;color:var(--teal)}
+.btn.ghost:hover{background:var(--teal-ghost)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.counter{font-family:var(--mono);font-size:.82rem;color:var(--ink-soft);min-width:62px;text-align:center}
+
+/* dots / menu */
+.menu-toggle{position:fixed;top:14px;right:16px;z-index:40;background:var(--slide);border:1px solid var(--line);
+  border-radius:10px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+.menu-toggle span,.menu-toggle span::before,.menu-toggle span::after{content:"";display:block;width:18px;height:2px;background:var(--teal);position:relative}
+.menu-toggle span::before{position:absolute;top:-6px}.menu-toggle span::after{position:absolute;top:6px}
+.menu{position:fixed;inset:0;background:rgba(22,35,31,.55);backdrop-filter:blur(4px);z-index:39;
+  opacity:0;visibility:hidden;transition:.3s;display:flex;justify-content:flex-end}
+.menu.open{opacity:1;visibility:visible}
+.menu-panel{width:min(360px,86vw);background:var(--slide);height:100%;overflow-y:auto;padding:64px 18px 24px;
+  transform:translateX(20px);transition:.3s}
+.menu.open .menu-panel{transform:none}
+.menu-panel h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-2);margin:14px 8px 8px}
+.menu-item{display:flex;gap:10px;align-items:baseline;padding:.5em .6em;border-radius:8px;cursor:pointer;color:var(--ink-soft);font-size:.92rem}
+.menu-item:hover{background:var(--teal-ghost);color:var(--ink)}
+.menu-item.cur{background:var(--teal);color:#fff}
+.menu-item .n{font-family:var(--mono);font-size:.74rem;opacity:.7;min-width:1.4em}
+
+/* SVG socket explorer */
+.iti-wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(16px,2.4vw,34px);align-items:center}
+.iti-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.iti-tab{font-family:var(--sans);font-weight:600;font-size:.88rem;border:1px solid var(--line);background:var(--slide);
+  border-radius:10px;padding:.5em .85em;cursor:pointer;transition:.18s;color:var(--ink-soft)}
+.iti-tab[aria-selected="true"]{background:var(--teal);color:#fff;border-color:var(--teal)}
+.socket-frame{background:linear-gradient(180deg,#fff,#F6F1E6);border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:var(--shadow)}
+.socket-frame svg{width:100%;height:auto;display:block}
+.iti-panel h3{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--teal);margin-bottom:.2em}
+.iti-stat{display:flex;gap:10px;margin:.6rem 0}
+.iti-stat .chip{flex:1;background:var(--teal-ghost);border-radius:10px;padding:.6em .7em}
+.iti-stat .chip b{display:block;font-family:var(--mono);font-size:1.05rem;color:var(--teal)}
+.iti-stat .chip span{font-size:.74rem;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase}
+
+/* interactive generic */
+.ui{background:var(--slide);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,24px);box-shadow:var(--shadow)}
+.range{width:100%;-webkit-appearance:none;height:6px;border-radius:99px;background:var(--gold-soft);outline:none;margin:14px 0}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.range::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff}
+.scale-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.readout{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,2rem);color:var(--teal);font-weight:600}
+
+.study-grid{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.study{flex:1 1 130px;border:1px dashed var(--bone-line);border-radius:12px;padding:12px;text-align:center;transition:.4s;background:#fff}
+.study .nbar{height:36px;display:flex;align-items:flex-end;justify-content:center;gap:3px;margin-bottom:8px}
+.study .nbar i{width:7px;background:var(--teal-2);border-radius:2px 2px 0 0;display:block}
+.study small{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft)}
+.study .verdict{font-size:.82rem;font-weight:600;color:var(--rim);margin-top:6px}
+.pooled{margin-top:6px;border:2px solid var(--teal);border-radius:12px;padding:14px;background:var(--teal-ghost);
+  opacity:0;max-height:0;overflow:hidden;transition:.5s}
+.pooled.show{opacity:1;max-height:240px}
+
+/* phenotype toggle */
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:4px;background:var(--slide);gap:4px}
+.toggle button{border:none;background:transparent;font-family:var(--sans);font-weight:600;font-size:.9rem;padding:.5em 1.1em;border-radius:99px;cursor:pointer;color:var(--ink-soft)}
+.toggle button.on{background:var(--teal);color:#fff}
+
+/* decision tree */
+.tree-step{display:none}.tree-step.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.choices{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.choice{border:1px solid var(--line);background:#fff;border-radius:12px;padding:.7em 1.1em;cursor:pointer;font-weight:600;font-size:.95rem;color:var(--ink);transition:.18s}
+.choice:hover{border-color:var(--teal);background:var(--teal-ghost)}
+.verdict-box{margin-top:16px;border-left:4px solid var(--gold);background:#fff;border-radius:0 12px 12px 0;padding:14px 18px}
+.verdict-box b{color:var(--teal)}
+
+/* inline self-check */
+.qcard{background:var(--slide);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.qcard .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;
+  padding:.7em .9em;margin-top:8px;cursor:pointer;font-size:.96rem;transition:.16s;color:var(--ink)}
+.qcard .opt:hover{border-color:var(--teal-2)}
+.qcard .opt.correct{background:#E4F2EC;border-color:var(--teal);color:var(--teal)}
+.qcard .opt.wrong{background:#F6E4E1;border-color:var(--rim);color:var(--rim)}
+.qcard .exp{font-size:.88rem;color:var(--ink-soft);margin-top:10px;display:none;border-top:1px dashed var(--line);padding-top:10px}
+.qcard .exp.show{display:block}
+
+/* timeline */
+.tl{position:relative;margin:24px 0 8px;height:8px;background:linear-gradient(90deg,var(--rim),var(--gold),var(--teal-2));border-radius:99px}
+.tl .pin{position:absolute;top:-7px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--teal);transform:translateX(-50%);transition:left .35s ease}
+.tl-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-top:14px}
+
+.fade-seq>*{opacity:0;transform:translateY(10px);animation:seq .6s ease forwards}
+.slide.active .fade-seq>*{animation-play-state:running}
+@keyframes seq{to{opacity:1;transform:none}}
+.fade-seq>*:nth-child(1){animation-delay:.05s}.fade-seq>*:nth-child(2){animation-delay:.16s}
+.fade-seq>*:nth-child(3){animation-delay:.27s}.fade-seq>*:nth-child(4){animation-delay:.38s}
+.fade-seq>*:nth-child(5){animation-delay:.49s}.fade-seq>*:nth-child(6){animation-delay:.6s}
+
+.title-mark{font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.objgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px}
+.obj{display:flex;gap:12px;align-items:flex-start;background:var(--slide);border:1px solid var(--line);border-radius:12px;padding:14px}
+.obj .num{font-family:var(--serif);font-size:1.6rem;color:var(--gold);font-weight:700;line-height:1}
+
+.note{border-left:4px solid var(--gold);background:var(--gold-soft);border-radius:0 10px 10px 0;padding:12px 16px;font-size:.95rem;color:#5e4a18}
+.compare{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.compare .col{background:var(--slide);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.84rem}
+.compare .col h4{color:var(--teal);font-family:var(--serif);font-size:1.05rem}
+.compare .col .pro{color:#1f6b53}.compare .col .con{color:var(--rim)}
+.compare .col ul{list-style:none;margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.compare .col li{padding-left:1em;position:relative;line-height:1.35;color:var(--ink-soft)}
+.compare .col li::before{content:"›";position:absolute;left:0;color:var(--gold)}
+
+@media (max-width:780px){
+  .g2,.g3,.iti-wrap,.objgrid{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr 1fr}
+  .slide{justify-content:flex-start;padding-top:60px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="menu-toggle" id="menuBtn" aria-label="Slide menu"><span></span></div>
+<div class="menu" id="menu"><div class="menu-panel" id="menuPanel"></div></div>
+
+<div class="deck">
+  <div class="topbar"><span id="prog"></span></div>
+  <div class="stage" id="stage"><!-- slides injected --></div>
+  <div class="navbar">
+    <div class="title">Module · Implant Timing &amp; Classification — Lecture 1</div>
+    <div class="nav-right">
+      <button class="btn ghost" id="prev">‹ Back</button>
+      <span class="counter" id="counter">01 / 30</span>
+      <button class="btn" id="next">Next ›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- SVG socket cross-section generator (signature element) ---------- */
+function socket(type){
+  // returns an SVG string of an alveolar cross-section for ITI type 1..4
+  const W=420,H=320;
+  // bone block with a socket void carved in the middle
+  // buccal (left) plate thin, palatal (right) thick
+  const boneTop=120, base=290;
+  // soft tissue band
+  let soft = (type>=2)
+    ? `<path d="M70 ${boneTop} q140 -34 280 0 v16 q-140 30 -280 0 z" fill="var(--pink)" stroke="#d09b90" stroke-width="1.5"/>`
+    : `<path d="M70 ${boneTop} q60 -24 120 -10 M230 ${boneTop-10} q60 -14 120 10" fill="none" stroke="var(--rim)" stroke-width="4" stroke-linecap="round"/>`;
+  // socket fill
+  let fill='';
+  const sx1=160,sx2=260,sTop=boneTop+14,sBot=base-6;
+  const cavity=`M${sx1} ${sTop} q50 -8 100 0 L${sx2-6} ${sBot-30} q-44 22 -88 0 Z`;
+  if(type===1){ fill=`<path d="${cavity}" fill="var(--void)" opacity=".85"/>`; }
+  if(type===2){ fill=`<path d="${cavity}" fill="var(--granule)" opacity=".5"/>
+      <text x="210" y="225" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#9a4438">granulation</text>`; }
+  if(type===3){
+    fill=`<clipPath id="cav${type}"><path d="${cavity}"/></clipPath>
+      <g clip-path="url(#cav${type})">
+        <rect x="150" y="${sTop}" width="120" height="60" fill="var(--granule)" opacity=".5"/>
+        <rect x="150" y="${sTop+60}" width="120" height="120" fill="var(--bone)"/>
+        <g stroke="var(--bone-line)" stroke-width="1">
+          <line x1="150" y1="${sTop+78}" x2="270" y2="${sTop+78}"/>
+          <line x1="150" y1="${sTop+96}" x2="270" y2="${sTop+96}"/>
+          <line x1="150" y1="${sTop+114}" x2="270" y2="${sTop+114}"/>
+        </g></g>
+      <text x="210" y="${sTop+34}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#9a4438">coronal ½</text>
+      <text x="210" y="${sBot-14}" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#7c6a3a">apical bone</text>`;
+  }
+  if(type===4){
+    fill=`<clipPath id="cav${type}"><path d="${cavity}"/></clipPath>
+      <g clip-path="url(#cav${type})"><rect x="150" y="${sTop}" width="120" height="180" fill="var(--bone)"/>
+      <g stroke="var(--bone-line)" stroke-width="1">
+        <line x1="150" y1="${sTop+30}" x2="270" y2="${sTop+30}"/><line x1="150" y1="${sTop+60}" x2="270" y2="${sTop+60}"/>
+        <line x1="150" y1="${sTop+90}" x2="270" y2="${sTop+90}"/><line x1="150" y1="${sTop+120}" x2="270" y2="${sTop+120}"/></g></g>`;
+  }
+  // ridge shrinkage indicator for type 4
+  const shrink = type===4
+    ? `<path d="M70 ${boneTop} q140 -30 280 0" fill="none" stroke="var(--rim)" stroke-width="1.5" stroke-dasharray="4 4" opacity=".7"/>
+       <text x="356" y="${boneTop-2}" font-family="IBM Plex Mono" font-size="9" fill="var(--rim)">original ridge</text>`
+    : '';
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="ITI Type ${type} socket cross-section">
+    <defs><linearGradient id="bn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3EBD6"/><stop offset="1" stop-color="#E3D5B4"/></linearGradient></defs>
+    <!-- bone body -->
+    <path d="M40 ${base} L40 ${boneTop} q150 -40 340 0 L380 ${base} Z" fill="url(#bn)" stroke="var(--bone-line)" stroke-width="2"/>
+    <!-- trabecular hint -->
+    <g stroke="var(--bone-line)" stroke-width="1" opacity=".5">
+      <line x1="70" y1="180" x2="110" y2="210"/><line x1="300" y1="175" x2="345" y2="205"/>
+      <line x1="80" y1="240" x2="120" y2="260"/><line x1="300" y1="235" x2="345" y2="258"/></g>
+    <!-- buccal plate label -->
+    <text x="44" y="150" font-family="IBM Plex Mono" font-size="9" fill="#7c6a3a" transform="rotate(-90 44 150)">buccal plate</text>
+    ${fill}
+    <path d="${cavity}" fill="none" stroke="var(--bone-line)" stroke-width="1.6"/>
+    ${soft}
+    ${shrink}
+  </svg>`;
+}
+
+const ITI = {
+ 1:{name:"Type 1 — Immediate",bone:"0%",soft:"0%",
+    desc:"Same-day placement into a fresh socket. The socket is empty: no bone fill and no soft-tissue cover. You see an open socket with a soft-tissue defect at the top.",
+    key:"Most predictable for timing &amp; tissue preservation if loaded — but the <b>least predictable aesthetic outcome</b>. Demands a guide, grafting, and a plan for low torque."},
+ 2:{name:"Type 2 — Soft-tissue healing",bone:"0%",soft:"100%",
+    desc:"Roughly 4–8 weeks on. Open the flap and it is essentially still an empty socket (granulation tissue), but now covered by fully healed keratinised mucosa.",
+    key:"You inherit healed keratinised tissue <b>free of charge</b>, so a low-torque implant is easy to bury. Bundle-bone resorption has already happened — a surviving buccal plate is now stable."},
+ 3:{name:"Type 3 — Partial bone healing",bone:"~50%",soft:"100%",
+    desc:"Full soft-tissue closure plus bone fill in the apical half, granulation in the coronal half. A 10 mm socket may behave like a 3 mm one.",
+    key:"Stability comes from <b>newly-formed apical bone</b>, so you stop depending on bone above the socket — ideal near the sinus floor or mental nerve. High torque (immediate loading) is unlikely."},
+ 4:{name:"Type 4 — Delayed",bone:"100%",soft:"100%",
+    desc:"Full soft-tissue and full bone healing. The site is mature and clean — but the ridge has shrunk (dashed outline shows the original contour).",
+    key:"Best bone <b>quality</b>, but greatest <b>ridge-volume loss</b>. Socket-graft cases sit here as a “modified Type 4” and must mature fully before drilling."}
+};
+
+/* ---------- slides ---------- */
+const slides = [
+/* 1 */`<div class="slide-inner fade-seq" style="text-align:left">
+  <div class="title-mark">Implant Treatment Planning · Lecture 1 of 2</div>
+  <h1 style="margin:.3em 0 .35em">Timing of Implant<br>Placement</h1>
+  <p class="lead" style="max-width:54ch">Immediate, early or delayed? How the evidence is built, why the calendar misleads us, and how the <b>ITI Types 1–4</b> turn timing into a clinical decision.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1.4rem">
+    <span class="tag">Treatment planning weekend</span><span class="tag gold">30 slides · interactive</span>
+  </div>
+  <p class="muted" style="margin-top:1.6rem;font-size:.92rem">Navigate with <span class="kbd">→</span> <span class="kbd">←</span> arrow keys, the buttons below, or the menu (top-right). Your place is saved automatically.</p>
+</div>`,
+
+/* 2 */`<div class="slide-inner"><div class="eyebrow">What you'll take away</div>
+  <h2>Learning objectives</h2>
+  <div class="objgrid fade-seq">
+    <div class="obj"><div class="num">1</div><div><h3>Separate research from clinic</h3><p style="font-size:.95rem">Explain why small trials report “no difference” and how meta-analysis pools numbers — and why the Cochrane 8-week line is a research convenience.</p></div></div>
+    <div class="obj"><div class="num">2</div><div><h3>Master the ITI Types 1–4</h3><p style="font-size:.95rem">Describe each type by the tissue you'll actually find, not by days elapsed.</p></div></div>
+    <div class="obj"><div class="num">3</div><div><h3>Trade volume against quality</h3><p style="font-size:.95rem">Reason about ridge-volume loss, bone quality, phenotype and bundle bone when choosing a type.</p></div></div>
+    <div class="obj"><div class="num">4</div><div><h3>Apply default protocols</h3><p style="font-size:.95rem">Pick a sensible default for anterior vs posterior sites — and recognise the exceptions that break the rule.</p></div></div>
+  </div></div>`,
+
+/* 3 */`<div class="slide-inner"><div class="eyebrow">The clinical question</div>
+  <h2>“How soon do we place the implant?”</h2>
+  <p>Once the tooth is out, every plan starts with timing. Drag the marker to see what each window means.</p>
+  <div class="ui" style="margin-top:18px">
+    <div class="tl"><div class="pin" id="tlpin" style="left:6%"></div></div>
+    <input class="range" id="tlrange" min="0" max="100" value="6" aria-label="Timing">
+    <div class="tl-labels"><span>Day 0</span><span>~8 weeks</span><span>3–6 months +</span></div>
+    <div style="margin-top:14px"><span class="tag" id="tltag">Immediate</span>
+      <p id="tldesc" style="margin-top:8px">Extraction and implant on the same day, into a fresh socket.</p></div>
+  </div></div>`,
+
+/* 4 */`<div class="slide-inner"><div class="eyebrow">The three classic options</div>
+  <h2>Immediate · Early · Delayed</h2>
+  <div class="grid g3 fade-seq" style="margin-top:6px">
+    <div class="card"><span class="tag">Immediate</span><h3 style="margin-top:10px">Same day</h3><p style="font-size:.93rem">Implant placed at extraction, into the fresh socket.</p></div>
+    <div class="card"><span class="tag">Early</span><h3 style="margin-top:10px">~ up to 8 weeks</h3><p style="font-size:.93rem">Some healing has begun — but “how much” depends entirely on the site.</p></div>
+    <div class="card"><span class="tag">Delayed</span><h3 style="margin-top:10px">3–6 months +</h3><p style="font-size:.93rem">Site left to heal more fully before placement.</p></div>
+  </div>
+  <div class="note" style="margin-top:18px">These plain words feel precise but hide a problem: the <b>same number of weeks</b> means very different things at different sites.</div></div>`,
+
+/* 5 */`<div class="slide-inner"><div class="eyebrow">Why “early” isn't one number</div>
+  <h2>Eight weeks ≠ eight weeks</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+    <li>A <b>lower molar</b> socket can still feel empty well after eight weeks — clinically “early”.</li>
+    <li>A <b>central incisor</b> may show real bone fill by then.</li>
+    <li>An <b>infected incisor</b> might not have healed even at sixteen weeks.</li>
+    <li>Soft-tissue healing alone runs ~5 weeks over a lateral, ~10 over a molar, and longer in a 72-year-old.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“We're more clinically oriented here — it tells you what to expect and what skills you'll need.”</p></div>
+  </div></div>`,
+
+/* 6 */`<div class="slide-inner"><div class="eyebrow">Why timing is debatable</div>
+  <h2>The research problem</h2>
+  <p>Guidelines come from pooling trials. But each randomised controlled trial recruits small numbers — 50 here, 20 there, 10 elsewhere. If a real difference exists, an underpowered study often <b>can't detect it</b>.</p>
+  <div class="note" style="margin-top:16px">“No difference found” is <b>not</b> the same as “the techniques are equivalent.” The difference may simply be hidden by small numbers.</div></div>`,
+
+/* 7 */`<div class="slide-inner"><div class="eyebrow">Underpowered studies</div>
+  <h2>Each small trial says “no difference”</h2>
+  <p>Four separate trials compare immediate vs early. Individually, none reaches significance. Now combine them.</p>
+  <div class="ui" style="margin-top:14px">
+   <div class="study-grid">
+     <div class="study"><div class="nbar"><i style="height:60%"></i><i style="height:46%"></i></div><small>n = 20</small><div class="verdict">No diff.</div></div>
+     <div class="study"><div class="nbar"><i style="height:70%"></i><i style="height:64%"></i></div><small>n = 50</small><div class="verdict">No diff.</div></div>
+     <div class="study"><div class="nbar"><i style="height:40%"></i><i style="height:34%"></i></div><small>n = 10</small><div class="verdict">No diff.</div></div>
+     <div class="study"><div class="nbar"><i style="height:80%"></i><i style="height:72%"></i></div><small>n = 50</small><div class="verdict">No diff.</div></div>
+   </div>
+   <button class="btn" id="poolBtn">Pool the patient numbers →</button>
+   <div class="pooled" id="pooled"><b style="font-family:var(--serif);font-size:1.3rem;color:var(--teal)">n = 200 per group</b>
+     <p style="margin-top:6px">With 200 patients per group, a real difference can finally surface. Reviewers combine the <b>raw numbers</b>, not the individual conclusions.</p></div>
+  </div></div>`,
+
+/* 8 */`<div class="slide-inner"><div class="eyebrow">How pooling works</div>
+  <h2>Meta-analysis combines data, not verdicts</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+     <li>You can't average four “no difference” conclusions into a stronger one.</li>
+     <li>Instead you pool the <b>raw patient counts</b> across studies.</li>
+     <li>To do that fairly you need a <b>predefined definition</b> of each group — same-day, within 8 weeks, after 8 weeks.</li>
+   </ul></div>
+   <div class="card"><p class="pull">A shared definition is the price of admission for combining studies.</p></div>
+  </div></div>`,
+
+/* 9 */`<div class="slide-inner"><div class="eyebrow">The research reference point</div>
+  <h2>The Cochrane 8-week convention</h2>
+  <p>So that studies could be grouped consistently, the Cochrane Collaboration systematic review fixed <b>eight weeks</b> as the reference: before = “early”, after = “delayed”.</p>
+  <div class="note" style="margin-top:16px">It's an <b>arbitrary research convenience</b> for sorting data into comparable buckets — not a statement about biology.</div></div>`,
+
+/* 10 */`<div class="slide-inner"><div class="eyebrow">Where the calendar breaks</div>
+  <h2>Why 8 weeks fails at the chairside</h2>
+  <div class="grid g2 fade-seq" style="margin-top:6px">
+    <div class="card"><h3>Lower molar at 8 weeks</h3><p style="font-size:.95rem">Often still an empty-feeling socket — behaves “early”.</p></div>
+    <div class="card"><h3>Infected incisor at 16 weeks</h3><p style="font-size:.95rem">May still not have healed well — behaves like a fresh site.</p></div>
+  </div>
+  <p style="margin-top:18px">The number of days doesn't tell you what skills you'll need when you open the flap. Something more clinical was required.</p></div>`,
+
+/* 11 */`<div class="slide-inner"><div class="eyebrow">A clinical framework</div>
+  <h2>Enter the ITI classification</h2>
+  <p>In a widely-cited 2004 framework, the ITI defined timing by the <b>desired clinical outcome</b> — essentially, what you'll find when you open the site — rather than by days.</p>
+  <p style="margin-top:12px">Four types, each describing a tissue state you can recognise and plan for.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+   <span class="tag">Type 1 · immediate</span><span class="tag">Type 2 · soft tissue</span><span class="tag">Type 3 · partial bone</span><span class="tag">Type 4 · delayed</span>
+  </div></div>`,
+
+/* 12 */`<div class="slide-inner"><div class="eyebrow">The signature tool</div>
+  <h2>Explore the four types</h2>
+  <p style="margin-bottom:6px">Select a type to see the cross-section and what it means clinically.</p>
+  <div class="iti-tabs" id="itiTabs" role="tablist">
+    <button class="iti-tab" role="tab" data-t="1" aria-selected="true">Type 1</button>
+    <button class="iti-tab" role="tab" data-t="2" aria-selected="false">Type 2</button>
+    <button class="iti-tab" role="tab" data-t="3" aria-selected="false">Type 3</button>
+    <button class="iti-tab" role="tab" data-t="4" aria-selected="false">Type 4</button>
+  </div>
+  <div class="iti-wrap">
+    <div class="socket-frame" id="itiSvg"></div>
+    <div class="iti-panel">
+      <h3 id="itiName"></h3>
+      <div class="iti-stat">
+        <div class="chip"><b id="itiBone"></b><span>Bone healing</span></div>
+        <div class="chip"><b id="itiSoft"></b><span>Soft-tissue healing</span></div>
+      </div>
+      <p id="itiDesc" style="font-size:.96rem"></p>
+      <div class="note" id="itiKey" style="margin-top:12px"></div>
+    </div>
+  </div></div>`,
+
+/* 13 */`<div class="slide-inner"><div class="eyebrow">Type 1</div>
+  <h2>Immediate — the empty socket</h2>
+  <div class="grid g2 center">
+   <div class="socket-frame">${socket(1)}</div>
+   <div><ul class="clean">
+     <li><b>Zero bone, zero soft-tissue healing.</b></li>
+     <li>Place into the fresh socket — but the buccal plate is at risk.</li>
+     <li>Old-school “fat implant blocking the socket” touches the buccal plate, and once you touch it, you lose it.</li>
+     <li>Stability for longer implants must come from bone <b>beyond</b> the socket.</li>
+   </ul></div>
+  </div></div>`,
+
+/* 14 */`<div class="slide-inner"><div class="eyebrow">Type 1 · the catch</div>
+  <h2>What if torque is low?</h2>
+  <p>If you don't get high torque you need to bury the implant — but burying a true immediate is hard.</p>
+  <div class="grid g2 fade-seq" style="margin-top:10px">
+   <div class="card" style="border-color:var(--rim)"><h3 style="color:var(--rim)">✗ Coronally advanced flap</h3><p style="font-size:.92rem">Drags keratinised mucosa to the crest, flattens the sulcus — patient ends up with a tight lip and lost vestibule.</p></div>
+   <div class="card"><h3 style="color:var(--teal)">✓ Soft-tissue plug</h3><p style="font-size:.92rem">A soft-tissue graft sutured in as a plug. Effective, but advanced — far more than “put the flap back”.</p></div>
+  </div></div>`,
+
+/* 15 */`<div class="slide-inner"><div class="eyebrow">Type 2</div>
+  <h2>Soft-tissue healing, no bone</h2>
+  <div class="grid g2 center">
+   <div class="socket-frame">${socket(2)}</div>
+   <div><ul class="clean">
+     <li>Healed keratinised mucosa over what is still essentially an <b>empty socket</b>.</li>
+     <li>Raise the flap and treat it with the same skills as a fresh socket.</li>
+     <li>Take a CBCT and you'll see little or no bone — plan for length and stability accordingly.</li>
+   </ul></div>
+  </div></div>`,
+
+/* 16 */`<div class="slide-inner"><div class="eyebrow">Type 2 · the upside</div>
+  <h2>Keratinised tissue, free of charge</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+     <li>Low torque? Just <b>put the flap back</b> — the healed soft tissue makes burying easy.</li>
+     <li>Bundle-bone resorption happens in the first 6–8 weeks, so a buccal plate still present at 8 weeks is <b>stable</b>.</li>
+     <li>Thin phenotype can convert toward thick as the socket fills with granulation → connective tissue.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“You get this free-of-charge keratinised mucosa as a gift.”</p></div>
+  </div></div>`,
+
+/* 17 */`<div class="slide-inner"><div class="eyebrow">The biology underneath</div>
+  <h2>Bundle bone resorbs early</h2>
+  <p>The buccal plate is largely bundle bone — it remodels in the first 6–8 weeks <b>regardless</b> of whether you placed immediately. Scrub through the timeline.</p>
+  <div class="ui" style="margin-top:14px">
+    <input class="range" id="bbrange" min="0" max="16" value="0" aria-label="Weeks">
+    <div class="scale-row"><span>0 wk</span><span>4</span><span>8</span><span>12</span><span>16 wk</span></div>
+    <div style="display:flex;align-items:baseline;gap:14px;margin-top:10px">
+      <span class="readout" id="bbwk">0 weeks</span>
+      <p id="bbtxt" style="margin:0">Fresh extraction. Buccal plate intact — but its fate is not yet known.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:14px">This is why “immediate placement preserves the buccal plate” was a <b>myth of the late 1990s</b>. It doesn't stop bundle-bone loss.</div></div>`,
+
+/* 18 */`<div class="slide-inner"><div class="eyebrow">Type 3</div>
+  <h2>Partial bone healing</h2>
+  <div class="grid g2 center">
+   <div class="socket-frame">${socket(3)}</div>
+   <div><ul class="clean">
+     <li>Full soft-tissue closure + bone in the <b>apical half</b>; granulation coronally (just remove it).</li>
+     <li>A 10 mm socket effectively becomes ~3 mm — an 8 mm implant sits in sound bone.</li>
+     <li>Stability now comes from <b>new apical bone</b>, not from bone above the socket.</li>
+   </ul></div>
+  </div></div>`,
+
+/* 19 */`<div class="slide-inner"><div class="eyebrow">Type 3 · worked example</div>
+  <h2>Upper five, mental nerve 2 mm below</h2>
+  <p style="margin-bottom:6px">Granulation coronally, sound bone apically, nerve close. Which type fits?</p>
+  <div id="ex1">
+    <div class="choices">
+      <button class="choice" data-c="bad">Type 1 — long implant past the socket</button>
+      <button class="choice" data-c="bad">Type 2 — raise to an empty socket</button>
+      <button class="choice" data-c="good">Type 3 — engage the apical bone</button>
+    </div>
+    <div class="verdict-box" id="ex1v" style="display:none"></div>
+  </div></div>`,
+
+/* 20 */`<div class="slide-inner"><div class="eyebrow">Type 3 · loading & torque</div>
+  <h2>Can I promise immediate loading?</h2>
+  <p>Unlikely — the regenerate isn't yet proper lamellar bone, so reaching 35 Ncm for a single-tooth immediate load is improbable. Recap the thresholds:</p>
+  <div class="grid g3 fade-seq" style="margin-top:12px">
+    <div class="card"><b style="font-family:var(--mono);color:var(--teal);font-size:1.3rem">≈ 25 Ncm</b><p style="font-size:.9rem;margin-top:4px">Decision point: submerge vs transmucosal.</p></div>
+    <div class="card"><b style="font-family:var(--mono);color:var(--teal);font-size:1.3rem">35 Ncm</b><p style="font-size:.9rem;margin-top:4px">Threshold for immediate loading of a single unit.</p></div>
+    <div class="card"><b style="font-family:var(--mono);color:var(--rim);font-size:1.3rem">&lt; 20 Ncm</b><p style="font-size:.9rem;margin-top:4px">Submerge; transmucosal risks chewing micromotion.</p></div>
+  </div>
+  <p class="muted" style="margin-top:14px;font-size:.9rem">Always a clinical judgement: anatomy + medical status (compromised patients heal more slowly).</p></div>`,
+
+/* 21 */`<div class="slide-inner"><div class="eyebrow">Type 4</div>
+  <h2>Delayed — fully healed</h2>
+  <div class="grid g2 center">
+   <div class="socket-frame">${socket(4)}</div>
+   <div><ul class="clean">
+     <li>Full soft-tissue and full bone healing — mature, clean, predictable stability.</li>
+     <li>But the longer you wait, the more the <b>ridge shrinks</b> (dashed = original contour).</li>
+     <li>Think of it as a trade: best bone <b>quality</b>, worst ridge <b>volume</b>.</li>
+   </ul></div>
+  </div></div>`,
+
+/* 22 */`<div class="slide-inner"><div class="eyebrow">A special case of Type 4</div>
+  <h2>“Modified Type 4” — the socket graft</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+     <li>Socket-graft cases sit under Type 4 because the graft <b>must mature fully</b>.</li>
+     <li>Go too early (8–12 weeks) and you'll find powder — the drill simply washes it away.</li>
+     <li>Used selectively (high aesthetic demand, thin phenotype, sinus/pontic preservation) — not for everyone.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“The moment you drill, you'll wash all that powder away — what's the point?”</p></div>
+  </div></div>`,
+
+/* 23 */`<div class="slide-inner"><div class="eyebrow">The central trade-off</div>
+  <h2>Volume vs quality</h2>
+  <p>Slide from early to late placement and watch the two curves diverge.</p>
+  <div class="ui" style="margin-top:14px">
+    <input class="range" id="vqrange" min="0" max="100" value="20" aria-label="Time since extraction">
+    <div class="scale-row"><span>Earlier (Type 1–2)</span><span>Later (Type 4)</span></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><span style="font-size:.8rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em">Bone quality / fill</span>
+        <div style="height:10px;background:var(--teal-ghost);border-radius:99px;margin-top:8px;overflow:hidden"><div id="vqQual" style="height:100%;background:var(--teal);width:20%;transition:.3s"></div></div></div>
+      <div class="card"><span style="font-size:.8rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em">Ridge volume retained</span>
+        <div style="height:10px;background:var(--pink-soft);border-radius:99px;margin-top:8px;overflow:hidden"><div id="vqVol" style="height:100%;background:var(--rim);width:90%;transition:.3s"></div></div></div>
+    </div>
+    <p id="vqtxt" style="margin-top:12px"></p>
+  </div></div>`,
+
+/* 24 */`<div class="slide-inner"><div class="eyebrow">The patient variable</div>
+  <h2>Phenotype changes the maths</h2>
+  <div class="ui" style="margin-top:6px">
+   <div class="toggle" id="phToggle"><button class="on" data-p="thin">Thin phenotype</button><button data-p="thick">Thick phenotype</button></div>
+   <p id="phtxt" style="margin-top:16px"></p>
+  </div>
+  <div class="note" style="margin-top:16px">Thin phenotypes can lose <b>&gt;50%</b> of ridge volume if simply left; thick phenotypes far less — which is why phenotype drives the type decision.</div></div>`,
+
+/* 25 */`<div class="slide-inner"><div class="eyebrow">At a glance</div>
+  <h2>The four types side by side</h2>
+  <div class="compare fade-seq">
+   <div class="col"><h4>Type 1</h4><span class="tag">Immediate</span>
+     <ul><li class="pro">Fewest visits</li><li class="pro">Preserves architecture (if loaded)</li><li class="con">Least predictable aesthetics</li><li class="con">High technique sensitivity</li></ul></div>
+   <div class="col"><h4>Type 2</h4><span class="tag">Soft tissue</span>
+     <ul><li class="pro">Free keratinised tissue</li><li class="pro">Easy to bury low torque</li><li class="con">Socket still empty</li><li class="con">Two surgeries</li></ul></div>
+   <div class="col"><h4>Type 3</h4><span class="tag">Partial bone</span>
+     <ul><li class="pro">Predictable, clean</li><li class="pro">Short implants near nerve/sinus</li><li class="con">Rarely high torque</li><li class="con">Some volume loss</li></ul></div>
+   <div class="col"><h4>Type 4</h4><span class="tag">Delayed</span>
+     <ul><li class="pro">Best bone quality</li><li class="pro">Predictable stability</li><li class="con">Greatest volume loss</li><li class="con">Longest timeline</li></ul></div>
+  </div></div>`,
+
+/* 26 */`<div class="slide-inner"><div class="eyebrow">Default protocol · anterior</div>
+  <h2>Anteriors default to Type 1 / Type 2</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+     <li><b>Type 2 is the safe default:</b> long implant, stability from bone above the socket, GBR regardless — so bony changes don't alter the plan.</li>
+     <li>Type 1 for modest aesthetic expectations (the “72-year-old, get on with it” case).</li>
+     <li><b>CBCT before extraction</b> for anteriors (more on this in Lecture 2).</li>
+   </ul></div>
+   <div class="card" style="border-color:var(--gold)"><h3 style="color:var(--gold)">⚠ The exception</h3>
+     <p style="font-size:.93rem">A central-incisor socket against the nasal floor (short premaxilla) breaks the rule — neither Type 1 nor 2 works. Choose Type 3 (thick phenotype) or socket-graft to Type 4 (thin phenotype).</p></div>
+  </div></div>`,
+
+/* 27 */`<div class="slide-inner"><div class="eyebrow">Default protocol · posterior</div>
+  <h2>Posteriors default to Type 3 / Type 4</h2>
+  <div class="grid g2 center">
+   <div><ul class="clean">
+     <li>Socket and sinus levels change a lot here, so <b>plan around partial or full healing</b>.</li>
+     <li>CBCT ~2–3 weeks before placement to see the real socket state.</li>
+     <li>Immediate molar placement is used <b>more and more</b> where some stability exists — but as a considered choice, not a default.</li>
+   </ul></div>
+   <div class="card"><p class="pull">“As a safe default — posteriors, Type 3 or Type 4. Sometimes we break the rules.”</p></div>
+  </div></div>`,
+
+/* 28 */`<div class="slide-inner"><div class="eyebrow">Put it together</div>
+  <h2>Decision flow</h2>
+  <div class="ui" id="tree">
+    <div class="tree-step on" data-step="0">
+      <h3>Where is the site?</h3>
+      <div class="choices"><button class="choice" data-go="ant">Anterior</button><button class="choice" data-go="post">Posterior</button></div>
+    </div>
+    <div class="tree-step" data-step="ant">
+      <h3>Anterior — socket against the nasal floor / short premaxilla?</h3>
+      <div class="choices"><button class="choice" data-go="ant-no">No, normal</button><button class="choice" data-go="ant-yes">Yes</button></div>
+    </div>
+    <div class="tree-step" data-step="post">
+      <h3>Posterior — is some primary stability achievable now?</h3>
+      <div class="choices"><button class="choice" data-go="post-yes">Yes, with a guide</button><button class="choice" data-go="post-no">No / safer staged</button></div>
+    </div>
+    <div class="tree-step" data-step="result"><div class="verdict-box" id="treeOut"></div>
+      <button class="btn ghost" id="treeReset" style="margin-top:14px">↺ Start over</button></div>
+  </div></div>`,
+
+/* 29 */`<div class="slide-inner"><div class="eyebrow">Quick self-check</div>
+  <h2>Test yourself</h2>
+  <div id="selfcheck"></div>
+  <p class="muted" style="font-size:.9rem">The full 30-question quiz for this lecture is a separate file.</p></div>`,
+
+/* 30 */`<div class="slide-inner fade-seq"><div class="eyebrow">Wrap-up</div>
+  <h2>Key takeaways</h2>
+  <ul class="clean" style="margin-bottom:18px">
+    <li>Small trials hide real differences; meta-analysis pools <b>numbers</b>, needing a fixed definition — hence Cochrane's 8 weeks.</li>
+    <li>The ITI classifies by <b>tissue found</b>, not days: Type 1 empty · Type 2 soft-tissue only · Type 3 partial bone · Type 4 full healing.</li>
+    <li>Later = better bone quality but worse ridge volume; phenotype tips the balance.</li>
+    <li>Default: <b>anterior → Type 1/2</b>, <b>posterior → Type 3/4</b> — with named exceptions.</li>
+  </ul>
+  <div class="card" style="border-color:var(--teal)"><h3 style="color:var(--teal)">Next — Lecture 2</h3>
+    <p style="font-size:.95rem">Clinical decision-making, grafting & loading: immediate placement in depth, infected sockets, CBCT timing, socket-graft indications, the jumping-gap rule, torque protocols, guided surgery and worked cases.</p></div>
+</div>`
+];
+
+/* ---------- engine ---------- */
+const stage=document.getElementById('stage');
+slides.forEach((html,i)=>{const d=document.createElement('section');d.className='slide';d.id='s'+i;d.innerHTML=html;stage.appendChild(d);});
+let cur=0; const N=slides.length;
+const prog=document.getElementById('prog'),counter=document.getElementById('counter');
+const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+const KEY='module4_day2_lec1_implant_timing_pos';
+
+function show(i,save=true){
+  i=Math.max(0,Math.min(N-1,i));
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+i).classList.add('active');
+  cur=i;
+  prog.style.width=((i+1)/N*100)+'%';
+  counter.textContent=String(i+1).padStart(2,'0')+' / '+N;
+  prevB.disabled=i===0;nextB.disabled=i===N-1;
+  document.querySelectorAll('.menu-item').forEach(m=>m.classList.toggle('cur',+m.dataset.i===i));
+  stage.scrollTop=0; document.getElementById('s'+i).scrollTop=0;
+  if(save){try{localStorage.setItem(KEY,i)}catch(e){}}
+}
+nextB.onclick=()=>show(cur+1);prevB.onclick=()=>show(cur-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown'){show(cur+1)}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){show(cur-1)}
+  if(e.key==='Home'){show(0)}if(e.key==='End'){show(N-1)}
+});
+
+/* menu */
+const menu=document.getElementById('menu'),panel=document.getElementById('menuPanel');
+const titles=["Title","Objectives","The question","Three options","8 wk ≠ 8 wk","Research problem","Underpowered trials","Meta-analysis","Cochrane 8 weeks","Calendar breaks","Enter the ITI","Explore the types","Type 1","Type 1 catch","Type 2","Type 2 upside","Bundle bone","Type 3","Type 3 example","Loading & torque","Type 4","Modified Type 4","Volume vs quality","Phenotype","Side by side","Default · anterior","Default · posterior","Decision flow","Self-check","Takeaways"];
+panel.innerHTML='<h4>Lecture 1 · slides</h4>'+titles.map((t,i)=>`<div class="menu-item" data-i="${i}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${t}</span></div>`).join('');
+panel.querySelectorAll('.menu-item').forEach(m=>m.onclick=()=>{show(+m.dataset.i);menu.classList.remove('open')});
+document.getElementById('menuBtn').onclick=()=>menu.classList.toggle('open');
+menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open')};
+
+/* ---------- interactions ---------- */
+// 3: timeline
+const tlData=[[0,12,'Immediate','Extraction and implant on the same day, into a fresh socket.'],
+ [13,55,'Early','Some healing — but the tissue state depends entirely on the site, not the clock.'],
+ [56,100,'Delayed','The site has healed more fully; bone quality is better but the ridge has shrunk.']];
+const tlr=document.getElementById('tlrange');
+if(tlr){tlr.oninput=()=>{const v=+tlr.value;document.getElementById('tlpin').style.left=v+'%';
+  const d=tlData.find(x=>v>=x[0]&&v<=x[1])||tlData[2];
+  document.getElementById('tltag').textContent=d[2];document.getElementById('tldesc').textContent=d[3];};}
+
+// 7: pooling
+const pb=document.getElementById('poolBtn');
+if(pb)pb.onclick=()=>{document.getElementById('pooled').classList.add('show');
+  document.querySelectorAll('#s6 .study').forEach((s,k)=>{setTimeout(()=>{s.style.transform='translateY(6px) scale(.96)';s.style.opacity='.45'},k*90)});
+  pb.disabled=true;pb.textContent='Pooled ✓';};
+
+// 12: ITI explorer
+function paintITI(t){
+  document.getElementById('itiSvg').innerHTML=socket(t);
+  document.getElementById('itiName').innerHTML=ITI[t].name;
+  document.getElementById('itiBone').textContent=ITI[t].bone;
+  document.getElementById('itiSoft').textContent=ITI[t].soft;
+  document.getElementById('itiDesc').innerHTML=ITI[t].desc;
+  document.getElementById('itiKey').innerHTML=ITI[t].key;
+}
+const itiTabs=document.getElementById('itiTabs');
+if(itiTabs){itiTabs.querySelectorAll('.iti-tab').forEach(b=>b.onclick=()=>{
+  itiTabs.querySelectorAll('.iti-tab').forEach(x=>x.setAttribute('aria-selected','false'));
+  b.setAttribute('aria-selected','true');paintITI(+b.dataset.t);});
+  paintITI(1);}
+
+// 17: bundle bone
+const bbr=document.getElementById('bbrange');
+const bbStates=[[0,'Fresh extraction. Buccal plate intact — but its fate is not yet known.'],
+ [4,'Bundle-bone resorption is well under way along the buccal plate.'],
+ [8,'By ~8 weeks the bundle-bone phase is largely complete. A plate still present now is stable.'],
+ [12,'Healing continuing; if the plate survived 8 weeks it should hold.'],
+ [16,'Mature. The buccal contour is now whatever the biology decided — placement timing did not stop the loss.']];
+if(bbr)bbr.oninput=()=>{const w=+bbr.value;document.getElementById('bbwk').textContent=w+' weeks';
+  let s=bbStates[0];for(const x of bbStates)if(w>=x[0])s=x;document.getElementById('bbtxt').textContent=s[1];};
+
+// 19: example
+const ex1=document.getElementById('ex1');
+if(ex1)ex1.querySelectorAll('.choice').forEach(c=>c.onclick=()=>{
+  const good=c.dataset.c==='good';const v=document.getElementById('ex1v');v.style.display='block';
+  ex1.querySelectorAll('.choice').forEach(x=>x.style.pointerEvents='none');
+  c.style.borderColor=good?'var(--teal)':'var(--rim)';c.style.background=good?'var(--teal-ghost)':'var(--pink-soft)';
+  v.innerHTML=good
+   ?'<b>Type 3 — correct.</b> The mental nerve rules out a longer implant beyond the socket (Type 1), and Type 2 just leaves you an empty socket with the same problem. Type 3 lets you engage the new apical bone: the 10&nbsp;mm socket behaves like ~3&nbsp;mm, so an 8&nbsp;mm implant sits safely.'
+   :'<b>Not the best fit.</b> Type 1 would force a long implant past the socket — but the nerve forbids that. Type 2 leaves an empty socket. The answer is <b>Type 3</b>: engage the apical bone that has formed.';});
+
+// 23: volume vs quality
+const vqr=document.getElementById('vqrange');
+if(vqr)vqr.oninput=()=>{const v=+vqr.value;const qual=20+v*0.8;const vol=95-v*0.65;
+  document.getElementById('vqQual').style.width=qual+'%';document.getElementById('vqVol').style.width=vol+'%';
+  const t=v<30?'Earliest placement: minimal bone to work with, but the ridge volume is still nearly all there.'
+    :v<70?'Mid-range: bone fill is improving while the ridge has begun to shrink. The classic balancing act.'
+    :'Late placement: excellent bone quality and fill, but the ridge has lost the most volume — stimulate or graft to limit it.';
+  document.getElementById('vqtxt').textContent=t;};
+
+// 24: phenotype
+const ph=document.getElementById('phToggle');
+const phTxt={thin:'<b>Thin phenotype:</b> high risk. The labial plate is fragile, and delayed placement can cost <b>&gt;50%</b> of ridge volume. Even Type 3 may be too risky on a critical site — favour socket grafting to a controlled Type 4, and plan extra soft tissue.',
+ thick:'<b>Thick phenotype:</b> forgiving. Far less volume loss when left (often ~20%), so Type 3 is usually safe and a simpler protocol is justified. Less need for prophylactic socket grafting.'};
+if(ph){document.getElementById('phtxt').innerHTML=phTxt.thin;
+  ph.querySelectorAll('button').forEach(b=>b.onclick=()=>{ph.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('phtxt').innerHTML=phTxt[b.dataset.p];});}
+
+// 28: decision tree
+const tree=document.getElementById('tree');
+const treeRes={'ant-no':'<b>Anterior, normal anatomy → default Type 2.</b> Long implant, stability from bone above the socket, GBR regardless. Type 1 only if aesthetic demands are modest. Take the CBCT <b>before</b> extraction.',
+ 'ant-yes':'<b>Anterior, short premaxilla / nasal floor → break the rule.</b> Neither Type 1 nor 2 works. Thick phenotype: Type 3. Thin phenotype: socket-graft to a “modified Type 4”.',
+ 'post-yes':'<b>Posterior with stability → immediate is on the table.</b> A considered choice, always fully guided, with grafting of the jumping gap. Otherwise the safe default still applies.',
+ 'post-no':'<b>Posterior, staged → Type 3 (or Type 4).</b> Partial bone healing gives predictable stability near the nerve/sinus; CBCT ~2–3 weeks before placement.'};
+function treeShow(s){tree.querySelectorAll('.tree-step').forEach(x=>x.classList.remove('on'));
+  if(treeRes[s]){document.getElementById('treeOut').innerHTML=treeRes[s];tree.querySelector('[data-step="result"]').classList.add('on');}
+  else tree.querySelector('[data-step="'+s+'"]').classList.add('on');}
+if(tree){tree.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)treeShow(b.dataset.go);
+  if(e.target.id==='treeReset')treeShow('0');});}
+
+// 29: self-check
+const scQ=[
+ {q:'Why do many small immediate-vs-early trials report “no difference”?',
+  o:['The techniques truly are identical','They are underpowered — small numbers hide a real difference','Immediate is always superior'],a:1,
+  e:'Underpowered studies can miss a genuine difference; pooling numbers in meta-analysis can reveal it.'},
+ {q:'Under the ITI scheme, Type 2 means:',
+  o:['Empty socket, no soft-tissue cover','Soft-tissue healing but essentially no bone','Full bone and soft-tissue healing'],a:1,
+  e:'Type 2 = healed keratinised tissue over what is still effectively an empty socket.'},
+ {q:'Best bone quality but greatest ridge-volume loss describes:',
+  o:['Type 1','Type 3','Type 4'],a:2,
+  e:'Type 4 (delayed): the longer you wait, the better the bone but the more the ridge shrinks.'},
+ {q:'The Cochrane 8-week line is best described as:',
+  o:['A biological healing milestone','A research convenience for grouping studies','The point of maximum bundle-bone loss'],a:1,
+  e:'It is an arbitrary cut-off so studies can be pooled consistently — not a clinical truth.'},
+ {q:'A central incisor socket sitting against the nasal floor most likely reflects a:',
+  o:['Long premaxilla','Short premaxilla','Thick phenotype'],a:1,
+  e:'A short premaxilla brings the socket close to the nasal floor and breaks the anterior default.'}
+];
+const sc=document.getElementById('selfcheck');
+if(sc)sc.innerHTML=scQ.map((q,i)=>`<div class="qcard" data-i="${i}"><h3>${i+1}. ${q.q}</h3>
+  ${q.o.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}
+  <div class="exp">${q.e}</div></div>`).join('');
+if(sc)sc.querySelectorAll('.qcard').forEach((card,i)=>{card.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+  if(card.dataset.done)return;card.dataset.done=1;const k=+btn.dataset.k;
+  card.querySelectorAll('.opt').forEach((b,kk)=>{if(kk===scQ[i].a)b.classList.add('correct');});
+  if(k!==scQ[i].a)btn.classList.add('wrong');card.querySelector('.exp').classList.add('show');});});
+
+/* restore position */
+let start=0;try{const v=localStorage.getItem(KEY);if(v!==null)start=+v;}catch(e){}
+show(start,false);
+</script>
+</body>
+</html>

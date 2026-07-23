@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 3 · Quiz 2 — Dose, Risk & Justification</title>
+<style>
+:root{
+  --bg:#0b1020;--bg2:#121a35;--panel:#161f3d;--panel2:#1c2750;--border:#2a3868;
+  --text:#e8ecff;--muted:#9aa6d6;--accent:#6ee7ff;--accent2:#a78bfa;
+  --good:#34d399;--warn:#fbbf24;--bad:#f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,#0d1530 100%);color:var(--text);overflow-x:hidden}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+  background:rgba(11,16,32,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+.brand{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+.brand small{color:var(--muted);font-weight:400;display:block;font-size:11px;margin-top:2px}
+.score-box{display:flex;align-items:center;gap:16px}
+.score-pill{background:var(--panel2);border:1px solid var(--border);border-radius:50px;padding:6px 16px;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.score-pill .val{color:var(--accent);font-weight:700}
+.progress-bar{width:200px;height:6px;background:var(--panel);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;width:0%}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-right:16px}
+.portal-back:hover{border-color:var(--accent);color:var(--accent)}
+.quiz-container{flex:1;max-width:780px;width:100%;margin:0 auto;padding:24px 20px 80px}
+.start-screen{text-align:center;padding:60px 20px}
+.start-screen h1{font-size:36px;color:var(--accent);margin-bottom:8px}
+.start-screen .sub{font-size:16px;color:var(--muted);margin-bottom:6px}
+.start-screen .desc{font-size:14px;color:var(--text);line-height:1.7;max-width:560px;margin:20px auto 30px;opacity:.85}
+.start-screen .meta{display:flex;gap:20px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+.start-screen .meta-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px}
+.start-screen .meta-item strong{display:block;color:var(--accent);font-size:22px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b1020}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(110,231,255,.25)}
+.btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent)}
+.question-card{display:none;animation:fadeIn .4s ease}
+.question-card.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.q-num{font-size:12px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.q-text{font-size:18px;line-height:1.6;color:var(--text);margin-bottom:24px;font-weight:500}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.opt-btn{display:flex;align-items:flex-start;gap:14px;background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;text-align:left;font-size:14px;line-height:1.55;color:var(--text)}
+.opt-btn:hover:not(.locked){border-color:var(--accent);background:var(--panel2)}
+.opt-btn .opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--accent);transition:all .2s}
+.opt-btn.selected{border-color:var(--accent);background:rgba(110,231,255,.06)}
+.opt-btn.selected .opt-letter{background:var(--accent);color:var(--bg)}
+.opt-btn.correct{border-color:var(--good);background:rgba(52,211,153,.08)}
+.opt-btn.correct .opt-letter{background:var(--good);color:var(--bg)}
+.opt-btn.wrong{border-color:var(--bad);background:rgba(248,113,113,.06)}
+.opt-btn.wrong .opt-letter{background:var(--bad);color:#fff}
+.opt-btn.locked{cursor:default;opacity:.7}
+.opt-btn.correct.locked{opacity:1}
+.opt-btn.wrong.locked.was-selected{opacity:1}
+.feedback{display:none;padding:16px 20px;border-radius:12px;margin-bottom:20px;font-size:14px;line-height:1.6}
+.feedback.show{display:block;animation:fadeIn .3s ease}
+.feedback.right{background:rgba(52,211,153,.1);border:1px solid var(--good)}
+.feedback.wrong-fb{background:rgba(248,113,113,.08);border:1px solid var(--bad)}
+.feedback strong{display:block;margin-bottom:6px}
+.feedback strong.correct-label{color:var(--good)}
+.feedback strong.wrong-label{color:var(--bad)}
+.nav-row{display:flex;justify-content:flex-end;margin-top:16px}
+.nav-row .btn{display:none}
+.nav-row .btn.show{display:inline-flex}
+.results{display:none;text-align:center;padding:40px 20px;animation:fadeIn .5s ease}
+.results.active{display:block}
+.results h1{font-size:32px;margin-bottom:8px}
+.results .pct{font-size:72px;font-weight:800;margin:20px 0 8px}
+.results .pct.high{color:var(--good)}
+.results .pct.mid{color:var(--warn)}
+.results .pct.low{color:var(--bad)}
+.results .summary{font-size:16px;color:var(--muted);margin-bottom:30px}
+.results .breakdown{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.results .bd-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 24px;min-width:120px}
+.results .bd-item .num{font-size:28px;font-weight:700}
+.results .bd-item .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.results .bd-item.c .num{color:var(--good)}
+.results .bd-item.w .num{color:var(--bad)}
+.review-list{max-width:780px;margin:0 auto;padding:0 20px 60px;text-align:left}
+.review-item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+.review-item.was-correct{border-left:4px solid var(--good)}
+.review-item.was-wrong{border-left:4px solid var(--bad)}
+.review-q{font-size:14px;font-weight:600;margin-bottom:10px}
+.review-your{font-size:13px;margin-bottom:4px}
+.review-your.wrong-ans{color:var(--bad)}
+.review-your.right-ans{color:var(--good)}
+.review-explain{font-size:13px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+@media(max-width:600px){header{padding:10px 14px}.progress-bar{width:100px}.start-screen h1{font-size:26px}.q-text{font-size:16px}.results .pct{font-size:52px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">CBCT LEVEL 1 · MODULE 2<small>Day 3 · Quiz 2 of 3</small></div>
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="score-box">
+      <div class="score-pill"><span class="val" id="scoreVal">0</span> / <span id="totalVal">30</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+  <div class="quiz-container">
+    <div class="start-screen" id="startScreen">
+      <h1>Quiz 2</h1>
+      <div class="sub">Dose, Risk, Justification & Guidelines</div>
+      <div class="desc">Test your knowledge of radiation dose measurement, stochastic vs deterministic effects, age-dependent risk, pregnancy enquiries, justification principles, FOV selection guidelines, and sinus augmentation indications.</div>
+      <div class="meta">
+        <div class="meta-item"><strong>30</strong>Questions</div>
+        <div class="meta-item"><strong>MCQ</strong>Single best answer</div>
+        <div class="meta-item"><strong>Instant</strong>Feedback</div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+    <div id="questionArea"></div>
+    <div class="results" id="resultsScreen">
+      <h1>Quiz Complete</h1>
+      <div class="pct" id="pctScore"></div>
+      <div class="summary" id="summaryText"></div>
+      <div class="breakdown">
+        <div class="bd-item c"><div class="num" id="correctNum">0</div><div class="label">Correct</div></div>
+        <div class="bd-item w"><div class="num" id="wrongNum">0</div><div class="label">Incorrect</div></div>
+      </div>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="showReview()">Review Answers</button>
+        <button class="btn btn-secondary" onclick="restartQuiz()">Try Again</button>
+      </div>
+    </div>
+    <div class="review-list" id="reviewList" style="display:none"></div>
+  </div>
+</div>
+<script>
+const questions=[
+{q:"What is the difference between deterministic and stochastic effects of radiation?",opts:["Deterministic effects are random; stochastic effects have a threshold","Deterministic effects have a dose threshold and predictable severity; stochastic effects are probabilistic with no threshold","They are the same thing with different names","Deterministic effects only occur in children"],ans:1,explain:"Deterministic effects (e.g. skin burns, hair loss) have a threshold dose below which they don't occur, and severity increases with dose. Stochastic effects (e.g. cancer) are probabilistic — no threshold, and higher dose increases probability, not severity."},
+{q:"For a child receiving the same CBCT scan as an adult, the radiation risk is approximately:",opts:["The same","Half the adult risk","Three times higher than an adult","Ten times higher"],ans:2,explain:"Children are approximately 3× more radiosensitive than adults due to their rapidly dividing cells and longer remaining lifespan for stochastic effects to manifest. This is a critical consideration in justification."},
+{q:"For an elderly patient (over ~65), radiation risk compared with a middle-aged adult is approximately:",opts:["Three times higher","The same","Approximately one-third (÷3)","Zero — elderly patients are immune to radiation effects"],ans:2,explain:"Elderly patients have roughly one-third the stochastic risk of middle-aged adults, because they have fewer dividing cells and a shorter remaining lifespan for cancer to develop. The risk is not zero, however."},
+{q:"The unit used to measure effective radiation dose (the biologically meaningful dose to the patient) is:",opts:["Gray (Gy)","Sievert (Sv)","Coulomb per kilogram (C/kg)","Roentgen (R)"],ans:1,explain:"The Sievert (Sv) is the unit of effective dose, which weights the absorbed dose by the type of radiation and the sensitivity of the tissues exposed. In dental imaging we use microsieverts (µSv). Gray (Gy) measures absorbed dose without tissue weighting."},
+{q:"Which of the following tissues is MOST radiosensitive in the head and neck region during a dental CBCT scan?",opts:["Enamel","Cortical bone","Bone marrow, thyroid, and salivary glands","Dentine"],ans:2,explain:"Bone marrow (in the mandible), thyroid gland, and salivary glands are the most radiosensitive tissues in the CBCT field. Enamel, dentine, and cortical bone are relatively radioresistant."},
+{q:"A maxillary CBCT scan typically delivers a higher dose than a mandibular scan because:",opts:["The maxilla is larger","The maxillary FOV captures more radiosensitive tissues including thyroid and salivary glands","The machine uses higher kVp for the maxilla","Maxillary bone is denser"],ans:1,explain:"A maxillary scan FOV extends higher and often includes more radiosensitive tissues such as the parotid salivary glands and potentially the thyroid, resulting in a higher effective dose than a mandibular scan of equivalent size."},
+{q:"Average annual background radiation in the UK is approximately:",opts:["270 µSv","2,700 µSv","27,000 µSv","270,000 µSv"],ans:1,explain:"Average UK background radiation is approximately 2,700 µSv per year — roughly 7 µSv per day. This comes from cosmic rays, ground radon, food, and medical exposures. It provides a useful benchmark for contextualising dental doses."},
+{q:"Why is Cornwall associated with higher background radiation?",opts:["It has more dental X-ray machines per capita","Its granite bedrock produces high levels of radon gas","It is closer to the sun","It has nuclear power plants"],ans:1,explain:"Cornwall's granite geology produces significant amounts of radon gas, which substantially increases background radiation levels compared with the UK average."},
+{q:"According to Ludlow's dose figures, the approximate effective dose of a single periapical radiograph is:",opts:["0.2 µSv","2 µSv","20 µSv","200 µSv"],ans:1,explain:"A single periapical radiograph delivers approximately 2 µSv of effective dose — roughly equivalent to a few hours of background radiation. These are the benchmark figures from Ludlow's widely cited dosimetry studies."},
+{q:"The approximate effective dose of a standard OPG (panoramic radiograph) is:",opts:["2 µSv","10 µSv","20 µSv","200 µSv"],ans:2,explain:"An OPG delivers approximately 20 µSv — about 10× a single periapical, or roughly 3 days of background radiation."},
+{q:"A small-FOV dental CBCT (e.g. single jaw, 5×5 cm) delivers approximately:",opts:["2 µSv","20 µSv","40 µSv","400 µSv"],ans:2,explain:"A small-FOV dental CBCT delivers approximately 40 µSv — about 2× an OPG, or roughly 6 days of background radiation. This is a useful benchmark for patient communication."},
+{q:"A both-jaw (large FOV) CBCT scan delivers approximately:",opts:["20 µSv","40 µSv","80 µSv","800 µSv"],ans:2,explain:"A large FOV CBCT covering both jaws delivers approximately 80 µSv — about 4× an OPG. This reinforces why small FOV should be used wherever possible."},
+{q:"The Linear No-Threshold (LNT) model assumes that:",opts:["There is a safe threshold below which radiation causes no harm","Any dose of radiation, no matter how small, carries some risk — with risk proportional to dose","High doses are safe but low doses are dangerous","Only doses above 100 mSv cause harm"],ans:1,explain:"The LNT model assumes no safe threshold — every dose carries proportional risk, and risk scales linearly with dose. This conservative model underpins radiation protection policy, though some argue a threshold may exist at very low doses."},
+{q:"In 2008, how many dental X-ray exposures were performed in the UK?",opts:["2 million","5.5 million","20.5 million","100 million"],ans:2,explain:"Approximately 20.5 million dental X-ray exposures were performed in the UK in 2008. This figure is used to illustrate the difference between population risk (cumulative across millions of exposures) and individual risk (very small per exposure)."},
+{q:"According to the RCR (Royal College of Radiologists) definition, justification for a CBCT scan requires that it will:",opts:["Always show pathology","Change management AND/OR add confidence to a clinical decision","Be requested by a specialist only","Replace the need for any 2D imaging"],ans:1,explain:"The RCR definition states that an imaging investigation is justified if it will change management AND/OR add confidence to a clinical decision. Either criterion alone is sufficient — you don't need both."},
+{q:"Under IRMER regulations, when must a pregnancy enquiry be made?",opts:["Only for medical CT, not for dental imaging","For any female patient of childbearing age before any ionising radiation exposure","Only if the patient volunteers the information","Only for CBCT, not for periapicals or OPGs"],ans:1,explain:"IRMER requires a pregnancy enquiry for any female of childbearing age before any ionising radiation exposure — including periapicals and OPGs, not just CBCT. The enquiry must be documented."},
+{q:"A patient is 6 weeks pregnant. Can you take a small-FOV dental CBCT of a lower premolar area?",opts:["Absolutely not — all dental X-rays are banned in pregnancy","Yes, if the scan is justified and the FOV does not include the uterus, the dose is negligible and the scan can proceed","Only with written consent from the patient's obstetrician","Only after the first trimester"],ans:1,explain:"The uterus is not in the CBCT field and the scattered dose to it is negligible (orders of magnitude below any harmful threshold). If the scan is clinically justified, it can proceed. The key is documenting the justification and the pregnancy enquiry."},
+{q:"Which of the following is considered a MANDATORY indication for CBCT by current guidelines (e.g. SedentexCT, EAO)?",opts:["All routine dental examinations","Pre-operative assessment for maxillary sinus augmentation","Every orthodontic case","All endodontic assessments"],ans:1,explain:"Sinus augmentation is one of the few procedures where CBCT is considered virtually mandatory by current European and international guidelines (SedentexCT, EAO, AAOMR) — because the sinus membrane, bone height, and septal anatomy cannot be adequately assessed on 2D imaging."},
+{q:"A 2D OPG measurement of bone height above the ID canal shows 9 mm. A subsequent CBCT cross-section of the same site shows only 6 mm. This discrepancy occurs because:",opts:["The OPG machine was broken","2D imaging magnifies and superimposes anatomy, often overestimating available bone — CBCT shows the true cross-sectional measurement","CBCT always underestimates bone height","The patient moved during the CBCT scan"],ans:1,explain:"OPG is subject to magnification (typically 20–30%) and superimposition. The OPG shows the maximum bucco-lingual projection of bone, which may include buccal or lingual bone that is not actually above the canal at the implant site. CBCT cross-sections show the true site-specific measurement."},
+{q:"CBCT Hounsfield Units (HU) should be used to assess bone density for implant site selection. True or false?",opts:["True — CBCT HU values correlate well with bone quality","False — CBCT HU values are unreliable and should not be used for bone density assessment","True — but only with small-FOV scans","True — but only on certain scanner brands"],ans:1,explain:"CBCT HU values are unreliable because the same bone can produce different HU values depending on its position in the scan volume. There is no good evidence to relate CBCT HU values to bone quality. Do not use them for site-specific density assessment."},
+{q:"Which guideline bodies have published recommendations specifically on CBCT use in implant dentistry?",opts:["Only the FDA","FGDP, SedentexCT, EAO and AAOMR among others","Only the General Dental Council","Only local NHS trusts"],ans:1,explain:"Multiple guideline bodies have published CBCT recommendations for implant dentistry including FGDP (UK), SedentexCT (European Commission), EAO (European Academy of Osseointegration), and AAOMR (American Academy of Oral and Maxillofacial Radiology)."},
+{q:"For a routine single implant in the posterior mandible with apparently adequate bone on OPG, is CBCT always required?",opts:["Yes — CBCT is mandatory for every single implant","No — if 2D imaging adequately answers the clinical questions and there is clearly adequate bone, CBCT may not be justified","Yes — the GDC requires it for medico-legal protection","No — CBCT should never be used for implants"],ans:1,explain:"If OPG (with appropriate magnification correction) adequately shows the anatomy and there are no complications, CBCT is not automatically required. The key is whether it would change management or add confidence. Many cases DO benefit from CBCT, but it should be justified on a case-by-case basis."},
+{q:"What FOV would be the first choice for assessing a single endo case (e.g. suspected missed MB2 canal in an upper 6)?",opts:["Full skull FOV (16 × 13 cm)","Both-jaw FOV (12 × 8 cm)","Small localised FOV (5 × 5 cm or smaller)","Medium single-jaw FOV (8 × 8 cm)"],ans:2,explain:"For a single endodontic case, use the smallest FOV that captures the tooth — typically 5 × 5 cm or even 4 × 4 cm. Smaller FOV = lower dose, higher resolution (smaller voxels often available), and less anatomy to report on outside your scope."},
+{q:"For a wisdom tooth assessment where the OPG shows close proximity to the ID canal, what FOV is most appropriate?",opts:["Full skull","Small FOV centred on the wisdom tooth and ID canal region","A standard periapical radiograph is sufficient","Medium FOV covering the full mandible"],ans:1,explain:"A small FOV centred on the wisdom tooth area gives the best resolution at the lowest dose, showing the relationship between tooth roots and ID canal in cross-section — which is the specific clinical question."},
+{q:"The concept of ALARA stands for:",opts:["Always Look At Radiographs Accurately","As Low As Reasonably Achievable","Avoid Long And Repeated Acquisitions","All Levels Are Radioactively Adjusted"],ans:1,explain:"ALARA — As Low As Reasonably Achievable — is the fundamental principle of radiation protection. It means using the minimum dose necessary to produce diagnostically adequate images."},
+{q:"Which of the following does NOT increase the radiation dose from a CBCT scan?",opts:["Increasing the field of view","Increasing the number of basis projections","Using a smaller voxel size","Using a lead apron on the patient"],ans:3,explain:"A lead apron does not increase dose — in fact, thyroid collars may reduce dose to the thyroid. Increasing FOV, number of projections, or reducing voxel size (which requires more data) all increase dose."},
+{q:"The SoR/RCR/IPEM poster referenced in the lecture provides guidance on:",opts:["How to clean CBCT machines","Dental CBCT radiation protection and dose optimisation","Marketing CBCT scanners to patients","Comparative pricing of CBCT scanners"],ans:1,explain:"The joint poster from the Society of Radiographers (SoR), Royal College of Radiologists (RCR) and Institute of Physics and Engineering in Medicine (IPEM) provides practical guidance on radiation protection principles for dental CBCT."},
+{q:"A patient asks: 'How much radiation will I get from this CBCT scan?' Which of the following is the most appropriate response?",opts:["'Don't worry, it's completely safe — zero risk'","'The dose from a small CBCT is roughly equivalent to a few days of natural background radiation — about the same as 2 OPGs'","'The dose is extremely dangerous and you should refuse'","'I don't know — ask a physicist'"],ans:1,explain:"Contextualising the dose in terms of background radiation (e.g. 'about 6 days of natural background' for a small-FOV CBCT) is the most effective and honest way to communicate risk. Saying 'zero risk' is inaccurate; saying it's 'dangerous' is disproportionate."},
+{q:"The stochastic risk from dental X-rays is best described as:",opts:["A certainty of developing cancer","An extremely small additional probability of cancer on top of the ~40% baseline lifetime risk, proportional to dose","A 50% chance of cancer per exposure","No risk whatsoever if the dose is below 1 mSv"],ans:1,explain:"The stochastic risk from dental imaging is real but extremely small — it adds a tiny increment to the baseline ~40% lifetime cancer risk. The LNT model assumes this risk scales proportionally with dose. Population-level impact matters because of volume (millions of exposures per year), but individual risk per scan is very low."},
+{q:"Why might Brazil nuts be mentioned in a radiation dose lecture?",opts:["They contain natural radioactivity (radium-226 and potassium-40) — illustrating that radiation exposure is a normal part of daily life","They are shaped like CBCT scanners","They can shield against radiation","They cause deterministic radiation effects"],ans:0,explain:"Brazil nuts contain naturally occurring radium-226 and potassium-40, making them one of the most radioactive common foods. They're a memorable example used to illustrate that radiation exposure is ubiquitous in everyday life, not just from medical imaging."}
+];
+
+let currentQ=0,score=0,answered=new Array(questions.length).fill(null),started=false;
+function startQuiz(){document.getElementById('startScreen').style.display='none';started=true;renderQuestion(0)}
+function renderQuestion(idx){currentQ=idx;const area=document.getElementById('questionArea');const q=questions[idx];const L=['A','B','C','D'];let h=`<div class="question-card active" id="qCard${idx}"><div class="q-num">Question ${idx+1} of ${questions.length}</div><div class="q-text">${q.q}</div><div class="options">`;q.opts.forEach((o,i)=>{h+=`<button class="opt-btn" data-idx="${i}" onclick="selectOption(${idx},${i})"><span class="opt-letter">${L[i]}</span><span>${o}</span></button>`});h+=`</div><div class="feedback" id="fb${idx}"></div><div class="nav-row"><button class="btn btn-primary" id="nextBtn${idx}" onclick="nextQuestion()">Next →</button></div></div>`;area.innerHTML=h;updateProgress()}
+function selectOption(qI,oI){if(answered[qI]!==null)return;answered[qI]=oI;const q=questions[qI];const ok=oI===q.ans;if(ok)score++;const btns=document.querySelectorAll(`#qCard${qI} .opt-btn`);btns.forEach((b,i)=>{b.classList.add('locked');if(i===q.ans)b.classList.add('correct');if(i===oI&&!ok)b.classList.add('wrong','was-selected');if(i===oI)b.classList.add('selected')});const fb=document.getElementById(`fb${qI}`);const L=['A','B','C','D'];if(ok){fb.className='feedback show right';fb.innerHTML=`<strong class="correct-label">✓ Correct!</strong>${q.explain}`}else{fb.className='feedback show wrong-fb';fb.innerHTML=`<strong class="wrong-label">✗ Incorrect — the answer is ${L[q.ans]}</strong>${q.explain}`}document.getElementById(`nextBtn${qI}`).classList.add('show');document.getElementById('scoreVal').textContent=score;updateProgress()}
+function nextQuestion(){if(currentQ<questions.length-1)renderQuestion(currentQ+1);else showResults()}
+function showResults(){document.getElementById('questionArea').innerHTML='';const pct=Math.round(score/questions.length*100);const r=document.getElementById('resultsScreen');r.classList.add('active');const p=document.getElementById('pctScore');p.textContent=pct+'%';p.className='pct '+(pct>=80?'high':pct>=60?'mid':'low');document.getElementById('correctNum').textContent=score;document.getElementById('wrongNum').textContent=questions.length-score;document.getElementById('summaryText').textContent=pct>=90?'Excellent — you understand dose and justification thoroughly.':pct>=80?'Strong performance — minor gaps to address.':pct>=60?'Reasonable — review the areas you missed.':'Worth revisiting Lecture 2 before continuing.';document.getElementById('progressFill').style.width='100%'}
+function showReview(){document.getElementById('resultsScreen').classList.remove('active');const rl=document.getElementById('reviewList');rl.style.display='block';const L=['A','B','C','D'];let h='<h2 style="color:var(--accent);margin-bottom:20px;font-size:22px">Answer Review</h2>';questions.forEach((q,i)=>{const u=answered[i];const c=u===q.ans;h+=`<div class="review-item ${c?'was-correct':'was-wrong'}"><div class="review-q">${i+1}. ${q.q}</div>${c?`<div class="review-your right-ans">✓ Your answer: ${L[u]}. ${q.opts[u]}</div>`:`<div class="review-your wrong-ans">✗ Your answer: ${L[u]}. ${q.opts[u]}</div><div class="review-your right-ans">✓ Correct answer: ${L[q.ans]}. ${q.opts[q.ans]}</div>`}<div class="review-explain">${q.explain}</div></div>`});h+=`<div style="text-align:center;margin:30px 0"><button class="btn btn-secondary" onclick="restartQuiz()">Try Again</button></div>`;rl.innerHTML=h;window.scrollTo({top:0,behavior:'smooth'})}
+function restartQuiz(){currentQ=0;score=0;answered=new Array(questions.length).fill(null);document.getElementById('scoreVal').textContent='0';document.getElementById('resultsScreen').classList.remove('active');document.getElementById('reviewList').style.display='none';document.getElementById('reviewList').innerHTML='';document.getElementById('startScreen').style.display='block';updateProgress()}
+function updateProgress(){document.getElementById('progressFill').style.width=(answered.filter(a=>a!==null).length/questions.length*100)+'%'}
+document.addEventListener('keydown',e=>{if(!started)return;if(e.key>='1'&&e.key<='4'){const i=parseInt(e.key)-1;if(i<questions[currentQ].opts.length)selectOption(currentQ,i)}if(e.key==='Enter'||e.key==='ArrowRight'){const nb=document.getElementById(`nextBtn${currentQ}`);if(nb&&nb.classList.contains('show'))nextQuestion()}});
+</script>
+</body>
+</html>

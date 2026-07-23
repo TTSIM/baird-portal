@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 — Post-Extraction Biology & Treatment Planning</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0d14;--surface:#111420;--card:#161b2e;--border:#1e2540;--gold:#c9a84c;--gold-light:#e8c97e;--gold-dim:rgba(201,168,76,0.15);--text:#e8e4dc;--muted:#8891aa;--subtle:#4a5270;--blue:#4a90d9;--teal:#3dbdac;--rose:#d96a6a;--amber:#e8a44a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.nav-home{color:var(--gold);text-decoration:none;font-size:13px;opacity:0.8;}.nav-home:hover{opacity:1;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:17px;}
+.nav-badge{font-size:11px;background:var(--gold-dim);color:var(--gold);padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.3);}
+.score-display{font-size:14px;color:var(--muted);}
+.score-display strong{color:var(--gold);}
+.progress-track{height:4px;background:var(--border);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.4s;}
+.container{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+.quiz-header{text-align:center;margin-bottom:48px;}
+.quiz-header h1{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;margin-bottom:10px;}
+.quiz-header h1 em{color:var(--gold);font-style:italic;}
+.quiz-header p{color:var(--muted);font-size:15px;}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:24px;transition:border-color 0.3s;}
+.question-card.answered{border-color:var(--subtle);}
+.question-card.correct-card{border-color:rgba(61,189,172,0.4);}
+.question-card.wrong-card{border-color:rgba(217,106,106,0.3);}
+.q-num{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.q-text{font-size:16px;line-height:1.65;margin-bottom:22px;font-weight:400;}
+.options{display:grid;gap:10px;}
+.opt-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:13px 18px;border-radius:9px;cursor:pointer;text-align:left;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;line-height:1.5;}
+.opt-btn:hover:not(:disabled){border-color:var(--gold);color:var(--text);background:rgba(201,168,76,0.05);}
+.opt-btn:disabled{cursor:default;}
+.opt-btn.selected-correct{background:rgba(61,189,172,0.12);border-color:var(--teal);color:var(--teal);}
+.opt-btn.selected-wrong{background:rgba(217,106,106,0.1);border-color:var(--rose);color:var(--rose);}
+.opt-btn.reveal-correct{background:rgba(61,189,172,0.08);border-color:rgba(61,189,172,0.4);color:var(--teal);}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:9px;font-size:13px;line-height:1.65;display:none;}
+.feedback.show{display:block;}
+.feedback.correct{background:rgba(61,189,172,0.08);border:1px solid rgba(61,189,172,0.25);color:#7dd5c8;}
+.feedback.wrong{background:rgba(217,106,106,0.07);border:1px solid rgba(217,106,106,0.22);color:#cc8888;}
+.results-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;margin-top:32px;display:none;}
+.results-panel.show{display:block;}
+.results-score{font-family:'Cormorant Garamond',serif;font-size:72px;color:var(--gold);line-height:1;}
+.results-label{font-size:16px;color:var(--muted);margin:8px 0 24px;}
+.results-grade{font-size:22px;font-family:'Cormorant Garamond',serif;margin-bottom:16px;}
+.results-bar{background:var(--border);border-radius:8px;height:12px;margin:20px 0;overflow:hidden;}
+.results-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 1s ease;}
+.action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.btn{padding:12px 26px;border-radius:9px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all 0.2s;border:1px solid var(--border);color:var(--text);background:transparent;}
+.btn:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:#0a0d14;font-weight:500;}
+.btn-primary:hover{background:var(--gold-light);border-color:var(--gold-light);}
+.sticky-score{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;gap:16px;}
+.sticky-score .s-correct{color:var(--teal);}
+.sticky-score .s-wrong{color:var(--rose);}
+.sticky-score .s-remain{color:var(--muted);}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="nav-home">← Back</a>
+    <div class="nav-title">Post-Extraction Biology & Planning</div>
+    <div class="nav-badge">Quiz 1</div>
+  </div>
+  <div class="score-display">Score: <strong id="liveScore">0</strong> / <span id="liveTotal">0</span></div>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="container">
+  <div class="quiz-header">
+    <h1>Quiz 1 — <em>Biology &amp; Planning</em></h1>
+    <p>30 questions · Select the best answer · Explanations provided after each question</p>
+  </div>
+  <div id="quizBody"></div>
+  <div class="results-panel" id="resultsPanel">
+    <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Quiz Complete</div>
+    <div class="results-score" id="finalScore">0</div>
+    <div class="results-label">out of 30 correct</div>
+    <div class="results-grade" id="finalGrade"></div>
+    <div class="results-bar"><div class="results-fill" id="resultsFill" style="width:0%"></div></div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.7;" id="finalMsg"></p>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="quiz2.html" class="btn">Quiz 2 →</a>
+      <a href="lecture1.html" class="btn">Review Lecture 1</a>
+      <a href="index.html" class="btn">Course Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-score" id="stickyScore">
+  <span class="s-correct">✓ <span id="sCorrect">0</span></span>
+  <span class="s-wrong">✗ <span id="sWrong">0</span></span>
+  <span class="s-remain">⬜ <span id="sRemain">30</span></span>
+</div>
+
+<script>
+const questions = [
+  {q:"What is the term for the specialised bone that makes up most of the coronal 5mm of the labial plate and relies on the periodontal ligament for its blood supply?",opts:["Lamellar bone","Woven bone","Bundle bone","Cortical bone"],correct:2,exp:"Bundle bone is the portion of the alveolar process that inserts the periodontal ligament fibres. It relies almost entirely on the PDL for blood supply — so when a tooth is extracted and the PDL is destroyed, bundle bone predictably resorbs."},
+  {q:"After tooth extraction, when does bundle bone begin to resorb?",opts:["Immediately within the first 24 hours","After approximately 6 weeks","It only resorbs if infected","After 12 weeks when the socket has fully healed"],correct:0,exp:"Bundle bone begins resorbing almost immediately after extraction because the PDL fibres — its blood supply — are severed at extraction. This process is inevitable regardless of technique."},
+  {q:"Which phenotype patient will experience more post-extraction bone loss?",opts:["Thick biotype with wide keratinized tissue","Thin biotype with thin labial plate","Patients with D1 (dense) bone","Older patients with calcified PDL"],correct:1,exp:"Thin biotype patients have a thin labial plate that relies more heavily on bundle bone. On extraction, they lose proportionally more labial bone volume than thick biotype patients."},
+  {q:"A patient had a central incisor extracted 6 months ago with a large acute apical abscess. Why might the bone quality be poor at 12 weeks?",opts:["Acute infection creates harder bone","Chronic infections always persist","The body spends ~6 weeks clearing acute infection before bone healing begins","Short healing time produces cortical bone"],correct:2,exp:"With acute infection, the body dedicates approximately 6 weeks to infection control before bone healing begins. So at 12 weeks, only ~6 weeks of bone healing has occurred — woven bone is likely, not mature lamellar bone."},
+  {q:"For accurate digital planning (STL to CBCT merge), what type of scan is recommended?",opts:["Sectional scan of the region of interest","Full arch CBCT","PA radiograph series","Bitewing series"],correct:1,exp:"Full arch CBCT provides ~10 reference points for merging the STL with the DICOM. A sectional scan only provides ~3 reference points, making the merge inaccurate and potentially unsafe for guided surgery."},
+  {q:"A pilot guide provides a sleeve for which drill only?",opts:["The final drill","All drills except the last","The first (pilot) drill only","Every other drill"],correct:2,exp:"The pilot guide has a sleeve only for the first drill — the pilot drill. This is the most critical step for establishing the correct trajectory. Subsequent drills and implant placement are completed freehand."},
+  {q:"What is the minimum torque required for immediate loading of a dental implant?",opts:["25 Ncm","30 Ncm","35 Ncm","40 Ncm"],correct:2,exp:"35 Ncm is the threshold for immediate loading. Below this, micromotion at the implant interface risks disrupting osseointegration. Note: 25 Ncm is the threshold for a transmucosal protocol (healing abutment placement)."},
+  {q:"At what torque threshold must an implant be fully submerged (two-stage protocol)?",opts:["Below 35 Ncm","Below 30 Ncm","Below 25 Ncm","Below 20 Ncm"],correct:2,exp:"Below 25 Ncm, the implant cannot be trusted to resist micromotion even with a healing abutment. It must be fully submerged and protected until osseointegration is complete."},
+  {q:"What is the most accurate method for measuring torque when making an immediate loading decision?",opts:["The implant motor feedback display","The surgeon's tactile feel","The torque wrench","Resonance frequency analysis (ISQ)"],correct:2,exp:"The implant motor provides feedback but is only accurate when regularly calibrated. For a critical loading decision like immediate loading, the torque wrench gives a definitive, calibration-independent measurement."},
+  {q:"Which factor does NOT directly affect the primary stability torque achieved?",opts:["Osteotomy diameter vs implant diameter","Thread design (aggressive vs regular)","Bone density (D1–D4)","The type of anaesthetic used"],correct:3,exp:"Primary stability is affected by osteotomy preparation (underpreparing increases torque), thread design (aggressive threads grip better), and bone density. The anaesthetic type has no mechanical relationship to stability."},
+  {q:"What happens to the labial plate blood supply when an osteotomy is drilled?",opts:["It increases due to drilling trauma response","It is reduced by approximately 50% — only periosteum remains","It is completely lost","It doubles from inflammatory response"],correct:1,exp:"Before drilling, the labial bone received blood from both the periosteum and the PDL. After drilling and placing a titanium implant, the PDL is gone. The thin sliver of labial bone now relies only on the periosteum — roughly 50% of its former supply."},
+  {q:"When placing an immediate implant, where should the implant be positioned relative to the root position?",opts:["Exactly at the root position for maximum stability","Labially, to engage the labial plate","Slightly palatal — 'as little as possible within the socket'","1mm deeper than the root apex"],correct:2,exp:"The implant is shifted slightly palatally because bundle bone on the labial will inevitably resorb. Placing at root position means the implant will become exposed as the bone disappears. The palatal shift creates a labial gap (jumping gap) that is grafted."},
+  {q:"What is the 'jumping gap' in immediate implant placement?",opts:["The gap between bone crest and implant shoulder","The space between the implant's labial surface and the socket wall","The distance between adjacent implants","The gap under the membrane"],correct:1,exp:"The jumping gap is the space between the labial surface of the implant and the socket wall created by deliberately positioning the implant palatally. This space must be grafted — it acts as a buffer against bundle bone resorption."},
+  {q:"In the mandible, how many weeks should a submerged implant be left before stage 2 exposure?",opts:["4 weeks","6 weeks","8 weeks","12 weeks"],correct:2,exp:"In the mandible, 8 weeks is the standard healing time for submerged protocol osseointegration. The maxilla requires 12 weeks due to lower bone density (D2–D3 vs mandibular D1–D2)."},
+  {q:"During stage 2 exposure, you try to remove the healing cap and feel rotational movement but no axial movement. What should you do?",opts:["Proceed — rotational movement is normal","Remove the implant immediately — it has failed","Leave it for approximately 20 more weeks — woven bone stage","Place a healing abutment anyway"],correct:2,exp:"Rotational movement without axial movement indicates the bone is still in the woven bone phase — not mature lamellar bone yet. Leaving for another 20 weeks allows the woven bone to mature. Axial movement would indicate fibrous healing and failure."},
+  {q:"Why is the subgingival profile of a temporary crown critical to long-term success?",opts:["A convex profile pushes tissue outward to create volume","A flat profile allows the best seal","A concave profile engages connective tissue and prevents recession","The shape has minimal clinical impact"],correct:2,exp:"The subgingival portion must be concave. This allows the surrounding connective tissue and bone to engage the implant naturally. A convex profile pushes the tissue and bone away — leading to recession. 'Concave = stable; convex = recession.'"},
+  {q:"How often should flowable composite be added during progressive soft tissue sculpting?",opts:["Weekly","Every 2 weeks","Monthly","Once at the end"],correct:1,exp:"Adding composite every 2 weeks allows gradual tissue displacement (not necrosis). The pressure creates tissue displacement when applied slowly — pressure applied all at once causes necrosis and unpredictable recession."},
+  {q:"What is the difference between a healing abutment and a temporary abutment?",opts:["Healing abutments are taller","Temporary abutments have a chimney with grooves for composite buildup","Healing abutments are used only in the maxilla","There is no clinical difference"],correct:1,exp:"A temporary abutment has a chimney (post) and grooves onto which composite or pMMA can be mechanically built to create a temporary crown. A healing abutment is simply a gingival former — it creates a circular emergence profile but is not designed for prosthetic buildup."},
+  {q:"What does platform switching achieve?",opts:["Increases implant diameter for better stability","Moves the implant-abutment junction further from the crestal bone","Increases the thread pitch for higher torque","Allows wider abutments on narrow implants"],correct:1,exp:"Platform switching places a narrower abutment on a wider implant, moving the microgap (where bacteria leak) away from the crestal bone. By the time bacteria travel from the gap to the bone level, their concentration is reduced — causing less bone resorption."},
+  {q:"What is more important than platform switching in modern implant design?",opts:["Implant length","Connection rigidity (to minimise bacterial leakage)","Surface roughness","Implant diameter"],correct:1,exp:"Connection rigidity is now recognised as more important than the degree of platform switching. A rigid, well-sealed connection produces very little bacterial leakage from the outset — making the distance bacteria must travel less relevant."},
+  {q:"Blue Diamond 3.7mm and 3.3mm implants use which connection type?",opts:["Regular Connection (RC) — purple","Narrow Connection (NC) — yellow","Wide Connection (WC) — green","Standard Connection (SC) — blue"],correct:1,exp:"The 3.3 and 3.7mm Blue Diamond implants use the Narrow Connection (NC), colour-coded yellow. The 4.1, 4.4, and 4.8mm use the Regular Connection (RC), colour-coded purple."},
+  {q:"For a cantilever bridge replacing missing upper lateral incisors, why should 4.1mm RC implants be preferred over 3.7mm NC?",opts:["4.1mm is wider in the bone","Cantilever bridges generate significant lateral forces — NC connection is too weak","3.7mm implants don't come in sufficient length","4.1mm has more aggressive threads"],correct:1,exp:"Cantilever bridges generate considerable lateral forces that stress the implant-abutment connection. The narrow connection (NC) of the 3.7mm is not designed to handle these forces reliably — fracture risk is significant. The regular connection (RC) of the 4.1mm is appropriate."},
+  {q:"What does the 'press release' technique achieve?",opts:["Releases the implant from the handpiece","Creates a periosteal releasing incision for tension-free flap closure","Releases the healing abutment after osseointegration","Removes the membrane after GBR healing"],correct:1,exp:"Press release is a periosteal releasing incision — a small notch (1mm) in the base of the flap that stretches to 10mm+ and allows tension-free primary closure over a GBR site. Without it, the flap under tension will dehisce."},
+  {q:"A young patient needs an immediate implant to be ready within 3 weeks. You use a longer, narrow implant and under-prepare the osteotomy. You achieve 35 Ncm. What can you do?",opts:["Bury the implant — 35 Ncm is not enough","Fit a temporary crown immediately — immediate loading is appropriate","Wait 12 weeks before loading","Place a healing abutment only"],correct:1,exp:"35 Ncm meets the threshold for immediate loading. You can fabricate and fit a temporary crown chairside. This is exactly how the 'Thomas' case was managed — the longer implant and under-preparation were chosen specifically to achieve sufficient torque for immediate loading."},
+  {q:"Why is a Rochette bridge preferred over a denture as a temporary restoration after burying an implant?",opts:["Rochette bridges are cheaper","Dentures apply pressure to the socket which accelerates bone loss and can cause recession","Rochette bridges last longer","A denture would interfere with the healing cap"],correct:1,exp:"Dentures press on the soft tissue overlying the healing implant — this pressure compresses the socket, accelerates bone loss, and can cause recession around the implant site. A single-wing Rochette bridge provides aesthetics without pressure on the tissues."},
+  {q:"When does bone healing begin after extracting a tooth with an ACUTE periapical infection?",opts:["Immediately on extraction","After ~2 weeks","After ~6 weeks of infection clearance","After ~12 weeks"],correct:2,exp:"The body prioritises infection clearance over bone healing. With an acute apical abscess, the immune system spends approximately 6 weeks eliminating the infection before bone healing can begin — effectively meaning the clock starts 6 weeks after extraction."},
+  {q:"An implant placed in correct prosthetic position in the anterior maxilla shows exposed threads on the labial aspect. This is:",opts:["A placement error requiring immediate correction","Normal — expected due to premaxillary concavity and prosthetic angulation","A sign of infection","Evidence of poor bone density"],correct:1,exp:"Labial thread exposure (fenestration or dehiscence) in the anterior maxilla is expected and normal. The prosthetic envelope requires a slightly more upright angulation than the natural root, and the premaxillary concavity always creates labial exposure. This is managed with GBR — not a reason to reposition the implant."},
+  {q:"Which of the following best describes the three types of surgical guides?",opts:["Soft, medium, and hard guide","Prosthetic guide, pilot guide, and full surgical guide","Tooth-supported, tissue-supported, and bone-supported","Digital, analogue, and hybrid guide"],correct:1,exp:"The three types are: (1) Prosthetic guide — shows prosthetic boundaries only; (2) Pilot guide — guides first drill only; (3) Full surgical guide — guides all drills and implant placement. Each offers progressively more guidance with proportionally higher planning accuracy requirements."},
+  {q:"What is the minimum recommended amount of inter-implant bone between two adjacent implants?",opts:["1mm","2mm","3mm","5mm"],correct:2,exp:"At least 3mm of bone between implants is needed to support the inter-implant papilla and prevent bone loss. Wider spacing is even better — it allows better papilla height and reduces the risk of peri-implant bone loss."},
+  {q:"The treatment timeline for a staged block graft case vs a simultaneous GBR case differs by approximately:",opts:["No difference","4–6 weeks","3–6 months","12 months"],correct:2,exp:"A simultaneous GBR case typically takes 24 weeks from surgery to final crown. A staged block graft case requires 24 weeks for graft integration, then a second surgery, then 12+ weeks for implant osseointegration — adding 3–6 months to the total treatment time."},
+  {q:"Which statement about the ITI Consensus Conference 2023 is correct?",opts:["GBR should only be done for exposed threads","Thin buccal bone with no GBR leads to predictable future problems","Xenograft should not be used for convexity","CBCT is no longer recommended for routine implant planning"],correct:1,exp:"The ITI Consensus 2023 confirmed: thin buccal bone + no GBR = predictable thread exposure and peri-implantitis. Thin buccal bone + correct GBR = predictable long-term protection. This validates the Level 3 approach of always addressing buccal bone adequacy."}
+];
+
+let answered = JSON.parse(localStorage.getItem('q1_answers') || '{}');
+let correct = 0, wrong = 0;
+
+function buildQuiz(){
+  const body = document.getElementById('quizBody');
+  body.innerHTML = '';
+  correct = 0; wrong = 0;
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card-' + i;
+    const prev = answered[i];
+    const isAnswered = prev !== undefined;
+    if(isAnswered){ if(prev === q.correct) correct++; else wrong++; }
+    card.innerHTML = `
+      <div class="q-num">Question ${i+1} of ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((o,oi)=>`<button class="opt-btn" id="opt-${i}-${oi}" onclick="answer(${i},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-${i}"></div>`;
+    body.appendChild(card);
+    if(isAnswered) restoreAnswer(i, prev, q);
+  });
+  updateStats();
+}
+
+function answer(qi, opt){
+  const q = questions[qi];
+  if(answered[qi] !== undefined) return;
+  answered[qi] = opt;
+  localStorage.setItem('q1_answers', JSON.stringify(answered));
+  if(opt === q.correct) correct++; else wrong++;
+  restoreAnswer(qi, opt, q);
+  updateStats();
+  if(Object.keys(answered).length === questions.length) setTimeout(showResults, 600);
+}
+
+function restoreAnswer(qi, opt, q){
+  const card = document.getElementById('card-'+qi);
+  const isCorrect = opt === q.correct;
+  card.classList.add(isCorrect ? 'correct-card' : 'wrong-card');
+  for(let i=0;i<q.opts.length;i++){
+    const btn = document.getElementById('opt-'+qi+'-'+i);
+    btn.disabled = true;
+    if(i === opt) btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+    if(!isCorrect && i === q.correct) btn.classList.add('reveal-correct');
+  }
+  const fb = document.getElementById('fb-'+qi);
+  fb.textContent = (isCorrect ? '✓ Correct — ' : '✗ Incorrect — ') + q.exp;
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+}
+
+function updateStats(){
+  const total = Object.keys(answered).length;
+  document.getElementById('liveScore').textContent = correct;
+  document.getElementById('liveTotal').textContent = total;
+  document.getElementById('progressFill').style.width = (total/questions.length*100)+'%';
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sWrong').textContent = wrong;
+  document.getElementById('sRemain').textContent = questions.length - total;
+}
+
+function showResults(){
+  const pct = Math.round(correct/questions.length*100);
+  document.getElementById('finalScore').textContent = correct;
+  document.getElementById('resultsFill').style.width = pct+'%';
+  let grade, msg;
+  if(pct>=90){grade='Excellent — Distinction Level';msg='Outstanding performance. You have a thorough understanding of post-extraction biology and treatment planning principles.';}
+  else if(pct>=75){grade='Good — Merit Level';msg='Strong performance. Review the questions you missed and revisit those topics in Lecture 1.';}
+  else if(pct>=60){grade='Pass Level';msg='Satisfactory. Several key areas need consolidation — revisit the relevant slides in Lecture 1 before proceeding.';}
+  else{grade='Needs Improvement';msg='Please review Lecture 1 fully before retaking the quiz. Pay particular attention to torque thresholds, timing protocols, and bone biology.';}
+  document.getElementById('finalGrade').textContent = grade;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('resultsPanel').classList.add('show');
+  localStorage.setItem('quiz1_done','1');
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
+}
+
+function retakeQuiz(){
+  answered = {};
+  localStorage.removeItem('q1_answers');
+  correct = 0; wrong = 0;
+  document.getElementById('resultsPanel').classList.remove('show');
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildQuiz();
+if(Object.keys(answered).length === questions.length) showResults();
+</script>
+</body>
+</html>

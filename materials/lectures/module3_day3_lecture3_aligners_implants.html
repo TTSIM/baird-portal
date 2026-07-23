@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3 — Aligners & Implant Planning | Baird Implant Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b12;--surface:#0d1220;--surface2:#121929;--teal:#00b4d8;--teal-dim:rgba(0,180,216,0.15);--gold:#d4a94a;--gold-dim:rgba(212,169,74,0.15);--text:#e2e8f0;--muted:#718096;--subtle:#1e2840;--green:#48bb78;--orange:#fb923c;--purple:#a78bfa;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(13,18,32,.95);border-bottom:1px solid var(--subtle);flex-shrink:0;backdrop-filter:blur(10px);}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.back-btn{font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--subtle);padding:5px 12px;border-radius:4px;transition:all .2s;}
+.back-btn:hover{color:var(--purple);border-color:rgba(167,139,250,.3);}
+.lecture-badge{font-size:.68rem;background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:4px 10px;border-radius:12px;letter-spacing:.08em;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:var(--muted);}
+.slide-counter{font-size:.8rem;color:var(--muted);}
+.slide-counter span{color:var(--purple);font-weight:600;}
+.progress-track{height:2px;background:var(--subtle);flex-shrink:0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));transition:width .4s ease;}
+main{flex:1;overflow:hidden;position:relative;}
+.slide{position:absolute;inset:0;padding:28px 48px;overflow-y:auto;opacity:0;transform:translateX(40px);transition:all .4s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+.slide.exit-left{opacity:0;transform:translateX(-40px);}
+.slide-hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:calc(100vh - 120px);}
+.slide-2col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+.slide-single{max-width:800px;margin:0 auto;}
+.tag{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;}
+.tag.teal{color:var(--teal);}.tag.gold{color:var(--gold);}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:300;line-height:1.15;margin-bottom:16px;}
+h1 em{color:var(--purple);font-style:italic;}
+h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:400;margin-bottom:14px;line-height:1.2;}
+h2 em{color:var(--purple);font-style:normal;}
+h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--teal);margin-bottom:7px;}
+h3.gold{color:var(--gold);}.h3.purple{color:var(--purple);}
+p{color:var(--muted);line-height:1.7;font-size:.92rem;}
+.lead{font-size:1rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
+.card{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:15px 17px;margin-bottom:10px;}
+.card.teal{border-color:rgba(0,180,216,.2);background:rgba(0,180,216,.04);}
+.card.gold{border-color:rgba(212,169,74,.2);background:rgba(212,169,74,.04);}
+.card.red{border-color:rgba(251,146,60,.2);background:rgba(251,146,60,.04);}
+.card.green{border-color:rgba(72,187,120,.2);background:rgba(72,187,120,.04);}
+.card.purple{border-color:rgba(167,139,250,.2);background:rgba(167,139,250,.04);}
+ul.fancy{list-style:none;margin-top:5px;}
+ul.fancy li{padding:6px 0 6px 18px;position:relative;color:var(--muted);font-size:.87rem;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.04);}
+ul.fancy li:last-child{border-bottom:none;}
+ul.fancy li::before{content:'▸';position:absolute;left:0;color:var(--purple);font-size:.65rem;top:9px;}
+ul.fancy.teal li::before{color:var(--teal);}
+ul.fancy.gold li::before{color:var(--gold);}
+ul.fancy.green li::before{color:var(--green);}
+ul.fancy.red li::before{color:var(--orange);}
+ul.fancy li strong{color:var(--text);}
+.compare{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px;}
+.compare th{background:var(--surface2);color:var(--purple);padding:9px 12px;text-align:left;font-weight:500;border-bottom:2px solid var(--subtle);}
+.compare td{padding:8px 12px;border-bottom:1px solid var(--subtle);color:var(--muted);}
+.compare td:first-child{color:var(--text);font-weight:500;}
+.pro{color:#48bb78!important;}.con{color:#fb923c!important;}.neutral{color:#00b4d8!important;}.purp{color:#a78bfa!important;}
+.highlight{background:rgba(167,139,250,.08);border-left:3px solid var(--purple);padding:12px 16px;border-radius:0 var(--r) var(--r) 0;margin:10px 0;}
+.highlight.teal{background:rgba(0,180,216,.08);border-color:var(--teal);}
+.highlight.gold{background:rgba(212,169,74,.08);border-color:var(--gold);}
+.highlight.green{background:rgba(72,187,120,.08);border-color:var(--green);}
+.highlight p{color:var(--text);font-size:.87rem;}
+.steps{margin-top:6px;}
+.step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.step-num{width:26px;height:26px;border-radius:50%;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:var(--purple);font-size:.75rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-body h4{font-size:.87rem;color:var(--text);margin-bottom:2px;}
+.step-body p{font-size:.82rem;color:var(--muted);}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0;}
+.pill{font-size:.7rem;padding:4px 10px;border-radius:14px;border:1px solid;}
+.pill.purple{background:rgba(167,139,250,.1);color:var(--purple);border-color:rgba(167,139,250,.25);}
+.pill.teal{background:var(--teal-dim);color:var(--teal);border-color:rgba(0,180,216,.25);}
+.pill.gold{background:var(--gold-dim);color:var(--gold);border-color:rgba(212,169,74,.25);}
+.pill.green{background:rgba(72,187,120,.1);color:var(--green);border-color:rgba(72,187,120,.25);}
+.diag-panel{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.stat-row{display:flex;gap:16px;margin:14px 0;flex-wrap:wrap;}
+.stat-box{flex:1;min-width:100px;background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px;text-align:center;}
+.stat-box .num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;line-height:1;}
+.stat-box .lbl{font-size:.7rem;color:var(--muted);margin-top:3px;letter-spacing:.06em;}
+footer{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(13,18,32,.9);border-top:1px solid var(--subtle);flex-shrink:0;}
+.btn{font-family:'DM Sans',sans-serif;font-size:.82rem;padding:9px 22px;border-radius:6px;cursor:pointer;border:1px solid;transition:all .2s;}
+.btn-prev{background:transparent;color:var(--muted);border-color:var(--subtle);}
+.btn-prev:hover{color:var(--text);}
+.btn-next{background:rgba(167,139,250,.15);color:var(--purple);border-color:rgba(167,139,250,.3);}
+.btn-next:hover{background:rgba(167,139,250,.25);}
+.btn:disabled{opacity:.3;cursor:not-allowed;}
+.toc-btn{font-size:.75rem;color:var(--muted);background:none;border:1px solid var(--subtle);padding:7px 14px;border-radius:5px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.toc-btn:hover{color:var(--purple);}
+.toc-overlay{position:fixed;inset:0;background:rgba(8,11,18,.96);z-index:200;display:none;overflow-y:auto;}
+.toc-overlay.open{display:block;}
+.toc-inner{max-width:700px;margin:0 auto;padding:40px 32px;}
+.toc-close{float:right;background:none;border:1px solid var(--subtle);color:var(--muted);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.toc-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:6px;cursor:pointer;transition:background .2s;border:1px solid transparent;}
+.toc-item:hover{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.15);}
+.toc-num{font-size:.68rem;color:var(--purple);font-weight:600;min-width:24px;}
+.toc-text{font-size:.82rem;color:var(--text);}
+@media(max-width:650px){.slide-2col{grid-template-columns:1fr;}.toc-grid{grid-template-columns:1fr;}.slide{padding:18px 16px;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <a href="index.html" class="back-btn">← Back</a>
+    <span class="lecture-badge">Lecture 03</span>
+    <span class="nav-title">Aligners & Implant Planning</span>
+  </div>
+  <span class="slide-counter">Slide <span id="slideNum">1</span> / 30</span>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:3.3%"></div></div>
+<main>
+
+<!-- SLIDE 1 -->
+<div class="slide active" data-slide="0">
+  <div class="slide-hero">
+    <div class="tag">Lecture 03 · Multidisciplinary Planning</div>
+    <h1>Clear Aligners &<br><em>Implant Treatment</em><br>Planning</h1>
+    <p style="max-width:520px;font-size:1rem;margin-bottom:22px;">Integrating orthodontic and implant workflows for optimal prosthetically-driven outcomes. Space analysis, timing decisions, digital integration, and retention.</p>
+    <div class="pills" style="justify-content:center;">
+      <span class="pill purple">Ortho Timing</span><span class="pill purple">Space Analysis</span>
+      <span class="pill teal">Clear Aligners</span><span class="pill teal">TADs</span>
+      <span class="pill gold">Digital Workflow</span><span class="pill gold">Retention</span>
+    </div>
+    <div style="margin-top:22px;padding:12px 20px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);border-radius:var(--r);max-width:400px;">
+      <p style="font-size:.78rem;color:var(--purple);">Arrow keys ← → · T for Table of Contents</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" data-slide="1">
+  <div class="slide-single">
+    <div class="tag">Why It Matters</div>
+    <h2>The <em>Multidisciplinary</em> Imperative</h2>
+    <p class="lead">Implants should be prosthetically driven and orthodontically prepared. Ignoring the orthodontic dimension leads to compromised positions, difficult restorations, and implant failure.</p>
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" style="color:var(--purple);">11%</div><div class="lbl">Root movement relapse post-ortho</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--teal);">6.5–7mm</div><div class="lbl">Min mesiodistal space per single implant</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--gold);">8mm</div><div class="lbl">Min interocclusal vertical space</div></div>
+      <div class="stat-box"><div class="num" style="color:var(--green);">12–14mm</div><div class="lbl">Space needed for 2 adjacent implants</div></div>
+    </div>
+    <div class="highlight">
+      <p>"We have no idea how many times we are going to need ortho — either aligners or fixed appliances. And with this: Do we do ortho first, in the middle, or at the end? That's the main question."</p>
+    </div>
+    <h3 style="margin-top:14px;">Consequences of a Single Missing Tooth (Untreated)</h3>
+    <ul class="fancy teal">
+      <li><strong>Occlusal instability</strong> — bite collapse over time</li>
+      <li><strong>Pathological tooth migration</strong> — tipping, drifting, over-eruption</li>
+      <li><strong>Malocclusion</strong> — spacing and alignment changes</li>
+      <li><strong>Alveolar bone resorption</strong> — ridge diminishes without stimulation</li>
+      <li><strong>Aesthetic and confidence impact</strong></li>
+      <li><strong>Functional consequences</strong> — reduced chewing efficiency</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" data-slide="2">
+  <div class="slide-single">
+    <div class="tag">The Core Rule</div>
+    <h2>Orthodontics <em>Before</em> Implants — Why?</h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Why Do Ortho First?</h3>
+          <ul class="fancy">
+            <li>Determine if <strong>ridge preservation, sinus lift, or bone graft</strong> is needed before committing</li>
+            <li>Assess interocclusal space accurately BEFORE implant placement</li>
+            <li>Establish correct root positions for ideal implant positioning</li>
+            <li>Avoid orthodontic movement around an osseointegrated implant (causes resorption)</li>
+            <li>Sinus lift + fixed ortho = proven bone resorption risk</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"If you're doing a graft and you're also doing orthodontic movements, you may lose part of your graft. Soft tissue surgery and ortho together — same risk."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card red">
+          <h3 style="color:var(--orange);">Risks of Implant BEFORE Ortho</h3>
+          <ul class="fancy red">
+            <li>Ortho around implants creates osteal resorption near the implant</li>
+            <li>Soft tissue may retract if aligner puts pressure on gingival margin</li>
+            <li>Graft healing compromised by adjacent tooth movement</li>
+            <li>Implant position may be suboptimal for final orthodontic result</li>
+            <li>May need to remove and replace the implant — avoidable</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Exception: Implant as Anchorage</h3>
+          <p style="font-size:.83rem;color:var(--muted);">If implant is placed in the molar/premolar area to serve as orthodontic anchorage for canine distalization or large rotations — acceptable. Must wait 3 months post-integration before loading for ortho.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" data-slide="3">
+  <div class="slide-single">
+    <div class="tag">Spatial Analysis</div>
+    <h2>Space Requirements — <em>Single Implant</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Mesiodistal Space</h3>
+          <ul class="fancy">
+            <li>Minimum: <strong>6mm</strong> (some references)</li>
+            <li>Clinical recommendation: <strong>6.5–7mm</strong></li>
+            <li>Implant needs 1–1.5mm bone on each side</li>
+            <li>Tight at 6mm: increased peri-implant bone loss risk</li>
+            <li>Measure: <strong>contact point to contact point</strong></li>
+            <li>Also measure: <strong>minimum available</strong> (near gingival level — bone level)</li>
+          </ul>
+        </div>
+        <div class="card teal" style="margin-top:10px;">
+          <h3>Interocclusal Space (Vertical)</h3>
+          <ul class="fancy teal">
+            <li>Minimum: <strong>8mm</strong> (crown only, not components)</li>
+            <li>Crown alone ≈ 4–5mm for posterior</li>
+            <li>Must also accommodate: abutment + components</li>
+            <li>Short abutment → low retention → crown keeps loosening</li>
+            <li>Short abutment → cleaning difficulty → periimplantitis risk</li>
+            <li>Scan patient and use digital articulator for precision</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="diag-panel">
+          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+            <!-- Upper teeth -->
+            <rect x="30" y="20" width="40" height="30" fill="#1e2840" stroke="#2d3748" stroke-width="1" rx="3"/>
+            <rect x="150" y="20" width="40" height="30" fill="#1e2840" stroke="#2d3748" stroke-width="1" rx="3"/>
+            <!-- Contact point arrows -->
+            <line x1="70" y1="35" x2="150" y2="35" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="110" y="30" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="DM Sans,sans-serif">Contact-to-contact</text>
+            <!-- Width measurement -->
+            <text x="110" y="45" fill="#a78bfa" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">≥ 6.5–7mm</text>
+            <!-- Bone level markers -->
+            <line x1="70" y1="65" x2="150" y2="65" stroke="#d4a94a" stroke-width="1" stroke-dasharray="3,2"/>
+            <text x="110" y="62" fill="#d4a94a" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">Min. bone-level space</text>
+            <!-- Implant -->
+            <rect x="100" y="70" width="20" height="80" fill="rgba(167,139,250,.5)" rx="2" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="110" y="115" fill="#fff" font-size="7" text-anchor="middle" font-family="DM Sans,sans-serif">Implant</text>
+            <!-- Crown -->
+            <rect x="98" y="50" width="24" height="22" fill="rgba(167,139,250,.3)" rx="3" stroke="#a78bfa" stroke-width="1"/>
+            <text x="110" y="64" fill="#a78bfa" font-size="6" text-anchor="middle" font-family="DM Sans,sans-serif">Crown</text>
+            <!-- Bone -->
+            <rect x="30" y="150" width="160" height="40" fill="#1e2840" rx="3"/>
+            <text x="110" y="175" fill="#718096" font-size="9" text-anchor="middle" font-family="DM Sans,sans-serif">Alveolar bone</text>
+            <!-- Vertical arrow -->
+            <line x1="140" y1="50" x2="140" y2="150" stroke="#00b4d8" stroke-width="1.5"/>
+            <line x1="136" y1="50" x2="144" y2="50" stroke="#00b4d8" stroke-width="1"/>
+            <line x1="136" y1="150" x2="144" y2="150" stroke="#00b4d8" stroke-width="1"/>
+            <text x="155" y="103" fill="#00b4d8" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">≥8mm</text>
+            <text x="110" y="208" fill="#718096" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">Single implant space requirements</text>
+          </svg>
+        </div>
+        <div class="highlight teal" style="margin-top:10px;">
+          <p>"'Mind the gap.' You need to know the distance — understand those spaces. Always leave 7mm of mesiodistal space in your orthodontic prescription."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" data-slide="4">
+  <div class="slide-single">
+    <div class="tag">Spatial Analysis</div>
+    <h2>Space Requirements — <em>Multiple Implants</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Two Adjacent Implants</h3>
+          <ul class="fancy">
+            <li>Minimum <strong>3mm between implant platforms</strong></li>
+            <li>1–1.5mm bone on each side of each implant</li>
+            <li>Interradicular space needed: <strong>5.5mm</strong></li>
+            <li>Total mesiodistal space for two implants: <strong>12–14mm</strong></li>
+            <li>Plus: 11% root relapse risk — plan with this buffer</li>
+          </ul>
+        </div>
+        <div class="card gold" style="margin-top:10px;">
+          <h3 class="gold">Bolton Analysis</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">Compares the mesiodistal width of teeth to their antagonists. Essential when planning implant crowns.</p>
+          <ul class="fancy gold">
+            <li>If implant crown is too different from antagonist width → looks malformed</li>
+            <li>Especially important for central incisors, canines, first premolars</li>
+            <li>Mesiodistal AND crown height must both match arch dimensions</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Three-Unit Bridge: Two Implants</h3>
+          <ul class="fancy teal">
+            <li>Space between: each implant to adjacent tooth</li>
+            <li>Space between: the two implants themselves</li>
+            <li>Emergency profile space for pontic</li>
+            <li>If insufficient space → single implant + cantilever (compromised)</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"If you quote 3 implants and there's only space for 2 with a bridge — the patient is in finance and already paid extra. This creates compliance issues and liability. Plan the space precisely <strong>before</strong> quoting."</p>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Two Measuring Points</h3>
+          <ul class="fancy" style="font-size:.82rem;">
+            <li><strong>Contact point to contact point</strong> — aesthetic planning</li>
+            <li><strong>Minimum available</strong> at bone/gingival level — surgical space</li>
+            <li>Both measurements required for every planned implant case</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" data-slide="5">
+  <div class="slide-single">
+    <div class="tag">Clear Aligners</div>
+    <h2>How Clear Aligners <em>Work</em></h2>
+    <p class="lead">All clear aligner systems work on the same biomechanical principles. Brand differences exist but the physics doesn't change between systems.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card teal">
+          <h3>Core Biomechanics</h3>
+          <ul class="fancy teal">
+            <li>Apply <strong>light, controlled forces</strong> to crowns (not roots)</li>
+            <li>Forces are programmed into each aligner in sequence</li>
+            <li>Different movement types split across multiple aligners</li>
+            <li>Predictable execution — prescription tied to each aligner</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>What Aligners Do Well</h3>
+          <ul class="fancy">
+            <li>Crown tipping movements</li>
+            <li>Space creation / closure</li>
+            <li>Rotation (mild–moderate)</li>
+            <li>Single tooth intrusion (up to <strong>0.5mm for molars</strong>)</li>
+            <li>Spacing (may avoid an implant entirely)</li>
+            <li>Levelling the curve of Spee (mild)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card red">
+          <h3 style="color:var(--orange);">What Aligners Do Poorly</h3>
+          <ul class="fancy red">
+            <li><strong>Molar uprighting</strong> — requires TADs / auxiliaries</li>
+            <li>Root movement — forces act on crown, not root</li>
+            <li>Large rotations of molars</li>
+            <li>Significant intrusion of brachycephalic patients (strong masseter)</li>
+            <li>Extrusion — do at very end of treatment sequence</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"The molar is a beast. Uprighting a molar with aligners alone? It doesn't matter which brand — it's just really hard for them. That's where TADs come in."</p>
+        </div>
+        <div class="card purple" style="margin-top:10px;">
+          <h3 style="color:var(--purple);">ClearCorrect Specific</h3>
+          <p style="font-size:.82rem;color:var(--muted);">Movement difficulty flagged by colour: <strong>purple = very difficult</strong> (needs elastics/buttons/auxiliaries), <strong>green = straightforward</strong>. Warns clinician about challenging movements pre-treatment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide" data-slide="6">
+  <div class="slide-single">
+    <div class="tag">Aligners + Implants</div>
+    <h2>Benefits of Aligners for <em>Implant Cases</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Clinical Advantages</h3>
+          <ul class="fancy">
+            <li>Predictable timeline — you know when to expect ideal space</li>
+            <li>Patient can see deadline for implant surgery</li>
+            <li>Less push-back than "2 years with orthodontist"</li>
+            <li>Integrates with digital workflow — technician uses final setup for surgical guide</li>
+            <li>Digital mockup showable to patient at consultation</li>
+            <li>Removable: better oral hygiene, less hygienist visits</li>
+            <li>Reduced peri-implant inflammation vs fixed brackets</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Implant-Driven Specific Benefits</h3>
+          <ul class="fancy teal">
+            <li>Prosthetically guides implant position</li>
+            <li>Facilitates ideal emergence profile</li>
+            <li>Improves aesthetic outcomes</li>
+            <li>Reduces risk of compromised implant placement angle</li>
+            <li>Root position on CBCT used to guide safe movement ranges</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"When I say to the patient 'you'll need 2 years with an orthodontist first' — they say 'that long?'. With aligners: 'Here's your 10-aligner plan, implant in 3 months.' Much more acceptable."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 -->
+<div class="slide" data-slide="7">
+  <div class="slide-single">
+    <div class="tag">Root Control</div>
+    <h2>Managing <em>Root Position</em> & Relapse</h2>
+    <div class="slide-2col">
+      <div>
+        <p style="margin-bottom:10px;">Root movement is the hardest thing to control with aligners — and the most important for implant spacing.</p>
+        <div class="card gold">
+          <h3 class="gold">11% Root Relapse Rate</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">After orthodontic root movement, 11% relapse is expected. For implant planning, this means:</p>
+          <ul class="fancy gold">
+            <li>Plan space with 11% buffer built in</li>
+            <li>If finishing with 7mm: ensure setup achieves 7–8mm</li>
+            <li>Root tips can close space before implant placed</li>
+            <li>Consider retainer with attachments after ortho</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Managing Relapse</h3>
+          <ul class="fancy teal">
+            <li><strong>Apply 5° double-bend</strong> at end of treatment (equivalent to T-loop wire bend)</li>
+            <li>Helps root stay in correct angulation post-ortho</li>
+            <li>Apply second round at end — reduces relapse</li>
+            <li>Retainer with <strong>attachments</strong> on adjacent teeth holds root position</li>
+            <li>Without bone on root: retainer on crown only = crown doesn't move, root can</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"At the end of treatment: leave your retainers with attachments, with gauges. They will hold the tooth in place until the surgery is done."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 -->
+<div class="slide" data-slide="8">
+  <div class="slide-single">
+    <div class="tag">Anchorage</div>
+    <h2>TADs — Temporary <em>Anchorage Devices</em></h2>
+    <div class="slide-2col">
+      <div>
+        <p style="margin-bottom:10px;">Mini-implants (TADs) placed in bone provide skeletal anchorage for movements that aligners cannot achieve alone.</p>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">When TADs Are Needed</h3>
+          <ul class="fancy">
+            <li><strong>Molar uprighting</strong> — aligners cannot upright molars predictably</li>
+            <li><strong>Molar intrusion >0.5mm</strong> — especially brachycephalic patients</li>
+            <li>Significant distalization</li>
+            <li>Large rotations of molar/premolar teeth</li>
+            <li>Any movement where aligner flag shows "purple" difficulty</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Using Existing Implants as Anchorage</h3>
+          <ul class="fancy teal">
+            <li>Integrated implants provide excellent skeletal anchorage</li>
+            <li>No periodontium — implant doesn't move under load</li>
+            <li>Can use for: large rotations, distalization, intrusion</li>
+            <li>Wait <strong>3 months post-integration</strong> before using as anchorage</li>
+            <li>Buttons or composite engagers can be placed on crown surface</li>
+            <li>Rough crown surface (buff first) for better composite adhesion</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"If the patient is fit and well and has an integrated implant — feel free to use it for big rotations, for distalization. The implant is rock solid in the bone."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 -->
+<div class="slide" data-slide="9">
+  <div class="slide-single">
+    <div class="tag">Aligner Design</div>
+    <h2>Trim Line Selection — <em>High vs Low</em></h2>
+    <p class="lead">The trim line (how far the aligner extends cervically) affects the force distribution and soft tissue pressure around the implant.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card teal">
+          <h3>High Trim Line</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">Extends to cervical area of the crown. Forces applied near the <strong>gingival margin</strong>.</p>
+          <ul class="fancy teal">
+            <li>Better for <strong>root movement</strong></li>
+            <li>Higher torque control</li>
+            <li>Recommended when implant will be placed <strong>after ortho</strong></li>
+            <li>Forces near cervical = more root influence</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Low Trim Line</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">Stops at incisal/occlusal edge. Forces applied near crown tip only.</p>
+          <ul class="fancy gold">
+            <li>Better for <strong>crown tipping</strong></li>
+            <li>Recommended when implant is <strong>mid-treatment or already placed</strong></li>
+            <li>Avoids pressure on gingival margin → prevents soft tissue recession around implant</li>
+            <li>If implant already in, high trim line risks soft tissue retraction</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>"If you did your implant before ortho or mid-treatment: choose the <strong>low trim line</strong> — you don't want pressure around the soft tissue. Your tissue could retract if you have a high trim line."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 -->
+<div class="slide" data-slide="10">
+  <div class="slide-single">
+    <div class="tag">Clinical Workflow</div>
+    <h2>The Correct <em>Treatment Sequence</em></h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Comprehensive Digital Documentation</h4><p>Intraoral scans, CBCT, full face/smile photos, digital smile design. Share everything with lab technician AND orthodontist from the start.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Digital Mockup + Treatment Plan</h4><p>Technician produces mockup. Patient can visualise final outcome before starting. This alone dramatically improves acceptance and compliance.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Orthodontic Phase (Aligners)</h4><p>Create ideal space for implants. Correct root angulations. Optimise occlusion. Pontic tooth in aligner maintains aesthetics during treatment.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Implant Surgery</h4><p>Space confirmed. CBCT repeated if needed. Surgical guide based on final aligner setup. Place implant(s). Allow osseointegration.</p></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Soft Tissue / Periodontal Surgery</h4><p>Any gingival surgery goes LAST — after ortho and after implant integration. Avoids relapse from surgical trauma during active tooth movement.</p></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-body"><h4>Final Restoration + Retention</h4><p>Crowns fitted. Ortho retainer (with attachments). Nightguard for implant protection. Start annual review cycle.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12 -->
+<div class="slide" data-slide="11">
+  <div class="slide-single">
+    <div class="tag">Digital Tools</div>
+    <h2>Smartcloud — <em>Digital Collaboration</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">What Smartcloud Does</h3>
+          <ul class="fancy">
+            <li>Integrated ecosystem for multidisciplinary team communication</li>
+            <li>Share case files securely with orthodontist, lab, specialist</li>
+            <li>Avoids sharing patient images via mobile (GDPR-safe)</li>
+            <li>View treatment plans from any device</li>
+            <li>Lab technicians can sign onto the platform</li>
+            <li>Generate patient-facing video with moving soft tissue mockup</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"Even with consent forms, sharing patient images on mobile is something we can't do ethically. When we have a safe space to do that — it's better for the patient and better for us."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>CBCT Integration</h3>
+          <ul class="fancy teal">
+            <li>Upload CBCT scans alongside intraoral scans on first appointment</li>
+            <li>Roots, bone levels, and cortical dimensions visualised</li>
+            <li>Confirm if planned movement is safe (root near cortical → risk)</li>
+            <li>Check bone levels before prescribing movement — recession risk</li>
+            <li>"I feel like the captain of the Titanic without X-ray or CBCT"</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>For the Lab Technician</h3>
+          <p style="font-size:.82rem;color:var(--muted);">Share: space measurements, crown colour, overbite, interocclusal distance, abutment type planned, connection type, cement-retained vs screw-retained. "They hate us because we don't give them enough information."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13 -->
+<div class="slide" data-slide="12">
+  <div class="slide-single">
+    <div class="tag">Provisionals</div>
+    <h2>Managing the <em>Missing Tooth</em> During Treatment</h2>
+    <p class="lead">Patients will not tolerate a gap for 12–18 months of ortho. Options for managing missing teeth aesthetically during the orthodontic phase.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;">
+      <div class="card purple" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:1.5rem;margin-bottom:6px;">🦷</div>
+        <h4 style="font-size:.85rem;color:var(--text);margin-bottom:4px;">Pontic in Aligner</h4>
+        <p style="font-size:.78rem;color:var(--muted);">Artificial tooth built into the aligner shell. Clean surface. Automatic update with each new aligner. Best for most cases.</p>
+      </div>
+      <div class="card teal" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:1.5rem;margin-bottom:6px;">🔗</div>
+        <h4 style="font-size:.85rem;color:var(--text);margin-bottom:4px;">Bonded Temp Crown</h4>
+        <p style="font-size:.78rem;color:var(--muted);">Composite or resin-bonded temporary. Patient eats, goes out confidently. Especially useful for anterior teeth.</p>
+      </div>
+      <div class="card gold" style="text-align:center;padding:16px 10px;">
+        <div style="font-size:1.5rem;margin-bottom:6px;">📌</div>
+        <h4 style="font-size:.85rem;color:var(--text);margin-bottom:4px;">Unloaded Implant Crown</h4>
+        <p style="font-size:.78rem;color:var(--muted);">Implant placed but NOT loaded. Temp crown for aesthetics only. Final crown only after all treatment complete.</p>
+      </div>
+    </div>
+    <div class="highlight gold">
+      <p>"By delaying the extraction to the very end, the patient will have something there to eat, to go out, to feel confident. This is the best strategy for most anterior cases."</p>
+    </div>
+    <div class="card" style="margin-top:10px;">
+      <h3>Engagers on Implant Crowns</h3>
+      <p style="font-size:.83rem;color:var(--muted);">Aligner engagers CAN be placed on implant crown surfaces. Rough the surface with a buff, use monobond adhesive (not standard bond) for better adhesion to ceramic/acrylic. Works for rotation correction.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14 -->
+<div class="slide" data-slide="13">
+  <div class="slide-single">
+    <div class="tag">Retention</div>
+    <h2>Retention After <em>Implant + Ortho</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Retainer Strategy</h3>
+          <ul class="fancy">
+            <li>Always use <strong>retainer with attachments</strong> after ortho adjacent to implant site</li>
+            <li>Attachments on adjacent teeth hold root position (not just crown)</li>
+            <li>Without attachments: root relapse possible even with perfect crown position</li>
+            <li>Keep in place until surgery is completed and implant loaded</li>
+            <li>After final crown fitted: new retainer without attachments if stable</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Nightguard — Always After Implants</h3>
+          <ul class="fancy gold">
+            <li>Implant has <strong>no proprioception</strong> — patient cannot feel grinding</li>
+            <li>Daytime: conscious chewing, aware of forces</li>
+            <li>Night: unconscious loading → bone loss risk</li>
+            <li>Recommend <strong>Hawley retainer</strong> at night (acrylic plate grind surface)</li>
+            <li>Essix retainer NOT ideal for grinders (no occlusal coverage)</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"Having an implant and just giving an Essix retainer is enough for ortho — but it's not good for the implant. If the patient grinds, I'd rather have the nightguard on the nightstand than the crown fractured in the first year."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15 -->
+<div class="slide" data-slide="14">
+  <div class="slide-single">
+    <div class="tag">Night Protection</div>
+    <h2>Retainer vs Nightguard — <em>Negotiating the Balance</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card teal">
+          <h3>Stage 1 (Active Ortho Phase)</h3>
+          <ul class="fancy teal">
+            <li>Retainer: full time (day + night) for first 6 months</li>
+            <li>Patient is NOT grinding protection during this phase</li>
+            <li>If grinder: nightguard at night + retainer during day</li>
+            <li>Accept that there may be minor ortho relapse — the implant takes priority</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Stage 2 (Long-Term)</h3>
+          <ul class="fancy">
+            <li>Year 2+: nightguard (night) + retainer (day)</li>
+            <li>Non-grinders: retainer alone may suffice</li>
+            <li>Annual implant review: X-ray + clean + check nightguard</li>
+            <li>"Having an implant is like owning a car — MOT and service every year"</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Patient Education Script</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">The key message to patients:</p>
+          <ul class="fancy gold">
+            <li>"The implant is in the bone — it doesn't move. If you grind, the force goes directly to the implant and bone."</li>
+            <li>"You won't know you're grinding at night."</li>
+            <li>"This nightguard protects your investment."</li>
+            <li>"Use retainer in the day, nightguard at night."</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px;">
+          <p>"I always recommend a nightguard when finishing an implant case — it doesn't matter if single unit or multiple units or All-on-X."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16 -->
+<div class="slide" data-slide="15">
+  <div class="slide-single">
+    <div class="tag">Special Indications</div>
+    <h2>When Orthodontics is <em>Mandatory</em></h2>
+    <p class="lead">Some clinical situations make multidisciplinary ortho-implant planning non-negotiable, not optional.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Absolute Indications</h3>
+          <ul class="fancy">
+            <li><strong>Congenitally missing laterals</strong> — space created by peg lateral or agenesis needs calibration</li>
+            <li><strong>Posterior tooth loss with drifting/tilting</strong> — especially upright molars (hardest movement)</li>
+            <li><strong>Collapsing bite / increased overbite</strong> — vertical space creation required</li>
+            <li><strong>Dento-alveolar trauma</strong> — fibrotic tissue + abnormal root positions</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Periodontally Compromised Teeth</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">Counter-intuitive: ortho in perio patients can be beneficial before implants. Why?</p>
+          <ul class="fancy gold">
+            <li>Moving the tooth to a better position improves <strong>future implant anatomy</strong></li>
+            <li>Even if the tooth is lost during treatment — the bone and soft tissue are better positioned for implant</li>
+            <li>Must obtain <strong>special consent</strong> — tooth may be lost during ortho</li>
+            <li>Ortho does not improve perio — but improves implant site post-extraction</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>"We are leaving the patient in a better condition for the implant and for the restorative site. That tooth is going to be lost at some point — we're just optimising what comes after."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17 -->
+<div class="slide" data-slide="16">
+  <div class="slide-single">
+    <div class="tag">Case Study</div>
+    <h2>Trauma Case — <em>Lost 11 & 12 at Age 14</em></h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Background</h4><p>Car accident at 14. Upper right 1 & 2 (11, 12) lost. Fibrotic scarring in the area. Implant placement when 18–19 years old.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Pre-implant Orthodontics</h4><p>Fixed braces placed BEFORE implants. Ortho established correct root positions and space. Fibrotic tissue managed with periodontal surgery (at the very end).</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Implant Placement</h4><p>At 18–19: sufficient bone confirmed. Implants placed in ideal position. Long healing with temp crown in aligner pontic throughout.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Scar Removal + Final Restoration</h4><p>Plastic/periodontal surgery to remove scarring as LAST step. Final crowns after all ortho and tissue management complete. Patient aged 19 — much better outcome than if implant placed at 14.</p></div></div>
+    </div>
+    <div class="highlight gold">
+      <p>"The accident was at 14. She was 19 when we started — already a lot of waiting. But by taking the time to plan properly, the outcome was dramatically better than rushing in."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18 -->
+<div class="slide" data-slide="17">
+  <div class="slide-single">
+    <div class="tag">Case Study</div>
+    <h2>Periodontally Compromised — <em>All-on-X + Aligners</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Presentation</h3>
+          <ul class="fancy">
+            <li>Upper arch: fully periodontally compromised</li>
+            <li>Lower arch: canine-to-canine work needed</li>
+            <li>Plan: All-on-X implants upper (molars + premolars)</li>
+            <li>Then: aligners lower arch to improve position</li>
+          </ul>
+        </div>
+        <div class="card teal" style="margin-top:10px;">
+          <h3>Clever Sequence</h3>
+          <ul class="fancy teal">
+            <li>Upper All-on-X first — surgical guide based on final aligner setup position</li>
+            <li>Upper arch done: serves as stable reference for lower treatment</li>
+            <li>Lower: aligners with existing implants (5 & 6) as anchorage</li>
+            <li>Canine recession: move root slightly lingual → more space for perio graft at very end</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Key Lesson</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">The upper arch All-on-X was planned with the lower final position in mind. The digital setup told the technician exactly where the lower arch would end up.</p>
+          <ul class="fancy gold">
+            <li>Surgical guide made for upper BEFORE lower ortho</li>
+            <li>Patient motivated: upper arch already done</li>
+            <li>Periodontal surgery at very end once everything positioned</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"With the final position from the lower arch, the denture can do the surgical guide for the upper arch first — then do ortho on the lower. You actually have better control of what happens on the lower arch."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19 -->
+<div class="slide" data-slide="18">
+  <div class="slide-single">
+    <div class="tag">Case Study</div>
+    <h2>Mid-Treatment <em>Extraction</em> — Replanning Protocol</h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card">
+          <h3>The Situation</h3>
+          <ul class="fancy">
+            <li>Patient in active aligner treatment</li>
+            <li>Compromised tooth becomes symptomatic mid-treatment</li>
+            <li>Tooth must be extracted before treatment is complete</li>
+          </ul>
+        </div>
+        <div class="card teal" style="margin-top:10px;">
+          <h3>Management Protocol</h3>
+          <ul class="fancy teal">
+            <li>Rescan the patient after extraction</li>
+            <li>Replan with final position in mind</li>
+            <li>Request pontic in aligner at extracted tooth site</li>
+            <li>Finalise remaining space requirements</li>
+            <li>May place implant during this stage (unloaded)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Post-Treatment Retention</h3>
+          <ul class="fancy gold">
+            <li>Because the implant is now in place: no need for retainer with attachments on that site</li>
+            <li>The implant crown itself maintains the space</li>
+            <li>Standard retainer post-ortho is sufficient for that segment</li>
+            <li>Nightguard still recommended for implant protection</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"Once the implant is there — you also don't need to put a retainer with engager attachments on. The implant crown takes care of maintaining that space."</p>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Refinements</h3>
+          <p style="font-size:.82rem;color:var(--muted);">If space is still insufficient after refinements: do another refinement round. It is better to leave the patient in more aligners than to deliver fewer implants than promised.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20 -->
+<div class="slide" data-slide="19">
+  <div class="slide-single">
+    <div class="tag">Medications</div>
+    <h2>Medications Affecting <em>Bone Response</em></h2>
+    <p class="lead">Both orthodontic tooth movement and implant osseointegration depend on bone remodelling — which can be significantly impaired by common medications.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card red">
+          <h3 style="color:var(--orange);">High-Risk Medications</h3>
+          <ul class="fancy red">
+            <li><strong>Antidepressants</strong> — decrease bone response; slower ortho movement AND slower osseointegration</li>
+            <li><strong>Immunosuppressants</strong> — avoid using implant as anchorage</li>
+            <li><strong>Diabetes medications</strong> (especially if poorly controlled) — impaired healing</li>
+            <li><strong>Bisphosphonates</strong> — significant risk of MRONJ</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"Finding a patient who is fit and well with no medications for an implant — I think it's like gold. It's not what we see in daily practice."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Clinical Implications</h3>
+          <ul class="fancy teal">
+            <li>Patient lost bone during graft surgery + on antidepressants + needing large tooth movements → be conservative</li>
+            <li>Delay placement if bone remodelling is needed adjacent to implant</li>
+            <li>Minimal movements near newly grafted areas</li>
+            <li>Check medications at every appointment</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Heavy Grinders / Brachycephalic</h3>
+          <p style="font-size:.82rem;color:var(--muted);">Do NOT use implant as orthodontic anchorage in active grinders (until they have nightguard compliance proven). Excessive force from grinding + ortho loading = failure risk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21 -->
+<div class="slide" data-slide="20">
+  <div class="slide-single">
+    <div class="tag">Communication</div>
+    <h2>Talking to <em>Your Orthodontic Team</em></h2>
+    <p class="lead">Poor communication between the implant surgeon and the orthodontist is the most preventable cause of poor outcomes.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">What to Send to Ortho / GP</h3>
+          <ul class="fancy">
+            <li>How much space you need and where (in millimetres)</li>
+            <li>Whether it's a single implant, multiple, or bridge</li>
+            <li>Type of connection (tissue level/bone level)</li>
+            <li>Abutment type planned</li>
+            <li>Cement vs screw-retained</li>
+            <li>Overbite and overjet requirements</li>
+            <li>Your final crown vision — which "apple" do you want?</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">What to Receive from Ortho</h3>
+          <ul class="fancy gold">
+            <li>Digital setup showing final root positions</li>
+            <li>Confirmation of space achieved (mesiodistal + vertical)</li>
+            <li>Alert if target space cannot be achieved — so you can adapt</li>
+            <li>Recommendation to use narrow implant if necessary</li>
+            <li>Final retainer type prescribed</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"If you are just sending 'go to the tell your patient to do ortho' — they will go to the GP, but you didn't leave anything explicit. Be the best friend of your restorative colleagues."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22 -->
+<div class="slide" data-slide="21">
+  <div class="slide-single">
+    <div class="tag">Extrusion Strategy</div>
+    <h2>Aligner Extrusion — <em>Sequence Matters</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card teal">
+          <h3>When Extrusion is Needed</h3>
+          <ul class="fancy teal">
+            <li>Restoring a compromised tooth before extraction (builds bone)</li>
+            <li>Improving crown-to-root ratio before restorative work</li>
+            <li>Establishing better vertical position for future implant</li>
+            <li>Correcting deep bite (relative extrusion of posteriors)</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Why It Goes Last</h3>
+          <p style="font-size:.85rem;color:var(--muted);">Extrusion is the hardest movement to achieve with aligners. If programmed early, other movements are completed and the aligner runs out before full extrusion.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Correct Protocol</h3>
+          <ul class="fancy gold">
+            <li>Request extrusion for the <strong>LAST steps</strong> of the aligner sequence</li>
+            <li>"Break the movements" — align first, then extrude</li>
+            <li>Higher chance of success because the aligner can focus on extrusion</li>
+            <li>Can still complete satisfactorily even if not 100% at end</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px;">
+          <p>"Always request extrusion for the last steps. When we break the movements — align the arch and extrude later — we have a higher chance of achieving the extrusion."</p>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Molar Intrusion Limit</h3>
+          <p style="font-size:.82rem;color:var(--muted);">Maximum predictable molar intrusion with aligners alone: <strong>0.5mm</strong>. Brachycephalic patients (strong masseter): even less predictable. Use TADs for >0.5mm intrusion.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 23 -->
+<div class="slide" data-slide="22">
+  <div class="slide-single">
+    <div class="tag">Buccal Corridor</div>
+    <h2>The <em>Buccal Corridor</em> — Don't Forget It</h2>
+    <div class="slide-2col">
+      <div>
+        <p style="margin-bottom:10px;">Once an implant is placed, it becomes a fixed point. Any subsequent attempt to expand the arch will be blocked by the implant — the teeth around it can move but the implant cannot.</p>
+        <div class="card red">
+          <h3 style="color:var(--orange);">The Risk</h3>
+          <ul class="fancy red">
+            <li>Placing an upper premolar implant in a narrow arch</li>
+            <li>Patient needs arch expansion 2 years later for aesthetics</li>
+            <li>The 5 cannot expand — everything around it moves but the implant is stuck</li>
+            <li>Leaves an obvious asymmetry in the smile</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>Assessment Protocol</h3>
+          <ul class="fancy teal">
+            <li>Check buccal corridor at consultation smile photos</li>
+            <li>If arch is narrow: plan expansion BEFORE implant</li>
+            <li>Use upper study models in articulator — assess expansion potential</li>
+            <li>If expansion likely needed in future → do ortho first</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"We look at the patient and say: bone OK, soft tissue OK, I can place the implant. But if that arch needs expansion in 2 years — you can't expand that 5 anymore. It's permanently fixed in position."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24 -->
+<div class="slide" data-slide="23">
+  <div class="slide-single">
+    <div class="tag">Space Measurement</div>
+    <h2>Two Methods to <em>Measure Space</em></h2>
+    <p class="lead">Two distinct measurements must be made for every planned implant site — one for aesthetics, one for surgical safety.</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Contact Point to Contact Point</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">The wider measurement — from where adjacent crowns touch occlusally.</p>
+          <ul class="fancy">
+            <li>Used for <strong>aesthetic crown planning</strong></li>
+            <li>Determines visible space in the smile</li>
+            <li>If too small: crown will look narrow/malformed</li>
+            <li>If too large: dark triangle at emergence</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Minimum Available (Bone Level)</h3>
+          <p style="font-size:.85rem;margin-bottom:8px;">The narrower measurement — at the level of the gingiva/bone, where root surfaces converge.</p>
+          <ul class="fancy gold">
+            <li>Used for <strong>surgical safety planning</strong></li>
+            <li>Root surfaces converge here — less space than crown zone</li>
+            <li>If &lt;6.5mm: implant risks root contact on either side</li>
+            <li>Both measurements needed: they are often quite different</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>Always measure BOTH. A case may look like it has enough contact-point space, but at bone level the roots may leave insufficient room for the implant body.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25 -->
+<div class="slide" data-slide="24">
+  <div class="slide-single">
+    <div class="tag">Implant as Anchorage</div>
+    <h2>Using Existing Implants for <em>Ortho Anchorage</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card green">
+          <h3>When It Works Well</h3>
+          <ul class="fancy green">
+            <li>Patient fit and well — no immunosuppression, no uncontrolled diabetes</li>
+            <li>Implant fully integrated for ≥3 months</li>
+            <li>Not actively grinding/bruxing</li>
+            <li>Distalization, large rotation correction</li>
+            <li>Cases requiring skeletal anchorage</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card red">
+          <h3 style="color:var(--orange);">When NOT to Use as Anchorage</h3>
+          <ul class="fancy red">
+            <li>Diabetes (risk of implant failure + poor bone response)</li>
+            <li>Immunosuppressant medication</li>
+            <li>Heavy grinder/clencher (unless nightguard is compliant)</li>
+            <li>Fresh implant placement with bone grafting — remodelling area still active</li>
+            <li>Large movements adjacent to newly-grafted site</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>"The implant is rock solid in the bone. There is no periodontal ligament — it will not move. <strong>Feel free to use it for big rotations, for distalization</strong> — it's a good source of anchorage."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 26 -->
+<div class="slide" data-slide="25">
+  <div class="slide-single">
+    <div class="tag">Common Challenges</div>
+    <h2>Solving Common <em>Combined Case</em> Problems</h2>
+    <table class="compare">
+      <tr><th>Problem</th><th>Solution</th></tr>
+      <tr><td>Insufficient space after ortho</td><td class="purp">Refinement round / another revision until space confirmed</td></tr>
+      <tr><td>Quoted 3 implants but only space for 2</td><td class="neutral">Plan space BEFORE quoting; accept bridge instead</td></tr>
+      <tr><td>11% root relapse closing space</td><td class="pro">Retainer with attachments; double-bend prescription</td></tr>
+      <tr><td>Missing tooth aesthetics during ortho</td><td class="neutral">Pontic in aligner, bonded temp crown, or unloaded implant crown</td></tr>
+      <tr><td>Patient forgot what their start was</td><td class="purp">Digital photos and setup comparison at every review</td></tr>
+      <tr><td>Molar won't upright with aligners</td><td class="pro">TADs; or use integrated implant as anchorage</td></tr>
+      <tr><td>Grinder risks after implant</td><td class="neutral">Hawley nightguard as priority; compromise on retainer compliance</td></tr>
+      <tr><td>Patient refuses ortho — wrong space</td><td class="con">Narrow implant; document discussion; accept compromise</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 27 -->
+<div class="slide" data-slide="26">
+  <div class="slide-single">
+    <div class="tag">Digital Workflow</div>
+    <h2>Digital Mockup — <em>The Treatment Acceptance Tool</em></h2>
+    <div class="slide-2col">
+      <div>
+        <div class="card purple">
+          <h3 style="color:var(--purple);">Why Digital Mockup Works</h3>
+          <ul class="fancy">
+            <li>Patient can visualise the end goal on the <strong>first appointment</strong></li>
+            <li>They take it home and show family — family now supports treatment</li>
+            <li>Patient remembers what they started with (vs 18 months later)</li>
+            <li>Reduces compliance issues around cost / duration</li>
+            <li>Creates shared accountability with the clinical team</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"Charge up to £250 for a mockup — they will be grateful. They go home, show it to the family. If the family was not supporting before, they will see the final outcome."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card teal">
+          <h3>What to Include in the Plan</h3>
+          <ul class="fancy teal">
+            <li>Timeline: when ortho, when surgery, when crown</li>
+            <li>Digital wax-up showing final tooth shapes</li>
+            <li>Animated soft-tissue video mockup (Smartcloud/ClearCorrect)</li>
+            <li>Surgical guide preview if applicable</li>
+            <li>All shared with the lab technician before start</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Prosthetically-Driven Mindset</h3>
+          <p style="font-size:.83rem;color:var(--muted);">Think backwards from the final restoration. Know what the crown will look like, what connection it needs, what space it requires, what abutment height is needed — BEFORE you plan the first aligner or place the first implant.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 28 -->
+<div class="slide" data-slide="27">
+  <div class="slide-single">
+    <div class="tag">Ortho-Can-Help</div>
+    <h2>Can Orthodontics <em>Create Bone</em>?</h2>
+    <p class="lead">An emerging debate: can aligner-mediated tooth movement create new bone and improve the site before implant placement?</p>
+    <div class="slide-2col">
+      <div>
+        <div class="card teal">
+          <h3>The Theory</h3>
+          <ul class="fancy teal">
+            <li>Moving a tooth through an extraction site before implant placement may stimulate bone formation in the direction of movement</li>
+            <li>This is called <strong>orthodontically mediated bone generation</strong></li>
+            <li>Theoretically could reduce need for bone grafting</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px;">
+          <p>"There is a lot of positive cases and maybe we will create some bone — but it's not 100% sure. And for a significant bone defect, I would still do step-by-step staging."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3 class="gold">Current Consensus</h3>
+          <ul class="fancy gold">
+            <li>Literature not yet in consensus</li>
+            <li>Some cases show benefit — but case selection is critical</li>
+            <li>Not reliable for large bone defects</li>
+            <li>May work for small amounts of additional bone</li>
+            <li>Do not use as substitute for staged bone grafting in deficient ridges</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Practical Advice</h3>
+          <p style="font-size:.83rem;color:var(--muted);">If ortho can improve the site and the literature suggests it's possible for that defect size — consider it as an adjunct, not a replacement for bone grafting. Do not put all eggs in one basket.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 29 -->
+<div class="slide" data-slide="28">
+  <div class="slide-single">
+    <div class="tag">Summary</div>
+    <h2>Multidisciplinary Workflow — <em>Decision Summary</em></h2>
+    <table class="compare">
+      <tr><th>Clinical Situation</th><th>Recommended Approach</th></tr>
+      <tr><td>Congenitally missing lateral</td><td class="purp">Ortho first to establish space, then implant at 18+</td></tr>
+      <tr><td>Tilted molar into gap</td><td class="purp">TADs or aligner uprighting (may need TADs), then implant</td></tr>
+      <tr><td>Good space, straightforward case</td><td class="pro">Minimal or no ortho — direct implant placement</td></tr>
+      <tr><td>Class III/deep bite with space issues</td><td class="purp">Full ortho first — vertical space creation priority</td></tr>
+      <tr><td>Periodontal compromise</td><td class="neutral">Ortho to improve site, with consent about potential tooth loss</td></tr>
+      <tr><td>Patient refuses ortho</td><td class="neutral">Narrow implant if possible, document, manage expectations</td></tr>
+      <tr><td>Multiple missing teeth / All-on-X</td><td class="purp">Full digital planning — surgical guide off final orthodontic setup</td></tr>
+    </table>
+    <div class="highlight" style="margin-top:12px;">
+      <p>The key principle: <strong>think prosthetically from day one</strong>. The final restoration drives every decision — implant position, ortho prescription, surgery timing, and retention strategy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 30 -->
+<div class="slide" data-slide="29">
+  <div class="slide-hero">
+    <div class="tag">Lecture 03 Complete</div>
+    <h1>Key <em>Takeaways</em></h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px;width:100%;max-width:820px;margin:20px 0;text-align:left;">
+      <div class="card purple"><h4 style="font-size:.85rem;color:var(--purple);margin-bottom:4px;">1. Ortho First</h4><p style="font-size:.78rem;color:var(--muted);">Establish correct root positions and space before placing implants. The implant is permanent — the ortho window is not.</p></div>
+      <div class="card teal"><h4 style="font-size:.85rem;color:var(--teal);margin-bottom:4px;">2. Mind the Gap</h4><p style="font-size:.78rem;color:var(--muted);">6.5–7mm mesiodistal, 8mm vertical. Measure both contact-point AND bone-level space. Quote only what fits.</p></div>
+      <div class="card gold"><h4 style="font-size:.85rem;color:var(--gold);margin-bottom:4px;">3. 11% Relapse</h4><p style="font-size:.78rem;color:var(--muted);">Root movement relapses. Use retainer with attachments and double-bend prescription. Build a buffer into your space plan.</p></div>
+      <div class="card purple"><h4 style="font-size:.85rem;color:var(--purple);margin-bottom:4px;">4. Always Nightguard</h4><p style="font-size:.78rem;color:var(--muted);">Implant has no proprioception. Patient doesn't know they grind at night. Hawley retainer at night for all grinders.</p></div>
+      <div class="card teal"><h4 style="font-size:.85rem;color:var(--teal);margin-bottom:4px;">5. Implants as Anchorage</h4><p style="font-size:.78rem;color:var(--muted);">Integrated, healthy implants are excellent orthodontic anchors. Use them for rotations and distalization (not in grinders or the immunocompromised).</p></div>
+      <div class="card gold"><h4 style="font-size:.85rem;color:var(--gold);margin-bottom:4px;">6. Show to Accept</h4><p style="font-size:.78rem;color:var(--muted);">Digital mockup on day one. The patient sees the end goal. Family supports. Treatment is accepted and adhered to.</p></div>
+    </div>
+    <a href="quiz_03_aligners_implants.html" style="background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:12px 28px;border-radius:6px;text-decoration:none;font-size:.9rem;letter-spacing:.05em;margin-top:8px;display:inline-block;">Take Quiz 03 →</a>
+  </div>
+</div>
+</main>
+<div class="toc-overlay" id="tocOverlay">
+  <div class="toc-inner">
+    <button class="toc-close" onclick="closeToc()">✕ Close</button>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:6px;color:var(--text);">Table of Contents</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:24px;">Lecture 03 — Clear Aligners & Implant Treatment Planning</p>
+    <div class="toc-grid" id="tocGrid"></div>
+  </div>
+</div>
+<footer>
+  <button class="btn btn-prev" id="prevBtn" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <button class="toc-btn" onclick="openToc()">☰ Contents (T)</button>
+  <button class="btn btn-next" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</footer>
+<script>
+const TOTAL=30,KEY='baird_lecture3';
+let current=0;
+const titles=["Title Slide","Why Multidisciplinary Matters","Ortho Before Implants","Space: Single Implant","Space: Multiple Implants","How Aligners Work","Aligner Benefits for Implants","Root Position & Relapse","TADs","Trim Line Selection","Treatment Sequence","Smartcloud Digital Workflow","Provisional Management","Retention Strategy","Retainer vs Nightguard","Mandatory Ortho Indications","Case: Trauma Lost 11 & 12","Case: All-on-X + Aligners","Case: Mid-Treatment Extraction","Medications & Bone Response","Ortho Team Communication","Aligner Extrusion Sequence","Buccal Corridor","Two Space Measurements","Implants as Anchorage","Common Problems & Solutions","Digital Mockup","Can Ortho Create Bone?","Decision Summary","Key Takeaways"];
+const tg=document.getElementById('tocGrid');
+titles.forEach((t,i)=>{tg.innerHTML+=`<div class="toc-item" onclick="goTo(${i});closeToc()"><span class="toc-num">${String(i+1).padStart(2,'0')}</span><span class="toc-text">${t}</span></div>`;});
+function goTo(n){const s=document.querySelectorAll('.slide');const target=Math.max(0,Math.min(TOTAL-1,n));if(target===current)return;const previous=s[current];previous.classList.remove('active');previous.classList.add('exit-left');setTimeout(()=>previous.classList.remove('exit-left'),400);current=target;s[current].classList.add('active');updateUI();save();}
+function changeSlide(d){goTo(current+d);}
+function updateUI(){document.getElementById('slideNum').textContent=current+1;document.getElementById('progressFill').style.width=((current+1)/TOTAL*100)+'%';document.getElementById('prevBtn').disabled=current===0;document.getElementById('nextBtn').disabled=current===TOTAL-1;document.querySelectorAll('.toc-item').forEach((el,i)=>el.classList.toggle('done',i<current));}
+function openToc(){document.getElementById('tocOverlay').classList.add('open');}
+function closeToc(){document.getElementById('tocOverlay').classList.remove('open');}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({slide:current}));}catch(e){}}
+function load(){try{const d=localStorage.getItem(KEY);if(d){const p=JSON.parse(d);if(p.slide>0)goTo(p.slide);}}catch(e){}}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')changeSlide(1);if(e.key==='ArrowLeft')changeSlide(-1);if(e.key==='t'||e.key==='T'){document.getElementById('tocOverlay').classList.contains('open')?closeToc():openToc();}if(e.key==='Escape')closeToc();});
+load();updateUI();
+</script>
+</body>
+</html>

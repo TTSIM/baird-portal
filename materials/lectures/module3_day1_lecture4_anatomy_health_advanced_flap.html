@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 4 — Peri-implant Anatomy, Health &amp; Advanced Flap Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--surface:#141e27;--surface2:#1a2733;--border:#1e3040;--gold:#c9a84c;--teal:#2dd4bf;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--sky:#0ea5e9;--sky2:#38bdf8}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow:hidden}
+  #header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,rgba(8,12,16,.98),rgba(8,12,16,.85));border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+  .course-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase}
+  .lecture-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-weight:300;letter-spacing:.05em}
+  .slide-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+  #progress-bar{position:fixed;top:54px;left:0;right:0;z-index:99;height:2px;background:var(--border)}
+  #progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--teal));transition:width .4s ease}
+  #slides-container{position:fixed;top:56px;bottom:56px;left:0;right:0;overflow:hidden}
+  .slide{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;pointer-events:none;transform:translateX(60px);transition:all .45s cubic-bezier(.4,0,.2,1);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+  .slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+  .slide.prev{opacity:0;transform:translateX(-60px)}
+  .slide-title-page{justify-content:center;align-items:center;text-align:center;background:radial-gradient(ellipse at 50% 30%,rgba(14,165,233,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(45,212,191,.05) 0%,transparent 50%)}
+  .title-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sky);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(14,165,233,.3);padding:4px 16px;display:inline-block}
+  .main-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--text);line-height:1.1;margin-bottom:16px}
+  .main-title em{color:var(--gold);font-style:italic}
+  .subtitle{font-size:16px;color:var(--text2);letter-spacing:.1em;margin-bottom:40px}
+  .title-divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--sky),transparent);margin:0 auto 40px}
+  .module-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .slide-heading{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);margin-bottom:6px;line-height:1.2}
+  .slide-subheading{font-size:13px;color:var(--sky);letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px;font-family:'JetBrains Mono',monospace}
+  .slide-body{flex:1;display:flex;gap:32px;align-items:flex-start}
+  .slide-body.col{flex-direction:column}
+  .content-col{flex:1}
+  .diagram-col{flex:0 0 300px}
+  p.lead{font-size:17px;color:var(--text);line-height:1.7;margin-bottom:16px}
+  p.body-text{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+  .bullet-list{list-style:none}
+  .bullet-list li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:16px;color:var(--text);line-height:1.5}
+  .bullet-list li::before{content:'▸';color:var(--sky);margin-top:2px;flex-shrink:0;font-size:12px}
+  .bullet-list li span.hl{color:var(--gold);font-weight:600}
+  .info-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:16px 20px;margin-bottom:14px;border-radius:2px}
+  .info-card .card-title{font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+  .info-card p{font-size:15px;color:var(--text2);line-height:1.6}
+  .info-card.sky{border-left-color:var(--sky)}.info-card.sky .card-title{color:var(--sky)}
+  .info-card.teal{border-left-color:var(--teal)}.info-card.teal .card-title{color:var(--teal)}
+  .info-card.red{border-left-color:var(--red)}.info-card.red .card-title{color:var(--red)}
+  .info-card.green{border-left-color:var(--green)}.info-card.green .card-title{color:var(--green)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .compare-col{background:var(--surface);border:1px solid var(--border);padding:16px}
+  .compare-col .compare-title{font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;font-family:'JetBrains Mono',monospace}
+  .compare-col.a .compare-title{color:var(--sky)}
+  .compare-col.b .compare-title{color:var(--teal)}
+  .compare-col ul{list-style:none}
+  .compare-col ul li{font-size:13px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}
+  .compare-col ul li:last-child{border-bottom:none}
+  .warning-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);padding:14px 18px;margin:12px 0}
+  .warning-box .w-title{font-size:11px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+  .warning-box p{font-size:14px;color:var(--text2);line-height:1.5}
+  .summary-box{background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(14,165,233,.02));border:1px solid rgba(14,165,233,.2);padding:20px 24px;margin:16px 0}
+  .summary-box .s-title{font-size:11px;color:var(--sky);letter-spacing:.2em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:10px}
+  .obj-list{}
+  .obj-item{display:flex;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .obj-num{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);opacity:.4;flex-shrink:0;line-height:1;margin-top:-2px;min-width:30px}
+  .obj-text{font-size:16px;color:var(--text2);line-height:1.6}
+  .obj-text strong{color:var(--text)}
+  .step-box{display:flex;align-items:flex-start;gap:16px;background:var(--surface);border:1px solid var(--border);padding:14px 16px;margin-bottom:10px}
+  .step-num{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--sky);opacity:.7;flex-shrink:0;line-height:1;min-width:28px}
+  .step-text{font-size:14px;color:var(--text2);line-height:1.5}
+  .step-text strong{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
+  .fact-box{background:var(--surface);border:1px solid var(--border);padding:12px 16px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start}
+  .fact-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);min-width:24px;flex-shrink:0;margin-top:2px}
+  .fact-text{font-size:14px;color:var(--text2);line-height:1.5}
+  .fact-text strong{color:var(--text)}
+  /* checklist */
+  .checklist-item{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px;color:var(--text2);line-height:1.5}
+  .checklist-item:last-child{border-bottom:none}
+  .checklist-item .ci-label{min-width:120px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sky);letter-spacing:.1em;flex-shrink:0;margin-top:2px}
+  /* decision tree */
+  .dtree-node{background:var(--surface);border:1px solid var(--border);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px}
+  .dtree-node .dn-q{font-size:14px;color:var(--text);line-height:1.4;flex:1}
+  .dtree-node .dn-yes{font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace;padding:3px 8px;border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.06);white-space:nowrap}
+  .dtree-node .dn-no{font-size:11px;color:var(--red);font-family:'JetBrains Mono',monospace;padding:3px 8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);white-space:nowrap}
+  /* Nav */
+  #nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,12,16,.95);border-top:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+  .nav-btn{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s}
+  .nav-btn:hover:not(:disabled){border-color:var(--sky);color:var(--sky)}
+  .nav-btn:disabled{opacity:.2;cursor:default}
+  .slide-dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:400px;justify-content:center}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+  .dot.active{background:var(--sky);transform:scale(1.4)}
+  .dot:hover{background:var(--text3)}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--sky);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left}
+  td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text2);line-height:1.5;vertical-align:top}
+  td:first-child{color:var(--text);font-weight:600}
+  tr:last-child td{border-bottom:none}
+</style>
+</head>
+<body>
+<div id="header">
+  <div>
+    <div class="course-label">Baird Implant Course · Module 2</div>
+    <div class="lecture-title">Lecture 4 — Anatomy, Health Monitoring &amp; Advanced Flap Reference</div>
+  </div>
+  <div class="slide-counter">Slide <span id="cur">1</span> / <span id="tot">30</span></div>
+</div>
+<div id="progress-bar"><div id="progress-fill"></div></div>
+<div id="slides-container">
+
+<!-- SLIDE 1 -->
+<div class="slide slide-title-page active" data-slide="1">
+  <div class="title-tag">Baird Implant Course · Lecture Series</div>
+  <div class="main-title">Peri-implant <em>Anatomy</em>,<br>Health Monitoring<br>&amp; Advanced Flap Reference</div>
+  <div class="title-divider"></div>
+  <div class="subtitle">LECTURE 4 OF 4 · ORAL ANATOMY · PROBING · XLA BIOLOGY · 10 FACTS · ADVANCED FLAP</div>
+  <div class="module-info">Module 2 · Supplementary Reference · Baird Course Material</div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" data-slide="2">
+  <div class="slide-heading">Learning Objectives</div>
+  <div class="slide-subheading">Content covered in this supplementary lecture</div>
+  <div class="obj-list">
+    <div class="obj-item"><div class="obj-num">01</div><div class="obj-text">Describe the <strong>three zones of oral gingival anatomy</strong> and their distinct properties</div></div>
+    <div class="obj-item"><div class="obj-num">02</div><div class="obj-text">Explain the <strong>five key differences</strong> between peri-implant and natural tooth soft tissue</div></div>
+    <div class="obj-item"><div class="obj-num">03</div><div class="obj-text">Apply the <strong>BAIRD probing protocol</strong> and annual check-up framework correctly</div></div>
+    <div class="obj-item"><div class="obj-num">04</div><div class="obj-text">Describe the <strong>XLA bone change hypothesis</strong> for thin and thick biotype post-extraction</div></div>
+    <div class="obj-item"><div class="obj-num">05</div><div class="obj-text">Recall all <strong>10 biology facts</strong> for flap design planning</div></div>
+    <div class="obj-item"><div class="obj-num">06</div><div class="obj-text">Apply advanced detail: <strong>Golf Club oblique component</strong>, <strong>GBR step/clefting risk</strong>, <strong>maxilla vs mandible crestal incision</strong>, and <strong>de-epithelialised papilla technique</strong></div></div>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" data-slide="3">
+  <div class="slide-heading">Oral Anatomy — The Three Gingival Zones</div>
+  <div class="slide-subheading">Foundation anatomy for every implant assessment</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">The gingiva surrounds the teeth and covers the alveolar bone, protecting underlying tissues from mechanical damage and bacterial invasion.</p>
+      <div class="info-card sky">
+        <div class="card-title">1. Free Gingiva</div>
+        <p>Forms a collar around the tooth. Once the tooth is removed, the free gingiva collapses — as healing progresses it merges with surrounding tissue. <strong>The free gingiva effectively disappears after tooth extraction.</strong></p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">2. Attached Gingiva</div>
+        <p>Firmly bound to the alveolar bone. Provides stability and protection. Withstands mechanical forces of chewing and brushing. Acts as a barrier to bacteria protecting periodontal structures. <strong>This is the zone of interest for implant health.</strong></p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">3. Non-Attached Mucosa (Alveolar Mucosa)</div>
+        <p>The movable tissue beyond the attached gingiva. Thinner, non-keratinized, loosely connected to bone. Less resilient, more prone to injury, less effective against mechanical forces or bacterial invasion. Its flexibility allows lip and cheek movement.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 260 300" width="260" height="300">
+        <text x="130" y="16" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">GINGIVAL ZONES</text>
+        <!-- Tooth -->
+        <rect x="80" y="22" width="100" height="100" rx="3" fill="rgba(220,200,160,.1)" stroke="rgba(220,200,160,.3)" stroke-width="1.5"/>
+        <text x="130" y="75" fill="#8fa8bc" font-family="Rajdhani" font-size="11" text-anchor="middle">TOOTH / ROOT</text>
+        <!-- Free gingiva -->
+        <rect x="60" y="122" width="140" height="26" fill="rgba(14,165,233,.12)" stroke="rgba(14,165,233,.4)" stroke-width="1.5"/>
+        <text x="130" y="139" fill="#0ea5e9" font-family="Rajdhani" font-size="11" text-anchor="middle" font-weight="600">FREE GINGIVA</text>
+        <!-- Attached gingiva -->
+        <rect x="40" y="148" width="180" height="40" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.35)" stroke-width="1.5"/>
+        <text x="130" y="172" fill="#c9a84c" font-family="Rajdhani" font-size="12" text-anchor="middle" font-weight="600">ATTACHED GINGIVA</text>
+        <!-- MGJ line -->
+        <line x1="30" y1="188" x2="230" y2="188" stroke="rgba(239,68,68,.6)" stroke-width="1.5"/>
+        <text x="234" y="192" fill="#ef4444" font-family="JetBrains Mono" font-size="7">MGJ</text>
+        <!-- Non-attached -->
+        <rect x="40" y="188" width="180" height="40" fill="rgba(45,212,191,.06)" stroke="rgba(45,212,191,.2)" stroke-width="1"/>
+        <text x="130" y="212" fill="#2dd4bf" font-family="Rajdhani" font-size="11" text-anchor="middle">NON-ATTACHED MUCOSA</text>
+        <!-- Bone -->
+        <rect x="40" y="228" width="180" height="22" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)"/>
+        <text x="130" y="242" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">BONE</text>
+        <!-- Labels right -->
+        <text x="130" y="270" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Keratinized = Free + Attached</text>
+        <text x="130" y="284" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Non-keratinized = Alveolar mucosa</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" data-slide="4">
+  <div class="slide-heading">Peri-implant vs Natural Tooth Mucosa</div>
+  <div class="slide-subheading">Five key structural differences</div>
+  <div class="slide-body col">
+    <p class="body-text">The soft tissue architecture around dental implants differs fundamentally from that around natural teeth. This affects bleeding response, probing interpretation, and susceptibility to disease.</p>
+    <div class="three-col">
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">1. Blood Supply</div>
+        <p style="font-size:13px">Natural teeth: rich blood supply from PDL vessels + supraperiosteal vessels. Implants: no PDL → reduced vascularity. The connective tissue seal is weaker and less vascularised.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">2. CT Fibre Direction</div>
+        <p style="font-size:13px"><strong>Implants: parallel</strong> to the implant surface. <strong>Teeth: perpendicular</strong> (Sharpey's fibres anchored in cementum). Parallel fibres = weaker connective tissue attachment.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">3. Fibroblasts &amp; Collagen</div>
+        <p style="font-size:13px">Reduced fibroblast density and collagen fibre content around implants. The connective tissue seal is less robust and less capable of resisting bacterial invasion.</p>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:12px">
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">4. Junctional Epithelium Permeability</div>
+        <p style="font-size:14px;color:var(--text2)">Junctional epithelium around implants is more permeable than around natural teeth. Higher permeability = easier bacterial penetration toward the crestal zone.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">5. Minimal Keratinized Mucosa Width</div>
+        <p style="font-size:14px;color:var(--text2)">Implants require a minimal width of attached keratinized mucosa more critically than natural teeth — because the other four defences are all reduced. KM is the primary protective barrier.</p>
+      </div>
+    </div>
+    <div class="summary-box" style="margin-top:8px">
+      <div class="s-title">Clinical Implication</div>
+      <p style="font-size:14px;color:var(--text2)">All five differences point in the same direction: peri-implant soft tissue is inherently more vulnerable than natural tooth gingiva. This is why strict maintenance protocols and adequate keratinized mucosa are non-negotiable.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" data-slide="5">
+  <div class="slide-heading">Probing Around Implants — 4 Reasons for Caution</div>
+  <div class="slide-subheading">Why standard periodontal probing is not directly transferable to implants</div>
+  <div class="slide-body col">
+    <div class="three-col" style="margin-bottom:12px">
+      <div class="info-card red" style="margin:0;grid-column:span 1">
+        <div class="card-title">Reason 1 — No Cementum / PDL</div>
+        <p style="font-size:13px">Probing can disrupt the delicate epithelial attachment around the implant. Without cementum and PDL, the junctional epithelium has weaker anchorage. Disruption can lead to inflammation or infection.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Reason 2 — Fragile Tissue</div>
+        <p style="font-size:13px">Peri-implant tissues are more fragile than natural tooth gingiva. Aggressive probing can cause trauma to the peri-implant soft tissue, potentially triggering peri-implantitis.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Reason 3 — Depth Variability</div>
+        <p style="font-size:13px">The sulcus depth around implants varies significantly depending on the depth of implant placement. Pocket depth measurements are not accurate or meaningful data for clinical assessment.</p>
+      </div>
+    </div>
+    <div class="info-card red">
+      <div class="card-title">Reason 4 — False Negatives Around Crowns &amp; Bridges</div>
+      <p>Probing around implant crowns or bridges will most likely give <strong>false negative results</strong> — due to the lack of flexibility of the periodontal probe and the high chance it will be contacting the contoured metal abutment rather than actually reaching the bone level.</p>
+    </div>
+    <div class="info-card sky">
+      <div class="card-title">BAIRD Probing Protocol</div>
+      <p>BAIRD recommends using the probe to check for <strong>bleeding</strong> by inserting the probe <strong>1–2mm</strong> only, then moving it in a <strong>lateral movement</strong>. Inflamed mucosa will bleed; healthy mucosa will not.<br><br>BAIRD does <strong>not recommend</strong> using the probe to check pocket depth — they consider it irrelevant to clinical decision-making around implants.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" data-slide="6">
+  <div class="slide-heading">Annual Check-Up for Dental Implants</div>
+  <div class="slide-subheading">BAIRD recommended annual review framework</div>
+  <div class="slide-body col">
+    <p class="body-text">Annual review of dental implants should be systematic, covering all components from patient symptoms to radiographic assessment.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Check 1 — Symptoms</div>
+          <p>• <strong>Comfort / Pain</strong> — any new onset of pain or discomfort around the implant site?</p>
+        </div>
+        <div class="info-card sky">
+          <div class="card-title">Check 2 — Stability</div>
+          <p>Assess all components:<br>• <strong>Crown</strong> — movement, wear, marginal integrity<br>• <strong>Abutment</strong> — stable, no rotation or looseness<br>• <strong>Implant</strong> — osseointegration confirmed by rigidity</p>
+        </div>
+        <div class="info-card sky">
+          <div class="card-title">Check 3 — Occlusion</div>
+          <p>Check occlusal contacts in ICP and excursive movements. Fremitus, heavy contacts, or parafunctional wear patterns should all be addressed.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Check 4 — Gum Health (Full Assessment)</div>
+          <p style="margin-bottom:6px"><strong>Recession:</strong> assess vertically, tissue thickness, and papilla height vs baseline</p>
+          <p style="margin-bottom:6px"><strong>Discharge on pressure:</strong> use the <em>back of the dental mirror handle</em> to apply gentle pressure — pus or exudate indicates active disease</p>
+          <p style="margin-bottom:6px"><strong>Bleeding on probing:</strong> lateral movement at 1–2mm depth only, no deeper. Inflamed = bleeds; healthy = no bleeding</p>
+          <p><strong>Pockets:</strong> debatable. Instead, check for <em>loss of attachment at the implant level</em></p>
+        </div>
+        <div class="warning-box" style="margin-top:0">
+          <div class="w-title">If BOP Present</div>
+          <p>BAIRD recommends <strong>removal of the prosthesis</strong> and using the periodontal probe to check for loss of attachment around the implant — then plan treatment accordingly. Do not probe deeper than 1–2mm through the crown/bridge.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide" data-slide="7">
+  <div class="slide-heading">X-rays for Dental Implant Check-Ups</div>
+  <div class="slide-subheading">BAIRD radiographic monitoring protocol</div>
+  <div class="slide-body col">
+    <p class="body-text">The frequency of periapical radiographs varies based on the patient's oral health, complexity of the implant procedure, and presence of complications or disease.</p>
+    <div class="obj-list">
+      <div class="obj-item">
+        <div class="obj-num" style="color:var(--sky);opacity:1">1</div>
+        <div class="obj-text"><strong>Post-operative periapical X-ray</strong> — at the prosthesis fitting visit. Purpose: confirm full crown seating, establish baseline marginal bone levels, confirm absence of any abnormalities.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="color:var(--sky);opacity:1">2</div>
+        <div class="obj-text"><strong>Long-term monitoring</strong> — after the first year, if the implant remains stable and there are no signs of complications (such as BOP), periapical X-rays may be taken <strong>every 2 years</strong>.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="color:var(--sky);opacity:1">3</div>
+        <div class="obj-text"><strong>Signs of disease</strong> — if the patient presents with signs of peri-implant disease (increased bleeding, swelling, or implant mobility), a periapical X-ray should be taken <strong>promptly</strong> to assess bone and surrounding tissues.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="color:var(--sky);opacity:1">4</div>
+        <div class="obj-text"><strong>Patient-specific factors</strong> — history of periodontal disease, smoking, or systemic health issues may necessitate more frequent imaging to ensure ongoing implant health.</div>
+      </div>
+    </div>
+    <div class="summary-box">
+      <div class="s-title">Key Principle</div>
+      <p style="font-size:14px;color:var(--text2)">The post-operative periapical at crown fit is mandatory — it establishes the baseline bone level that all future radiographs are compared against. Without this baseline, progressive bone loss cannot be reliably detected.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 -->
+<div class="slide" data-slide="8">
+  <div class="slide-heading">XLA Bone Changes — Thin Biotype</div>
+  <div class="slide-subheading">The biological hypothesis for post-extraction bone behaviour</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="lead">Understanding why thin and thick biotype behave so differently after extraction is essential for timing implant placement and planning grafting.</p>
+      <div class="info-card red">
+        <div class="card-title">Thin Biotype — The Cascade</div>
+        <p>The thin facial bone wall is <strong>rapidly resorbed</strong> after extraction. This resorption facilitates the ingrowth of facial soft tissue due to the high proliferation rate of soft tissue cells.<br><br>These soft tissue cells then occupy the <strong>majority of the available space</strong> in the extraction socket defect and thus promote spontaneous thickening of the soft tissue — but at the cost of the labial bony architecture.</p>
+      </div>
+      <div class="warning-box">
+        <div class="w-title">Clinical Consequence</div>
+        <p>Thin biotype: >50% volume loss, in apical and lingual direction. The ridge collapses labially and apically. What appears as tissue thickening is scar tissue filling the socket — not bone. This is why thin biotype requires grafting intervention.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 240 300" width="240" height="300">
+        <text x="120" y="16" fill="#ef4444" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">THIN BIOTYPE XLA</text>
+        <!-- Before extraction -->
+        <text x="120" y="38" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Pre-extraction</text>
+        <rect x="50" y="42" width="140" height="50" rx="2" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)"/>
+        <rect x="50" y="42" width="10" height="50" fill="rgba(200,180,130,.2)" stroke="rgba(200,180,130,.4)"/>
+        <text x="85" y="70" fill="#8fa8bc" font-family="Rajdhani" font-size="9">Thin bone wall</text>
+        <text x="85" y="82" fill="#4a6a80" font-family="Rajdhani" font-size="9">(bundle bone)</text>
+        <!-- Arrow -->
+        <text x="120" y="108" fill="#ef4444" font-family="Rajdhani" font-size="11" text-anchor="middle">↓ Extraction</text>
+        <!-- After: bone resorbed -->
+        <text x="120" y="130" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Post-extraction: thin biotype</text>
+        <rect x="60" y="134" width="120" height="50" rx="2" fill="rgba(239,68,68,.06)" stroke="rgba(239,68,68,.2)" stroke-dasharray="3,2"/>
+        <text x="120" y="163" fill="#ef4444" font-family="Rajdhani" font-size="10" text-anchor="middle">Bone RESORBED</text>
+        <text x="120" y="177" fill="#ef4444" font-family="Rajdhani" font-size="10" text-anchor="middle">Soft tissue ingrowth</text>
+        <!-- Result -->
+        <text x="120" y="205" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">6+ months later</text>
+        <rect x="70" y="209" width="100" height="50" rx="2" fill="rgba(200,100,100,.12)" stroke="rgba(200,100,100,.3)"/>
+        <text x="120" y="234" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Collapsed ridge</text>
+        <text x="120" y="248" fill="#ef4444" font-family="Rajdhani" font-size="11" text-anchor="middle">&gt;50% volume loss</text>
+        <!-- Direction arrows -->
+        <line x1="70" y1="259" x2="70" y2="280" stroke="rgba(239,68,68,.5)" stroke-width="1.5"/>
+        <polygon points="67,280 70,287 73,280" fill="#ef4444"/>
+        <line x1="120" y1="259" x2="100" y2="280" stroke="rgba(239,68,68,.5)" stroke-width="1.5"/>
+        <polygon points="97,280 100,287 103,280" fill="#ef4444"/>
+        <text x="120" y="295" fill="#4a6a80" font-family="Rajdhani" font-size="9" text-anchor="middle">Apical + lingual direction</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 -->
+<div class="slide" data-slide="9">
+  <div class="slide-heading">XLA Bone Changes — Thick Biotype</div>
+  <div class="slide-subheading">Why thick biotype heals so differently from thin</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">The thick biotype response to extraction is the biological inverse of thin biotype — the bone wall acts as a protective barrier rather than a liability.</p>
+      <div class="info-card sky">
+        <div class="card-title">Thick Biotype — The Mechanism</div>
+        <p>The thick facial bone wall <strong>represents a barrier</strong> that allows the extraction alveolus to remain as a <strong>self-contained bony defect</strong>.<br><br>This morphology favours the ingrowth of cells from the <strong>bony socket walls and surrounding bone marrow spaces</strong>. Only crestal soft tissue ingrowth occurs, due to the minimal bone resorption on the facial aspect of the extraction socket.</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Clinical Result</div>
+        <p>Only 5–20% volume loss. Ridge maintains its width and height. The bone wall barrier contains the clot, enabling bone formation from multiple walls simultaneously. Predictable healing and stable contours.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 240 300" width="240" height="300">
+        <text x="120" y="16" fill="#0ea5e9" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">THICK BIOTYPE XLA</text>
+        <text x="120" y="38" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Pre-extraction</text>
+        <rect x="40" y="42" width="160" height="50" rx="2" fill="rgba(200,180,130,.08)" stroke="rgba(200,180,130,.2)"/>
+        <rect x="40" y="42" width="20" height="50" fill="rgba(200,180,130,.25)" stroke="rgba(200,180,130,.5)" stroke-width="1.5"/>
+        <text x="115" y="70" fill="#8fa8bc" font-family="Rajdhani" font-size="9">Thick bone wall</text>
+        <text x="115" y="82" fill="#4a6a80" font-family="Rajdhani" font-size="9">(multi-layered cortex)</text>
+        <text x="120" y="108" fill="#0ea5e9" font-family="Rajdhani" font-size="11" text-anchor="middle">↓ Extraction</text>
+        <text x="120" y="130" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Post-extraction: thick biotype</text>
+        <!-- Bone walls intact -->
+        <rect x="40" y="134" width="160" height="50" rx="2" fill="rgba(14,165,233,.04)" stroke="rgba(14,165,233,.2)"/>
+        <rect x="40" y="134" width="20" height="50" fill="rgba(200,180,130,.2)" stroke="rgba(200,180,130,.4)"/>
+        <rect x="180" y="134" width="20" height="50" fill="rgba(200,180,130,.2)" stroke="rgba(200,180,130,.4)"/>
+        <!-- Arrows from walls inward -->
+        <line x1="62" y1="159" x2="90" y2="159" stroke="rgba(14,165,233,.6)" stroke-width="1.5"/>
+        <polygon points="90,156 97,159 90,162" fill="#0ea5e9"/>
+        <line x1="178" y1="159" x2="150" y2="159" stroke="rgba(14,165,233,.6)" stroke-width="1.5"/>
+        <polygon points="150,156 143,159 150,162" fill="#0ea5e9"/>
+        <text x="120" y="163" fill="#0ea5e9" font-family="Rajdhani" font-size="10" text-anchor="middle">Cells from walls</text>
+        <text x="120" y="175" fill="#0ea5e9" font-family="Rajdhani" font-size="10" text-anchor="middle">&amp; marrow spaces</text>
+        <!-- Result -->
+        <text x="120" y="205" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">6+ months later</text>
+        <rect x="40" y="209" width="160" height="50" rx="2" fill="rgba(34,197,94,.06)" stroke="rgba(34,197,94,.2)"/>
+        <text x="120" y="238" fill="#22c55e" font-family="Rajdhani" font-size="11" text-anchor="middle">Ridge maintained</text>
+        <text x="120" y="252" fill="#22c55e" font-family="Rajdhani" font-size="11" text-anchor="middle">5–20% volume loss only</text>
+        <text x="120" y="290" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Predictable. Stable contours.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 -->
+<div class="slide" data-slide="10">
+  <div class="slide-heading">XLA — Biotype Comparison Summary</div>
+  <div class="slide-subheading">How thick and thin biotype respond differently across all clinical scenarios</div>
+  <div class="slide-body col">
+    <table>
+      <tr><th>Scenario</th><th>Thick Biotype</th><th>Thin Biotype</th></tr>
+      <tr><td>Inflammation</td><td>Cyanosis, oedema, fibrosis, bleeding, bone loss with pocket formation / infra-bony defects</td><td>Rapid bone loss with soft tissue recession</td></tr>
+      <tr><td>Surgery</td><td>Predictable soft and hard tissue contours after surgery</td><td>Difficult to predict where tissue will heal and stabilise</td></tr>
+      <tr><td>Flap design</td><td>Higher risk of scarring, less risk of recession. Avoid vertical lines if possible</td><td>Higher risk of recession, less risk of scarring. Avoid involving papillae if possible</td></tr>
+      <tr><td>Extraction (XLA)</td><td>Minimal ridge atrophy: <strong>5–20% volume loss</strong></td><td>Ridge absorbs apically and lingually: <strong>&gt;50% volume loss</strong></td></tr>
+    </table>
+    <div class="summary-box" style="margin-top:12px">
+      <div class="s-title">Key Clinical Takeaway</div>
+      <p style="font-size:15px;color:var(--text2)">Thick biotype is forgiving and predictable. Thin biotype requires anticipation: graft early, place carefully, accept that healing will be less predictable. Never treat thin biotype the same way as thick biotype in any clinical scenario.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 -->
+<div class="slide" data-slide="11">
+  <div class="slide-heading">10 Biology Facts — Flap Design (1–5)</div>
+  <div class="slide-subheading">BAIRD course: biology facts every surgeon must consider before designing a flap</div>
+  <div class="slide-body col">
+    <div class="fact-box"><div class="fact-num">01</div><div class="fact-text"><strong>Primary wound closure</strong> and uneventful early wound stability over biomaterials are the critical parts of successful implant surgery and guided bone regeneration.</div></div>
+    <div class="fact-box"><div class="fact-num">02</div><div class="fact-text"><strong>Surgical elevation of the interdental papilla</strong> to access deep intrabony defects interferes with the papillary blood supply and can impair the healing process — possibly even preventing primary closure in the early healing phase.</div></div>
+    <div class="fact-box"><div class="fact-num">03</div><div class="fact-text"><strong>Subsequent bacterial contamination</strong> may deteriorate the healing process in later phases — another reason why primary wound closure is non-negotiable.</div></div>
+    <div class="fact-box"><div class="fact-num">04</div><div class="fact-text"><strong>Crown and root exposure</strong> and increase in interdental spacing following flap surgery is highly unacceptable. An ideal flap design must maintain gingival marginal anatomy and maximum papilla height throughout implant therapy.</div></div>
+    <div class="fact-box"><div class="fact-num">05</div><div class="fact-text">A surgical approach that <strong>splits the papilla</strong> contributes to shrinkage and decrease in interdental papilla height — leading to exposure of interproximal embrasures. Vertical incisions must either include or exclude the papilla — never split it.</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 12 -->
+<div class="slide" data-slide="12">
+  <div class="slide-heading">10 Biology Facts — Flap Design (6–10)</div>
+  <div class="slide-subheading">BAIRD course: continued</div>
+  <div class="slide-body col">
+    <div class="fact-box"><div class="fact-num">06</div><div class="fact-text">In the <strong>maxilla</strong>, a remote crestal (para-crestal) incision is recommended: moves keratinized mucosa labially, places incision on sound bone (not titanium cover screw), enables good re-epithelialisation if dehiscence occurs (both sides = keratinized mucosa).</div></div>
+    <div class="fact-box"><div class="fact-num">07</div><div class="fact-text">In the <strong>mandible</strong>, a mid-crestal incision is recommended: equal keratinized mucosa labially and lingually. Note: the lingual flap in the mandible has very limited keratinized mucosa compared to the palatal flap in the maxilla.</div></div>
+    <div class="fact-box"><div class="fact-num">08</div><div class="fact-text">The <strong>papilla acts like normal mucosa</strong> when there is no contact area. If interproximal bony peaks are &gt;3mm from the papilla, expect papillary recession and root exposure of adjacent teeth following elevation — due to the biological width concept.</div></div>
+    <div class="fact-box"><div class="fact-num">09</div><div class="fact-text"><strong>Factors improving papillary growth:</strong> (1) bone sounding ≤3mm; (2) presence of contact area; (3) tissue thickness; (4) blood supply — smokers have reduced blood supply; (5) good oral hygiene and absence of plaque in the gingival embrasure.</div></div>
+    <div class="fact-box"><div class="fact-num">10</div><div class="fact-text"><strong>Suturing</strong> must be under no tension and minimally traumatic: small needle size, sufficient distance between adjacent sutures, small thread size — allowing optimal flap margin closure.</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 13 -->
+<div class="slide" data-slide="13">
+  <div class="slide-heading">Maxilla vs Mandible — Crestal Incision</div>
+  <div class="slide-subheading">Why the correct incision position differs between arches</div>
+  <div class="slide-body col">
+    <div class="compare-grid">
+      <div class="compare-col a">
+        <div class="compare-title">Maxilla — Remote (Para-crestal) Incision</div>
+        <ul>
+          <li>Incision offset palatally from the crest</li>
+          <li>Moves keratinized mucosa labially (more KM buccally)</li>
+          <li>Incision line sits on sound bone — not on titanium cover screw or healing abutment</li>
+          <li>If dehiscence: both sides are keratinized mucosa → fast, quality re-epithelialisation</li>
+          <li>Long healing abutment at high torque pushes palatal KM buccally → FGG effect</li>
+          <li>Recommended for GBR cases and aesthetic zone</li>
+        </ul>
+      </div>
+      <div class="compare-col b">
+        <div class="compare-title">Mandible — Mid-crestal Incision</div>
+        <ul>
+          <li>Incision placed at the mid-crest</li>
+          <li>Provides equal KM labially and lingually</li>
+          <li>The lingual flap in the mandible has very limited keratinized mucosa</li>
+          <li>Unlike the maxilla (generous palatal KM), the mandible has minimal lingual KM</li>
+          <li>A palatal offset equivalent in the mandible would place incision on non-keratinized lingual mucosa — unhelpful</li>
+          <li>Mid-crestal therefore the practical recommendation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-card sky" style="margin-top:12px">
+      <div class="card-title">The Core Reason for the Difference</div>
+      <p>The palate has generous keratinized mucosa — making a palatal offset a gain in keratinized tissue buccally. The lingual mandible has minimal keratinized tissue — so a lingual offset creates a problem, not a benefit. The recommendation follows the anatomy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14 -->
+<div class="slide" data-slide="14">
+  <div class="slide-heading">Two-Sided Flap — Anterior vs Posterior Relieving Incision</div>
+  <div class="slide-subheading">Which side to place the single relieving incision — and why</div>
+  <div class="slide-body col">
+    <p class="lead">A two-sided flap is an envelope flap with one relieving incision. The choice of whether to place it anteriorly or posteriorly has specific logic.</p>
+    <div class="compare-grid">
+      <div class="compare-col a">
+        <div class="compare-title">Anterior Relieving Incision — Standard</div>
+        <ul>
+          <li>Recommended in most cases</li>
+          <li>Increases vision and access to the surgical field anteriorly</li>
+          <li>Makes it easier to suture at the end of the procedure</li>
+          <li>Suturing a vertical incision anteriorly is technically more accessible than posteriorly</li>
+          <li>Default choice when no aesthetic concerns apply</li>
+        </ul>
+      </div>
+      <div class="compare-col b">
+        <div class="compare-title">Posterior Relieving Incision — Aesthetic Zone Exception</div>
+        <ul>
+          <li>Used as exception in the aesthetic zone</li>
+          <li>Placing the vertical line posteriorly keeps the scar away from the visible anterior zone</li>
+          <li>The scar from a posterior incision is less visible during smiling</li>
+          <li>Trade-off: reduced access anteriorly and more challenging suturing</li>
+          <li>Justified when avoiding visible anterior scarring is the priority</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-card sky" style="margin-top:12px">
+      <div class="card-title">Clinical Decision Logic</div>
+      <p>The anterior position is the default because it gives better access and easier suturing. Move posteriorly only when cosmesis explicitly demands it — typically high smile line + thick phenotype patients where a visible anterior scar would be problematic.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15 -->
+<div class="slide" data-slide="15">
+  <div class="slide-heading">Golf Club Incision — Full Anatomical Detail</div>
+  <div class="slide-subheading">Vertical component + oblique extension — the complete design</div>
+  <div class="slide-body">
+    <div class="content-col">
+      <p class="body-text">The Golf Club incision has two components that together form its characteristic shape. Understanding both components is essential for correct execution.</p>
+      <div class="info-card sky">
+        <div class="card-title">Component 1 — The Vertical Shaft</div>
+        <p>Placed on the flat surface between two roots, at the <strong>middle of the mesio-distal width of the base of the papilla</strong>. Away from the maximum root convexity. Minimum 3mm clearance from the implant margin.</p>
+      </div>
+      <div class="info-card sky">
+        <div class="card-title">Component 2 — The Oblique Extension (Club Head)</div>
+        <p>Starting at the base of the papilla, an oblique line extends toward the mesial tooth, <strong>parallel to the mesial curvature of the posterior tooth</strong>. This oblique extension directs the incision away from the papilla vascular supply and toward more robust tissue.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-title">The 3mm Papilla Island</div>
+        <p>The combined effect of the vertical shaft and the oblique extension leaves a <strong>minimum 3mm island of papilla</strong> behind — providing adequate tissue for suturing and preserving the papilla's blood supply.</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Why "Golf Club"?</div>
+        <p>The vertical line = the shaft of the golf club. The oblique line at the papilla base = the club head. Together they form the distinctive golf club silhouette. This shape is designed to route the incision safely through complex anatomy without splitting the papilla.</p>
+      </div>
+    </div>
+    <div class="diagram-col">
+      <svg viewBox="0 0 260 300" width="260" height="300">
+        <text x="130" y="16" fill="#0ea5e9" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">GOLF CLUB INCISION</text>
+        <!-- Two tooth roots -->
+        <ellipse cx="75" cy="100" rx="42" ry="85" fill="rgba(200,180,130,.07)" stroke="rgba(200,180,130,.2)" stroke-width="1"/>
+        <ellipse cx="185" cy="100" rx="42" ry="85" fill="rgba(200,180,130,.07)" stroke="rgba(200,180,130,.2)" stroke-width="1"/>
+        <text x="75" y="100" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Root</text>
+        <text x="185" y="100" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Root</text>
+        <!-- Papilla -->
+        <path d="M 117 185 Q 130 160 143 185" fill="rgba(200,100,100,.15)" stroke="rgba(200,150,150,.5)" stroke-width="1.5"/>
+        <!-- Mid MD width marker -->
+        <line x1="117" y1="195" x2="143" y2="195" stroke="rgba(14,165,233,.3)" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="130" y="208" fill="#4a6a80" font-family="Rajdhani" font-size="9" text-anchor="middle">MD midpoint</text>
+        <!-- Vertical shaft of golf club -->
+        <line x1="130" y1="160" x2="130" y2="195" stroke="rgba(14,165,233,.9)" stroke-width="2.5"/>
+        <!-- Oblique extension (club head) — runs toward mesial tooth parallel to its curvature -->
+        <path d="M 130 185 Q 110 190 95 180" fill="none" stroke="rgba(14,165,233,.9)" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="145" y="175" fill="#0ea5e9" font-family="Rajdhani" font-size="10">Vertical</text>
+        <text x="145" y="187" fill="#0ea5e9" font-family="Rajdhani" font-size="10">shaft</text>
+        <text x="60" y="172" fill="#0ea5e9" font-family="Rajdhani" font-size="10">Oblique</text>
+        <text x="60" y="184" fill="#0ea5e9" font-family="Rajdhani" font-size="10">extension</text>
+        <!-- 3mm island -->
+        <path d="M 95 180 Q 105 172 117 185" fill="rgba(34,197,94,.15)" stroke="rgba(34,197,94,.4)" stroke-width="1"/>
+        <text x="76" y="200" fill="#22c55e" font-family="JetBrains Mono" font-size="8">3mm island</text>
+        <!-- Parallel curvature arrow -->
+        <path d="M 50 155 Q 65 130 80 115" fill="none" stroke="rgba(201,168,76,.4)" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="30" y="150" fill="#c9a84c" font-family="Rajdhani" font-size="9">Mesial</text>
+        <text x="30" y="162" fill="#c9a84c" font-family="Rajdhani" font-size="9">curvature</text>
+        <!-- Max convexity markers -->
+        <circle cx="75" cy="30" r="4" fill="rgba(239,68,68,.4)"/>
+        <circle cx="185" cy="30" r="4" fill="rgba(239,68,68,.4)"/>
+        <text x="130" y="250" fill="#ef4444" font-family="Rajdhani" font-size="10" text-anchor="middle">Never incise over maximum convexity</text>
+        <text x="130" y="262" fill="#4a6a80" font-family="Rajdhani" font-size="10" text-anchor="middle">Flat zone between roots = target zone</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16 -->
+<div class="slide" data-slide="16">
+  <div class="slide-heading">Papillary Preserving Flap with GBR — Step/Clefting Risk</div>
+  <div class="slide-subheading">A specific limitation when performing GBR within the surgical field</div>
+  <div class="slide-body col">
+    <p class="lead">When GBR is performed within a papillary-preserving flap's surgical field, a specific anatomical problem arises at wound closure — the step/clefting effect.</p>
+    <div class="info-card red">
+      <div class="card-title">The Step/Clefting Problem</div>
+      <p>During GBR, bone graft material and membrane are placed <em>within</em> the surgical field. This elevates the central portion of the flap. However, the preserved papillae — on either side of the elevated central section — remain at their original lower, flatter level.<br><br>Result: the central flap margin sits higher than the papilla margins → a <strong>step effect</strong> (also called clefting) at the transition. This creates a prominent, visible scar at the junction between the central flap and the preserved papillae.</p>
+    </div>
+    <div class="two-col">
+      <div class="info-card">
+        <div class="card-title">Prevention / Mitigation</div>
+        <p>• Careful periosteal release to maximise flap advancement<br>• Ensure membrane placed as far from flap margins as possible<br>• Suturing technique must accommodate the height difference<br>• Consider: is GBR this extensive truly compatible with papillary-preserving design?</p>
+      </div>
+      <div class="info-card teal">
+        <div class="card-title">Clinical Decision</div>
+        <p>If the GBR extent is significant, a three-sided flap with periosteal release may provide better closure and fewer steps than forcing GBR into a papillary-preserving design. The flap must match the procedure's needs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17 -->
+<div class="slide" data-slide="17">
+  <div class="slide-heading">De-epithelialised Papilla Technique</div>
+  <div class="slide-subheading">Preserving the anatomical papilla for advanced soft tissue augmentation</div>
+  <div class="slide-body col">
+    <p class="lead">In advanced soft tissue augmentation cases, the anatomical papilla's connective tissue can be used to vascularise a surgically created papilla placed on top of it.</p>
+    <div class="info-card sky">
+      <div class="card-title">The Principle</div>
+      <p>Instead of simply discarding the papilla during flap elevation, consider leaving the <strong>de-epithelialised anatomical part of the papilla</strong> in place. This de-epithelialised connective tissue base provides:</p>
+      <p style="margin-top:8px">• A vascular bed for the surgical papilla placed on top<br>• Structural support for the augmented tissue<br>• Better long-term stability of the augmented result</p>
+    </div>
+    <div class="info-card">
+      <div class="card-title">Application in Advanced Cases</div>
+      <p>In cases requiring significant coronal advancement or papilla reconstruction: the de-epithelialised anatomical papilla base acts as a scaffold. The surgical papilla (connective tissue or grafted tissue) is advanced coronally on top of this anatomical base.<br><br>This technique is particularly useful when: (1) there is existing papilla tissue of adequate volume, and (2) a standard papillary-preserving flap would not provide sufficient access or tissue advancement for the planned augmentation.</p>
+    </div>
+    <div class="info-card teal">
+      <div class="card-title">Why De-epithelialise?</div>
+      <p>Epithelium to epithelium will not fuse — it creates a pocket. By removing the epithelium from the anatomical papilla base, its underlying connective tissue is exposed. Connective tissue to connective tissue integration is predictable and vascular.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18 -->
+<div class="slide" data-slide="18">
+  <div class="slide-heading">Suturing — Technical Specifications</div>
+  <div class="slide-subheading">BAIRD course guidance on minimally traumatic suture technique</div>
+  <div class="slide-body col">
+    <p class="lead">Suturing must be under no tension and minimally traumatic. Technical details matter as much as technique selection.</p>
+    <div class="three-col">
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">Needle Size</div>
+        <p style="font-size:13px">Use a <strong>small needle</strong>. A smaller needle creates a smaller passage through tissue, reduces trauma, and minimises the risk of tearing delicate peri-implant mucosa.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">Suture Spacing</div>
+        <p style="font-size:13px">Allow <strong>sufficient distance between adjacent sutures</strong>. Over-dense suturing strangulates the tissue between sutures and creates ischaemic zones that necrosis during healing.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">Thread Size</div>
+        <p style="font-size:13px">Use a <strong>small thread size</strong> (e.g. 5-0 or 6-0 in aesthetic zones). Finer threads create less inflammatory reaction and cause less tissue drag during placement.</p>
+      </div>
+    </div>
+    <div class="info-card" style="margin-top:12px">
+      <div class="card-title">Optimal Flap Margin Closure</div>
+      <p>All suture choices serve one goal: <strong>optimal flap margin closure</strong>. Margins must be in stable contact without blanching or ischaemia. Suture tension, not just suture technique, is the primary determinant of wound healing success.</p>
+    </div>
+    <div class="info-card teal">
+      <div class="card-title">Technique Selection Reminder</div>
+      <p>Vertical mattress sutures for papilla preservation. Interrupted sutures acceptable away from aesthetic zones. Horizontal mattress for broader tissue mobilisation. All techniques require the underlying flap to be tension-free before the first suture is placed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19 -->
+<div class="slide" data-slide="19">
+  <div class="slide-heading">5 Factors for Papillary Growth</div>
+  <div class="slide-subheading">All five must be considered when assessing papilla potential — Biology Fact 9</div>
+  <div class="slide-body col">
+    <p class="body-text">The papilla does not simply exist or not exist — it responds to biological conditions. These five factors collectively determine whether a papilla will form, maintain, or recede.</p>
+    <div class="obj-list">
+      <div class="obj-item">
+        <div class="obj-num" style="opacity:1;color:var(--sky);font-size:26px">1</div>
+        <div class="obj-text"><strong>Bone sounding at the papilla region</strong> — ≤3mm from mucosa crest to bone = favourable. The papilla cannot maintain height above 3mm from its bony support due to the biological width principle.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="opacity:1;color:var(--sky);font-size:26px">2</div>
+        <div class="obj-text"><strong>Presence or absence of a contact area</strong> — Without a contact area, the papilla acts like normal mid-labial mucosa (flat). A contact area between adjacent teeth or crowns provides the anatomical reference point for papilla height.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="opacity:1;color:var(--sky);font-size:26px">3</div>
+        <div class="obj-text"><strong>Thickness of the mucosa</strong> — Thicker tissue provides better volume and vascular support for papilla height. Thin tissue cannot maintain papilla height under normal healing pressures.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="opacity:1;color:var(--sky);font-size:26px">4</div>
+        <div class="obj-text"><strong>Blood supply to the papillary mucosa</strong> — <em>Smokers have reduced blood supply</em>. Compromised vascularity = compromised healing = increased papilla recession risk. Smoking is a specific, named risk factor for papilla loss.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-num" style="opacity:1;color:var(--sky);font-size:26px">5</div>
+        <div class="obj-text"><strong>Oral hygiene and absence of plaque in the gingival embrasure</strong> — Plaque in the embrasure causes inflammation at the papilla base → chronic tissue volume loss. Good oral hygiene is a prerequisite for papilla stability.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20 -->
+<div class="slide" data-slide="20">
+  <div class="slide-heading">Smoking &amp; Systemic Factors</div>
+  <div class="slide-subheading">How patient-specific factors affect flap design decisions and outcomes</div>
+  <div class="slide-body col">
+    <p class="body-text">The five papillary growth factors include blood supply — and smoking is explicitly named as reducing this. It is not just a general risk factor but a tissue-level biological impairment.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card red">
+          <div class="card-title">Smoking — Specific Effects</div>
+          <p>• Vasoconstriction reduces blood supply to papillary mucosa<br>• Reduced healing capacity in both thin and thick phenotype<br>• Higher risk of wound dehiscence<br>• Higher risk of papilla loss post-elevation<br>• More aggressive bone loss with peri-implantitis</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Flap Design Implication</div>
+          <p>In a smoker, the four-yeses assessment should weight the phenotype factor more cautiously. Even a thick phenotype patient who smokes has compromised blood supply — tipping borderline cases toward papilla preservation rather than elevation.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Other Systemic Factors</div>
+          <p>• <strong>Diabetes</strong> — impaired wound healing, increased infection risk<br>• <strong>Immunosuppression</strong> — reduced capacity for primary closure<br>• <strong>Anticoagulants</strong> — haemostasis management required<br>• <strong>Bisphosphonates</strong> — MRONJ risk with surgical flaps<br>• All systemic factors affect wound healing and papilla recovery</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">X-Ray Frequency Impact</div>
+          <p>Systemic factors (smoking, periodontal history) also necessitate more frequent radiographic monitoring per BAIRD guidelines — patient-specific factors mandate individually tailored recall intervals, not a single fixed protocol for all.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21 -->
+<div class="slide" data-slide="21">
+  <div class="slide-heading">Three-Sided Flap — Apically Repositioned Flap</div>
+  <div class="slide-subheading">Advanced indications and the full range of benefits</div>
+  <div class="slide-body col">
+    <p class="body-text">The three-sided flap is the most powerful of the four designs — offering maximum access, easiest periosteal release, and coronal flap advancement when needed.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Also Known As</div>
+          <p>The three-sided flap is also called the <strong>apically repositioned flap</strong> — because after closure, the flap margin may be repositioned at a different (often more apical) level than its pre-surgical position.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Four Advantages</div>
+          <p>1. <strong>Best access and reflection</strong> — full visualisation of the surgical field<br>2. <strong>Indicated for GBR and advanced bone augmentation</strong> — including bone block grafting<br>3. <strong>Allows easier periosteal release</strong> — more surface area accessible for the 1mm notch<br>4. <strong>Coronal advancement</strong> of flap margins when needed — critically important for tension-free GBR closure</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">When to Choose Three-Sided Over Two-Sided</div>
+          <p>• Bone block grafting<br>• Large GBR defects requiring maximum closure advancement<br>• Cases where coronal flap advancement is planned<br>• Cases requiring more passive closure than a two-sided flap allows<br>• Any case where the extent of surgery cannot be accommodated by an envelope or two-sided design</p>
+        </div>
+        <div class="warning-box">
+          <div class="w-title">Trade-Off</div>
+          <p>Two vertical incisions = two scar lines. Both must be placed using Golf Club and scarring rules. In thin phenotype, two vertical lines carry higher scar risk than in thick phenotype — but recession risk from insufficient access is usually greater.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22 -->
+<div class="slide" data-slide="22">
+  <div class="slide-heading">Extent of the Flap — Minimally Invasive Principle</div>
+  <div class="slide-subheading">BAIRD Biology Fact 2: why a minimally invasive flap is always preferable when possible</div>
+  <div class="slide-body col">
+    <p class="lead">"A minimally invasive flap will ensure better blood supply, preferred healing conditions, and less post-operative pain and discomfort."</p>
+    <div class="three-col">
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">Simple Implant</div>
+        <p style="font-size:13px">1 unit each side. Minimal papilla involvement. Even flapless if bone adequate. Minimise the flap to minimise the risk. Fewer papillae disturbed = fewer complications possible.</p>
+      </div>
+      <div class="info-card" style="margin:0">
+        <div class="card-title">GBR / Staged Augmentation</div>
+        <p style="font-size:13px">Requires a wider flap for better access and easier operation. GBR membrane must be positioned away from flap margins — needs sufficient field to achieve this safely.</p>
+      </div>
+      <div class="info-card" style="margin:0">
+        <div class="card-title">Coronal Advancement Cases</div>
+        <p style="font-size:13px">Cases requiring coronal flap advancement due to extensive grafting benefit from a wider flap — wider base means less tension on closure after advancement. The periosteal release is more effective with a larger flap.</p>
+      </div>
+    </div>
+    <div class="info-card teal" style="margin-top:12px">
+      <div class="card-title">Aesthetic Zone — Distal Extension of Vertical Incision</div>
+      <p>In the aesthetic zone, cases may benefit from extending the flap to keep the vertical incision more distal — away from the centre of the aesthetic zone. The vertical line's visual impact is reduced when it is placed further from the most visible area.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 23 -->
+<div class="slide" data-slide="23">
+  <div class="slide-heading">Complete Decision Framework — Flap Design</div>
+  <div class="slide-subheading">All three questions, in order, with all factors integrated</div>
+  <div class="slide-body col">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.25);padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);letter-spacing:.15em">QUESTION 1 — RAISE THE PAPILLA OR PRESERVE IT?</div>
+      <div class="dtree-node"><div class="dn-q">Bone sounding — mesial/distal papilla base ≤3mm?</div><div class="dn-yes">YES → continue</div><div class="dn-no">NO → preserve</div></div>
+      <div class="dtree-node" style="margin-left:20px"><div class="dn-q">Bone sounding — mid-labial of adjacent teeth ≤3mm?</div><div class="dn-yes">YES → continue</div><div class="dn-no">NO → preserve</div></div>
+      <div class="dtree-node" style="margin-left:40px"><div class="dn-q">Favourable adjacent structures? (No implant neighbour, no leaking crown)</div><div class="dn-yes">YES → continue</div><div class="dn-no">NO → preserve</div></div>
+      <div class="dtree-node" style="margin-left:60px"><div class="dn-q">Thick phenotype? (≥2mm tissue thickness)</div><div class="dn-yes">YES → RAISE (4 yeses)</div><div class="dn-no">NO → consider preserving</div></div>
+      <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.25);padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);letter-spacing:.15em;margin-top:8px">QUESTION 2 — EXTENT OF FLAP?</div>
+      <div class="dtree-node"><div class="dn-q">Simple implant only: 1 unit each side. GBR: 2 units each side. Advanced augmentation: extend further. Aesthetic zone: push vertical incision more distal.</div></div>
+      <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.25);padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);letter-spacing:.15em;margin-top:8px">QUESTION 3 — VERTICAL INCISION POSITION?</div>
+      <div class="dtree-node"><div class="dn-q">No vertical in mobile mucosa. No horizontal in attached gingiva. No incision over root convexity. Golf Club: flat surface, MD midpoint, oblique extension parallel to posterior tooth curvature, 3mm papilla island.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24 -->
+<div class="slide" data-slide="24">
+  <div class="slide-heading">Keratinized Mucosa — Recording &amp; Consent</div>
+  <div class="slide-subheading">Pre-extraction assessment and patient communication</div>
+  <div class="slide-body col">
+    <p class="lead">Keratinized mucosa width varies from site to site and patient to patient — and must be recorded and discussed before any extraction near an implant site.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Pre-Extraction Assessment</div>
+          <p>Measure and record the amount of keratinized mucosa <strong>before extraction</strong>. Warn the patient of the <strong>risk of reduction</strong> in keratinized mucosa after tooth removal — this is a consent point, not just a clinical note.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">When to Act Proactively</div>
+          <p>Cases with minimal or no keratinized mucosa may require:<br>• FGG — to increase keratinized mucosa width<br>• Mucoderm — if palatal harvest is not preferred<br>• Timing: before extraction, or after implant healing (never simultaneously with GBR)</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card teal">
+          <div class="card-title">When Surgery May Not Be Needed</div>
+          <p>Some patients with little to no keratinized mucosa who <strong>maintain careful cleaning habits</strong>, use a soft toothbrush, and exhibit good oral hygiene may not require surgical intervention. The clinical picture must be assessed individually — not all deficiencies require grafting.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Why KM Matters — The Clinical Case</div>
+          <p>KM protects against bacterial invasion, reduces tissue mobility during brushing, contributes to aesthetic appearance, and helps secure the gingival attachment. Without adequate KM, patients experience pain on brushing, plaque accumulation, and increased peri-implant disease risk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25 -->
+<div class="slide" data-slide="25">
+  <div class="slide-heading">Position of Vertical Incision — Complete Rules</div>
+  <div class="slide-subheading">All rules in one consolidated reference slide</div>
+  <div class="slide-body col">
+    <div class="three-col">
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Rule 1 — No Convex Surfaces</div>
+        <p style="font-size:13px">No vertical incisions on convex surfaces. Root convexity = guaranteed mid-labial recession at the scar site. Always place incisions on the flat surfaces between convexities.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Rule 2 — Do Not Split the Papilla</div>
+        <p style="font-size:13px">Incision must include or exclude the papilla — never split it. Splitting contributes to shrinkage, height loss, and interproximal embrasure exposure. The Golf Club design prevents this.</p>
+      </div>
+      <div class="info-card sky" style="margin:0">
+        <div class="card-title">Rule 3 — Vertical Heals Better</div>
+        <p style="font-size:13px">Vertical lines heal better than curved ones. This is the rationale for the transition at the MGJ to oblique (not curved) — the oblique is a straighter, more predictable scar line than a curve.</p>
+      </div>
+    </div>
+    <div class="three-col" style="margin-top:12px">
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Rule 4 — Away from Implant Site</div>
+        <p style="font-size:13px">Make vertical lines away from the implant site. Minimum 3mm. This ensures the GBR membrane or graft is not directly beneath the scar line — reducing dehiscence risk.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Rule 5 — No Vertical in Mobile Mucosa</div>
+        <p style="font-size:13px">Vertical lines in mobile (non-keratinized) mucosa scar badly. Transition to oblique at the MGJ. Never continue straight vertical beyond the attached gingiva.</p>
+      </div>
+      <div class="info-card red" style="margin:0">
+        <div class="card-title">Rule 6 — No Horizontal in Attached Gingiva</div>
+        <p style="font-size:13px">Horizontal lines in attached/keratinized mucosa scar horribly — worse than any other tissue type. This is the most severe scarring error. Absolute prohibition, no exceptions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 26 -->
+<div class="slide" data-slide="26">
+  <div class="slide-heading">Envelope Flap — Full Profile</div>
+  <div class="slide-subheading">Complete BAIRD characterisation including GBR considerations</div>
+  <div class="slide-body col">
+    <p class="body-text">The envelope flap: a one-sided extended crevicular incision freeing the interdental papillae. It requires sufficient length to permit adequate reflection and visualisation.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Advantages</div>
+          <p>• No vertical scars — useful for patients with high smile line and thick phenotype<br>• Preserves blood supply on both sides of the flap<br>• Simpler to execute<br>• Can be extended 2 units each side for GBR cases</p>
+        </div>
+        <div class="info-card red">
+          <div class="card-title">Contraindication</div>
+          <p>The envelope flap is <strong>not recommended for patients with thin phenotype</strong> — to avoid papillary recession and black triangles. Elevating papillae in thin phenotype predictably causes permanent aesthetic damage.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">GBR Extension Rule</div>
+          <p>If guided bone regeneration is required: extend the envelope flap by <strong>2 units on each side</strong>. This larger flap allows the GBR membrane to be placed well away from the flap margins (which must rest on vital bone) and gives adequate access for correct GBR technique.</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">When It Is the Right Choice</div>
+          <p>Thick phenotype + high smile line + all four yeses confirmed. The no-scar advantage is significant in high smile-line patients where vertical scars would be constantly visible — but only if all papillae can safely be elevated.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 27 -->
+<div class="slide" data-slide="27">
+  <div class="slide-heading">Papillary Preserving Flap — Complete Profile</div>
+  <div class="slide-subheading">Full BAIRD characterisation including the GBR step/clefting limitation</div>
+  <div class="slide-body col">
+    <p class="body-text">Designed to provide access to the surgical field without disturbing adjacent papillae — used when the papillae were found non-favourable via the four-yeses assessment.</p>
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Three Advantages</div>
+          <p>1. Minimises risk of papillary loss and black triangles<br>2. Less interproximal bone loss (papilla blood supply preserved)<br>3. Minimal disruption to flap vascularisation</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Golf Club Detail</div>
+          <p>Leave minimum <strong>3mm island</strong> of papilla. Golf Club incision: vertical shaft at MD midpoint of papilla base → oblique extension toward mesial tooth, parallel to the posterior tooth's mesial curvature.</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card red">
+          <div class="card-title">Three Limitations</div>
+          <p>1. <strong>Small surgical field</strong> — limited GBR access<br>2. <strong>Visible scarring</strong> in thick phenotype (dense fibrous tissue scars more)<br>3. <strong>Step/clefting effect</strong> when GBR within the field: central flap elevated by graft volume, papillae at lower level → step scar at the junction</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">Challenging Suturing</div>
+          <p>Suturing the papillary-preserving flap after GBR is technically difficult: the elevated central portion and flat papillae create a height discrepancy. Small needle, fine thread, and accurate placement are essential to prevent clefting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 28 -->
+<div class="slide" data-slide="28">
+  <div class="slide-heading">All Four Flap Designs — Consolidated Reference</div>
+  <div class="slide-subheading">Complete comparison for clinical decision-making</div>
+  <div class="slide-body col">
+    <table>
+      <tr><th>Flap</th><th>Key Feature</th><th>Advantages</th><th>Limitations / Contraindications</th></tr>
+      <tr><td>Envelope</td><td>Sulcular only, no vertical lines</td><td>No scars; simple; extend for GBR (2 units each side)</td><td>Not for thin phenotype; elevates all papillae</td></tr>
+      <tr><td>Two-Sided</td><td>Envelope + 1 vertical (anterior preferred; posterior for aesthetics)</td><td>Better access/suturing than envelope; one scar only</td><td>One side still limited; careful scar position needed</td></tr>
+      <tr><td>Three-Sided (Apically Repositioned)</td><td>Envelope + 2 verticals; best access</td><td>Best GBR access; periosteal release easiest; coronal advancement possible</td><td>Two scar lines; both must follow Golf Club rules</td></tr>
+      <tr><td>Papillary Preserving</td><td>3mm papilla island; Golf Club incision design</td><td>Preserves papilla; less interproximal bone loss; minimal vascular disruption</td><td>Small field; thick phenotype scarring; step/cleft with GBR</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 29 -->
+<div class="slide" data-slide="29">
+  <div class="slide-heading">Pre-Surgical &amp; Maintenance Integration</div>
+  <div class="slide-subheading">Linking surgical planning to long-term peri-implant health monitoring</div>
+  <div class="slide-body col">
+    <div class="two-col">
+      <div>
+        <div class="info-card sky">
+          <div class="card-title">Before Surgery — Assess &amp; Record</div>
+          <p>• KM width at implant site and adjacent teeth<br>• Gingival phenotype (probe shadow test)<br>• Bone sounding: papilla bases + mid-labial adjacent<br>• Neighbour assessment: health of adjacent teeth/implants<br>• Smile line and aesthetic demands<br>• Systemic factors (smoking, diabetes, medications)</p>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Surgery — Execute &amp; Document</div>
+          <p>• Flap design chosen: document rationale<br>• Periosteal release: tweezers test passed<br>• Grafting performed: type, amount<br>• Sutures: type, number<br>• Post-op periapical X-ray at crown fit (mandatory baseline)</p>
+        </div>
+      </div>
+      <div>
+        <div class="info-card">
+          <div class="card-title">Annual Review — BAIRD Protocol</div>
+          <p>• Comfort / pain<br>• Stability: crown, abutment, implant<br>• Occlusion<br>• Recession: vertical, thickness, papillae<br>• Discharge on mirror pressure<br>• BOP: 1–2mm lateral probing<br>• Pockets: debatable → check loss of attachment instead<br>• X-ray: every 2 years if stable; promptly if disease signs</p>
+        </div>
+        <div class="info-card teal">
+          <div class="card-title">If BOP Found at Review</div>
+          <p>Remove prosthesis. Probe for loss of attachment at implant level. Plan treatment. Do not probe deeper than 1–2mm through the crown. Aggressive probing risks disrupting the hemidesmosomal attachment and triggering the very disease you are investigating.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 30 -->
+<div class="slide slide-title-page" data-slide="30" style="background:radial-gradient(ellipse at 50% 40%,rgba(14,165,233,.07) 0%,transparent 60%)">
+  <div class="title-tag">Lecture 4 Summary</div>
+  <div class="main-title" style="font-size:36px">Key Takeaways</div>
+  <div class="title-divider"></div>
+  <div style="text-align:left;max-width:660px;margin-top:16px">
+    <ul class="bullet-list">
+      <li>Peri-implant tissue has <span class="hl">5 structural disadvantages</span> vs natural teeth: blood supply, parallel CT fibres, fewer fibroblasts, more permeable JE, minimal KM</li>
+      <li>BAIRD probing: <span class="hl">1–2mm lateral movement only</span> — no pocket depth measurement. BOP = remove crown, reassess attachment</li>
+      <li>Annual check-up: <span class="hl">comfort, stability, occlusion, gum health</span> — pockets debatable, check loss of attachment instead</li>
+      <li>X-rays: <span class="hl">post-op baseline mandatory</span>, then every 2 years if stable, promptly if disease signs</li>
+      <li>Thin biotype XLA: <span class="hl">&gt;50% volume loss</span>, apical + lingual. Thick biotype: <span class="hl">5–20% volume loss</span> — bone wall self-contains the socket</li>
+      <li>Golf Club oblique component runs <span class="hl">parallel to the mesial curvature of the posterior tooth</span>, leaving 3mm papilla island</li>
+      <li>Mandible: <span class="hl">mid-crestal incision</span> (equal KM labially + lingually). Maxilla: <span class="hl">remote palatal incision</span></li>
+    </ul>
+  </div>
+  <div class="module-info" style="margin-top:24px">Proceed to Quiz 4 — Anatomy, Health Monitoring &amp; Advanced Flap Reference</div>
+</div>
+
+</div>
+<div id="nav">
+  <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>← Previous</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next →</button>
+</div>
+<script>
+let current=1;const total=30;
+document.getElementById('tot').textContent=total;
+const dotsContainer=document.getElementById('dots');
+for(let i=1;i<=total;i++){const d=document.createElement('div');d.className='dot'+(i===1?' active':'');d.onclick=()=>goTo(i);dotsContainer.appendChild(d);}
+function updateUI(){document.getElementById('cur').textContent=current;document.getElementById('progress-fill').style.width=((current/total)*100)+'%';document.getElementById('prev-btn').disabled=current===1;document.getElementById('next-btn').disabled=current===total;document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current));}
+function goTo(n){const prev=document.querySelector('.slide.active');const next=document.querySelector('[data-slide="'+n+'"]');if(!prev||!next||n===current)return;prev.classList.remove('active');if(n>current)prev.classList.add('prev');next.classList.remove('prev');next.classList.add('active');setTimeout(()=>{prev.classList.remove('prev');},500);current=n;updateUI();}
+function changeSlide(dir){goTo(current+dir);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+updateUI();
+</script>
+</body>
+</html>

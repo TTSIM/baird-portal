@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Short Implants, Augmentation & Peri-implant Health — Interactive Lecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1620; --ink-2:#16212E; --panel:#1B2A3A; --line:#2A3B4F;
+  --bone:#F5F1E8; --bone-2:#EBE3D2; --bone-line:#D8CDB6;
+  --gold:#C9A24B; --gold-soft:#E2C57E; --gold-deep:#A9842F;
+  --teal:#3E8E84; --teal-soft:#7DBEB4; --coral:#C97B6A; --coral-soft:#E0A99B;
+  --ink-text:#20303F; --ink-muted:#5C6E7E;
+  --on-dark:#E7EDF3; --on-dark-muted:#93A6BA;
+  --shadow:0 24px 60px -20px rgba(0,0,0,.55);
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(140% 120% at 50% -10%,#16263a 0%,var(--ink) 55%);
+  color:var(--on-dark); font-family:var(--sans); overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:14px clamp(16px,4vw,40px) 10px;gap:16px;flex:0 0 auto;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand .mark{width:30px;height:30px;flex:0 0 auto}
+.brand .t{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--on-dark-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .t b{color:var(--gold-soft);font-weight:600}
+.eyebrow-now{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold-soft);text-align:center;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.counter{font-family:var(--mono);font-size:12px;color:var(--on-dark-muted);white-space:nowrap}
+.counter b{color:var(--on-dark);font-weight:600}
+.progress{height:2px;background:var(--line);position:relative;flex:0 0 auto;margin:0 clamp(16px,4vw,40px)}
+.progress>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft));
+  width:0;transition:width .45s cubic-bezier(.2,.7,.2,1);box-shadow:0 0 12px var(--gold)}
+
+/* ---------- deck ---------- */
+.deck{flex:1 1 auto;position:relative;display:flex;align-items:center;justify-content:center;
+  padding:clamp(10px,2vh,22px) clamp(14px,4vw,48px);min-height:0}
+.slide{position:absolute;inset:clamp(10px,2vh,22px) clamp(14px,4vw,48px);
+  background:linear-gradient(180deg,#FBF8F1,var(--bone));color:var(--ink-text);
+  border-radius:18px;box-shadow:var(--shadow);border:1px solid var(--bone-line);
+  padding:clamp(20px,3.4vw,46px);overflow:auto;
+  opacity:0;visibility:hidden;transform:translateY(14px) scale(.985);
+  transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility .5s;}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide::-webkit-scrollbar{width:9px}
+.slide::-webkit-scrollbar-thumb{background:var(--bone-line);border-radius:9px}
+.slide-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-deep);display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slide-eyebrow .num{background:var(--ink);color:var(--gold-soft);border-radius:6px;
+  padding:2px 8px;font-weight:600}
+.slide h2{font-family:var(--serif);font-weight:600;line-height:1.06;letter-spacing:-.01em;
+  font-size:clamp(24px,3.6vw,40px);color:var(--ink);margin-bottom:.5em;max-width:18ch}
+.slide h2 .accent{color:var(--gold-deep);font-style:italic}
+.lead{font-size:clamp(15px,1.5vw,18px);line-height:1.55;color:#37495a;max-width:62ch}
+.cols{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(18px,3vw,40px);align-items:start;margin-top:6px}
+.cols.flip{grid-template-columns:.95fr 1.05fr}
+.cols.even{grid-template-columns:1fr 1fr}
+.stack>*+*{margin-top:14px}
+
+/* lists */
+.points{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.points li{position:relative;padding-left:30px;font-size:clamp(14px,1.45vw,16.5px);line-height:1.5;color:#34465a}
+.points li::before{content:"";position:absolute;left:4px;top:.5em;width:9px;height:9px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.2)}
+.points li b{color:var(--ink)}
+.points.teal li::before{background:var(--teal);box-shadow:0 0 0 3px rgba(62,142,132,.18)}
+.points.coral li::before, .points.coral-list li::before{background:var(--coral);box-shadow:0 0 0 3px rgba(201,123,106,.18)}
+
+/* callouts */
+.pearl{margin-top:18px;border-left:4px solid var(--gold);background:rgba(201,162,75,.1);
+  padding:14px 16px;border-radius:0 12px 12px 0}
+.pearl .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep);display:block;margin-bottom:4px}
+.pearl p{font-size:14.5px;line-height:1.5;color:#2c3c4c}
+.pearl.teal{border-color:var(--teal);background:rgba(62,142,132,.1)}
+.pearl.teal .k{color:#2c6f66}
+.pearl.coral{border-color:var(--coral);background:rgba(201,123,106,.12)}
+.pearl.coral .k{color:#a85843}
+
+/* stat chips */
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+.stat{background:var(--ink);color:var(--on-dark);border-radius:12px;padding:12px 16px;min-width:120px;flex:1}
+.stat .v{font-family:var(--serif);font-size:clamp(22px,3vw,30px);color:var(--gold-soft);line-height:1}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-dark-muted);margin-top:6px}
+
+.figcap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-muted);
+  text-align:center;margin-top:10px;text-transform:uppercase}
+.viz{background:var(--ink);border-radius:16px;padding:18px;border:1px solid var(--line)}
+.viz.light{background:#fff;border:1px solid var(--bone-line)}
+svg{display:block;width:100%;height:auto}
+
+/* tabs */
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--bone-line);background:transparent;
+  color:var(--ink-muted);cursor:pointer;transition:.2s}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--gold-soft);border-color:var(--ink)}
+.tabpane{display:none;animation:fade .4s ease}
+.tabpane.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+
+/* generic interactive button */
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--gold);color:#1a1206;border:none;border-radius:999px;padding:11px 20px;
+  cursor:pointer;font-weight:600;transition:.2s;box-shadow:0 6px 18px -8px var(--gold-deep)}
+.btn:hover{background:var(--gold-soft)}
+.btn.ghost{background:transparent;border:1px solid var(--ink);color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bone)}
+
+/* toggle (augment vs short) */
+.seg{display:inline-flex;background:#fff;border:1px solid var(--bone-line);border-radius:999px;padding:4px;gap:4px}
+.seg button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  border:none;background:transparent;color:var(--ink-muted);padding:8px 16px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--gold-soft)}
+
+/* flip card */
+.flip{perspective:1200px;cursor:pointer}
+.flip-inner{position:relative;transition:transform .6s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.flip.on .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:center}
+.flip-front{background:var(--ink);color:var(--on-dark)}
+.flip-back{background:linear-gradient(160deg,var(--teal),#2c6f66);color:#fff;transform:rotateY(180deg)}
+.flip-wrap{position:relative}
+
+/* hotspots */
+.hot{cursor:pointer;transition:.2s}
+.hot:hover circle, .hot:focus circle{r:11}
+.hotlabel{font-family:var(--mono);font-size:12px;fill:var(--on-dark)}
+
+/* slider */
+.range{width:100%;-webkit-appearance:none;height:6px;border-radius:6px;background:var(--bone-line);outline:none;margin:18px 0 6px}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid #fff}
+
+/* ---------- bottom nav ---------- */
+.nav{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+  padding:10px clamp(16px,4vw,40px) 16px;gap:14px}
+.nav-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--on-dark);background:var(--ink-2);
+  border:1px solid var(--line);border-radius:999px;padding:11px 18px;cursor:pointer;transition:.2s}
+.nav-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold-soft)}
+.nav-btn:disabled{opacity:.32;cursor:not-allowed}
+.dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:60%}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:.2s}
+.dot.on{background:var(--gold);transform:scale(1.35)}
+.dot.sec{background:#3a5170}
+.menu-btn{background:transparent;border:1px solid var(--line);color:var(--on-dark-muted);
+  border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:18px;display:grid;place-items:center}
+.menu-btn:hover{border-color:var(--gold);color:var(--gold-soft)}
+
+/* overview overlay */
+.overlay{position:fixed;inset:0;background:rgba(8,14,22,.92);backdrop-filter:blur(6px);
+  z-index:30;display:none;padding:clamp(20px,5vw,60px);overflow:auto}
+.overlay.on{display:block}
+.overlay h3{font-family:var(--serif);font-size:26px;color:var(--bone);margin-bottom:4px}
+.overlay .sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-dark-muted);margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ov-card{background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;text-align:left;transition:.2s}
+.ov-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.ov-card .n{font-family:var(--mono);font-size:11px;color:var(--gold-soft)}
+.ov-card .ti{font-family:var(--serif);font-size:15px;color:var(--bone);margin-top:6px;line-height:1.2}
+.ov-card .se{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-dark-muted);margin-top:8px}
+.close-x{position:fixed;top:22px;right:26px;background:var(--ink-2);border:1px solid var(--line);
+  color:var(--bone);width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer}
+
+/* title slide */
+.title-slide{display:flex;flex-direction:column;justify-content:center;height:100%;text-align:left;
+  background:radial-gradient(120% 100% at 80% 10%,#16263a,var(--ink) 60%);color:var(--bone);
+  border:1px solid var(--line)}
+.title-slide .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:18px}
+.title-slide h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,6vw,72px);line-height:1.02;letter-spacing:-.02em;max-width:16ch}
+.title-slide h1 em{font-style:italic;color:var(--gold-soft)}
+.title-slide .desc{font-size:clamp(15px,1.6vw,19px);color:var(--on-dark-muted);max-width:54ch;margin-top:22px;line-height:1.55}
+.title-meta{display:flex;gap:28px;margin-top:34px;flex-wrap:wrap}
+.title-meta div{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--on-dark-muted)}
+.title-meta div b{display:block;color:var(--gold-soft);font-size:13px;margin-top:4px;letter-spacing:.04em}
+.start-hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-dark-muted);margin-top:30px;animation:pulse 2.4s infinite}
+@keyframes pulse{50%{opacity:.4}}
+
+.kbd{font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--on-dark)}
+
+@media (max-width:860px){
+  .cols,.cols.flip,.cols.even{grid-template-columns:1fr;gap:18px}
+  .slide{inset:8px;padding:18px}
+  .dots{display:none}
+  .brand .t{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" fill="none"><rect x="1" y="1" width="38" height="38" rx="9" stroke="#C9A24B" stroke-width="1.5"/><path d="M20 8 L20 24 M20 24 L16 32 M20 24 L24 32 M14 13 H26" stroke="#E2C57E" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="t">Implant Treatment Planning · <b>Short Implants &amp; Peri-implant Health</b></span>
+    </div>
+    <div class="eyebrow-now" id="eyebrowNow">Introduction</div>
+    <div class="counter"><b id="curNum">1</b> / <span id="totNum">30</span></div>
+  </div>
+  <div class="progress"><span id="progressBar"></span></div>
+
+  <div class="deck" id="deck"><!-- slides injected --></div>
+
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn">&larr; Prev</button>
+    <div class="dots" id="dots"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="menu-btn" id="menuBtn" title="All slides">▦</button>
+      <button class="nav-btn" id="nextBtn">Next &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <button class="close-x" id="closeX">×</button>
+  <h3>Lecture contents</h3>
+  <div class="sub">30 slides · tap any to jump</div>
+  <div class="grid" id="ovGrid"></div>
+</div>
+
+<script>
+/* ============ shared SVG helpers ============ */
+// A ridge cross-section: gingiva, bone, sinus, IAN canal. Returns inner markup.
+function ridgeBase(opt={}){
+  return `
+   <defs>
+     <linearGradient id="boneG" x1="0" y1="0" x2="0" y2="1">
+       <stop offset="0" stop-color="#efe6d0"/><stop offset="1" stop-color="#d9c79c"/>
+     </linearGradient>
+     <linearGradient id="tissueG" x1="0" y1="0" x2="0" y2="1">
+       <stop offset="0" stop-color="#d98a78"/><stop offset="1" stop-color="#bd6a57"/>
+     </linearGradient>
+   </defs>`;
+}
+function implantSVG(x, topY, len, w=12){
+  // simple threaded implant from topY downward 'len'
+  let body = `<rect x="${x-w/2}" y="${topY}" width="${w}" height="${len}" rx="3" fill="#c9ccd2" stroke="#7c8794" stroke-width="1.2"/>`;
+  let threads='';
+  for(let ty=topY+6; ty<topY+len-3; ty+=7){
+    threads+=`<path d="M${x-w/2} ${ty} l${w} 3" stroke="#9aa3ae" stroke-width="1"/>`;
+  }
+  return body+threads;
+}
+
+/* ============ slide data ============ */
+const SECTIONS = {
+  intro:'Introduction', tech:'Augment or Go Short', evid:'The Evidence',
+  design:'Design · Complications', peri:'Peri-implant Health', deliver:'Delivery'
+};
+const slides = [
+/* 1 TITLE */
+{section:'intro', title:'Title', custom:'title', html:`
+  <div class="title-slide">
+    <div class="kicker">Implant Treatment Planning · Weekend Course</div>
+    <h1>Short Implants, Augmentation &amp; <em>Peri-implant Health</em></h1>
+    <div class="desc">An evidence-led tour of the atrophic posterior ridge: when to graft, when to go short, how connection and design drive complications — and how to keep implants healthy for the long term.</div>
+    <div class="title-meta">
+      <div>Format<b>30 interactive slides</b></div>
+      <div>Topics<b>Sinus lift · short implants · RCT evidence · peri-implantitis</b></div>
+      <div>Navigate<b>Arrow keys · swipe · ▦ menu</b></div>
+    </div>
+    <div class="start-hint">Press → or Next to begin</div>
+  </div>`},
+
+/* 2 OBJECTIVES */
+{section:'intro', title:'What this lecture covers', html:`
+  <div class="slide-eyebrow"><span class="num">01</span> Overview</div>
+  <h2>Five questions this lecture <span class="accent">answers</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li><b>Augment or go short?</b> What the controlled evidence actually shows for the atrophic posterior ridge.</li>
+      <li><b>Does length matter</b> when bone is plentiful — and why the “coronal three millimetres” carries the load.</li>
+      <li><b>Why design dictates complications</b> — connection type, transmucosal necks and displacement.</li>
+      <li><b>How to read the trials</b> — split-mouth RCTs, forest plots and the hidden “can’t-place” rate.</li>
+      <li><b>Keeping implants healthy</b> — diagnosing and managing peri-implant disease.</li>
+    </ul>
+    <div class="viz">
+      <svg viewBox="0 0 320 230" role="img" aria-label="Cross-section comparing an augmented long implant and a short implant beneath the sinus">
+        ${ridgeBase()}
+        <!-- sinus -->
+        <path d="M20 20 Q160 0 300 20 L300 95 Q160 78 20 95 Z" fill="#e9f1f5" stroke="#9fc0cf" stroke-width="1.5"/>
+        <text x="160" y="48" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#5b7c8a">MAXILLARY SINUS</text>
+        <!-- bone -->
+        <path d="M20 95 Q160 78 300 95 L300 170 Q160 185 20 170 Z" fill="url(#boneG)" stroke="#bda874" stroke-width="1.5"/>
+        <!-- gingiva -->
+        <path d="M20 168 Q160 182 300 168 L300 182 Q160 196 20 182 Z" fill="url(#tissueG)"/>
+        <!-- left: augmented long implant entering grafted sinus -->
+        <path d="M70 30 Q95 25 120 30 L120 95 L70 95 Z" fill="#f0e3c2" stroke="#caa64f" stroke-width="1" stroke-dasharray="3 3"/>
+        ${implantSVG(95, 40, 130)}
+        <text x="95" y="206" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#caa64f">AUGMENT + LONG</text>
+        <!-- right: short implant in native bone -->
+        ${implantSVG(225, 100, 64, 16)}
+        <text x="225" y="206" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#3E8E84">SHORT (NATIVE)</text>
+      </svg>
+      <div class="figcap">The central trade-off, in one picture</div>
+    </div>
+  </div>`},
+
+/* 3 THE DILEMMA — toggle */
+{section:'tech', title:'The core dilemma', html:`
+  <div class="slide-eyebrow"><span class="num">02</span> The clinical problem</div>
+  <h2>The atrophic posterior ridge: <span class="accent">two roads</span></h2>
+  <p class="lead">There is little bone above the canal or below the sinus. You can rebuild the bone to place a conventional implant — or place a short implant in what bone exists. Toggle to compare.</p>
+  <div style="margin-top:16px" class="seg" id="seg-dilemma">
+    <button class="on" data-v="short">Go short</button>
+    <button data-v="augment">Augment</button>
+  </div>
+  <div class="cols" style="margin-top:16px">
+    <div id="dilemma-text"></div>
+    <div class="viz" id="dilemma-viz"></div>
+  </div>`},
+
+/* 4 SINUS ANATOMY — hotspots */
+{section:'tech', title:'Sinus anatomy & toolkit', html:`
+  <div class="slide-eyebrow"><span class="num">03</span> Anatomy</div>
+  <h2>Know the <span class="accent">sinus</span> before you lift it</h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 340 240" id="sinusHot" role="img" aria-label="Maxillary sinus anatomy with interactive labels">
+        ${ridgeBase()}
+        <path d="M20 18 Q170 -2 320 18 L320 100 Q170 82 20 100 Z" fill="#e9f1f5" stroke="#9fc0cf" stroke-width="1.5"/>
+        <path d="M20 100 Q170 82 320 100 L320 175 Q170 190 20 175 Z" fill="url(#boneG)" stroke="#bda874" stroke-width="1.5"/>
+        <path d="M20 173 Q170 188 320 173 L320 188 Q170 203 20 188 Z" fill="url(#tissueG)"/>
+        <!-- Schneiderian membrane line -->
+        <path d="M30 98 Q170 80 310 98" fill="none" stroke="#c97b6a" stroke-width="2.5"/>
+        <!-- ostium -->
+        <circle cx="40" cy="30" r="6" fill="#cfe0e8" stroke="#5b7c8a"/>
+        <g class="hot" data-k="membrane" tabindex="0"><circle cx="170" cy="86" r="8" fill="#C9A24B"/></g>
+        <g class="hot" data-k="floor" tabindex="0"><circle cx="240" cy="100" r="8" fill="#C9A24B"/></g>
+        <g class="hot" data-k="ostium" tabindex="0"><circle cx="40" cy="30" r="8" fill="#C9A24B"/></g>
+        <g class="hot" data-k="residual" tabindex="0"><circle cx="120" cy="140" r="8" fill="#C9A24B"/></g>
+      </svg>
+      <div class="figcap">Tap the gold markers</div>
+    </div>
+    <div>
+      <div id="sinusInfo" class="pearl"><span class="k">Select a structure</span><p>The sinus is lined by the thin <b>Schneiderian membrane</b>. Elevating it without perforation is the central skill of every sinus-floor technique.</p></div>
+      <ul class="points teal" style="margin-top:14px">
+        <li><b>Residual bone height</b> below the sinus drives the whole decision — and often makes early loading possible.</li>
+        <li>The <b>ostium</b> drains the sinus; graft or infection that reaches it risks sinusitis.</li>
+      </ul>
+    </div>
+  </div>`},
+
+/* 5 LATERAL vs CRESTAL — tabs */
+{section:'tech', title:'Lateral vs crestal', html:`
+  <div class="slide-eyebrow"><span class="num">04</span> Technique</div>
+  <h2>Two ways to lift the <span class="accent">floor</span></h2>
+  <div class="tabs" id="liftTabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-p="lat">Lateral window</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="cre">Crestal approach</button>
+  </div>
+  <div class="cols">
+    <div>
+      <div class="tabpane on" data-p="lat">
+        <ul class="points">
+          <li>A bony window is cut in the lateral wall; the membrane is elevated and the space grafted.</li>
+          <li><b>Piezosurgery</b> is thought to reduce membrane perforation, but with experience rotary and piezo give the same result — piezo simply takes longer.</li>
+          <li>A common compromise: start the window with a bur, finish against the membrane with piezo.</li>
+          <li>Often two-stage: graft heals 4–5 months, then implants, then more integration — close to a year to restore.</li>
+        </ul>
+      </div>
+      <div class="tabpane" data-p="cre">
+        <ul class="points">
+          <li>Drills of increasing length advance to ~1 mm below the sinus floor; radiographs confirm position.</li>
+          <li>The final instrument <b>abrades rather than cuts</b> the last millimetre — reaching the membrane without tearing it.</li>
+          <li>Autogenous bone collected during refinement is packed against the intact membrane, then the implant placed.</li>
+          <li>For 4–6 mm of residual height, a minimal crestal lift with a <b>collagen sponge</b> alone often forms new bone.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="viz" id="liftViz"></div>
+  </div>`},
+
+/* 6 GRAFT BIOLOGY */
+{section:'tech', title:'Graft biology & timing', html:`
+  <div class="slide-eyebrow"><span class="num">05</span> Biology</div>
+  <h2>The <span class="accent">timing trap</span> of grafted bone</h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">If an implant is loaded at 45 days and survives, it is <b>not</b> because of the graft — it is because of the native residual bone.</p>
+      <div class="viz light">
+        <svg viewBox="0 0 320 130" role="img" aria-label="Timeline of graft maturation">
+          <line x1="20" y1="95" x2="300" y2="95" stroke="#d8cdb6" stroke-width="2"/>
+          <g font-family="IBM Plex Mono" font-size="9" fill="#5C6E7E" text-anchor="middle">
+            <circle cx="40" cy="95" r="4" fill="#C97B6A"/><text x="40" y="115">45 days</text>
+            <circle cx="150" cy="95" r="4" fill="#C9A24B"/><text x="150" y="115">6 months</text>
+            <circle cx="280" cy="95" r="4" fill="#3E8E84"/><text x="280" y="115">12 months</text>
+          </g>
+          <text x="40" y="70" text-anchor="middle" font-family="Inter" font-size="10" fill="#bd6a57">no new bone</text>
+          <text x="150" y="55" text-anchor="middle" font-family="Inter" font-size="10" fill="#A9842F">immature bone</text>
+          <text x="280" y="40" text-anchor="middle" font-family="Inter" font-size="10" fill="#2c6f66">sound bone</text>
+          <path d="M40 88 Q150 60 280 35" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="4 4"/>
+        </svg>
+        <div class="figcap">New bone forms slowly — months, not weeks</div>
+      </div>
+    </div>
+    <ul class="points">
+      <li>New bone <b>begins</b> after ~6 months, is immature even then, and is only sound at ~12 months.</li>
+      <li>Unloaded grafted autogenous bone <b>resorbs unpredictably</b> — wait too long and there may be no bone left.</li>
+      <li>Covering membranes are often used to slow resorption; their benefit here is debatable.</li>
+    </ul>
+  </div>
+  <div class="pearl"><span class="k">Clinical pearl</span><p>Early loading over a fresh graft borrows stability from native bone. Respect graft maturation timelines before you trust the regenerate.</p></div>`},
+
+/* 7 MORBIDITY */
+{section:'tech', title:'Augmentation morbidity', html:`
+  <div class="slide-eyebrow"><span class="num">06</span> Morbidity</div>
+  <h2>The donor-site <span class="accent">reality</span></h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">Patients are often told iliac-crest harvesting is pain-free within a week. Across many centres, that reassurance simply does not hold.</p>
+      <div class="stats">
+        <div class="stat"><div class="v">1 mo</div><div class="l">5 patients still in significant pain</div></div>
+        <div class="stat"><div class="v">2 mo</div><div class="l">2 patients with donor-site problems</div></div>
+        <div class="stat"><div class="v">&gt;6 mo</div><div class="l">to close one oro-antral communication</div></div>
+      </div>
+    </div>
+    <ul class="points coral-list">
+      <li>Harvesting bone — crestal or intra-oral — carries real pain and sometimes complications.</li>
+      <li><b>Bilateral sinus infection</b> is a recognised hazard; both sinuses frequently become infected together.</li>
+      <li>If material in the sinus becomes infected, <b>remove it early</b> — even at the cost of the implant — before it reaches the ostium.</li>
+    </ul>
+  </div>
+  <div class="pearl coral"><span class="k">Plan B</span><p>The simplest fallback when augmentation is risky or fails is a shorter implant. Always have one.</p></div>`},
+
+/* 8 SPLIT MOUTH RCT */
+{section:'evid', title:'The split-mouth RCT', html:`
+  <div class="slide-eyebrow"><span class="num">07</span> Study design</div>
+  <h2>How the question was <span class="accent">tested</span></h2>
+  <div class="cols">
+    <div class="viz">
+      <svg viewBox="0 0 320 200" role="img" aria-label="Split mouth design diagram">
+        <text x="160" y="22" text-anchor="middle" font-family="Fraunces" font-size="16" fill="#E2C57E">Same patient, both sides</text>
+        <rect x="30" y="50" width="110" height="110" rx="12" fill="#1B2A3A" stroke="#caa64f" stroke-width="1.5"/>
+        <rect x="180" y="50" width="110" height="110" rx="12" fill="#1B2A3A" stroke="#7DBEB4" stroke-width="1.5"/>
+        <text x="85" y="100" text-anchor="middle" font-family="Inter" font-size="13" fill="#E2C57E">Sinus lift</text>
+        <text x="85" y="122" text-anchor="middle" font-family="Inter" font-size="13" fill="#E2C57E">+ long implant</text>
+        <text x="235" y="100" text-anchor="middle" font-family="Inter" font-size="13" fill="#7DBEB4">Short</text>
+        <text x="235" y="122" text-anchor="middle" font-family="Inter" font-size="13" fill="#7DBEB4">implant</text>
+        <text x="160" y="105" text-anchor="middle" font-family="IBM Plex Mono" font-size="18" fill="#93A6BA">vs</text>
+        <text x="160" y="185" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#93A6BA">RANDOMISED · CONTROLS FOR THE PATIENT</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>Each patient receives <b>both</b> treatments — one per side — so patient factors are controlled.</li>
+      <li>Always compare <b>baseline characteristics</b> (age, sex, smoking) to check the randomisation worked.</li>
+      <li>Recruitment was hard: free treatment was offered, yet the split-mouth design eventually had to be abandoned for parallel groups.</li>
+    </ul>
+  </div>
+  <div class="pearl"><span class="k">Why it matters</span><p>The split-mouth design removes between-patient noise — making even small, real differences visible.</p></div>`},
+
+/* 9 REPEATING PATTERN */
+{section:'evid', title:'The repeating pattern', html:`
+  <div class="slide-eyebrow"><span class="num">08</span> Findings</div>
+  <h2>The same result, <span class="accent">again and again</span></h2>
+  <p class="lead">Across split-mouth trials — different diameters, implant systems and bone substitutes — one pattern repeated.</p>
+  <div class="cols even" style="margin-top:14px">
+    <div class="viz">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:#E2C57E;text-transform:uppercase;margin-bottom:10px">Short implant side</div>
+      <ul class="points teal" style="--b:teal">
+        <li>Slightly more implant failures — <b>not significant</b></li>
+        <li>Fewer complications</li>
+        <li>Less marginal bone loss</li>
+        <li>Smaller, faster operation</li>
+      </ul>
+    </div>
+    <div class="viz">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:#E0A99B;text-transform:uppercase;margin-bottom:10px">Sinus-lift side</div>
+      <ul class="points" style="">
+        <li>More complications</li>
+        <li>More marginal bone loss</li>
+        <li>Larger, often two-stage surgery</li>
+        <li>Longer healing — better at a year vs months</li>
+      </ul>
+    </div>
+  </div>`},
+
+/* 10 PATIENT PREFERENCE */
+{section:'evid', title:'Patient preference', html:`
+  <div class="slide-eyebrow"><span class="num">09</span> The patient’s view</div>
+  <h2>Patients consistently chose <span class="accent">short</span></h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 300 170" role="img" aria-label="Patient preference bar">
+        <text x="150" y="22" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#93A6BA">“WHICH WOULD YOU PREFER?”</text>
+        <rect x="40" y="50" width="220" height="34" rx="8" fill="#1B2A3A"/>
+        <rect x="40" y="50" width="180" height="34" rx="8" fill="#3E8E84"/>
+        <text x="55" y="72" font-family="Inter" font-size="13" fill="#fff" font-weight="600">Short implant</text>
+        <rect x="40" y="98" width="220" height="34" rx="8" fill="#1B2A3A"/>
+        <rect x="40" y="98" width="60" height="34" rx="8" fill="#C97B6A"/>
+        <text x="55" y="120" font-family="Inter" font-size="13" fill="#fff" font-weight="600">Sinus lift</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>A small crestal incision and a quick procedure beats a large, sometimes two-stage operation.</li>
+      <li>Recovery is faster — the short-implant side is comfortable in months, not a year.</li>
+      <li><b>Beware how you ask:</b> shown an aesthetic result, patients may praise the grafted side yet still decline to graft the other — preference depends on the question.</li>
+    </ul>
+  </div>`},
+
+/* 11 META-ANALYSIS forest plot */
+{section:'evid', title:'Meta-analysis', html:`
+  <div class="slide-eyebrow"><span class="num">10</span> Pooled evidence</div>
+  <h2>Reading the <span class="accent">forest plot</span></h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">Pooling the trials: implant and prosthetic failures don’t differ significantly — but complications clearly favour short implants. Tap to reveal.</p>
+      <button class="btn" id="forestBtn">Reveal pooled effects</button>
+    </div>
+    <div class="viz" id="forestViz">
+      <svg viewBox="0 0 320 200" role="img" aria-label="Forest plot of pooled outcomes">
+        <line x1="160" y1="20" x2="160" y2="180" stroke="#3a5170" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="160" y="195" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#93A6BA">favours short · 1 · favours augment</text>
+        <g class="fp" data-cx="150" data-w="60"><text x="14" y="50" font-family="Inter" font-size="11" fill="#E7EDF3">Implant failure</text><line class="fline" y1="46" y2="46" stroke="#7DBEB4" stroke-width="2.5"/><circle class="fdot" cy="46" r="5" fill="#7DBEB4"/></g>
+        <g class="fp" data-cx="156" data-w="54"><text x="14" y="92" font-family="Inter" font-size="11" fill="#E7EDF3">Prosthetic failure</text><line class="fline" y1="88" y2="88" stroke="#7DBEB4" stroke-width="2.5"/><circle class="fdot" cy="88" r="5" fill="#7DBEB4"/></g>
+        <g class="fp" data-cx="108" data-w="46"><text x="14" y="134" font-family="Inter" font-size="11" fill="#E7EDF3">Complications</text><line class="fline" y1="130" y2="130" stroke="#C9A24B" stroke-width="2.5"/><circle class="fdot" cy="130" r="5" fill="#C9A24B"/></g>
+        <g class="fp" data-cx="118" data-w="40"><text x="14" y="176" font-family="Inter" font-size="11" fill="#E7EDF3">Bone loss ~0.6mm</text><line class="fline" y1="172" y2="172" stroke="#C9A24B" stroke-width="2.5"/><circle class="fdot" cy="172" r="5" fill="#C9A24B"/></g>
+      </svg>
+      <div class="figcap">Marker left of the line favours short implants</div>
+    </div>
+  </div>`},
+
+/* 12 HIDDEN 14% */
+{section:'evid', title:'The hidden 14%', html:`
+  <div class="slide-eyebrow"><span class="num">11</span> The catch</div>
+  <h2>Equal failure rates <span class="accent">hide</span> something</h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 220 220" role="img" aria-label="14 percent of augmentation could not be placed">
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#1B2A3A" stroke-width="22"/>
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#C97B6A" stroke-width="22"
+          stroke-dasharray="70 502" stroke-dashoffset="0" transform="rotate(-90 110 110)" stroke-linecap="round"/>
+        <text x="110" y="104" text-anchor="middle" font-family="Fraunces" font-size="34" fill="#E0A99B">14%</text>
+        <text x="110" y="128" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#93A6BA">COULD NOT PLACE</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>In ~<b>14% of augmentation cases</b> the planned implant could not be placed at all — a shorter one was used, or none.</li>
+      <li>So “equal implant-failure rates” conceals that augmentation sometimes <b>prevents placement</b> entirely.</li>
+      <li>Interposition grafting outperformed onlay block-only grafting in comparative studies.</li>
+    </ul>
+  </div>
+  <div class="pearl coral"><span class="k">Asymmetry of risk</span><p>If a short implant fails you can still graft. If you graft first and lose it, you may be unable to place even a short implant.</p></div>`},
+
+/* 13 SHORT vs LONG adequate bone */
+{section:'evid', title:'Short vs long in good bone', html:`
+  <div class="slide-eyebrow"><span class="num">12</span> Adequate bone</div>
+  <h2>When bone is plentiful, is <span class="accent">longer better?</span></h2>
+  <p class="lead">Four trials randomised sites with ample bone to short vs long implants. The surprise: essentially equivalent outcomes.</p>
+  <div class="stats" style="margin-top:14px">
+    <div class="stat"><div class="v">6 vs 11</div><div class="l">Dutch RCT · early loading 6 wks · equivalent at 3 yrs</div></div>
+    <div class="stat"><div class="v">10 yrs</div><div class="l">6 mm transmucosal · one short failure · no real difference</div></div>
+    <div class="stat"><div class="v">150</div><div class="l">patients · 4 vs ≥8.5 mm · similar failures</div></div>
+  </div>
+  <div class="pearl"><span class="k">Take-home</span><p>If you have 11 mm of bone you don’t need a sinus lift — and you rarely need an 11 mm implant where a shorter one will do. Use common sense; avoid over-treatment.</p></div>`},
+
+/* 14 CORONAL 3MM */
+{section:'evid', title:'The coronal 3 mm', html:`
+  <div class="slide-eyebrow"><span class="num">13</span> Biomechanics</div>
+  <h2>The load lives in the <span class="accent">coronal bone</span></h2>
+  <div class="cols">
+    <div class="viz">
+      <svg viewBox="0 0 200 230" role="img" aria-label="Stress concentrates in the coronal bone around an implant">
+        <rect x="20" y="40" width="160" height="170" rx="8" fill="url(#boneG)" stroke="#bda874"/>
+        ${ridgeBase()}
+        ${implantSVG(100,30,150,18)}
+        <!-- stress halo coronal -->
+        <ellipse cx="100" cy="58" rx="46" ry="22" fill="#C97B6A" opacity="0.55"/>
+        <ellipse cx="100" cy="58" rx="30" ry="14" fill="#bd6a57" opacity="0.6"/>
+        <text x="100" y="20" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">PEAK STRESS</text>
+        <line x1="150" y1="40" x2="150" y2="80" stroke="#C9A24B" stroke-width="2"/>
+        <text x="158" y="64" font-family="IBM Plex Mono" font-size="10" fill="#A9842F">~3 mm</text>
+      </svg>
+      <div class="figcap">Occlusal load concentrates in the top ~3 mm</div>
+    </div>
+    <ul class="points">
+      <li>Roughly the coronal <b>three millimetres</b> of crestal bone bears most of the load.</li>
+      <li>In theory three millimetres can suffice; more is welcome but not essential.</li>
+      <li>The same logic reduced implant <b>number</b> — fewer, well-distributed implants can carry a restoration.</li>
+      <li>Honest limitation: most data are five-year; long-term follow-up is still scarce.</li>
+    </ul>
+  </div>`},
+
+/* 15 CROWN:IMPLANT RATIO slider */
+{section:'evid', title:'Crown:implant ratio myth', html:`
+  <div class="slide-eyebrow"><span class="num">14</span> Myth-busting</div>
+  <h2>The crown-to-implant ratio <span class="accent">myth</span></h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">The old rule said the implant should be twice the crown length. Drag the slider — these restorations function even at 3:1 and 4:1.</p>
+      <input type="range" min="10" max="40" value="30" class="range" id="ratioSlide">
+      <div id="ratioReadout" class="pearl teal"><span class="k">Crown : implant</span><p></p></div>
+    </div>
+    <div class="viz light"><svg viewBox="0 0 200 240" id="ratioViz" role="img" aria-label="Crown to implant ratio illustration"></svg><div class="figcap">Biology ignores tidy mathematical rules</div></div>
+  </div>`},
+
+/* 16 CONNECTION DESIGN */
+{section:'design', title:'Connection design', html:`
+  <div class="slide-eyebrow"><span class="num">15</span> Design</div>
+  <h2>Why short implants are <span class="accent">different</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li>When an implant is very short, there’s <b>no room for an internal screw</b>.</li>
+      <li>So you use either an <b>external connection</b> or go <b>transmucosal</b>.</li>
+      <li>A locking-taper connection (e.g. <b>Bicon</b>) needs little vertical space and offers a genuine seal — attractive for short implants, but under-studied.</li>
+      <li>Connection choice isn’t cosmetic — it shapes the complications you’ll see.</li>
+    </ul>
+    <div class="viz">
+      <svg viewBox="0 0 300 180" role="img" aria-label="Internal vs external vs locking taper connections">
+        <g font-family="IBM Plex Mono" font-size="9" fill="#93A6BA" text-anchor="middle">
+          <rect x="20" y="50" width="50" height="80" rx="5" fill="#c9ccd2" stroke="#7c8794"/><path d="M35 50 v20 h20 v-20" fill="#1B2A3A"/><text x="45" y="150">INTERNAL</text>
+          <rect x="125" y="50" width="50" height="80" rx="5" fill="#c9ccd2" stroke="#7c8794"/><rect x="140" y="38" width="20" height="16" fill="#C9A24B"/><text x="150" y="150">EXTERNAL</text>
+          <rect x="230" y="50" width="50" height="80" rx="5" fill="#c9ccd2" stroke="#7c8794"/><path d="M243 50 l12 18 l12 -18" fill="#3E8E84"/><text x="255" y="150">LOCKING TAPER</text>
+        </g>
+      </svg>
+    </div>
+  </div>`}
+,
+/* 17 TRANSMUCOSAL DISPLACEMENT */
+{section:'design', title:'Displacement complication', html:`
+  <div class="slide-eyebrow"><span class="num">16</span> Complication</div>
+  <h2>The transmucosal <span class="accent">displacement</span> trap</h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 300 210" role="img" aria-label="A narrow-necked transmucosal implant migrating into the sinus">
+        ${ridgeBase()}
+        <path d="M20 20 Q150 4 280 20 L280 80 Q150 66 20 80 Z" fill="#e9f1f5" stroke="#9fc0cf"/>
+        <path d="M20 80 Q150 66 280 80 L280 130 Q150 142 20 130 Z" fill="url(#boneG)" stroke="#bda874"/>
+        <!-- implant with rough body, narrow neck protruding -->
+        <rect x="120" y="92" width="16" height="40" rx="3" fill="#c9ccd2" stroke="#7c8794"/>
+        <rect x="125" y="74" width="6" height="20" fill="#9aa3ae"/>
+        <text x="180" y="86" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">narrow neck</text>
+        <path d="M170 84 L140 90" stroke="#C97B6A" stroke-width="1.5" marker-end="url(#arr)"/>
+        <!-- arrow up into sinus -->
+        <path d="M210 110 L210 60" stroke="#C97B6A" stroke-width="2.5"/>
+        <path d="M210 56 l-5 9 h10 z" fill="#C97B6A"/>
+        <text x="222" y="50" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">into sinus</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>A transmucosal implant’s neck <b>protrudes</b> above bone and meets chewing forces.</li>
+      <li>If that neck is <b>narrow</b> and the bone soft, the implant can migrate <b>into the sinus</b>.</li>
+      <li>One trial lost an implant into the sinus this way — the maker later advised against sinus use.</li>
+      <li>Prefer a design that <b>cannot</b> drop into the sinus even if it fails to integrate; ideally bone-level.</li>
+    </ul>
+  </div>`},
+
+/* 18 NARROW vs HORIZONTAL AUG */
+{section:'design', title:'Narrow implants', html:`
+  <div class="slide-eyebrow"><span class="num">17</span> The thin ridge</div>
+  <h2>Narrow implant or <span class="accent">widen the ridge?</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li>Adequate width is often missing. Options: augment horizontally, or use a <b>narrow implant</b> (≤3 mm).</li>
+      <li>Very narrow implants (2.8–2.5 mm) risk <b>fracture</b>, especially with an internal connection — for a molar, two are used.</li>
+      <li>In trial: all failures were in the <b>augmented</b> group; more complications and bone loss there too.</li>
+      <li>The narrow-implant route was faster and less morbid; the open question is fracture at 5–10 years.</li>
+    </ul>
+    <div class="viz">
+      <svg viewBox="0 0 300 170" role="img" aria-label="Narrow implant in a thin ridge versus widened augmented ridge">
+        <rect x="30" y="40" width="90" height="110" rx="10" fill="url(#boneG)" stroke="#bda874"/>
+        ${ridgeBase()}
+        ${implantSVG(75,55,80,8)}
+        <text x="75" y="166" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#3E8E84">NARROW (≤3mm)</text>
+        <rect x="180" y="40" width="110" height="110" rx="10" fill="url(#boneG)" stroke="#bda874"/>
+        <rect x="180" y="40" width="110" height="26" fill="#f0e3c2" stroke="#caa64f" stroke-dasharray="3 3"/>
+        ${implantSVG(235,55,90,16)}
+        <text x="235" y="166" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#caa64f">AUGMENT + WIDE</text>
+      </svg>
+    </div>
+  </div>`},
+
+/* 19 NERVE SAFETY drill stop */
+{section:'design', title:'Mandibular nerve safety', html:`
+  <div class="slide-eyebrow"><span class="num">18</span> Safety</div>
+  <h2>The mandible bites back: <span class="accent">drill stops</span></h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">A dense cortex over a near-hollow interior lets a drill skid, then plunge — like cracking an eggshell. Press play.</p>
+      <button class="btn" id="drillBtn">Play the plunge risk</button>
+      <ul class="points" style="margin-top:8px">
+        <li>The avoidable disaster with short implants is <b>cutting the nerve</b> by losing depth control.</li>
+        <li><b>Idiot-proof drills with a built-in stop</b> remove the need to remember a separate stopper.</li>
+      </ul>
+    </div>
+    <div class="viz"><svg viewBox="0 0 300 220" id="drillViz" role="img" aria-label="Drill plunging towards inferior alveolar nerve, with and without a stop"></svg><div class="figcap">A 4 mm stop keeps the bur clear of the canal</div></div>
+  </div>`},
+
+/* 20 CATASTROPHIC + MEDICOLEGAL */
+{section:'design', title:'When it goes wrong', html:`
+  <div class="slide-eyebrow"><span class="num">19</span> Hard cases</div>
+  <h2>When augmentation goes <span class="accent">catastrophically</span> wrong</h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 300 200" role="img" aria-label="Cascade of complications">
+        <g font-family="Inter" font-size="11" fill="#E7EDF3">
+        <rect x="20" y="20" width="260" height="28" rx="8" fill="#1B2A3A" stroke="#C97B6A"/><text x="32" y="38">“Minor” haemorrhage → bone fracture</text>
+        <rect x="20" y="62" width="260" height="28" rx="8" fill="#1B2A3A" stroke="#C97B6A"/><text x="32" y="80">Longer surgery → infection → trismus</text>
+        <rect x="20" y="104" width="260" height="28" rx="8" fill="#1B2A3A" stroke="#C97B6A"/><text x="32" y="122">Graft removed → mandibular fracture</text>
+        <rect x="20" y="146" width="260" height="28" rx="8" fill="#1B2A3A" stroke="#3E8E84"/><text x="32" y="164">Trust kept via referring dentist → resolved</text>
+        </g>
+        <path d="M150 48 L150 62 M150 90 L150 104 M150 132 L150 146" stroke="#93A6BA" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>A “minor” maxillofacial bleed and bone fracture turned into a long, invasive, infection-prone course.</li>
+      <li>The more invasive the procedure, the higher the infection risk and the harder the recovery.</li>
+      <li><b>Medicolegal lesson:</b> goodwill and a trusted referring dentist salvaged an angry patient — and a lawsuit.</li>
+    </ul>
+  </div>`},
+
+/* 21 CONCLUSIONS short implants */
+{section:'design', title:'Decision summary', html:`
+  <div class="slide-eyebrow"><span class="num">20</span> Conclusions</div>
+  <h2>Choose <span class="accent">short first</span></h2>
+  <div class="cols">
+    <ul class="points teal">
+      <li><b>Posterior, up to ~8–10 yrs:</b> short implants (4–6 mm) match longer implants in augmented bone.</li>
+      <li>Lower morbidity · lower cost · faster treatment.</li>
+      <li>If a short implant fails, you can still graft — the reverse isn’t true.</li>
+      <li><b>Mandible:</b> “short” means ~6 mm; first choice.</li>
+    </ul>
+    <ul class="points">
+      <li><b>Maxilla:</b> a different story — needs longer follow-up.</li>
+      <li>Peri-implantitis may be less forgiving on a short maxillary implant.</li>
+      <li>Match the connection and design to the height available.</li>
+      <li>Always keep a plan B.</li>
+    </ul>
+  </div>
+  <div class="pearl"><span class="k">One line</span><p>Where it’s viable, the short implant is the lower-risk, patient-preferred default — graft when you must, not by reflex.</p></div>`},
+
+/* 22 PERI-IMPLANT DISEASE */
+{section:'peri', title:'Peri-implant disease', html:`
+  <div class="slide-eyebrow"><span class="num">21</span> Disease</div>
+  <h2>From <span class="accent">mucositis</span> to peri-implantitis</h2>
+  <div class="cols">
+    <div class="viz">
+      <svg viewBox="0 0 300 180" role="img" aria-label="Healthy, mucositis and peri-implantitis stages">
+        ${ridgeBase()}
+        <g>
+          <rect x="20" y="60" width="70" height="90" fill="url(#boneG)"/><rect x="20" y="52" width="70" height="10" fill="url(#tissueG)"/>${implantSVG(55,55,90,9)}<text x="55" y="168" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#2c6f66">HEALTHY</text>
+          <rect x="115" y="60" width="70" height="90" fill="url(#boneG)"/><rect x="115" y="50" width="70" height="14" fill="#bd6a57"/>${implantSVG(150,55,90,9)}<text x="150" y="168" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#A9842F">MUCOSITIS</text>
+          <rect x="210" y="60" width="70" height="90" fill="url(#boneG)"/><path d="M210 60 q35 30 70 0 v90 h-70z" fill="#d9c79c"/><rect x="210" y="50" width="70" height="14" fill="#bd6a57"/>${implantSVG(245,55,90,9)}<text x="245" y="168" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#bd6a57">PERI-IMPLANTITIS</text>
+        </g>
+      </svg>
+    </div>
+    <ul class="points">
+      <li><b>Mucositis</b> = reversible soft-tissue inflammation; <b>peri-implantitis</b> adds progressive bone loss.</li>
+      <li>It doesn’t happen overnight — you don’t lose 4 mm of bone suddenly, so there’s time to act.</li>
+      <li>Be <b>suspicious, not complacent</b>: doing nothing is the wrong answer.</li>
+    </ul>
+  </div>`},
+
+/* 23 DIAGNOSIS triad */
+{section:'peri', title:'Diagnosis', html:`
+  <div class="slide-eyebrow"><span class="num">22</span> Diagnosis</div>
+  <h2>Why bleeding alone <span class="accent">isn’t enough</span></h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 240 200" role="img" aria-label="Diagnostic triad: bleeding, probing depth, radiograph">
+        <circle cx="120" cy="70" r="50" fill="#C97B6A" opacity=".22" stroke="#C97B6A"/>
+        <circle cx="80" cy="140" r="50" fill="#C9A24B" opacity=".22" stroke="#C9A24B"/>
+        <circle cx="160" cy="140" r="50" fill="#3E8E84" opacity=".22" stroke="#3E8E84"/>
+        <text x="120" y="55" text-anchor="middle" font-family="Inter" font-size="11" fill="#E0A99B">Bleeding</text>
+        <text x="120" y="68" text-anchor="middle" font-family="Inter" font-size="11" fill="#E0A99B">on probing</text>
+        <text x="62" y="150" text-anchor="middle" font-family="Inter" font-size="11" fill="#E2C57E">Probing</text>
+        <text x="62" y="163" text-anchor="middle" font-family="Inter" font-size="11" fill="#E2C57E">depth</text>
+        <text x="178" y="150" text-anchor="middle" font-family="Inter" font-size="11" fill="#7DBEB4">Radiograph</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li><b>Bleeding on probing</b> is the least specific single sign — it also occurs with mucositis or heavy probing.</li>
+      <li>Don’t ignore it; <b>investigate behind it</b> with probing depth, attachment loss and a radiograph.</li>
+      <li>Reality is usually <b>worse than the radiograph</b> — raise a flap and the loss is greater than it looked.</li>
+    </ul>
+  </div>`},
+
+/* 24 BONE LOSS PATTERN toggle */
+{section:'peri', title:'Bone-loss patterns', html:`
+  <div class="slide-eyebrow"><span class="num">23</span> Pattern</div>
+  <h2>How bone is lost around <span class="accent">implants</span></h2>
+  <div style="margin-top:8px" class="seg" id="seg-loss">
+    <button class="on" data-v="thick">Thick bone</button>
+    <button data-v="thin">Thin bone</button>
+  </div>
+  <div class="cols" style="margin-top:14px">
+    <div class="viz" id="lossViz"></div>
+    <div id="lossText"></div>
+  </div>`},
+
+/* 25 PHENOTYPE probe */
+{section:'peri', title:'Tissue phenotype', html:`
+  <div class="slide-eyebrow"><span class="num">24</span> Soft tissue</div>
+  <h2>Thin or thick? <span class="accent">Probe it</span></h2>
+  <div class="cols">
+    <div class="stack">
+      <p class="lead">Assess phenotype <b>before</b> you place the implant. Place a periodontal probe in the sulcus — does it show through the tissue? Tap to test.</p>
+      <button class="btn" id="probeBtn">Insert probe</button>
+      <div id="probeText" class="pearl"><span class="k">Phenotype</span><p>Press “Insert probe” to see the shine-through test.</p></div>
+    </div>
+    <div class="viz"><svg viewBox="0 0 240 200" id="probeViz" role="img" aria-label="Periodontal probe shine-through test for tissue phenotype"></svg></div>
+  </div>`},
+
+/* 26 CEMENT & RETROGRADE */
+{section:'peri', title:'Cement & retrograde traps', html:`
+  <div class="slide-eyebrow"><span class="num">25</span> Traps</div>
+  <h2>Cement &amp; <span class="accent">retrograde</span> lesions</h2>
+  <div class="cols even">
+    <div class="viz">
+      <div style="font-family:var(--mono);font-size:11px;color:#E2C57E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Excess cement</div>
+      <ul class="points">
+        <li>Use a <b>radiopaque</b> cement — but a PA only shows mesial/distal, never buccolingual.</li>
+        <li>Retained cement drives inflammation, marginal bone loss and peri-implantitis.</li>
+      </ul>
+    </div>
+    <div class="viz">
+      <div style="font-family:var(--mono);font-size:11px;color:#E0A99B;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Retrograde peri-implantitis</div>
+      <ul class="points">
+        <li>Causes: <b>over-torque</b> (~80 Ncm), a previously infected site, overheating/over-irrigation.</li>
+        <li>Painful, fistulous or persistent → raise a flap, debride, or resect the apex. Antibiotics alone won’t cure it.</li>
+      </ul>
+    </div>
+  </div>`},
+
+/* 27 SURFACE DESIGN */
+{section:'peri', title:'Surface design', html:`
+  <div class="slide-eyebrow"><span class="num">26</span> Surface</div>
+  <h2>The polished-collar <span class="accent">idea</span></h2>
+  <div class="cols flip">
+    <div class="viz">
+      <svg viewBox="0 0 160 220" role="img" aria-label="Implant with polished coronal collar and rough body">
+        ${ridgeBase()}
+        <rect x="56" y="30" width="48" height="34" rx="4" fill="#e6e8ec" stroke="#9aa3ae"/>
+        <rect x="56" y="64" width="48" height="120" rx="4" fill="#b9bec6" stroke="#7c8794"/>
+        <g stroke="#9aa3ae" stroke-width="1">${Array.from({length:14}).map((_,i)=>`<path d="M56 ${72+i*8} l48 4"/>`).join('')}</g>
+        <text x="116" y="48" font-family="IBM Plex Mono" font-size="8" fill="#A9842F">polished</text>
+        <text x="116" y="120" font-family="IBM Plex Mono" font-size="8" fill="#5C6E7E">rough</text>
+      </svg>
+    </div>
+    <ul class="points">
+      <li>Polished coronal third + rough apical thirds: idea is to <b>slow peri-implantitis spread</b> if bone is lost.</li>
+      <li>Conceptually appealing, but <b>not yet proven</b> by a well-designed trial.</li>
+      <li>Machined surfaces resist disease but osseointegrate less; masking to make collars adds cost.</li>
+      <li>A polished “cuff” suits atrophic/old cases as an alternative to extensive grafting.</li>
+    </ul>
+  </div>`},
+
+/* 28 PERIO HISTORY */
+{section:'peri', title:'Perio history & maintenance', html:`
+  <div class="slide-eyebrow"><span class="num">27</span> Risk</div>
+  <h2>A periodontal past <span class="accent">follows the patient</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li>Patients who lost teeth to periodontitis are at <b>higher peri-implantitis risk</b>.</li>
+      <li>Warn them in the treatment plan and schedule <b>more frequent maintenance</b>.</li>
+      <li>Implants are <b>not</b> more resistant than teeth — they need more cleaning, not less.</li>
+      <li>Always record <b>why teeth were lost</b> (perio vs failed restoration) — it changes the plan.</li>
+    </ul>
+    <div class="pearl coral"><span class="k">Patient myth</span><p>“Take them all out for a fresh start.” In reality, the new restoration demands more maintenance than the teeth it replaced.</p></div>
+  </div>`},
+
+/* 29 DECONTAMINATION */
+{section:'peri', title:'Decontamination & decisions', html:`
+  <div class="slide-eyebrow"><span class="num">28</span> Management</div>
+  <h2>The bleeding implant: <span class="accent">flapless or flap?</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li><b>Ultrasonic / sonic</b> beats hand instruments here — cavitation reaches between threads where bulky hand tips can’t.</li>
+      <li><b>Shallow (2 mm) + smooth threads</b> → often manageable flaplessly.</li>
+      <li><b>Deep (4 mm) or aggressive threads</b> → the tip can’t pass the first thread; raise a flap.</li>
+      <li><b>Implantoplasty caution:</b> grinding a thin wall (&lt;0.5 mm) risks fracture — do as little as needed.</li>
+    </ul>
+    <div class="viz">
+      <svg viewBox="0 0 260 170" role="img" aria-label="Decision: flapless versus flap based on depth and thread design">
+        <rect x="20" y="30" width="100" height="100" rx="10" fill="#1B2A3A" stroke="#3E8E84"/>
+        <text x="70" y="64" text-anchor="middle" font-family="Inter" font-size="12" fill="#7DBEB4">Flapless</text>
+        <text x="70" y="84" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#93A6BA">shallow ·</text>
+        <text x="70" y="98" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#93A6BA">smooth</text>
+        <rect x="140" y="30" width="100" height="100" rx="10" fill="#1B2A3A" stroke="#C9A24B"/>
+        <text x="190" y="64" text-anchor="middle" font-family="Inter" font-size="12" fill="#E2C57E">Raise a flap</text>
+        <text x="190" y="84" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#93A6BA">deep ·</text>
+        <text x="190" y="98" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#93A6BA">aggressive threads</text>
+      </svg>
+    </div>
+  </div>`},
+
+/* 30 GUIDED SURGERY + TAKEAWAYS */
+{section:'deliver', title:'Delivery & takeaways', html:`
+  <div class="slide-eyebrow"><span class="num">29</span> Delivery & summary</div>
+  <h2>Guided surgery &amp; the <span class="accent">five takeaways</span></h2>
+  <div class="cols">
+    <ul class="points">
+      <li><b>In-house guided surgery:</b> design the guide from the scan/STL and print it — control improves once set up.</li>
+      <li>Match the <b>sleeve</b> to the chosen implant system and diameter; account for sleeve-to-implant offset.</li>
+      <li>Non-parallel implants → use <b>angled multi-unit abutments</b> for a common path of insertion.</li>
+    </ul>
+    <ol class="points teal" style="counter-reset:t">
+      <li><b>Go short first</b> in the posterior where viable.</li>
+      <li><b>Length matters less</b> than the coronal bone that bears load.</li>
+      <li><b>Design drives complications</b> — connection &amp; neck.</li>
+      <li><b>Diagnose early</b>; bleeding is a prompt to investigate.</li>
+      <li><b>Maintenance is the long game</b> — especially post-perio.</li>
+    </ol>
+  </div>
+  <div class="pearl"><span class="k">End of lecture</span><p>Use the ▦ menu to revisit any slide — then test yourself with the companion 30-question quiz.</p></div>`}
+];
+
+/* ============ engine ============ */
+const deck=document.getElementById('deck'), dotsEl=document.getElementById('dots'),
+  ovGrid=document.getElementById('ovGrid'), bar=document.getElementById('progressBar');
+let cur=0; const N=slides.length;
+document.getElementById('totNum').textContent=N;
+
+slides.forEach((s,i)=>{
+  const el=document.createElement('section');
+  el.className='slide'+(s.custom==='title'?' title-wrap':'');
+  if(s.custom==='title'){el.style.padding='0';el.style.background='none';el.style.border='none';el.style.boxShadow='none';}
+  el.innerHTML=s.html; el.dataset.i=i; deck.appendChild(el);
+  const d=document.createElement('button'); d.className='dot'; d.dataset.i=i;
+  d.title=s.title; d.onclick=()=>go(i); dotsEl.appendChild(d);
+  const c=document.createElement('button'); c.className='ov-card';
+  c.innerHTML=`<div class="n">${String(i+1).padStart(2,'0')}</div><div class="ti">${s.title}</div><div class="se">${SECTIONS[s.section]}</div>`;
+  c.onclick=()=>{go(i);closeOverlay();}; ovGrid.appendChild(c);
+});
+const slideEls=[...deck.children];
+
+function go(i){
+  i=Math.max(0,Math.min(N-1,i)); cur=i;
+  slideEls.forEach((el,k)=>el.classList.toggle('active',k===i));
+  [...dotsEl.children].forEach((d,k)=>d.classList.toggle('on',k===i));
+  document.getElementById('curNum').textContent=i+1;
+  document.getElementById('eyebrowNow').textContent=SECTIONS[slides[i].section];
+  bar.style.width=((i)/(N-1)*100)+'%';
+  document.getElementById('prevBtn').disabled=(i===0);
+  document.getElementById('nextBtn').disabled=(i===N-1);
+  slideEls[i].scrollTop=0;
+}
+document.getElementById('prevBtn').onclick=()=>go(cur-1);
+document.getElementById('nextBtn').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('overlay').classList.contains('on')){if(e.key==='Escape')closeOverlay();return;}
+  if(e.key==='ArrowRight'||e.key==='PageDown'){go(cur+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1)}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(N-1)}
+});
+let tx=0; deck.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+deck.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>55){dx<0?go(cur+1):go(cur-1)}},{passive:true});
+const overlay=document.getElementById('overlay');
+document.getElementById('menuBtn').onclick=()=>overlay.classList.add('on');
+document.getElementById('closeX').onclick=closeOverlay;
+function closeOverlay(){overlay.classList.remove('on')}
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});
+
+/* ============ shared injected-SVG defs ============ */
+const DEFS=`<defs>
+  <linearGradient id="boneG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe6d0"/><stop offset="1" stop-color="#d9c79c"/></linearGradient>
+  <linearGradient id="tissueG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a78"/><stop offset="1" stop-color="#bd6a57"/></linearGradient></defs>`;
+function imp(x,topY,len,w=12){let s=`<rect x="${x-w/2}" y="${topY}" width="${w}" height="${len}" rx="3" fill="#c9ccd2" stroke="#7c8794" stroke-width="1.2"/>`;
+  for(let ty=topY+6;ty<topY+len-3;ty+=7){s+=`<path d="M${x-w/2} ${ty} l${w} 3" stroke="#9aa3ae" stroke-width="1"/>`;}return s;}
+
+/* ---- slide 3: augment vs short toggle ---- */
+(function(){
+  const seg=document.getElementById('seg-dilemma');
+  const txt=document.getElementById('dilemma-text'), viz=document.getElementById('dilemma-viz');
+  const data={
+    short:{pts:['<b>Place a short implant</b> in the bone you already have.','Small crestal incision · fast · low morbidity.','If it fails, you can <b>still graft</b> as a fallback.','Patient-preferred in every comparative trial.'],cls:'teal',
+      svg:`${DEFS}<path d="M20 18 Q150 2 280 18 L280 78 Q150 64 20 78 Z" fill="#e9f1f5" stroke="#9fc0cf"/><path d="M20 78 Q150 64 280 78 L280 150 Q150 164 20 150 Z" fill="url(#boneG)" stroke="#bda874"/>${imp(150,86,58,16)}<text x="150" y="180" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#7DBEB4">SHORT · NATIVE BONE · ONE STAGE</text>`},
+    augment:{pts:['<b>Rebuild the bone</b>, then place a conventional implant.','Larger, often two-stage surgery; ~a year to restore.','More complications &amp; bone loss in trials.','~14% of cases: planned implant <b>can’t be placed</b>.'],cls:'coral',
+      svg:`${DEFS}<path d="M20 18 Q150 2 280 18 L280 60 Q150 46 20 60 Z" fill="#e9f1f5" stroke="#9fc0cf"/><path d="M20 60 Q150 46 280 60 L280 78 Q150 64 20 78 Z" fill="#f0e3c2" stroke="#caa64f" stroke-dasharray="3 3"/><path d="M20 78 Q150 64 280 78 L280 150 Q150 164 20 150 Z" fill="url(#boneG)" stroke="#bda874"/>${imp(150,52,98,12)}<text x="150" y="180" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#caa64f">AUGMENT · GRAFT + LONG IMPLANT</text>`}
+  };
+  function set(v){
+    [...seg.children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    const d=data[v];
+    txt.innerHTML=`<ul class="points ${d.cls}">`+d.pts.map(p=>`<li>${p}</li>`).join('')+`</ul>`;
+    viz.innerHTML=`<svg viewBox="0 0 300 190" role="img" aria-label="${v} approach">${d.svg}</svg>`;
+  }
+  seg.querySelectorAll('button').forEach(b=>b.onclick=()=>set(b.dataset.v));
+  set('short');
+})();
+
+/* ---- slide 4: sinus hotspots ---- */
+(function(){
+  const info=document.getElementById('sinusInfo');
+  const txt={
+    membrane:['Schneiderian membrane','The thin sinus lining you must elevate intact. Perforation is the key risk of every lifting technique.'],
+    floor:['Sinus floor','The bony floor you drill towards. The final crestal instrument abrades — not cuts — the last millimetre.'],
+    ostium:['Ostium','The sinus drains here. Graft or infection reaching the ostium risks acute or chronic sinusitis.'],
+    residual:['Residual bone height','Drives the whole decision. 4–6 mm often allows a short implant or a minimal crestal lift with native bone giving early stability.']
+  };
+  document.querySelectorAll('#sinusHot .hot').forEach(h=>{
+    const act=()=>{const t=txt[h.dataset.k];info.innerHTML=`<span class="k">${t[0]}</span><p>${t[1]}</p>`;
+      document.querySelectorAll('#sinusHot .hot circle').forEach(c=>c.setAttribute('fill','#C9A24B'));
+      h.querySelector('circle').setAttribute('fill','#E2C57E');};
+    h.onclick=act; h.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act()}});
+  });
+})();
+
+/* ---- slide 5: lift tabs + viz ---- */
+(function(){
+  const tabs=document.getElementById('liftTabs'), viz=document.getElementById('liftViz');
+  const svgs={
+    lat:`${DEFS}<path d="M20 20 Q150 4 280 20 L280 70 Q150 56 20 70 Z" fill="#e9f1f5" stroke="#9fc0cf"/><path d="M20 70 Q150 56 280 70 L280 150 Q150 164 20 150 Z" fill="url(#boneG)" stroke="#bda874"/><rect x="60" y="78" width="44" height="40" rx="6" fill="#0E1620" opacity=".85"/><text x="82" y="135" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#E2C57E">WINDOW</text><path d="M120 90 q40 -22 90 0" fill="none" stroke="#C97B6A" stroke-width="2"/><circle cx="165" cy="100" r="3" fill="#caa64f"/><circle cx="180" cy="98" r="3" fill="#caa64f"/><circle cx="150" cy="102" r="3" fill="#caa64f"/><text x="150" y="178" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#caa64f">LATERAL WINDOW + GRAFT</text>`,
+    cre:`${DEFS}<path d="M20 20 Q150 4 280 20 L280 70 Q150 56 20 70 Z" fill="#e9f1f5" stroke="#9fc0cf"/><path d="M20 70 Q150 56 280 70 L280 150 Q150 164 20 150 Z" fill="url(#boneG)" stroke="#bda874"/><path d="M150 150 L150 80" stroke="#9aa3ae" stroke-width="10" stroke-linecap="round"/><path d="M120 74 q30 -16 60 0" fill="none" stroke="#C97B6A" stroke-width="2"/><circle cx="150" cy="78" r="3" fill="#caa64f"/><text x="150" y="178" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#3E8E84">CRESTAL · ABRADE LAST 1 mm</text>`
+  };
+  function set(p){
+    [...tabs.children].forEach(b=>b.setAttribute('aria-selected',b.dataset.p===p));
+    slideEls[4].querySelectorAll('.tabpane').forEach(tp=>tp.classList.toggle('on',tp.dataset.p===p));
+    viz.innerHTML=`<svg viewBox="0 0 300 190" role="img" aria-label="${p} technique">${svgs[p]}</svg>`;
+  }
+  tabs.querySelectorAll('.tab').forEach(b=>b.onclick=()=>set(b.dataset.p));
+  set('lat');
+})();
+
+/* ---- slide 11: forest plot reveal ---- */
+(function(){
+  const btn=document.getElementById('forestBtn');
+  const groups=slideEls[10].querySelectorAll('#forestViz .fp');
+  groups.forEach(g=>{const ln=g.querySelector('.fline'),dot=g.querySelector('.fdot');ln.setAttribute('x1','160');ln.setAttribute('x2','160');dot.setAttribute('cx','160');});
+  btn.onclick=()=>{
+    groups.forEach((g,k)=>{const cx=+g.dataset.cx,w=+g.dataset.w,ln=g.querySelector('.fline'),dot=g.querySelector('.fdot');
+      setTimeout(()=>{ln.style.transition='all .6s ease';dot.style.transition='all .6s ease';
+        ln.setAttribute('x1',cx-w/2);ln.setAttribute('x2',cx+w/2);dot.setAttribute('cx',cx);},k*180);});
+    btn.textContent='Pooled effects shown'; btn.disabled=true; btn.style.opacity=.6;
+  };
+})();
+
+/* ---- slide 15: crown:implant ratio slider ---- */
+(function(){
+  const sl=document.getElementById('ratioSlide'), out=document.getElementById('ratioReadout').querySelector('p'), viz=document.getElementById('ratioViz');
+  function draw(){
+    const r=(+sl.value)/10; const impLen=70, crownLen=impLen*r/ (r>2.2? r/2.2:1); // keep visible
+    const cl=Math.min(150, 38*r); const baseY=210;
+    const verdict=r<1.2?'Conventional — textbook comfortable.':r<2.2?'Higher than the old rule — and it still works.':'Crown 3–4× the implant — defies the rule, yet functions.';
+    out.innerHTML=`<b>${r.toFixed(1)} : 1</b> — ${verdict}`;
+    viz.innerHTML=`${DEFS}
+      <rect x="80" y="${baseY-cl}" width="40" height="${cl}" rx="6" fill="#e9ddc2" stroke="#caa64f"/>
+      <text x="100" y="${baseY-cl-8}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#A9842F">CROWN</text>
+      <rect x="60" y="${baseY}" width="80" height="22" fill="#bd6a57"/>
+      ${imp(100,baseY+22,impLen,16)}
+      <text x="150" y="${baseY+22+impLen/2}" font-family="IBM Plex Mono" font-size="9" fill="#5C6E7E">implant ${impLen===70?'':''}</text>`;
+  }
+  sl.oninput=draw; draw();
+})();
+
+/* ---- slide 19: drill plunge animation ---- */
+(function(){
+  const btn=document.getElementById('drillBtn'), viz=document.getElementById('drillViz');
+  function base(stop){return `${DEFS}
+    <rect x="20" y="40" width="260" height="150" rx="10" fill="url(#boneG)" stroke="#bda874"/>
+    <rect x="20" y="40" width="260" height="14" fill="#c9b07e"/>
+    <ellipse cx="150" cy="165" rx="120" ry="16" fill="#fff" opacity=".5"/>
+    <path d="M40 165 Q150 150 260 165" fill="none" stroke="#C97B6A" stroke-width="4"/>
+    <text x="150" y="184" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">INFERIOR ALVEOLAR CANAL</text>
+    ${stop?`<rect x="143" y="40" width="14" height="0" id="stopMark"/><line x1="120" y1="118" x2="180" y2="118" stroke="#3E8E84" stroke-width="2" stroke-dasharray="3 3"/><text x="186" y="121" font-family="IBM Plex Mono" font-size="8" fill="#2c6f66">4 mm stop</text>`:''}
+    <g id="drill"><rect x="143" y="-30" width="14" height="40" rx="3" fill="#6b7280"/><path d="M143 10 l7 12 l7 -12 z" fill="#4b5563"/></g>`;}
+  function play(stop){
+    viz.innerHTML=`<svg viewBox="0 0 300 200" role="img" aria-label="drill ${stop?'with':'without'} stop">${base(stop)}</svg>`;
+    const drill=viz.querySelector('#drill'); let y=0; const limit=stop?108:150;
+    const id=setInterval(()=>{y+=4; drill.setAttribute('transform',`translate(0,${y})`);
+      if(y>=limit){clearInterval(id);
+        if(!stop){const c=viz.querySelector('svg');c.insertAdjacentHTML('beforeend',`<text x="150" y="30" text-anchor="middle" font-family="Inter" font-size="13" fill="#bd6a57">⚠ nerve injury</text>`);}
+        else{const c=viz.querySelector('svg');c.insertAdjacentHTML('beforeend',`<text x="150" y="30" text-anchor="middle" font-family="Inter" font-size="13" fill="#2c6f66">✓ stopped safely</text>`);}}
+    },16);
+  }
+  let mode=0; viz.innerHTML=`<svg viewBox="0 0 300 200">${base(false)}</svg>`;
+  btn.onclick=()=>{mode=1-mode; btn.textContent=mode?'Now play WITH a drill stop':'Play the plunge risk'; play(mode===1?false:true);};
+  // first click shows the danger (no stop), second shows safe stop
+  btn.onclick=()=>{ if(mode===0){play(false);btn.textContent='Now play WITH a drill stop';mode=1;} else {play(true);btn.textContent='Replay the plunge risk';mode=0;} };
+})();
+
+/* ---- slide 24: bone-loss pattern toggle ---- */
+(function(){
+  const seg=document.getElementById('seg-loss'), viz=document.getElementById('lossViz'), txt=document.getElementById('lossText');
+  const data={
+    thick:{svg:`${DEFS}<rect x="20" y="30" width="260" height="150" rx="10" fill="url(#boneG)" stroke="#bda874"/>${imp(150,40,130,16)}<path d="M110 40 q40 60 80 0 l0 -10 q-40 50 -80 0 z" fill="#0E1620" opacity=".5"/><path d="M110 40 Q150 96 190 40" fill="none" stroke="#bd6a57" stroke-width="2.5"/><text x="150" y="172" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#A9842F">CRATER-LIKE DEFECT</text>`,
+      pts:['Thicker bone tends to lose bone as a <b>crater-like (infrabony) defect</b> around the implant.','A contained defect can sometimes be approached regeneratively.']},
+    thin:{svg:`${DEFS}<rect x="20" y="30" width="260" height="150" rx="10" fill="url(#boneG)" stroke="#bda874"/><rect x="20" y="30" width="260" height="40" fill="#cdbb8c"/>${imp(150,40,130,16)}<line x1="40" y1="70" x2="260" y2="70" stroke="#bd6a57" stroke-width="2.5" stroke-dasharray="5 4"/><text x="150" y="172" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">HORIZONTAL / GENERALISED LOSS</text>`,
+      pts:['Thinner bone tends to resorb <b>horizontally</b> — a more generalised, less contained pattern.','Horizontal loss is harder to regenerate and often managed by resective/maintenance approaches.']}
+  };
+  function set(v){[...seg.children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    viz.innerHTML=`<svg viewBox="0 0 300 190" role="img" aria-label="${v} bone loss">${data[v].svg}</svg>`;
+    txt.innerHTML=`<ul class="points">`+data[v].pts.map(p=>`<li>${p}</li>`).join('')+`</ul>`;}
+  seg.querySelectorAll('button').forEach(b=>b.onclick=()=>set(b.dataset.v)); set('thick');
+})();
+
+/* ---- slide 25: phenotype probe ---- */
+(function(){
+  const btn=document.getElementById('probeBtn'), viz=document.getElementById('probeViz'), txt=document.getElementById('probeText');
+  let thin=true;
+  function draw(inserted){
+    const tissue= thin? '#c98a78':'#a85c4a';
+    const probeShine = (inserted&&thin);
+    viz.innerHTML=`${DEFS}
+      <rect x="0" y="120" width="240" height="80" fill="url(#boneG)"/>
+      <path d="M70 60 q50 -20 100 0 l0 80 l-100 0 z" fill="${tissue}"/>
+      ${thin?'<path d="M70 60 q50 -20 100 0 l0 80 l-100 0 z" fill="#7c8794" opacity="0.0"/>':''}
+      <rect x="113" y="20" width="6" height="120" rx="2" fill="#9aa3ae" opacity="${inserted?1:0.25}"/>
+      ${probeShine?'<rect x="113" y="62" width="6" height="74" rx="2" fill="#5b6470" opacity="0.65"/><text x="150" y="50" font-family="IBM Plex Mono" font-size="9" fill="#bd6a57">shows through</text>':''}
+      ${(inserted&&!thin)?'<text x="150" y="50" font-family="IBM Plex Mono" font-size="9" fill="#2c6f66">not visible</text>':''}
+      <text x="120" y="190" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#5C6E7E">${thin?'THIN PHENOTYPE':'THICK PHENOTYPE'}</text>`;
+    if(inserted){txt.innerHTML=`<span class="k">${thin?'Thin phenotype':'Thick phenotype'}</span><p>${thin?'The probe’s shadow <b>shows through</b> the gingiva — thin tissue. Expect more recession risk; plan soft-tissue management.':'No shine-through — <b>thick</b>, more forgiving tissue. Lower recession risk.'}</p>`;}
+  }
+  draw(false);
+  btn.onclick=()=>{draw(true); btn.textContent='Test the other phenotype'; thin=!thin; setTimeout(()=>{},0);};
+})();
+
+go(0);
+</script>
+</body>
+</html>

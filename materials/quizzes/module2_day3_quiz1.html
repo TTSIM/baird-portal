@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 3 · Quiz 1 — CBCT Fundamentals</title>
+<style>
+:root{
+  --bg:#0b1020;--bg2:#121a35;--panel:#161f3d;--panel2:#1c2750;--border:#2a3868;
+  --text:#e8ecff;--muted:#9aa6d6;--accent:#6ee7ff;--accent2:#a78bfa;
+  --good:#34d399;--warn:#fbbf24;--bad:#f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,#0d1530 100%);color:var(--text);overflow-x:hidden}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+  background:rgba(11,16,32,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+.brand{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+.brand small{color:var(--muted);font-weight:400;display:block;font-size:11px;margin-top:2px}
+.score-box{display:flex;align-items:center;gap:16px}
+.score-pill{background:var(--panel2);border:1px solid var(--border);border-radius:50px;padding:6px 16px;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.score-pill .val{color:var(--accent);font-weight:700}
+.progress-bar{width:200px;height:6px;background:var(--panel);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;width:0%}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-right:16px}
+.portal-back:hover{border-color:var(--accent);color:var(--accent)}
+
+.quiz-container{flex:1;max-width:780px;width:100%;margin:0 auto;padding:24px 20px 80px}
+
+/* Start screen */
+.start-screen{text-align:center;padding:60px 20px}
+.start-screen h1{font-size:36px;color:var(--accent);margin-bottom:8px}
+.start-screen .sub{font-size:16px;color:var(--muted);margin-bottom:6px}
+.start-screen .desc{font-size:14px;color:var(--text);line-height:1.7;max-width:560px;margin:20px auto 30px;opacity:.85}
+.start-screen .meta{display:flex;gap:20px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+.start-screen .meta-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px}
+.start-screen .meta-item strong{display:block;color:var(--accent);font-size:22px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b1020}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(110,231,255,.25)}
+.btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent)}
+
+/* Question card */
+.question-card{display:none;animation:fadeIn .4s ease}
+.question-card.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.q-num{font-size:12px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.q-text{font-size:18px;line-height:1.6;color:var(--text);margin-bottom:24px;font-weight:500}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.opt-btn{display:flex;align-items:flex-start;gap:14px;background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;text-align:left;font-size:14px;line-height:1.55;color:var(--text)}
+.opt-btn:hover:not(.locked){border-color:var(--accent);background:var(--panel2)}
+.opt-btn .opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--accent);transition:all .2s}
+.opt-btn.selected{border-color:var(--accent);background:rgba(110,231,255,.06)}
+.opt-btn.selected .opt-letter{background:var(--accent);color:var(--bg)}
+.opt-btn.correct{border-color:var(--good);background:rgba(52,211,153,.08)}
+.opt-btn.correct .opt-letter{background:var(--good);color:var(--bg)}
+.opt-btn.wrong{border-color:var(--bad);background:rgba(248,113,113,.06)}
+.opt-btn.wrong .opt-letter{background:var(--bad);color:#fff}
+.opt-btn.locked{cursor:default;opacity:.7}
+.opt-btn.correct.locked{opacity:1}
+.opt-btn.wrong.locked.was-selected{opacity:1}
+
+.feedback{display:none;padding:16px 20px;border-radius:12px;margin-bottom:20px;font-size:14px;line-height:1.6}
+.feedback.show{display:block;animation:fadeIn .3s ease}
+.feedback.right{background:rgba(52,211,153,.1);border:1px solid var(--good);color:var(--text)}
+.feedback.wrong-fb{background:rgba(248,113,113,.08);border:1px solid var(--bad);color:var(--text)}
+.feedback strong{display:block;margin-bottom:6px}
+.feedback strong.correct-label{color:var(--good)}
+.feedback strong.wrong-label{color:var(--bad)}
+
+.nav-row{display:flex;justify-content:flex-end;margin-top:16px}
+.nav-row .btn{display:none}
+.nav-row .btn.show{display:inline-flex}
+
+/* Results screen */
+.results{display:none;text-align:center;padding:40px 20px;animation:fadeIn .5s ease}
+.results.active{display:block}
+.results h1{font-size:32px;margin-bottom:8px}
+.results .pct{font-size:72px;font-weight:800;margin:20px 0 8px}
+.results .pct.high{color:var(--good)}
+.results .pct.mid{color:var(--warn)}
+.results .pct.low{color:var(--bad)}
+.results .summary{font-size:16px;color:var(--muted);margin-bottom:30px}
+.results .breakdown{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.results .bd-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 24px;min-width:120px}
+.results .bd-item .num{font-size:28px;font-weight:700}
+.results .bd-item .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.results .bd-item.c .num{color:var(--good)}
+.results .bd-item.w .num{color:var(--bad)}
+
+/* Review mode */
+.review-list{max-width:780px;margin:0 auto;padding:0 20px 60px;text-align:left}
+.review-item{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+.review-item.was-correct{border-left:4px solid var(--good)}
+.review-item.was-wrong{border-left:4px solid var(--bad)}
+.review-q{font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.review-your{font-size:13px;margin-bottom:4px}
+.review-your.wrong-ans{color:var(--bad)}
+.review-your.right-ans{color:var(--good)}
+.review-explain{font-size:13px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+@media(max-width:600px){
+  header{padding:10px 14px}
+  .progress-bar{width:100px}
+  .start-screen h1{font-size:26px}
+  .q-text{font-size:16px}
+  .results .pct{font-size:52px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">CBCT LEVEL 1 · MODULE 2<small>Day 3 · Quiz 1 of 3</small></div>
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="score-box">
+      <div class="score-pill"><span class="val" id="scoreVal">0</span> / <span id="totalVal">30</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+
+  <div class="quiz-container">
+
+    <!-- Start screen -->
+    <div class="start-screen" id="startScreen">
+      <h1>Quiz 1</h1>
+      <div class="sub">CBCT Fundamentals: Training, Scope & Physics</div>
+      <div class="desc">Test your knowledge of the topics covered in Lecture 1 — training requirements, scope of reporting, how CBCT works, voxels, field of view, dose optimisation, and the limitations of 2D imaging.</div>
+      <div class="meta">
+        <div class="meta-item"><strong>30</strong>Questions</div>
+        <div class="meta-item"><strong>MCQ</strong>Single best answer</div>
+        <div class="meta-item"><strong>Instant</strong>Feedback</div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+
+    <!-- Questions injected here -->
+    <div id="questionArea"></div>
+
+    <!-- Results -->
+    <div class="results" id="resultsScreen">
+      <h1>Quiz Complete</h1>
+      <div class="pct" id="pctScore"></div>
+      <div class="summary" id="summaryText"></div>
+      <div class="breakdown">
+        <div class="bd-item c"><div class="num" id="correctNum">0</div><div class="label">Correct</div></div>
+        <div class="bd-item w"><div class="num" id="wrongNum">0</div><div class="label">Incorrect</div></div>
+      </div>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="showReview()">Review Answers</button>
+        <button class="btn btn-secondary" onclick="restartQuiz()">Try Again</button>
+      </div>
+    </div>
+
+    <div class="review-list" id="reviewList" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "What is the most accurate term to describe CBCT as an imaging modality?",
+    opts: ["3D imaging","Cross-sectional imaging","Panoramic imaging","Volumetric photography"],
+    ans: 1,
+    explain: "CBCT is most accurately called a cross-sectional imaging modality — it belongs to the same family as medical CT and MRI. '3D imaging' is a colloquial shorthand but doesn't capture the diagnostic principle."
+  },
+  {
+    q: "Level 1 CBCT training is required for which of the following?",
+    opts: ["Only the clinician who requests the scan","Only the operator who takes the scan","Any dental team member who takes, refers for, or interprets CBCT scans","Only specialist oral surgeons and radiologists"],
+    ans: 2,
+    explain: "Level 1 is the introductory core training required for any dental team member involved with CBCT — whether they're requesting, operating, or interpreting the scans."
+  },
+  {
+    q: "How often must the IRMER radiation protection update be completed?",
+    opts: ["Every 2 years","Every 3 years","Every 5 years","Every 10 years"],
+    ans: 2,
+    explain: "IRMER (Ionising Radiation (Medical Exposure) Regulations) requires a 5-hour continuing professional development update every 5 years. Many practitioners add CBCT-specific refresher hours on top."
+  },
+  {
+    q: "Level 2 CBCT training is divided into which two sub-streams?",
+    opts: ["Theory and practical","Operator training and reporting/interpretation training","Undergraduate and postgraduate","Dental and maxillofacial"],
+    ans: 1,
+    explain: "Level 2 has two distinct flavours: (a) operator training on a specific machine, and (b) reporting/interpretation training for clinical practice."
+  },
+  {
+    q: "Which imaging modality is best suited for assessing soft tissue pathology such as a lower 8 abscess spreading to the submandibular space?",
+    opts: ["Periapical radiograph","CBCT","MRI","Orthopantomogram"],
+    ans: 2,
+    explain: "MRI is the gold standard for soft tissue assessment. CBCT excels at hard tissue (bone, teeth) but cannot adequately image the fascial spaces, muscles, or the extent of soft tissue infection."
+  },
+  {
+    q: "A pituitary tumour is discovered incidentally on a large-FOV CBCT scan. This case illustrates the importance of:",
+    opts: ["Using the largest possible field of view","Understanding your scope of reporting and requesting second opinions when needed","Always referring patients for medical CT instead","Never scanning above the maxilla"],
+    ans: 1,
+    explain: "This cautionary case highlights scope of reporting — anything above the orbital floors or beyond cervical spine may contain pathology outside your training. A second-opinion radiologist report is essential for large FOV scans."
+  },
+  {
+    q: "During a CBCT scan, the X-ray tube:",
+    opts: ["Emits radiation continuously throughout the rotation","Pulses — emitting brief bursts with pauses between them","Only fires at two fixed positions (0° and 180°)","Remains stationary while the patient rotates"],
+    ans: 1,
+    explain: "The tube pulses — pulse, rotate, pulse, rotate. Each pulse produces one 2D projection image. The exposure time on the control panel is the sum of all pulse durations, not the total rotation time."
+  },
+  {
+    q: "What is the fundamental difference between the X-ray beam in medical CT and CBCT?",
+    opts: ["Medical CT uses a higher kVp","Medical CT uses a fan-shaped beam; CBCT uses a cone-shaped beam","CBCT uses a fan-shaped beam; medical CT uses a cone-shaped beam","Medical CT has better spatial resolution"],
+    ans: 1,
+    explain: "Medical CT uses a narrow fan beam (divergent horizontally, narrow vertically) and acquires slice by slice. CBCT uses a cone beam divergent in both directions, capturing the entire volume in a single rotation."
+  },
+  {
+    q: "In the 'loaf of bread' analogy, medical CT is compared to:",
+    opts: ["Baking the whole loaf first, then slicing it","Buying pre-sliced bread and assembling the loaf","Cutting individual slices and stacking them to build the loaf","Making breadcrumbs and pressing them together"],
+    ans: 2,
+    explain: "Medical CT acquires individual thin slices one at a time (as the patient moves through the gantry) and reconstructs the volume. It's like cutting individual slices and stacking them. CBCT captures the whole 'loaf' in one rotation and then slices it computationally."
+  },
+  {
+    q: "CBCT field of view dimensions are described as a cylinder because:",
+    opts: ["The patient's head is cylindrical","The detector panel is circular","The X-ray beam traces a circular path around the patient, producing a cylindrical volume","The software only reconstructs cylinders"],
+    ans: 2,
+    explain: "The tube and detector rotate around the patient in a circle, so the volume captured is inherently cylindrical. FOV is described by the diameter and height of that cylinder."
+  },
+  {
+    q: "What is a voxel?",
+    opts: ["A 2D pixel with colour information","A 3D cube-shaped volumetric pixel — the smallest unit of a CBCT dataset","A single 2D projection image from the rotation","The software filter applied to sharpen images"],
+    ans: 1,
+    explain: "A voxel is the 3D equivalent of a pixel — a tiny cube. CBCT voxels are isotropic, meaning they have equal dimensions in all three planes."
+  },
+  {
+    q: "The best achievable voxel size in current dental CBCT scanners is approximately:",
+    opts: ["500 µm","200 µm","50 µm","5 µm"],
+    ans: 2,
+    explain: "The best dental CBCT scanners achieve voxel sizes of approximately 50 µm — about 10× better spatial resolution than the best medical CT (which achieves ~500 µm)."
+  },
+  {
+    q: "How does the voxel size of the best dental CBCT compare with the best medical CT?",
+    opts: ["About the same","CBCT is 2× worse","CBCT is 3–10× better","Medical CT is 5× better"],
+    ans: 2,
+    explain: "CBCT achieves voxel sizes of ~50 µm at best, compared to ~500 µm for medical CT — meaning CBCT has 3–10× better spatial resolution, depending on the scanner."
+  },
+  {
+    q: "In the dose/quality/FOV trade-off triangle, which lever is BY FAR the most important for optimising patient dose?",
+    opts: ["Image quality settings","Field of view (scanning less anatomy)","Tube current (mA)","Using a higher kVp"],
+    ans: 1,
+    explain: "Reducing the field of view is by far the most impactful way to reduce dose. Scan less anatomy = less data needed = less dose. Less anatomy also means less to interpret and less chance of incidental findings outside your scope."
+  },
+  {
+    q: "Increasing the number of projection images (basis images) during a CBCT rotation will:",
+    opts: ["Decrease both dose and resolution","Increase resolution but also increase dose","Have no effect on dose","Reduce scan time"],
+    ans: 1,
+    explain: "More projections = more data = higher resolution reconstruction, but each projection delivers radiation, so dose increases proportionally. This is the core dose/quality trade-off."
+  },
+  {
+    q: "The three orthogonal planes used to display CBCT images are:",
+    opts: ["Anterior, posterior, and lateral","Panoramic, periapical, and bitewing","Axial, coronal, and sagittal","Horizontal, vertical, and oblique"],
+    ans: 2,
+    explain: "CBCT reconstructions are displayed in the three orthogonal planes: axial (horizontal slices, looking down), coronal (front-to-back slices, looking from the front) and sagittal (side-to-side slices, looking from the side)."
+  },
+  {
+    q: "Which plane divides the head into left and right halves?",
+    opts: ["Axial","Coronal","Sagittal","Transverse"],
+    ans: 2,
+    explain: "The sagittal plane divides the body into left and right halves. The coronal plane divides front and back. The axial (transverse) plane divides upper and lower."
+  },
+  {
+    q: "The key limitation of 2D dental imaging compared with CBCT is:",
+    opts: ["Lower spatial resolution","Superimposition of structures from different depths","Higher radiation dose","Inability to image teeth"],
+    ans: 1,
+    explain: "2D imaging actually has higher spatial resolution than CBCT. The killer disadvantage is superimposition — all structures from different depths are compressed into a single 2D shadow, making it impossible to know where structures really are in the third dimension."
+  },
+  {
+    q: "A periapical radiograph can actually resolve finer detail than any CBCT voxel. Why then do we use CBCT?",
+    opts: ["CBCT is cheaper","CBCT has zero radiation dose","CBCT eliminates superimposition and shows the third dimension","CBCT always shows more pathology"],
+    ans: 2,
+    explain: "Despite having lower spatial resolution per-pixel, CBCT eliminates the superimposition that plagues 2D imaging and reveals anatomy in all three dimensions — which is why it changes diagnosis in cases where overlapping structures obscure pathology."
+  },
+  {
+    q: "In the cracked premolar case from the lecture, the CBCT was justified because:",
+    opts: ["The crack was visible on the periapical","The CBCT cost less than a periapical","The periapical was ambiguous due to superimposition, and CBCT resolved the question","The patient requested it"],
+    ans: 2,
+    explain: "The periapical showed an ambiguous lucency around the premolar root. Superimposition made it impossible to tell whether this was a crack-related defect or normal anatomy. CBCT removed the superimposition and confirmed the fracture, changing management."
+  },
+  {
+    q: "What does a scout view (scout image) do before a CBCT scan?",
+    opts: ["It diagnoses the patient's condition","It provides a low-dose preview to confirm the patient is correctly positioned in the FOV","It replaces the need for a CBCT scan","It calibrates the monitor brightness"],
+    ans: 1,
+    explain: "The scout view is a quick, low-dose 2D preview that lets you confirm the region of interest is centred within the FOV cylinder before taking the full scan. This prevents wasted scans due to poor positioning."
+  },
+  {
+    q: "A CBCT scan of the mandible from angle to angle would typically use a field of view described as:",
+    opts: ["5 × 5 cm","8 × 5 cm","A larger FOV such as 12 × 8 cm or similar","No FOV restriction is needed"],
+    ans: 2,
+    explain: "A full mandible scan (angle to angle) requires a larger FOV — typically around 12 × 8 cm or greater. The workhorse single-jaw volume is typically around 8 × 5 to 8 × 8 cm, while 5 × 5 cm covers a localised area."
+  },
+  {
+    q: "Which of the following is NOT a member of the cross-sectional imaging family?",
+    opts: ["Medical CT","CBCT","MRI","Orthopantomogram (OPG)"],
+    ans: 3,
+    explain: "OPG is a 2D tomographic projection — it sweeps a thin focal trough through the jaws but does not produce true cross-sectional images. Medical CT, CBCT and MRI are all cross-sectional modalities."
+  },
+  {
+    q: "According to the lecture, what should you do if your CBCT scan captures anatomy above the orbital floors?",
+    opts: ["Ignore that anatomy — it's outside your FOV","Attempt to report on it yourself","Request a second-opinion radiologist report","Delete those slices from the dataset"],
+    ans: 2,
+    explain: "If you have captured anatomy above the orbital floors or beyond the cervical spine, you should request a second-opinion radiologist report. This is outside the scope of most dental CBCT reporting, and incidental pathology (like pituitary tumours) can be present."
+  },
+  {
+    q: "If two CBCT scanners both have a voxel size of 150 µm, but scanner A uses a larger FOV, which scanner will deliver more radiation dose (all else being equal)?",
+    opts: ["Scanner A (larger FOV)","Scanner B (smaller FOV)","They deliver the same dose","Dose depends only on kVp, not FOV"],
+    ans: 0,
+    explain: "Larger FOV means more anatomy is irradiated, and more projection data is needed to reconstruct the larger volume, resulting in higher dose. FOV is the single most important variable for dose."
+  },
+  {
+    q: "Which of the following is TRUE about CBCT Hounsfield Units (HU)?",
+    opts: ["They are as reliable as medical CT HU values","They can be used to accurately determine bone density for implant planning","They are unreliable — the same anatomical area can have different HU values depending on its position in the scan","They are only relevant for soft tissue assessment"],
+    ans: 2,
+    explain: "CBCT HU values are unreliable because the grey-scale value of a voxel depends on its position in the reconstructed volume, not just its actual density. The same bone in different positions can produce different HU values. There is no good data to relate CBCT HU to bone quality."
+  },
+  {
+    q: "In a dental CBCT scanner, the detector is:",
+    opts: ["A narrow linear array (like a barcode scanner)","A flat panel area detector — a 2D rectangle","A single photon-counting crystal","A film cassette"],
+    ans: 1,
+    explain: "CBCT uses a flat panel area detector — a 2D rectangular sensor. This is what makes the cone beam possible: the cone-shaped beam hits the entire area detector in one exposure, unlike the narrow linear detector in fan-beam medical CT."
+  },
+  {
+    q: "The IRMER regulations in the UK require that any X-ray exposure must be:",
+    opts: ["As cheap as possible","Justified and optimised","Repeated three times for confirmation","Performed only by a radiologist"],
+    ans: 1,
+    explain: "IRMER requires that every medical radiation exposure be justified (there must be a clinical benefit outweighing the risk) and optimised (the dose should be as low as reasonably achievable — ALARA — while still producing diagnostic-quality images)."
+  },
+  {
+    q: "Reducing image quality settings on a CBCT scanner to chase 'low-dose' marketing numbers is:",
+    opts: ["Best practice — always minimise dose","Problematic — if the image is non-diagnostic, you may need to repeat the scan, doubling the patient's dose","Required by IRMER regulations","Only relevant for paediatric patients"],
+    ans: 1,
+    explain: "If you reduce quality too far, the images become non-diagnostic and you may need to rescan — giving the patient double the dose. The goal is diagnostic-quality images at the lowest achievable dose, not the lowest dose at any cost."
+  },
+  {
+    q: "A 5 × 5 cm FOV CBCT scan is best described as covering:",
+    opts: ["The entire skull","Both jaws from angle to angle","A localised area — typically a few teeth or a single implant site","The chest and head"],
+    ans: 2,
+    explain: "A 5 × 5 cm FOV is a small, localised scan — ideal for assessing a few teeth, a single implant site, or a specific area of concern. It delivers the lowest dose of the common FOV sizes."
+  },
+  {
+    q: "Why is it recommended to repeat Level 1 and Level 2 training every 5 years, even though only a refresher is legally required?",
+    opts: ["The legal requirement changes every 5 years","After years of clinical CBCT use, practitioners typically get far more out of the training than the first time","The scanners change so frequently that old training is obsolete","It is not recommended — once is enough"],
+    ans: 1,
+    explain: "Once you have been using CBCT clinically for several years, you bring real-world experience to the training. Topics that seemed abstract the first time become clinically meaningful, and you typically learn much more on repeat."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = new Array(questions.length).fill(null); // stores user's chosen index
+let started = false;
+
+function startQuiz(){
+  document.getElementById('startScreen').style.display = 'none';
+  started = true;
+  renderQuestion(0);
+}
+
+function renderQuestion(idx){
+  currentQ = idx;
+  const area = document.getElementById('questionArea');
+  const q = questions[idx];
+  const letters = ['A','B','C','D'];
+  let html = `<div class="question-card active" id="qCard${idx}">
+    <div class="q-num">Question ${idx+1} of ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">`;
+  q.opts.forEach((o,i) => {
+    html += `<button class="opt-btn" data-idx="${i}" onclick="selectOption(${idx},${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${o}</span>
+    </button>`;
+  });
+  html += `</div>
+    <div class="feedback" id="fb${idx}"></div>
+    <div class="nav-row">
+      <button class="btn btn-primary" id="nextBtn${idx}" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>`;
+  area.innerHTML = html;
+  updateProgress();
+}
+
+function selectOption(qIdx, optIdx){
+  if(answered[qIdx] !== null) return;
+  answered[qIdx] = optIdx;
+  const q = questions[qIdx];
+  const isCorrect = optIdx === q.ans;
+  if(isCorrect) score++;
+
+  // Style options
+  const btns = document.querySelectorAll(`#qCard${qIdx} .opt-btn`);
+  btns.forEach((b,i) => {
+    b.classList.add('locked');
+    if(i === q.ans) b.classList.add('correct');
+    if(i === optIdx && !isCorrect){
+      b.classList.add('wrong','was-selected');
+    }
+    if(i === optIdx) b.classList.add('selected');
+  });
+
+  // Feedback
+  const fb = document.getElementById(`fb${qIdx}`);
+  if(isCorrect){
+    fb.className = 'feedback show right';
+    fb.innerHTML = `<strong class="correct-label">✓ Correct!</strong>${q.explain}`;
+  } else {
+    const letters = ['A','B','C','D'];
+    fb.className = 'feedback show wrong-fb';
+    fb.innerHTML = `<strong class="wrong-label">✗ Incorrect — the answer is ${letters[q.ans]}</strong>${q.explain}`;
+  }
+
+  // Show next button
+  document.getElementById(`nextBtn${qIdx}`).classList.add('show');
+  document.getElementById('scoreVal').textContent = score;
+  updateProgress();
+}
+
+function nextQuestion(){
+  if(currentQ < questions.length - 1){
+    renderQuestion(currentQ + 1);
+  } else {
+    showResults();
+  }
+}
+
+function showResults(){
+  document.getElementById('questionArea').innerHTML = '';
+  const pct = Math.round((score / questions.length) * 100);
+  const r = document.getElementById('resultsScreen');
+  r.classList.add('active');
+  const pctEl = document.getElementById('pctScore');
+  pctEl.textContent = pct + '%';
+  pctEl.className = 'pct ' + (pct >= 80 ? 'high' : pct >= 60 ? 'mid' : 'low');
+  document.getElementById('correctNum').textContent = score;
+  document.getElementById('wrongNum').textContent = questions.length - score;
+  let msg = pct >= 90 ? 'Outstanding — you\'ve nailed the fundamentals!' :
+            pct >= 80 ? 'Solid knowledge — well above the pass mark.' :
+            pct >= 60 ? 'Good effort — review the topics you missed.' :
+            'Worth revisiting Lecture 1 before moving on.';
+  document.getElementById('summaryText').textContent = msg;
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+function showReview(){
+  document.getElementById('resultsScreen').classList.remove('active');
+  const rl = document.getElementById('reviewList');
+  rl.style.display = 'block';
+  const letters = ['A','B','C','D'];
+  let html = '<h2 style="color:var(--accent);margin-bottom:20px;font-size:22px">Answer Review</h2>';
+  questions.forEach((q,i) => {
+    const userAns = answered[i];
+    const correct = userAns === q.ans;
+    html += `<div class="review-item ${correct ? 'was-correct' : 'was-wrong'}">
+      <div class="review-q">${i+1}. ${q.q}</div>
+      ${correct ?
+        `<div class="review-your right-ans">✓ Your answer: ${letters[userAns]}. ${q.opts[userAns]}</div>` :
+        `<div class="review-your wrong-ans">✗ Your answer: ${letters[userAns]}. ${q.opts[userAns]}</div>
+         <div class="review-your right-ans">✓ Correct answer: ${letters[q.ans]}. ${q.opts[q.ans]}</div>`
+      }
+      <div class="review-explain">${q.explain}</div>
+    </div>`;
+  });
+  html += `<div style="text-align:center;margin:30px 0"><button class="btn btn-secondary" onclick="restartQuiz()">Try Again</button></div>`;
+  rl.innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restartQuiz(){
+  currentQ = 0; score = 0;
+  answered = new Array(questions.length).fill(null);
+  document.getElementById('scoreVal').textContent = '0';
+  document.getElementById('resultsScreen').classList.remove('active');
+  document.getElementById('reviewList').style.display = 'none';
+  document.getElementById('reviewList').innerHTML = '';
+  document.getElementById('startScreen').style.display = 'block';
+  updateProgress();
+}
+
+function updateProgress(){
+  const answeredCount = answered.filter(a => a !== null).length;
+  document.getElementById('progressFill').style.width = (answeredCount / questions.length * 100) + '%';
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if(!started) return;
+  if(e.key >= '1' && e.key <= '4'){
+    const idx = parseInt(e.key) - 1;
+    if(idx < questions[currentQ].opts.length) selectOption(currentQ, idx);
+  }
+  if(e.key === 'Enter' || e.key === 'ArrowRight'){
+    const nb = document.getElementById(`nextBtn${currentQ}`);
+    if(nb && nb.classList.contains('show')) nextQuestion();
+  }
+});
+</script>
+</body>
+</html>

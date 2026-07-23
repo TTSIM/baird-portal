@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ask Dr Hassan questions grounded in BAIRD lectures, quizzes, transcripts and formal course materials.">
+  <title>Ask Dr Hassan | BAIRD Learning Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/ask-dr-hassan.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="baird_implant_portal.html" aria-label="Back to BAIRD Learning Portal">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      <span>BAIRD Portal</span>
+    </a>
+    <div class="header-actions">
+      <a class="admin-link" id="admin-link" href="admin.html" hidden>Backend dashboard</a>
+      <span class="account-name" id="account-name"></span>
+      <button class="signout-button" id="logout-button" type="button">Sign out</button>
+      <div class="library-status" aria-label="Course library status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Course library
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="home-state" aria-labelledby="page-title">
+      <div class="companion-home-slot" id="companion-home-slot">
+        <div class="companion-mount" id="companion-mount">
+          <aside class="companion" id="dr-hassan-companion" data-state="idle" aria-label="Animated Dr Hassan AI companion">
+            <p class="companion-bubble" id="companion-bubble" aria-hidden="true" hidden></p>
+            <button class="companion-character" id="companion-character" type="button" aria-label="Greet the Dr Hassan companion">
+              <span class="avatar-sprite" aria-hidden="true"></span>
+            </button>
+            <button class="companion-toggle" id="companion-toggle" type="button" aria-label="Hide the Dr Hassan companion">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+              <span>Hide</span>
+            </button>
+          </aside>
+          <button class="companion-reveal" id="companion-reveal" type="button" hidden>
+            <span class="reveal-avatar" aria-hidden="true"></span>
+            Show Dr Hassan
+          </button>
+        </div>
+      </div>
+      <div class="wordmark" aria-hidden="true">
+        <span>Dr</span><span class="wordmark-dot">.</span><span>Hassan</span>
+      </div>
+      <h1 id="page-title">Ask Dr Hassan</h1>
+      <p class="intro">Your BAIRD course companion. Ask about any lecture, quiz, transcript or formal course material.</p>
+      <p class="ai-identity">An AI course companion inspired by Dr Hassan — not Dr Hassan responding live.</p>
+    </section>
+
+    <section class="conversation" id="conversation" aria-label="Conversation with Dr Hassan" hidden>
+      <div class="conversation-heading">
+        <div>
+          <p class="eyebrow">Course companion</p>
+          <h2>Dr Hassan</h2>
+        </div>
+        <button class="clear-button" id="clear-button" type="button">Clear chat</button>
+      </div>
+      <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+    </section>
+
+    <section class="ask-area" aria-label="Ask Dr Hassan a question">
+      <div class="composer-row">
+        <div class="chat-companion-slot" id="chat-companion-slot"></div>
+        <form class="ask-form" id="ask-form">
+          <label class="sr-only" for="question-input">Ask a question about the BAIRD course</label>
+          <textarea id="question-input" name="question" rows="1" maxlength="2000" placeholder="Ask anything about your course materials…" autofocus required></textarea>
+          <button class="send-button" id="send-button" type="submit" aria-label="Send question">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="suggestions" id="suggestions" aria-label="Example questions">
+        <button type="button" data-prompt="What are the key principles of osseointegration?">Principles of osseointegration</button>
+        <button type="button" data-prompt="Summarise the implant drilling sequence for revision.">Review the drilling sequence</button>
+        <button type="button" data-prompt="Quiz me on evidence-based implant dentistry.">Start a quick revision quiz</button>
+      </div>
+
+      <p class="disclaimer">Ask Dr Hassan is an AI companion that answers from BAIRD course materials for education only. Administrators can review questions and usage. Do not enter patient-identifiable information. It does not provide patient-specific diagnosis or clinical advice.</p>
+      <p class="live-status sr-only" id="live-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <template id="message-template">
+    <article class="message">
+      <div class="message-label"></div>
+      <div class="message-copy"></div>
+      <div class="sources" hidden>
+        <p class="sources-title">Sources</p>
+        <div class="source-list"></div>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="assets/ask-dr-hassan.js"></script>
+</body>
+</html>

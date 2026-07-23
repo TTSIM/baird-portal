@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 · Day 3 · Lecture 1 — CBCT Fundamentals: Training, Scope & Physics</title>
+<style>
+:root{
+  --bg:#0b1020;
+  --bg2:#121a35;
+  --panel:#161f3d;
+  --panel2:#1c2750;
+  --border:#2a3868;
+  --text:#e8ecff;
+  --muted:#9aa6d6;
+  --accent:#6ee7ff;
+  --accent2:#a78bfa;
+  --good:#34d399;
+  --warn:#fbbf24;
+  --bad:#f87171;
+  --highlight:#fde68a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(135deg,var(--bg) 0%,#0d1530 100%);
+  color:var(--text);
+  overflow:hidden;
+}
+.app{display:flex;flex-direction:column;height:100vh}
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;background:rgba(11,16,32,.9);
+  border-bottom:1px solid var(--border);backdrop-filter:blur(8px);
+}
+.brand{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+.brand small{color:var(--muted);font-weight:400;display:block;font-size:11px;margin-top:2px}
+.progress-wrap{flex:1;margin:0 24px;max-width:400px}
+.progress-bar{height:6px;background:var(--panel);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease;width:0%}
+.slide-counter{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.portal-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-right:16px}
+.portal-back:hover{border-color:var(--accent);color:var(--accent)}
+
+.slide-area{flex:1;position:relative;overflow:hidden}
+.slide{
+  position:absolute;inset:0;padding:40px 60px 80px;
+  display:none;flex-direction:column;
+  animation:fadeIn .4s ease;overflow-y:auto;
+}
+.slide.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+h1.slide-title{font-size:28px;color:var(--accent);margin-bottom:6px;font-weight:700}
+h2.slide-sub{font-size:14px;color:var(--muted);margin-bottom:24px;font-weight:400;text-transform:uppercase;letter-spacing:1.2px}
+.content{flex:1;display:flex;flex-direction:column;gap:18px}
+p{line-height:1.6;font-size:16px;color:#dde3ff}
+ul{list-style:none;padding:0}
+ul li{padding:8px 0 8px 28px;position:relative;line-height:1.55}
+ul li::before{content:"▸";position:absolute;left:8px;color:var(--accent);font-weight:700}
+
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.card-title{font-size:14px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.title-slide{justify-content:center;align-items:center;text-align:center}
+.title-slide .module-tag{font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+.title-slide h1{font-size:46px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;line-height:1.2;max-width:900px}
+.title-slide .subtitle{font-size:18px;color:var(--muted);margin-bottom:30px;max-width:700px}
+.title-slide .lect-num{display:inline-block;padding:8px 18px;background:var(--panel);border:1px solid var(--accent);border-radius:50px;font-size:13px;color:var(--accent)}
+
+footer{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 60px;background:rgba(11,16,32,.9);
+  border-top:1px solid var(--border);
+}
+.nav-btn{
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text);padding:8px 18px;border-radius:8px;
+  cursor:pointer;font-size:14px;transition:all .2s;
+}
+.nav-btn:hover:not(:disabled){background:var(--panel2);border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:60%;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--accent);width:18px;border-radius:4px}
+.dot:hover{background:var(--accent2)}
+
+/* Tables */
+table.compare{width:100%;border-collapse:collapse;margin-top:8px}
+table.compare th,table.compare td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+table.compare th{background:var(--panel2);color:var(--accent);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.8px}
+table.compare tr:hover td{background:rgba(110,231,255,.04)}
+.tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:12px;font-weight:600}
+.tag-good{background:rgba(52,211,153,.18);color:var(--good)}
+.tag-bad{background:rgba(248,113,113,.18);color:var(--bad)}
+.tag-warn{background:rgba(251,191,36,.18);color:var(--warn)}
+
+/* Flip cards */
+.flip{perspective:1000px;height:160px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flip-front{background:var(--panel);border:1px solid var(--border)}
+.flip-front .icon{font-size:32px;margin-bottom:8px;color:var(--accent)}
+.flip-back{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--accent);transform:rotateY(180deg);font-size:13px;line-height:1.5;color:#dde3ff}
+
+/* Click to reveal */
+.reveal{background:var(--panel);border:1px dashed var(--accent2);border-radius:10px;padding:14px;cursor:pointer;transition:all .3s}
+.reveal .question{color:var(--accent);font-weight:600;font-size:14px}
+.reveal .answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:14px;color:#dde3ff;line-height:1.55}
+.reveal.shown .answer{display:block}
+.reveal.shown{border-style:solid;background:var(--panel2)}
+
+/* Callouts */
+.callout{padding:14px 18px;border-radius:10px;border-left:4px solid;display:flex;gap:12px;align-items:flex-start}
+.callout.tip{background:rgba(52,211,153,.08);border-color:var(--good)}
+.callout.warn{background:rgba(251,191,36,.08);border-color:var(--warn)}
+.callout.key{background:rgba(167,139,250,.08);border-color:var(--accent2)}
+.callout-icon{font-size:20px;flex-shrink:0}
+.callout-text{font-size:14px;line-height:1.55}
+.callout-text strong{color:var(--accent)}
+
+/* Stat blocks */
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat .num{font-size:32px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.stat .lbl{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.8px}
+
+/* SVG containers */
+.svg-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:center;align-items:center}
+.svg-wrap svg{max-width:100%;height:auto}
+
+/* Scrollbar */
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-track{background:var(--bg2)}
+.slide::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.slide::-webkit-scrollbar-thumb:hover{background:var(--accent2)}
+
+/* Speaker badge */
+.speaker{display:inline-block;font-size:11px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:50px;margin-bottom:14px}
+.speaker.s2{border-color:var(--accent2);color:var(--accent2)}
+
+/* Interactive: Drag scrubber for axial/coronal/sagittal */
+.scrubber-demo{display:flex;flex-direction:column;align-items:center;gap:12px}
+.view-tabs{display:flex;gap:8px}
+.view-tab{padding:8px 16px;background:var(--panel);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text);transition:all .2s}
+.view-tab.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.view-display{font-size:13px;color:var(--muted);text-align:center;max-width:400px}
+
+/* Dose-quality slider */
+.slider-demo{display:flex;flex-direction:column;gap:12px;align-items:center}
+.slider-row{display:flex;align-items:center;gap:16px;width:100%;max-width:500px}
+.slider-row label{font-size:13px;color:var(--muted);min-width:80px}
+input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-output{display:flex;justify-content:space-between;width:100%;max-width:500px;font-size:13px}
+.slider-output span{padding:6px 12px;background:var(--panel);border-radius:6px}
+
+/* Print/keyboard hints */
+.kbd-hint{position:absolute;bottom:90px;right:60px;font-size:11px;color:var(--muted);opacity:.6}
+kbd{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:10px}
+
+@media (max-width:768px){
+  .slide{padding:24px 20px 90px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  h1.slide-title{font-size:22px}
+  .title-slide h1{font-size:30px}
+  footer{padding:12px 16px}
+  .kbd-hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">CBCT LEVEL 1 · MODULE 2<small>Day 3 · Lecture 1 of 3</small></div>
+    <a class="portal-back" href="../../baird_implant_portal.html">← Back to Portal</a>
+    <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+    <div class="slide-counter"><span id="curSlide">1</span> / <span id="totSlide">29</span></div>
+  </header>
+
+  <div class="slide-area" id="slideArea">
+
+    <!-- SLIDE 1: Title -->
+    <section class="slide active title-slide">
+      <div class="module-tag">Module 2 · Day 3 · Lecture 1</div>
+      <h1>CBCT Fundamentals<br>Training, Scope & Physics</h1>
+      <p class="subtitle">Cone Beam CT Level 1 Training — what CBCT is, how it differs from medical CT and MRI, the physics of image acquisition, and the legal/training framework that governs its use in dentistry.</p>
+      <div class="lect-num">29 slides · ~45 min</div>
+    </section>
+
+    <!-- SLIDE 2: Learning objectives -->
+    <section class="slide">
+      <h1 class="slide-title">Learning Objectives</h1>
+      <h2 class="slide-sub">By the end of this lecture you should be able to…</h2>
+      <div class="content">
+        <ul>
+          <li>Explain what CBCT is and why it is the cross-sectional imaging modality of choice in dentistry</li>
+          <li>Compare CBCT, medical CT and MRI in terms of dose, cost, hard- and soft-tissue imaging</li>
+          <li>Outline the four levels of training (Level 1, Level 2 operator, Level 2 reporting, refresher) needed to work with dental CBCT</li>
+          <li>Define the anatomical scope of "dentoalveolar" CBCT and the medico-legal limits of independent reporting</li>
+          <li>Describe how a CBCT scanner physically acquires an image (cone-shaped beam, single rotation, voxel reconstruction)</li>
+          <li>Understand the inverse relationship between dose, image quality and field-of-view</li>
+          <li>Recognise and orient axial, coronal and sagittal views</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Course structure -->
+    <section class="slide">
+      <h1 class="slide-title">CBCT Training Structure</h1>
+      <h2 class="slide-sub">Level 1 vs Level 2</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Level 1 — Today</div>
+            <p style="font-size:14px;line-height:1.6">The introductory <strong style="color:var(--accent)">core training</strong> in dental CBCT. Theory-heavy. Required for <em>any</em> dental team member who is going to take, refer for, or interpret CBCT scans.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Level 2 — Two flavours</div>
+            <p style="font-size:14px;line-height:1.6">Two distinct sub-streams: (a) <strong style="color:var(--accent)">operator training</strong> on a specific machine, and (b) <strong style="color:var(--accent)">reporting/interpretation training</strong> for clinical practice.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">CBCT training requirements are based on the <strong>European Academy of DentoMaxilloFacial Radiology (EADMFR)</strong> curriculum, adopted in UK guidance documents that we must comply with as part of our IRMER duties.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: The four levels -->
+    <section class="slide">
+      <h1 class="slide-title">The Four Training Tiers</h1>
+      <h2 class="slide-sub">Click each card to reveal what it actually involves</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="flip" onclick="this.classList.toggle('flipped')">
+            <div class="flip-inner">
+              <div class="flip-face flip-front"><div class="icon">📘</div><strong>Level 1 — Core Theory</strong><div style="font-size:12px;color:var(--muted);margin-top:4px">Click to flip</div></div>
+              <div class="flip-face flip-back">Done on a course (like today). Covers physics, dose, regulations, selection criteria, anatomy & artefacts. Required even just to <em>refer</em> a patient for a CBCT scan.</div>
+            </div>
+          </div>
+          <div class="flip" onclick="this.classList.toggle('flipped')">
+            <div class="flip-inner">
+              <div class="flip-face flip-front"><div class="icon">⚙️</div><strong>Level 2 — Operator</strong><div style="font-size:12px;color:var(--muted);margin-top:4px">Click to flip</div></div>
+              <div class="flip-face flip-back">NOT a course. Practical training from the manufacturer/distributor on the <em>specific</em> machine in your practice. How to position the patient and which buttons to press. Must be documented.</div>
+            </div>
+          </div>
+          <div class="flip" onclick="this.classList.toggle('flipped')">
+            <div class="flip-inner">
+              <div class="flip-face flip-front"><div class="icon">🔬</div><strong>Level 2 — Reporting</strong><div style="font-size:12px;color:var(--muted);margin-top:4px">Click to flip</div></div>
+              <div class="flip-face flip-back">Clinical interpretation training — usually a structured course with case-based learning. The skill of actually reading scans and writing reports.</div>
+            </div>
+          </div>
+          <div class="flip" onclick="this.classList.toggle('flipped')">
+            <div class="flip-inner">
+              <div class="flip-face flip-front"><div class="icon">🔄</div><strong>Refresher</strong><div style="font-size:12px;color:var(--muted);margin-top:4px">Click to flip</div></div>
+              <div class="flip-face flip-back">Minimum <strong>1 hour every 5 years</strong>, on top of the standard 5-hour IRMER update. Many clinicians choose to redo the full Level 1 + 2 because they get more from it once experienced.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Who needs Level 1 -->
+    <section class="slide">
+      <h1 class="slide-title">Who Needs Level 1 Training?</h1>
+      <h2 class="slide-sub">A common point of confusion</h2>
+      <div class="content">
+        <table class="compare">
+          <thead><tr><th>Role</th><th>Activity</th><th>Level 1 needed?</th></tr></thead>
+          <tbody>
+            <tr><td>Dentist</td><td>Prescribing / interpreting CBCT</td><td><span class="tag tag-good">YES</span></td></tr>
+            <tr><td>Dentist</td><td>Just <em>referring</em> to another practice for CBCT</td><td><span class="tag tag-good">YES</span></td></tr>
+            <tr><td>Dental nurse</td><td>Taking the CBCT scan on the prescription of a dentist</td><td><span class="tag tag-good">YES</span></td></tr>
+            <tr><td>Hygienist / therapist</td><td>Prescribing CBCT</td><td><span class="tag tag-bad">NOT IN SCOPE</span></td></tr>
+            <tr><td>Hygienist / therapist</td><td>Prescribing standard 2D dental imaging</td><td><span class="tag tag-good">In scope</span></td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>Quirk of the rules:</strong> a maxillofacial dentist can refer a hospital patient for a much higher-dose <em>medical CT</em> with no extra training, but on the same day in private practice they need Level 1 to refer for a much lower-dose CBCT. Logical? No. Required? Yes.</div>
+        </div>
+        <p style="font-size:14px;color:var(--muted)">If your practice <em>accepts</em> CBCT referrals, ask referrers to declare on the referral form that they hold Level 1 training.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Refresher requirements -->
+    <section class="slide">
+      <h1 class="slide-title">Refresher & IRMER Requirements</h1>
+      <h2 class="slide-sub">What you must do every 5 years</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="stat"><div class="num">5h</div><div class="lbl">IRMER update<br>every 5 years</div></div>
+          <div class="stat"><div class="num">1h</div><div class="lbl">CBCT refresher<br>(minimum)</div></div>
+          <div class="stat"><div class="num">6h</div><div class="lbl">Total minimum<br>recommended</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Practical recommendation</div>
+          <p style="font-size:14px;line-height:1.65">Do your <strong style="color:var(--accent)">5-hour IRMER update</strong> every 5 years, then add at least one extra <strong style="color:var(--accent)">CBCT-specific refresher hour</strong> on top of that. Many practitioners choose to repeat Level 1 + 2 fully every 5 years — once you've been using CBCT clinically for several years, you typically get far more out of the training than the first time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: What is CBCT? -->
+    <section class="slide">
+      <h1 class="slide-title">What is CBCT?</h1>
+      <h2 class="slide-sub">More than just "3D imaging"</h2>
+      <div class="content">
+        <p>CBCT is most accurately described as a <strong style="color:var(--accent)">cross-sectional imaging modality</strong> — not merely a "3D imaging" technique.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">3D vs Cross-sectional</div>
+            <p style="font-size:14px;line-height:1.6">When you look at a patient clinically, you already have <em>3D</em> information — about the surface anatomy. What you can't do is look <em>inside</em> the teeth and bone. CBCT lets you slice the patient's anatomy into thin sections and examine the internal structures. That's the real advantage.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Cross-sectional family</div>
+            <p style="font-size:14px;line-height:1.6">CBCT joins medical CT, MRI and ultrasound as cross-sectional modalities. The interesting question is <em>why CBCT</em> is the dental modality of choice — and that comes down to a mixture of inherent advantages and very practical considerations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: CBCT vs CT vs MRI -->
+    <section class="slide">
+      <h1 class="slide-title">CBCT vs Medical CT vs MRI</h1>
+      <h2 class="slide-sub">Why CBCT wins for dentistry</h2>
+      <div class="content">
+        <table class="compare">
+          <thead><tr><th></th><th>CBCT</th><th>Medical CT</th><th>MRI</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Hard tissue</strong></td><td><span class="tag tag-good">Excellent</span> (better than CT)</td><td>Very good</td><td>Poor</td></tr>
+            <tr><td><strong>Soft tissue</strong></td><td><span class="tag tag-bad">Very poor</span></td><td>Good</td><td><span class="tag tag-good">Gold standard</span></td></tr>
+            <tr><td><strong>Patient dose</strong></td><td>Low</td><td><span class="tag tag-bad">High</span></td><td><span class="tag tag-good">No ionising radiation</span></td></tr>
+            <tr><td><strong>Cost of machine</strong></td><td>£30k–£200k</td><td>Hundreds of thousands</td><td>£1m+ (install fee alone!)</td></tr>
+            <tr><td><strong>Footprint in practice</strong></td><td>Same as an OPG</td><td>Whole room</td><td>Dedicated suite</td></tr>
+            <tr><td><strong>Resolution (best voxel)</strong></td><td><strong>50 µm</strong></td><td>500 µm</td><td>~1 mm</td></tr>
+          </tbody>
+        </table>
+        <div class="callout key">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-text"><strong>Key insight:</strong> CBCT shows the <em>teeth and bone</em> at 3–10× the resolution of medical CT, at a fraction of the dose, in a machine the size of an OPG that you can fit in your practice. The "limitation" of poor soft-tissue contrast is actually an advantage — it focuses the information on what dentists need to see and makes the scan easier to learn to interpret.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: Hard vs soft tissue case -->
+    <section class="slide">
+      <h1 class="slide-title">What CBCT Can — and Cannot — Show</h1>
+      <h2 class="slide-sub">Case: horizontally impacted lower 8 with facial swelling</h2>
+      <div class="content">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- CBCT panel -->
+            <g>
+              <rect x="20" y="20" width="310" height="230" rx="10" fill="#161f3d" stroke="#2a3868"/>
+              <text x="175" y="45" text-anchor="middle" fill="#6ee7ff" font-size="14" font-weight="700">CBCT (bone window)</text>
+              <!-- Mandible cross-section -->
+              <ellipse cx="175" cy="160" rx="120" ry="65" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+              <ellipse cx="175" cy="160" rx="100" ry="50" fill="#0b1020" stroke="#3a4878"/>
+              <!-- Tooth -->
+              <rect x="200" y="120" width="22" height="35" rx="3" fill="#e8ecff" transform="rotate(75 211 138)"/>
+              <!-- ID canal -->
+              <circle cx="160" cy="170" r="5" fill="#0b1020" stroke="#a78bfa" stroke-width="2"/>
+              <text x="120" y="220" fill="#9aa6d6" font-size="10">✓ Tooth</text>
+              <text x="120" y="234" fill="#9aa6d6" font-size="10">✓ Bone resorption</text>
+              <text x="120" y="248" fill="#9aa6d6" font-size="10">✓ ID canal</text>
+              <text x="220" y="220" fill="#f87171" font-size="10">✗ Abscess?</text>
+              <text x="220" y="234" fill="#f87171" font-size="10">✗ Soft tissue?</text>
+            </g>
+            <!-- Medical CT panel -->
+            <g>
+              <rect x="370" y="20" width="310" height="230" rx="10" fill="#161f3d" stroke="#2a3868"/>
+              <text x="525" y="45" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700">Medical CT (soft tissue window)</text>
+              <ellipse cx="525" cy="160" rx="120" ry="65" fill="#2a3050" stroke="#3a4878" stroke-width="2"/>
+              <!-- Mandible -->
+              <ellipse cx="525" cy="160" rx="100" ry="50" fill="#1c2750" stroke="#3a4878"/>
+              <!-- masseter swollen -->
+              <ellipse cx="600" cy="155" rx="35" ry="40" fill="#3a4878" opacity=".7"/>
+              <text x="610" y="125" fill="#fbbf24" font-size="10">Masseter</text>
+              <text x="610" y="138" fill="#fbbf24" font-size="10">(swollen)</text>
+              <!-- abscess -->
+              <circle cx="595" cy="160" r="10" fill="#0b1020" stroke="#f87171" stroke-width="2"/>
+              <text x="595" y="200" fill="#f87171" font-size="10" text-anchor="middle">Abscess (pus)</text>
+              <!-- Tooth -->
+              <rect x="550" y="120" width="22" height="35" rx="3" fill="#e8ecff" transform="rotate(75 561 138)"/>
+              <text x="450" y="240" fill="#9aa6d6" font-size="10">✓ Bone   ✓ Muscle   ✓ Pus collection</text>
+            </g>
+          </svg>
+        </div>
+        <p style="font-size:14px">CBCT will show you the resorbed bone, the buccal cortex perforation and the relationship of the tooth to the ID canal — but it cannot tell you whether the patient's swollen face is just oedema or whether there's a frank abscess underneath the masseter. For that, you need medical CT with windowing, or MRI.</p>
+        <div class="callout tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Simple example:</strong> on CBCT you can assess the relationship of a lower 8 to the <em>ID nerve</em> (which runs in a bony canal) — but you cannot assess its relationship to the <em>lingual nerve</em>, which runs entirely in soft tissue.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: Scope of reporting -->
+    <section class="slide">
+      <h1 class="slide-title">Scope of Reporting</h1>
+      <h2 class="slide-sub">Where does "dentoalveolar" end?</h2>
+      <div class="content">
+        <p>The current UK guidance specifies training for <strong style="color:var(--accent)">"dental CBCT"</strong> but doesn't precisely define the term. The older 2010 HPA-CRCE-101 guidance was more explicit, and the European SedentexCT guidance fills in the gaps.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- Skull silhouette -->
+            <path d="M 300 30 Q 200 30 180 100 Q 170 160 200 200 L 220 245 Q 230 260 250 260 L 350 260 Q 370 260 380 245 L 400 200 Q 430 160 420 100 Q 400 30 300 30 Z" fill="#1c2750" stroke="#3a4878" stroke-width="2"/>
+            <!-- orbit -->
+            <ellipse cx="265" cy="115" rx="22" ry="14" fill="#0b1020" stroke="#a78bfa" stroke-width="1.5"/>
+            <ellipse cx="335" cy="115" rx="22" ry="14" fill="#0b1020" stroke="#a78bfa" stroke-width="1.5"/>
+            <!-- Sinuses -->
+            <ellipse cx="270" cy="160" rx="20" ry="22" fill="#0b1020" opacity=".6"/>
+            <ellipse cx="330" cy="160" rx="20" ry="22" fill="#0b1020" opacity=".6"/>
+            <!-- Teeth row -->
+            <rect x="240" y="200" width="120" height="14" rx="3" fill="#e8ecff" opacity=".7"/>
+            <rect x="240" y="220" width="120" height="14" rx="3" fill="#e8ecff" opacity=".7"/>
+            <!-- Safe zone (orange box) -->
+            <rect x="220" y="175" width="160" height="75" fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,3" rx="6"/>
+            <text x="300" y="172" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="700">SAFE ZONE — dentoalveolar</text>
+            <!-- Above orbit line -->
+            <line x1="160" y1="115" x2="440" y2="115" stroke="#f87171" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="450" y="118" fill="#f87171" font-size="11" font-weight="600">Orbital floor — limit</text>
+            <!-- Skull base -->
+            <text x="450" y="60" fill="#f87171" font-size="11" font-weight="600">⬆ Skull base</text>
+            <text x="450" y="74" fill="#9aa6d6" font-size="10">→ refer to radiologist</text>
+            <!-- Arrow up -->
+            <text x="100" y="240" fill="#9aa6d6" font-size="10">↑ Up to ⅔ into</text>
+            <text x="100" y="252" fill="#9aa6d6" font-size="10">maxillary sinus OK</text>
+          </svg>
+        </div>
+        <ul>
+          <li>Anything <strong>above the orbital floors</strong> or up to the <strong>skull base</strong> is outside independent dentist reporting</li>
+          <li>The <strong>airway and cervical spine</strong> are also outside scope</li>
+          <li><strong>TMJ imaging</strong> sits outside dentoalveolar — you can't image the TMJ without imaging the middle/inner ear</li>
+          <li>Up to about <strong>two-thirds into the maxillary sinus</strong> is reasonable, as you can't usefully scan the maxilla without seeing some sinus</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: Pituitary tumour case -->
+    <section class="slide">
+      <h1 class="slide-title">Why Scope Matters: A Cautionary Case</h1>
+      <h2 class="slide-sub">The incidental pituitary tumour</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">Case</div>
+          <p style="font-size:14px;line-height:1.65">A very experienced oral surgeon took a <em>large</em>-volume CBCT for some bilateral sinus mucosal thickening, retained roots and an oroantral communication. The scan extended right up to the skull base. There was complete opacification of the sphenoid sinuses and destruction of the pituitary fossa with soft tissue herniating downward.</p>
+          <p style="font-size:14px;line-height:1.65;margin-top:8px">The patient had an asymptomatic <strong style="color:var(--bad)">pituitary tumour</strong>. The dentoalveolar findings were correctly reported — but the tumour was nearly missed. Fortunately a second-opinion radiology report caught it and the patient was referred for neurosurgery.</p>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-text"><strong>Medico-legal lesson:</strong> if you image anatomy outside your scope and miss pathology, "I wasn't trained for that" is not a defence — the guidance clearly says it falls outside your remit. The right answer is either (a) take a smaller-volume scan, or (b) get the larger scan reported by a radiologist. A typical radiology report costs ~£100 — minimal compared with the cost of a missed diagnosis.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: How CBCT works intro -->
+    <section class="slide">
+      <h1 class="slide-title">How a CBCT Scanner Works</h1>
+      <h2 class="slide-sub">Why this matters for clinical practice</h2>
+      <div class="content">
+        <span class="speaker s2">Speaker 2 · Co-presenter</span>
+        <p>Understanding the basic physics of how the scanner acquires an image lets you make sense of the relationship between <strong style="color:var(--accent)">image quality, dose and field of view</strong> — and what you can do at the control panel to optimise both.</p>
+        <div class="grid3">
+          <div class="card" style="text-align:center"><div style="font-size:32px;color:var(--accent)">🔄</div><strong>Rotation</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">X-ray source orbits the patient</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:32px;color:var(--accent2)">📡</div><strong>Pulsing</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">Many 2D projections, not continuous</p></div>
+          <div class="card" style="text-align:center"><div style="font-size:32px;color:var(--accent)">🧠</div><strong>Reconstruction</strong><p style="font-size:13px;color:var(--muted);margin-top:6px">Computer builds a 3D dataset</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 13: 360 rotation -->
+    <section class="slide">
+      <h1 class="slide-title">The 360° Rotation Principle</h1>
+      <h2 class="slide-sub">Like Jeremy Clarkson walking around a Ferrari…</h2>
+      <div class="content">
+        <p>To form a 3D mental picture of an object, you walk around it and look from many angles. To use X-rays to reconstruct a 3D image, the scanner must take projections from many angles around the patient. <strong style="color:var(--accent)">More projections → more information → higher resolution → higher dose.</strong></p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+            <!-- 4 projections -->
+            <g>
+              <text x="80" y="20" text-anchor="middle" fill="#9aa6d6" font-size="11">4 projections</text>
+              <circle cx="80" cy="120" r="55" fill="none" stroke="#2a3868" stroke-width="1" stroke-dasharray="3,3"/>
+              <circle cx="80" cy="120" r="20" fill="#1c2750" stroke="#3a4878"/>
+              <circle cx="80" cy="65" r="6" fill="#6ee7ff"/>
+              <circle cx="135" cy="120" r="6" fill="#6ee7ff"/>
+              <circle cx="80" cy="175" r="6" fill="#6ee7ff"/>
+              <circle cx="25" cy="120" r="6" fill="#6ee7ff"/>
+              <text x="80" y="215" text-anchor="middle" fill="#f87171" font-size="11">Pixelated · Low dose</text>
+            </g>
+            <!-- 16 projections -->
+            <g>
+              <text x="220" y="20" text-anchor="middle" fill="#9aa6d6" font-size="11">16 projections</text>
+              <circle cx="220" cy="120" r="55" fill="none" stroke="#2a3868" stroke-width="1" stroke-dasharray="3,3"/>
+              <circle cx="220" cy="120" r="20" fill="#1c2750" stroke="#3a4878"/>
+              <g fill="#6ee7ff"><circle cx="220" cy="65" r="4"/><circle cx="241" cy="69" r="4"/><circle cx="261" cy="83" r="4"/><circle cx="271" cy="103" r="4"/><circle cx="275" cy="120" r="4"/><circle cx="271" cy="137" r="4"/><circle cx="261" cy="157" r="4"/><circle cx="241" cy="171" r="4"/><circle cx="220" cy="175" r="4"/><circle cx="199" cy="171" r="4"/><circle cx="179" cy="157" r="4"/><circle cx="169" cy="137" r="4"/><circle cx="165" cy="120" r="4"/><circle cx="169" cy="103" r="4"/><circle cx="179" cy="83" r="4"/><circle cx="199" cy="69" r="4"/></g>
+              <text x="220" y="215" text-anchor="middle" fill="#fbbf24" font-size="11">Acceptable</text>
+            </g>
+            <!-- 64 -->
+            <g>
+              <text x="380" y="20" text-anchor="middle" fill="#9aa6d6" font-size="11">64 projections</text>
+              <circle cx="380" cy="120" r="55" fill="none" stroke="#2a3868" stroke-width="1" stroke-dasharray="3,3"/>
+              <circle cx="380" cy="120" r="20" fill="#1c2750" stroke="#3a4878"/>
+              <g fill="#6ee7ff" id="ringD"></g>
+              <text x="380" y="215" text-anchor="middle" fill="#34d399" font-size="11">High res</text>
+            </g>
+            <!-- 360+ -->
+            <g>
+              <text x="520" y="20" text-anchor="middle" fill="#9aa6d6" font-size="11">600+ projections</text>
+              <circle cx="520" cy="120" r="55" fill="none" stroke="#6ee7ff" stroke-width="2"/>
+              <circle cx="520" cy="120" r="20" fill="#1c2750" stroke="#3a4878"/>
+              <text x="520" y="215" text-anchor="middle" fill="#a78bfa" font-size="11">Diagnostic · High dose</text>
+            </g>
+          </svg>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-text"><strong>The fundamental trade-off:</strong> you cannot have a high-resolution AND very-low-dose scan. Anyone who tells you otherwise is misleading you. There are only two ways to reduce dose: <strong>(1) compromise image quality</strong>, or <strong>(2) scan less anatomy</strong>.</div>
+        </div>
+      </div>
+      <script>
+        // Generate 64-point ring once on load
+        (function(){
+          const g = document.getElementById('ringD');
+          if(!g) return;
+          let html='';
+          for(let i=0;i<32;i++){
+            const a = (i/32)*Math.PI*2;
+            const x = 380 + Math.cos(a)*55;
+            const y = 120 + Math.sin(a)*55;
+            html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`;
+          }
+          g.innerHTML = html;
+        })();
+      </script>
+    </section>
+
+    <!-- SLIDE 14: Pulsed not continuous -->
+    <section class="slide">
+      <h1 class="slide-title">Pulsed, Not Continuous</h1>
+      <h2 class="slide-sub">The exposure-time clue on your control panel</h2>
+      <div class="content">
+        <p>The X-ray tube does not emit continuously as it rotates. It <strong style="color:var(--accent)">pulses</strong> — pulse → rotate → pulse → rotate. Each pulse is one 2D projection. The total exposure time you see on the control panel is the sum of all those pulses.</p>
+        <div class="card">
+          <div class="card-title">Why this matters clinically</div>
+          <p style="font-size:14px;line-height:1.6">When you switch your machine from <em>standard</em> to <em>high-resolution</em> settings, watch the exposure time. It will go up, because the scanner is taking <em>more pulses</em> per rotation. Switch to <em>low-dose</em> and the exposure time drops because there are fewer pulses — but image quality also drops because there's less data to reconstruct from.</p>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">⏱️</div>
+          <div class="callout-text">The exposure time on the control panel is your real-time visual indicator of how much radiation the patient is receiving. Use it as a sanity check.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 15: Fan beam vs Cone beam -->
+    <section class="slide">
+      <h1 class="slide-title">Fan Beam vs Cone Beam</h1>
+      <h2 class="slide-sub">Why "cone beam" CT is called cone beam CT</h2>
+      <div class="content">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+            <!-- Fan beam -->
+            <g>
+              <text x="170" y="25" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Medical CT — Fan Beam</text>
+              <!-- Source -->
+              <circle cx="170" cy="55" r="10" fill="#34d399"/>
+              <text x="170" y="48" text-anchor="middle" fill="#34d399" font-size="9">Source</text>
+              <!-- Fan -->
+              <path d="M 170 55 L 50 200 L 290 200 Z" fill="#a78bfa" opacity=".15" stroke="#a78bfa" stroke-width="1"/>
+              <!-- detector -->
+              <rect x="50" y="200" width="240" height="8" fill="#a78bfa"/>
+              <!-- Patient -->
+              <ellipse cx="170" cy="130" rx="40" ry="22" fill="#1c2750" stroke="#3a4878"/>
+              <text x="170" y="135" text-anchor="middle" fill="#9aa6d6" font-size="10">Patient</text>
+              <text x="170" y="240" text-anchor="middle" fill="#9aa6d6" font-size="11">→ One slice per rotation</text>
+              <text x="170" y="254" text-anchor="middle" fill="#9aa6d6" font-size="11">→ Bed advances, repeats</text>
+            </g>
+            <!-- Cone beam -->
+            <g>
+              <text x="500" y="25" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">CBCT — Cone Beam</text>
+              <circle cx="500" cy="55" r="10" fill="#34d399"/>
+              <text x="500" y="48" text-anchor="middle" fill="#34d399" font-size="9">Source</text>
+              <!-- 3D cone (front view as triangle + perspective) -->
+              <path d="M 500 55 L 380 200 L 620 200 Z" fill="#6ee7ff" opacity=".15" stroke="#6ee7ff" stroke-width="1"/>
+              <path d="M 500 55 L 410 195 L 410 215 L 590 215 L 590 195 Z" fill="#6ee7ff" opacity=".08" stroke="#6ee7ff" stroke-width="1" stroke-dasharray="3,2"/>
+              <!-- detector -->
+              <rect x="380" y="200" width="240" height="20" fill="#6ee7ff" opacity=".7"/>
+              <!-- Patient -->
+              <ellipse cx="500" cy="130" rx="40" ry="22" fill="#1c2750" stroke="#3a4878"/>
+              <text x="500" y="135" text-anchor="middle" fill="#9aa6d6" font-size="10">Patient</text>
+              <text x="500" y="240" text-anchor="middle" fill="#9aa6d6" font-size="11">→ Whole volume per rotation</text>
+              <text x="500" y="254" text-anchor="middle" fill="#9aa6d6" font-size="11">→ One pass, done</text>
+            </g>
+          </svg>
+        </div>
+        <p>In <strong style="color:var(--accent2)">medical CT</strong>, the X-ray beam is a flat fan — divergent horizontally but narrow vertically. One rotation acquires one slice, then the bed moves and another slice is acquired. In <strong style="color:var(--accent)">CBCT</strong>, the beam is a 3D cone — divergent in <em>both</em> directions — so a single rotation captures the entire volume at once.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 16: Loaf of bread analogy -->
+    <section class="slide">
+      <h1 class="slide-title">The Loaf of Bread Analogy</h1>
+      <h2 class="slide-sub">A way to remember the difference</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">🍞 Medical CT — slices first</div>
+            <p style="font-size:14px;line-height:1.6">You bake the bread <em>as individual slices</em>, one at a time. Each rotation gives you one slice. Then you stack them together to make the whole loaf. To image less anatomy, you simply slice from a higher or lower point — but every slice is the full width of the patient.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">🥖 CBCT — loaf first</div>
+            <p style="font-size:14px;line-height:1.6">You bake the <em>whole loaf</em> in one go (one rotation), then artificially slice it up on the computer afterwards to view different cross-sections. This is why with CBCT you can choose exactly the size and position of the volume you want — you control the cone shape and where its centre of rotation sits.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Critical consequence:</strong> with medical CT you can only control the vertical extent, but you must always image the full width of the patient — left side, right side, cervical spine, everything in between. With CBCT you can target a 4×4 cm cylinder around just one tooth.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 17: Field of view -->
+    <section class="slide">
+      <h1 class="slide-title">Field of View</h1>
+      <h2 class="slide-sub">CBCT volumes are cylinders</h2>
+      <div class="content">
+        <p>CBCT volumes are described in <strong style="color:var(--accent)">two dimensions</strong> — e.g. "5 × 5 cm" or "8 × 8 cm". Why only two? Because the volumes are cylinders, and we describe the <em>diameter</em> of the circle and the <em>height</em> of the cylinder.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+            <!-- Small 5x5 -->
+            <g>
+              <text x="100" y="25" text-anchor="middle" fill="#34d399" font-size="13" font-weight="700">5 × 5 cm</text>
+              <ellipse cx="100" cy="60" rx="40" ry="10" fill="none" stroke="#34d399" stroke-width="2"/>
+              <line x1="60" y1="60" x2="60" y2="170" stroke="#34d399" stroke-width="2"/>
+              <line x1="140" y1="60" x2="140" y2="170" stroke="#34d399" stroke-width="2"/>
+              <ellipse cx="100" cy="170" rx="40" ry="10" fill="#34d399" opacity=".15" stroke="#34d399" stroke-width="2"/>
+              <text x="100" y="200" text-anchor="middle" fill="#9aa6d6" font-size="11">Section of jaw</text>
+              <text x="100" y="215" text-anchor="middle" fill="#9aa6d6" font-size="10">single tooth + neighbours</text>
+            </g>
+            <!-- 8x5 -->
+            <g>
+              <text x="300" y="25" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700">8 × 5 cm</text>
+              <ellipse cx="300" cy="60" rx="65" ry="14" fill="none" stroke="#fbbf24" stroke-width="2"/>
+              <line x1="235" y1="60" x2="235" y2="170" stroke="#fbbf24" stroke-width="2"/>
+              <line x1="365" y1="60" x2="365" y2="170" stroke="#fbbf24" stroke-width="2"/>
+              <ellipse cx="300" cy="170" rx="65" ry="14" fill="#fbbf24" opacity=".15" stroke="#fbbf24" stroke-width="2"/>
+              <text x="300" y="200" text-anchor="middle" fill="#9aa6d6" font-size="11">Single arch</text>
+              <text x="300" y="215" text-anchor="middle" fill="#9aa6d6" font-size="10">full upper or lower</text>
+            </g>
+            <!-- 8x8 -->
+            <g>
+              <text x="540" y="25" text-anchor="middle" fill="#f87171" font-size="13" font-weight="700">8 × 8 cm</text>
+              <ellipse cx="540" cy="55" rx="65" ry="14" fill="none" stroke="#f87171" stroke-width="2"/>
+              <line x1="475" y1="55" x2="475" y2="180" stroke="#f87171" stroke-width="2"/>
+              <line x1="605" y1="55" x2="605" y2="180" stroke="#f87171" stroke-width="2"/>
+              <ellipse cx="540" cy="180" rx="65" ry="14" fill="#f87171" opacity=".15" stroke="#f87171" stroke-width="2"/>
+              <text x="540" y="200" text-anchor="middle" fill="#9aa6d6" font-size="11">Both arches</text>
+              <text x="540" y="215" text-anchor="middle" fill="#9aa6d6" font-size="10">all teeth in both jaws</text>
+            </g>
+          </svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Three workhorse volumes</div>
+          <p style="font-size:14px;line-height:1.65">For most dental practice you need just three options — <strong>5×5</strong> (or 4×4) for a section of jaw, <strong>8×5</strong> for a single arch, <strong>8×8</strong> for both jaws. Higher-end machines offer more, but you rarely need them.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 18: Centre of rotation / scout view -->
+    <section class="slide">
+      <h1 class="slide-title">Centre of Rotation & Scout Views</h1>
+      <h2 class="slide-sub">Targeting the cone-shaped beam</h2>
+      <div class="content">
+        <p>You decide where the centre of rotation sits — the machine targets the cone-shaped beam there. The X-rays still pass through contralateral anatomy, but only the volume in the cone is repeatedly irradiated and only that volume has enough information to be reconstructed.</p>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">▸ How do you actually tell the machine where to scan?</div>
+          <div class="answer">You don't move the patient or the source manually. You position the patient in the machine, and you tell the software which area you want centred. Most machines do this in one of two ways:<br><br>
+          <strong>1. Standardised assumption</strong> — the machine assumes a standard patient size (e.g. some Carestream/CS machines). Faster, but more chance of mis-positioning.<br><br>
+          <strong>2. Scout view</strong> — the machine takes a very-low-dose, blurry frontal and lateral projection. You drop a crosshair onto these to mark the centre. Adds about a minute to the workflow, but means you almost never need to repeat the scan due to mis-positioning. <strong>Always use scout view if your machine offers it.</strong></div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">📷</div>
+          <div class="callout-text">Scout views are <strong>not</strong> diagnostic images — they are just blurry positioning aids. You're not expected to interpret pathology on them.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 19: Voxels -->
+    <section class="slide">
+      <h1 class="slide-title">Voxels — 3D Pixels</h1>
+      <h2 class="slide-sub">The building blocks of a CBCT dataset</h2>
+      <div class="content">
+        <div class="grid2">
+          <div>
+            <p>A digital photograph is made of thousands of 2D <strong>pixels</strong>. A CBCT scan is made of thousands of 3D <strong style="color:var(--accent)">voxels</strong> — cube-shaped, isotropic 3D versions of a pixel.</p>
+            <p style="margin-top:12px">"Voxel size" is one of the few easy numerical specs manufacturers use as a marketing surrogate for image quality. The smaller the voxel, the higher the spatial resolution — but the relationship is not as simple as the spec sheet suggests.</p>
+          </div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg">
+              <!-- 3D cube grid -->
+              <g stroke="#6ee7ff" stroke-width="1" fill="none">
+                <!-- Front face -->
+                <rect x="40" y="60" width="100" height="100"/>
+                <!-- Back face -->
+                <rect x="80" y="20" width="100" height="100"/>
+                <!-- Connecting -->
+                <line x1="40" y1="60" x2="80" y2="20"/>
+                <line x1="140" y1="60" x2="180" y2="20"/>
+                <line x1="40" y1="160" x2="80" y2="120"/>
+                <line x1="140" y1="160" x2="180" y2="120"/>
+                <!-- Voxel grid lines -->
+                <line x1="65" y1="60" x2="65" y2="160" opacity=".5"/>
+                <line x1="90" y1="60" x2="90" y2="160" opacity=".5"/>
+                <line x1="115" y1="60" x2="115" y2="160" opacity=".5"/>
+                <line x1="40" y1="85" x2="140" y2="85" opacity=".5"/>
+                <line x1="40" y1="110" x2="140" y2="110" opacity=".5"/>
+                <line x1="40" y1="135" x2="140" y2="135" opacity=".5"/>
+              </g>
+              <!-- highlighted voxel -->
+              <rect x="65" y="85" width="25" height="25" fill="#a78bfa" opacity=".6" stroke="#a78bfa"/>
+              <text x="110" y="178" text-anchor="middle" fill="#9aa6d6" font-size="11">1 voxel = isotropic cube</text>
+            </svg>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">📐</div>
+          <div class="callout-text"><strong>Isotropic</strong> means the voxel has the same dimension in all three planes (e.g. 100 × 100 × 100 µm). This is why you can re-slice a CBCT dataset in axial, coronal or sagittal planes without loss of resolution — every direction looks identical.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 20: Voxel size comparison -->
+    <section class="slide">
+      <h1 class="slide-title">Voxel Size — CBCT vs Medical CT</h1>
+      <h2 class="slide-sub">Where CBCT really shines</h2>
+      <div class="content">
+        <div class="grid3">
+          <div class="stat"><div class="num">500 µm</div><div class="lbl">Best medical CT<br>(0.5 mm)</div></div>
+          <div class="stat" style="border-color:var(--accent)"><div class="num">50 µm</div><div class="lbl">Best CBCT on the market</div></div>
+          <div class="stat"><div class="num">100–150 µm</div><div class="lbl">Average CBCT</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Putting this in perspective</div>
+          <p style="font-size:14px;line-height:1.65">There are 1000 micrometres in 1 mm. The <strong style="color:var(--accent)">best medical CT</strong> achieves a voxel size of about half a millimetre. The best CBCT on the market reaches <strong style="color:var(--accent)">50 µm</strong> — that's <strong>10× the spatial resolution of medical CT</strong>, in the worst case still 3–5× better.</p>
+          <p style="font-size:14px;line-height:1.65;margin-top:10px">Combined with lower dose, lower cost, smaller machines, and the fact that it shows you exactly the structures dentists need (teeth & bone), this is why CBCT is the imaging modality of choice in dentistry.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 21: Dose-quality-FOV interactive -->
+    <section class="slide">
+      <h1 class="slide-title">The Dose / Quality / FOV Triangle</h1>
+      <h2 class="slide-sub">Try the slider — see what trades off</h2>
+      <div class="content">
+        <div class="card slider-demo">
+          <div class="slider-row">
+            <label>Quality:</label>
+            <input type="range" min="1" max="5" value="3" id="qSlider">
+          </div>
+          <div class="slider-row">
+            <label>FOV size:</label>
+            <input type="range" min="1" max="5" value="3" id="fSlider">
+          </div>
+          <div class="slider-output">
+            <span>Dose: <strong id="doseOut" style="color:var(--accent)">Medium</strong></span>
+            <span>Image: <strong id="imgOut" style="color:var(--accent)">Diagnostic</strong></span>
+            <span>Use case: <strong id="useOut" style="color:var(--accent2)">Implant planning</strong></span>
+          </div>
+        </div>
+        <ul>
+          <li><strong>Higher quality</strong> = more projections per rotation = longer exposure time = higher dose</li>
+          <li><strong>Larger FOV</strong> = more anatomy irradiated = higher dose. The single biggest dose-saving lever is to scan the smallest possible volume to answer the clinical question.</li>
+          <li><strong>You cannot have all three</strong> — high quality, large FOV, and very low dose. Pick two.</li>
+        </ul>
+        <div class="callout key">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-text"><strong>The clinical priority:</strong> get diagnostic image quality (because you need a confident diagnosis), and counterbalance the dose by minimising the FOV. Don't compromise quality — compromise size.</div>
+        </div>
+      </div>
+      <script>
+        (function(){
+          const q = document.getElementById('qSlider');
+          const f = document.getElementById('fSlider');
+          const dOut = document.getElementById('doseOut');
+          const iOut = document.getElementById('imgOut');
+          const uOut = document.getElementById('useOut');
+          if(!q) return;
+          function upd(){
+            const qV=+q.value, fV=+f.value;
+            const dose = Math.round((qV*fV)/2);
+            const doseLabels = ['Very low','Low','Medium','High','Very high'];
+            dOut.textContent = doseLabels[Math.max(0,Math.min(4,dose))]||'Medium';
+            const imgLabels = ['Very poor','Low','Acceptable','Diagnostic','High res'];
+            iOut.textContent = imgLabels[qV-1];
+            // Use case
+            let useC='Implant planning';
+            if(qV>=4 && fV<=2) useC='Endodontics';
+            else if(qV<=2) useC='Low-dose recall';
+            else if(fV>=4) useC='Full-arch / orthognathic';
+            else if(qV>=4) useC='Endodontics / fine detail';
+            else useC='Implant planning';
+            uOut.textContent=useC;
+            // colour code dose
+            const colors=['#34d399','#34d399','#fbbf24','#f87171','#f87171'];
+            dOut.style.color=colors[Math.max(0,Math.min(4,dose))]||'#fbbf24';
+          }
+          q.addEventListener('input',upd);
+          f.addEventListener('input',upd);
+          upd();
+        })();
+      </script>
+    </section>
+
+    <!-- SLIDE 22: Image planes -->
+    <section class="slide">
+      <h1 class="slide-title">Axial · Coronal · Sagittal</h1>
+      <h2 class="slide-sub">Click each tab to learn the orientation</h2>
+      <div class="content">
+        <div class="card scrubber-demo">
+          <div class="view-tabs">
+            <div class="view-tab active" data-view="axial">Axial</div>
+            <div class="view-tab" data-view="coronal">Coronal</div>
+            <div class="view-tab" data-view="sagittal">Sagittal</div>
+          </div>
+          <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" id="viewSVG">
+            <!-- Default axial -->
+            <g id="viewG"></g>
+          </svg>
+          <div class="view-display" id="viewDesc"></div>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-text"><strong>Memory aid:</strong> unlike a periapical, you usually look at <em>anterior</em> teeth in the <strong>coronal</strong> view, and <em>posterior</em> teeth in the <strong>sagittal</strong> view. Just like an OPG, the right side of the screen is always the patient's left, and vice versa.</div>
+        </div>
+      </div>
+      <script>
+        (function(){
+          const tabs = document.querySelectorAll('.view-tab');
+          const g = document.getElementById('viewG');
+          const desc = document.getElementById('viewDesc');
+          if(!g) return;
+          const views = {
+            axial: {
+              svg:`<ellipse cx="180" cy="100" rx="80" ry="55" fill="#1c2750" stroke="#6ee7ff" stroke-width="2"/>
+                   <path d="M 110 90 Q 180 30 250 90 Q 250 130 180 145 Q 110 130 110 90 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+                   <text x="180" y="35" text-anchor="middle" fill="#fbbf24" font-size="11">Anterior (nose ↑)</text>
+                   <text x="180" y="180" text-anchor="middle" fill="#fbbf24" font-size="11">Posterior</text>
+                   <text x="60" y="105" fill="#f87171" font-size="11">Right</text>
+                   <text x="280" y="105" fill="#34d399" font-size="11">Left</text>`,
+              text:'Bird\'s-eye view. Patient lying on their back, nose pointing to the ceiling. You scroll up and down through the head. Anterior arch at the top, posterior at the bottom.'
+            },
+            coronal: {
+              svg:`<rect x="100" y="40" width="160" height="120" rx="6" fill="#1c2750" stroke="#6ee7ff" stroke-width="2"/>
+                   <ellipse cx="180" cy="80" rx="55" ry="20" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+                   <ellipse cx="180" cy="120" rx="55" ry="20" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+                   <text x="180" y="35" text-anchor="middle" fill="#fbbf24" font-size="11">Front-on view</text>
+                   <text x="60" y="105" fill="#f87171" font-size="11">Right</text>
+                   <text x="280" y="105" fill="#34d399" font-size="11">Left</text>`,
+              text:'Front-on view of the patient — like standing in front of them. You scroll front-to-back through the head. Best for looking at anterior teeth.'
+            },
+            sagittal: {
+              svg:`<rect x="100" y="40" width="160" height="120" rx="6" fill="#1c2750" stroke="#6ee7ff" stroke-width="2"/>
+                   <path d="M 130 70 L 230 70 L 230 130 L 130 130 Z" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+                   <text x="180" y="35" text-anchor="middle" fill="#fbbf24" font-size="11">Side-on view</text>
+                   <text x="105" y="180" fill="#9aa6d6" font-size="10">Anterior →</text>
+                   <text x="220" y="180" fill="#9aa6d6" font-size="10">← Posterior</text>`,
+              text:'Lateral side-on view — like a periapical from the side. You scroll left-to-right through the head. Best for looking at posterior teeth and tracking nerve canals.'
+            }
+          };
+          function show(v){
+            g.innerHTML = views[v].svg;
+            desc.textContent = views[v].text;
+            tabs.forEach(t=>t.classList.toggle('active', t.dataset.view===v));
+          }
+          tabs.forEach(t=>t.addEventListener('click',()=>show(t.dataset.view)));
+          show('axial');
+        })();
+      </script>
+    </section>
+
+    <!-- SLIDE 23: 2D limitation - superimposition -->
+    <section class="slide">
+      <h1 class="slide-title">Why 2D Imaging Falls Short</h1>
+      <h2 class="slide-sub">Superimposition is the enemy</h2>
+      <div class="content">
+        <p>2D dental imaging actually has <em>higher spatial resolution</em> than 3D imaging — a periapical can resolve finer detail than any CBCT voxel. The killer disadvantage is <strong style="color:var(--accent)">superimposition</strong>: structures from different depths overlap into a single shadow. You lose the ability to know where things really are.</p>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">2D imaging</div>
+            <ul>
+              <li>Higher spatial resolution</li>
+              <li>Lower dose</li>
+              <li>Cheap & quick</li>
+              <li><span class="tag tag-bad">Superimposition kills depth</span></li>
+              <li>Multi-angle parallax helps but is not the same</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">3D / cross-sectional</div>
+            <ul>
+              <li>True spatial relationships</li>
+              <li>No superimposition</li>
+              <li>Slice in any plane</li>
+              <li><span class="tag tag-warn">Slightly lower resolution</span></li>
+              <li><span class="tag tag-warn">Higher dose than 2D</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Perception trick:</strong> you've probably seen the Prince William / Barack Obama optical illusions where one perspective looks completely different from another. A single periapical can deceive you in exactly the same way.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 24: Crack diagnosis case -->
+    <section class="slide">
+      <h1 class="slide-title">Case: The Cracked Premolar</h1>
+      <h2 class="slide-sub">When 3D imaging is the only way</h2>
+      <div class="content">
+        <div class="card">
+          <div class="card-title">History</div>
+          <p style="font-size:14px;line-height:1.65">The patient (the father of a dentist) bit down on an upper left 4 and heard a crack. Their dentist daughter took a CBCT within a couple of days.</p>
+        </div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tooth axial -->
+            <text x="300" y="25" text-anchor="middle" fill="#6ee7ff" font-size="13" font-weight="700">Axial CBCT through upper 4</text>
+            <!-- buccal root -->
+            <ellipse cx="250" cy="115" rx="22" ry="30" fill="#e8ecff" stroke="#9aa6d6"/>
+            <ellipse cx="250" cy="115" rx="6" ry="9" fill="#1c2750"/>
+            <text x="250" y="170" text-anchor="middle" fill="#9aa6d6" font-size="10">Buccal root</text>
+            <!-- palatal root -->
+            <ellipse cx="350" cy="115" rx="22" ry="30" fill="#e8ecff" stroke="#9aa6d6"/>
+            <ellipse cx="350" cy="115" rx="6" ry="9" fill="#1c2750"/>
+            <text x="350" y="170" text-anchor="middle" fill="#9aa6d6" font-size="10">Palatal root</text>
+            <!-- crack line -->
+            <line x1="260" y1="115" x2="340" y2="115" stroke="#f87171" stroke-width="2.5"/>
+            <text x="300" y="105" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">CRACK</text>
+            <!-- arrow -->
+            <text x="475" y="115" fill="#fbbf24" font-size="11">→ Connecting crack between roots</text>
+          </svg>
+        </div>
+        <div class="callout tip">
+          <div class="callout-icon">✅</div>
+          <div class="callout-text">No combination of periapicals from different angles could ever show this crack running between the two roots. Diagnosed early, the tooth was extracted and an immediate implant placed before secondary infection or bone loss could develop.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 25: Optimising dose -->
+    <section class="slide">
+      <h1 class="slide-title">How to Optimise Dose in Practice</h1>
+      <h2 class="slide-sub">Two levers, one priority</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Lever 1 — Quality</div>
+            <p style="font-size:14px;line-height:1.6">You can compromise image quality (fewer projections per rotation, lower exposure time). <strong>Usually a bad idea</strong> — you sacrifice diagnostic confidence and may have to repeat the scan, doubling the dose.</p>
+          </div>
+          <div class="card" style="border-color:var(--accent)">
+            <div class="card-title" style="color:var(--accent)">Lever 2 — FOV ⭐</div>
+            <p style="font-size:14px;line-height:1.6">Scan less anatomy. <strong style="color:var(--accent)">By far the most important way</strong> to optimise dose. Use the smallest field of view that answers your clinical question. Less data, less dose, less to interpret, less chance of incidental findings outside your scope.</p>
+          </div>
+        </div>
+        <div class="callout key">
+          <div class="callout-icon">⭐</div>
+          <div class="callout-text"><strong>The single most important practical message of this lecture:</strong> always image at <em>good quality</em> but at the <em>smallest possible field of view</em>. Don't sacrifice diagnostic clarity to save a fraction of dose — counterbalance dose by being surgical with the volume size.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 26: Scout/centre summary -->
+    <section class="slide">
+      <h1 class="slide-title">Practical Workflow Recap</h1>
+      <h2 class="slide-sub">Putting it all together at the control panel</h2>
+      <div class="content">
+        <ol style="list-style:none;padding:0;counter-reset:step">
+          <li style="counter-increment:step;padding:14px 14px 14px 60px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">1</span>
+            <strong style="color:var(--accent)">Justify the scan</strong> — does it answer a clinical question and change/confirm management?
+          </li>
+          <li style="counter-increment:step;padding:14px 14px 14px 60px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">2</span>
+            <strong style="color:var(--accent)">Choose the smallest FOV</strong> that captures the area of interest
+          </li>
+          <li style="counter-increment:step;padding:14px 14px 14px 60px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">3</span>
+            <strong style="color:var(--accent)">Position with a scout view</strong> if your machine offers it — saves repeats
+          </li>
+          <li style="counter-increment:step;padding:14px 14px 14px 60px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">4</span>
+            <strong style="color:var(--accent)">Use diagnostic-quality settings</strong> — don't drop quality to chase low-dose marketing numbers
+          </li>
+          <li style="counter-increment:step;padding:14px 14px 14px 60px;background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">5</span>
+            <strong style="color:var(--accent)">Stay within scope</strong> — anything above orbital floors or beyond cervical spine → second-opinion radiologist
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 27: Quick check -->
+    <section class="slide">
+      <h1 class="slide-title">Quick Check</h1>
+      <h2 class="slide-sub">Click each question to reveal the answer</h2>
+      <div class="content">
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q1 ▸ Why can't CBCT be used to assess soft tissue pathology?</div>
+          <div class="answer">CBCT has very poor soft-tissue contrast resolution. It is essentially a hard-tissue imaging modality. To assess soft-tissue swelling, abscesses, muscle pathology or soft-tissue tumours, you need medical CT (with windowing) or MRI.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q2 ▸ A dentist refers a patient to another practice for a CBCT scan. Does the referring dentist need Level 1 training?</div>
+          <div class="answer">Yes. UK guidance requires Level 1 CBCT training even just to <em>refer</em> a patient for a CBCT scan, even if someone else justifies, takes and reports the scan.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q3 ▸ Where does "dentoalveolar" CBCT end?</div>
+          <div class="answer">Roughly: up to about ⅔ into the maxillary sinuses is fine. Beyond the orbital floors, into the skull base, the airway or the cervical spine is outside dentist scope. TMJ imaging is also outside scope because you can't image the TMJ without the middle/inner ear.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q4 ▸ Why is the X-ray beam in CBCT called a "cone" beam?</div>
+          <div class="answer">Because it diverges in <em>both</em> the horizontal and vertical planes (forming a 3D cone), unlike medical CT's beam which is a flat fan (divergent only horizontally). The cone shape means CBCT can capture the entire volume in a single rotation.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q5 ▸ What are the only two ways to reduce dose to the patient?</div>
+          <div class="answer">(1) Compromise image quality — usually a bad trade-off. (2) Scan less anatomy — by far the more important lever, and the one you should reach for first.</div>
+        </div>
+        <div class="reveal" onclick="this.classList.toggle('shown')">
+          <div class="question">Q6 ▸ What is the best voxel size CBCT can achieve, and how does it compare with medical CT?</div>
+          <div class="answer">Best CBCT: 50 µm (highest-end machine on the market). Average CBCT: 100–150 µm. Best medical CT: ~500 µm (0.5 mm). CBCT delivers 3–10× the spatial resolution of medical CT for hard tissue imaging.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 28: Key takeaways -->
+    <section class="slide">
+      <h1 class="slide-title">Key Takeaways</h1>
+      <h2 class="slide-sub">Lecture 1 in one screen</h2>
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Training framework</div>
+            <ul style="margin-top:0">
+              <li>Level 1 = core theory (today), needed even to refer</li>
+              <li>Level 2 operator = manufacturer training on your machine</li>
+              <li>Level 2 reporting = clinical interpretation training</li>
+              <li>Refresher: minimum 1h every 5 years on top of IRMER</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Scope of practice</div>
+            <ul style="margin-top:0">
+              <li>"Dentoalveolar" only — up to orbital floors</li>
+              <li>Not airway, cervical spine, skull base, TMJ</li>
+              <li>Get a second-opinion radiology report when in doubt</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">CBCT physics</div>
+            <ul style="margin-top:0">
+              <li>Cone-shaped beam, single rotation, pulsed exposures</li>
+              <li>Volumes are cylinders, described as height × diameter</li>
+              <li>Isotropic voxels — re-slice in any plane</li>
+              <li>50–150 µm voxel size (vs 500 µm for medical CT)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Dose optimisation</div>
+            <ul style="margin-top:0">
+              <li>You cannot have high quality + large FOV + low dose</li>
+              <li>Always use the smallest possible FOV — that's the lever</li>
+              <li>Don't drop image quality to chase marketing numbers</li>
+              <li>Use the scout view for accurate positioning</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 29: End -->
+    <section class="slide title-slide">
+      <div class="module-tag">END OF LECTURE 1</div>
+      <h1>Foundations laid.<br>Onwards to dose & justification.</h1>
+      <p class="subtitle">You now understand what CBCT is, who can use it, what the scanner is doing physically, and why quality, FOV and dose are inseparably linked. Lecture 2 builds on this to cover effective dose, risk communication, selection criteria and justification.</p>
+      <div class="lect-num">▶ Continue with Lecture 2: Dose, Risk & Justification</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <button class="nav-btn" id="prevBtn">◀ Previous</button>
+    <div class="dots" id="dotsNav"></div>
+    <button class="nav-btn" id="nextBtn">Next ▶</button>
+  </footer>
+  <div class="kbd-hint">Use <kbd>←</kbd> <kbd>→</kbd> arrow keys to navigate</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('totSlide').textContent = total;
+  let cur = 0;
+
+  const dots = document.getElementById('dotsNav');
+  for(let i=0;i<total;i++){
+    const d = document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.addEventListener('click',()=>go(i));
+    dots.appendChild(d);
+  }
+
+  function go(i){
+    cur = Math.max(0, Math.min(total-1, i));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('active',k===cur));
+    document.getElementById('curSlide').textContent = cur+1;
+    document.getElementById('progressFill').style.width = ((cur+1)/total*100)+'%';
+    document.getElementById('prevBtn').disabled = cur===0;
+    document.getElementById('nextBtn').disabled = cur===total-1;
+    // scroll active slide to top
+    slides[cur].scrollTop=0;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click',()=>go(cur-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ') go(cur+1);
+    if(e.key==='ArrowLeft') go(cur-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(total-1);
+  });
+
+  go(0);
+</script>
+</body>
+</html>

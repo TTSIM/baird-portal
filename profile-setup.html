@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your profile | BAIRD Learning Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/profile.css">
+</head>
+<body>
+  <main class="profile-shell">
+    <section class="profile-intro">
+      <p class="kicker">BAIRD Community</p>
+      <h1>Set up your delegate profile</h1>
+      <p>Your name and course experience help other delegates understand who they are learning with. Your email stays private.</p>
+      <div class="privacy-note">
+        <strong>Clinical confidentiality</strong>
+        <span>Never include patient-identifiable information in your profile or community posts.</span>
+      </div>
+    </section>
+
+    <form class="profile-card" id="profile-form">
+      <div class="avatar-preview" id="avatar-preview" aria-live="polite"></div>
+      <fieldset>
+        <legend>Display picture <span>Optional</span></legend>
+        <label class="choice"><input type="radio" name="avatarChoice" value="google"> Use Google picture</label>
+        <label class="choice"><input type="radio" name="avatarChoice" value="upload"> Upload another picture</label>
+        <label class="choice"><input type="radio" name="avatarChoice" value="none"> Use initials</label>
+        <input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <button class="secondary" id="choose-avatar" type="button">Choose image</button>
+        <p class="field-note">JPEG, PNG or WebP. Maximum 10 MB.</p>
+      </fieldset>
+
+      <label>Name
+        <input id="profile-name" name="name" maxlength="80" autocomplete="name" required>
+      </label>
+      <label>Location <span>Optional</span>
+        <input id="profile-location" name="location" maxlength="100" autocomplete="address-level2" placeholder="For example, Leeds">
+      </label>
+
+      <section class="course-history">
+        <h2>Completed courses</h2>
+        <p>BAIRD administrators manage these course badges.</p>
+        <div class="course-badges" id="course-badges"><span>None assigned yet</span></div>
+      </section>
+
+      <fieldset>
+        <legend>Email notifications</legend>
+        <label class="choice"><input type="checkbox" name="emailReplies" checked> Replies to discussions I follow</label>
+        <label class="choice"><input type="checkbox" name="emailMentions" checked> Mentions of my name</label>
+        <label class="choice"><input type="checkbox" name="emailAcceptedAnswers" checked> Accepted answers</label>
+      </fieldset>
+
+      <p class="form-status" id="profile-status" role="status"></p>
+      <button class="primary" type="submit">Save profile</button>
+    </form>
+  </main>
+  <script type="module" src="assets/profile.js"></script>
+</body>
+</html>

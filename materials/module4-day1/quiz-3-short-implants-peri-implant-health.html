@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Short Implants & Peri-implant Health — 30-Question Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1620; --ink-2:#16212E; --panel:#1B2A3A; --line:#2A3B4F;
+  --bone:#F5F1E8; --bone-2:#EBE3D2; --bone-line:#D8CDB6;
+  --gold:#C9A24B; --gold-soft:#E2C57E; --gold-deep:#A9842F;
+  --teal:#3E8E84; --teal-soft:#7DBEB4; --teal-deep:#2c6f66;
+  --coral:#C97B6A; --coral-soft:#E0A99B; --coral-deep:#a85843;
+  --ink-text:#20303F; --ink-muted:#5C6E7E; --on-dark:#E7EDF3; --on-dark-muted:#93A6BA;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:var(--sans);color:var(--on-dark);
+  background:radial-gradient(140% 120% at 50% -10%,#16263a 0%,var(--ink) 55%);
+  -webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;
+  display:flex;align-items:flex-start;justify-content:center;padding:clamp(14px,3vw,40px)}
+.wrap{width:100%;max-width:760px}
+
+/* top */
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:14px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand svg{width:30px;height:30px}
+.brand .t{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-dark-muted)}
+.brand .t b{color:var(--teal-soft);font-weight:600}
+.score-pill{font-family:var(--mono);font-size:12px;color:var(--on-dark-muted);background:var(--ink-2);
+  border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+.score-pill b{color:var(--gold-soft)}
+.progress{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal-deep),var(--teal-soft));transition:width .4s ease}
+
+/* card */
+.card{background:linear-gradient(180deg,#FBF8F1,var(--bone));color:var(--ink-text);
+  border-radius:18px;border:1px solid var(--bone-line);box-shadow:0 24px 60px -20px rgba(0,0,0,.55);
+  padding:clamp(20px,4vw,38px)}
+.qmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.qtag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:#fff;background:var(--teal);border-radius:999px;padding:5px 12px}
+.qtag.evid{background:var(--gold-deep)} .qtag.design{background:var(--coral-deep)} .qtag.peri{background:var(--teal-deep)} .qtag.tech{background:#3a6ea5}
+.qnum{font-family:var(--mono);font-size:12px;color:var(--ink-muted)}
+.qtext{font-family:var(--serif);font-weight:600;font-size:clamp(19px,2.6vw,26px);line-height:1.25;color:var(--ink);margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:flex-start;gap:13px;text-align:left;width:100%;cursor:pointer;
+  background:#fff;border:1.5px solid var(--bone-line);border-radius:13px;padding:15px 16px;
+  font-family:var(--sans);font-size:clamp(14px,1.6vw,16px);color:#2c3c4c;transition:.16s;line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--teal);transform:translateY(-1px)}
+.opt:disabled{cursor:default}
+.opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:var(--ink);color:var(--gold-soft);
+  font-family:var(--mono);font-size:13px;font-weight:600;display:grid;place-items:center}
+.opt.correct{border-color:var(--teal);background:rgba(62,142,132,.12)}
+.opt.correct .key{background:var(--teal);color:#fff}
+.opt.wrong{border-color:var(--coral);background:rgba(201,123,106,.12)}
+.opt.wrong .key{background:var(--coral);color:#fff}
+.opt.dim{opacity:.55}
+
+.explain{margin-top:20px;border-left:4px solid var(--teal);background:rgba(62,142,132,.1);
+  padding:15px 17px;border-radius:0 12px 12px 0;display:none;animation:fade .35s ease}
+.explain.show{display:block}
+.explain.miss{border-color:var(--coral);background:rgba(201,123,106,.12)}
+.explain .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);display:block;margin-bottom:5px}
+.explain.miss .k{color:var(--coral-deep)}
+.explain p{font-size:14.5px;line-height:1.55;color:#2c3c4c}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+
+.actions{display:flex;justify-content:flex-end;margin-top:22px}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  background:var(--teal);color:#fff;border:none;border-radius:999px;padding:13px 26px;cursor:pointer;
+  transition:.2s;box-shadow:0 8px 22px -10px var(--teal-deep)}
+.btn:hover{background:var(--teal-deep)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#1a1206;box-shadow:0 8px 22px -10px var(--gold-deep)}
+.btn.gold:hover{background:var(--gold-soft)}
+.btn.ghost{background:transparent;border:1.5px solid var(--bone-line);color:var(--ink-text);box-shadow:none}
+
+/* start + results */
+.hero{text-align:center;padding:clamp(26px,5vw,48px)}
+.hero .kick{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:16px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,5vw,46px);line-height:1.05;color:var(--ink);max-width:16ch;margin:0 auto .5em}
+.hero h1 em{font-style:italic;color:var(--teal-deep)}
+.hero p{font-size:clamp(15px,1.7vw,17px);color:#46586a;line-height:1.55;max-width:48ch;margin:0 auto 26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:30px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--bone-2);color:var(--ink-muted);border-radius:999px;padding:7px 13px}
+
+.ring{display:block;margin:0 auto 8px}
+.result-score{font-family:var(--serif);font-size:clamp(46px,9vw,72px);line-height:1;color:var(--ink)}
+.result-grade{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-deep);margin-top:6px}
+.breakdown{margin:26px 0;display:flex;flex-direction:column;gap:12px}
+.brow{display:grid;grid-template-columns:130px 1fr 46px;align-items:center;gap:12px}
+.brow .nm{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.bbar{height:9px;background:var(--bone-2);border-radius:9px;overflow:hidden}
+.bbar>span{display:block;height:100%;border-radius:9px;background:var(--teal);width:0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.brow .vl{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right}
+
+.review{margin-top:10px;text-align:left}
+.review h3{font-family:var(--serif);font-size:22px;color:var(--ink);margin:28px 0 14px}
+.ritem{border:1px solid var(--bone-line);border-radius:13px;padding:15px 17px;margin-bottom:11px;background:#fff}
+.ritem .rq{font-weight:600;color:var(--ink);font-size:15px;margin-bottom:9px;line-height:1.35}
+.ritem .ra{font-size:13.5px;line-height:1.5;display:flex;gap:8px;align-items:flex-start;margin-bottom:4px}
+.ritem .ra .mk{font-family:var(--mono);font-weight:600;flex:0 0 auto}
+.ra.you.ok .mk{color:var(--teal-deep)} .ra.you.no .mk{color:var(--coral-deep)}
+.ra.corr .mk{color:var(--teal-deep)}
+.ritem .rex{font-size:13px;color:#52616f;line-height:1.5;margin-top:7px;padding-top:8px;border-top:1px dashed var(--bone-line)}
+.foot{font-family:var(--mono);font-size:10.5px;color:var(--on-dark-muted);text-align:center;margin-top:22px;letter-spacing:.04em}
+.kbd{font-family:var(--mono);font-size:11px;background:var(--bone-2);border-radius:5px;padding:2px 7px;color:var(--ink-muted)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" fill="none"><rect x="1" y="1" width="38" height="38" rx="9" stroke="#3E8E84" stroke-width="1.5"/><path d="M20 8 L20 24 M20 24 L16 32 M20 24 L24 32 M14 13 H26" stroke="#7DBEB4" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="t">Companion Quiz · <b>Short Implants &amp; Peri-implant Health</b></span>
+    </div>
+    <div class="score-pill" id="scorePill" style="display:none">Score <b id="scoreNow">0</b>/<span id="scoreSeen">0</span></div>
+  </div>
+  <div class="progress" id="progWrap" style="display:none"><span id="progBar"></span></div>
+  <div id="root"></div>
+  <div class="foot">In-memory quiz · keys <span class="kbd">1–4</span> to answer · <span class="kbd">Enter</span> for next</div>
+</div>
+
+<script>
+const QUESTIONS=[
+{s:'tech',t:'Augment · Plan B',q:'When augmentation is high-risk or has failed, what is the simplest fall-back option?',
+ o:['Repeat the graft from the contralateral iliac crest','Place a short implant','Defer treatment for 12 months','Switch to a wider-diameter long implant'],a:1,
+ e:'A shorter implant is the pragmatic plan B. The asymmetry of risk is key: if a short implant fails you can still graft, whereas if you graft first and lose it you may be unable to place even a short implant.'},
+{s:'tech',t:'Graft biology',q:'An implant loaded at 45 days over a fresh sinus graft that survives owes its stability mainly to:',
+ o:['Rapid maturation of the graft material','The covering membrane','The native residual bone','The insertion torque alone'],a:2,
+ e:'At 45 days a graft cannot have matured. Early-loading success comes from the native residual bone height — not the regenerate, which is still forming.'},
+{s:'tech',t:'Graft maturation',q:'Grafted bone is generally only considered "sound" at approximately:',
+ o:['6 weeks','3 months','6 months','12 months'],a:3,
+ e:'New bone begins forming after ~6 months and is immature even then; it is only sound at around 12 months. Respect this timeline before trusting the regenerate.'},
+{s:'tech',t:'Crestal technique',q:'In a crestal sinus lift, the final instrument should treat the last millimetre of bone by:',
+ o:['Cutting cleanly through it','Abrading rather than cutting it','Fracturing it with an osteotome tap','Leaving it and perforating deliberately'],a:1,
+ e:'The final instrument abrades — not cuts — the last millimetre, so you reach the Schneiderian membrane and elevate it without perforation.'},
+{s:'tech',t:'Window technique',q:'Comparing piezosurgery with rotary instruments for a lateral window:',
+ o:['Piezo dramatically reduces failure rates','With experience both give similar results; piezo is slower','Rotary is contraindicated near the membrane','Piezo eliminates the need for grafting'],a:1,
+ e:'Piezo is believed to reduce perforations, but with experience both techniques achieve the same result and piezo simply takes longer. A common compromise: start with a bur, finish against the membrane with piezo.'},
+{s:'tech',t:'Anatomy',q:'The thin lining of the maxillary sinus that must be elevated intact is the:',
+ o:['Periosteal membrane','Schneiderian membrane','Bruch’s membrane','Buccinator membrane'],a:1,
+ e:'The Schneiderian membrane is the sinus lining. Keeping it intact during elevation is the central skill of every sinus-floor technique.'},
+{s:'tech',t:'Anatomy',q:'Graft material or infection that reaches which structure most risks sinusitis?',
+ o:['The ostium','The hard palate','The nasal septum','The zygomatic buttress'],a:0,
+ e:'The ostium drains the sinus. Graft or infection tracking to it can cause acute or chronic sinusitis — which is why infected sinus material should be removed early.'},
+{s:'evid',t:'Study design',q:'A split-mouth randomised design is valuable mainly because it controls for:',
+ o:['Operator skill','Between-patient variability','Implant brand effects','Radiographic magnification'],a:1,
+ e:'Each patient receives both treatments (one per side), removing between-patient noise and making small but real differences detectable.'},
+{s:'evid',t:'RCT findings',q:'Across the split-mouth trials, the short-implant side consistently showed, versus the sinus-lift side:',
+ o:['More complications and more bone loss','Fewer complications and less marginal bone loss','Markedly higher implant failure','Worse patient-reported outcomes'],a:1,
+ e:'The repeating pattern: the short side had fewer complications and less bone loss, with only slightly more (non-significant) implant failures, plus a smaller, faster operation.'},
+{s:'evid',t:'Patient preference',q:'When asked which treatment they preferred, patients in the comparative trials consistently chose:',
+ o:['The sinus-lift side','The short-implant side','No preference either way','Whichever was treated first'],a:1,
+ e:'Patients consistently preferred the short-implant side — a small crestal incision and a fast recovery beats a larger, often two-stage operation. (Note: aesthetic-framed questions can flip the answer.)'},
+{s:'evid',t:'The hidden catch',q:'Beyond equal failure rates, what did roughly 14% of augmentation cases reveal?',
+ o:['Spontaneous graft regeneration','The planned implant could not be placed','Reduced need for maintenance','Better long-term aesthetics'],a:1,
+ e:'In ~14% of augmentation cases the planned implant could not be placed at all — a shorter one was used, or none. "Equal implant-failure rates" conceals this.'},
+{s:'evid',t:'Meta-analysis',q:'In the pooled meta-analysis, implant failure between short and longer implants was:',
+ o:['Significantly higher for short implants','Significantly higher for long implants','Not statistically significantly different','Impossible to assess'],a:2,
+ e:'Pooled data showed no statistically significant difference in implant or prosthetic failure between short and longer implants.'},
+{s:'evid',t:'Meta-analysis',q:'Average marginal bone loss reported in the pooled five-year data was in the region of:',
+ o:['0.1 mm','0.6 mm','1.8 mm','3.0 mm'],a:1,
+ e:'Average marginal bone loss was around 0.6 mm. Complications, however, were significantly more frequent with augmentation.'},
+{s:'evid',t:'Adequate bone',q:'In trials placing short vs long implants where bone was plentiful (e.g. 6 vs 11 mm), outcomes were:',
+ o:['Clearly better with long implants','Clearly better with short implants','Essentially equivalent','Only assessable at 1 year'],a:2,
+ e:'Even with ample bone, short and long implants performed essentially equivalently — including a 6 mm transmucosal study followed to ten years.'},
+{s:'evid',t:'Biomechanics',q:'Most occlusal load around an implant is borne by:',
+ o:['The apical third of the implant','The coronal ~3 mm of crestal bone','The implant apex engaging the cortex','The abutment screw'],a:1,
+ e:'Roughly the coronal three millimetres of crestal bone carries most of the load — the biomechanical rationale for why short implants can suffice.'},
+{s:'evid',t:'Myth-busting',q:'The traditional rule that the implant should be twice the crown length is:',
+ o:['Strongly supported by the evidence','Not borne out — restorations function even at 3–4:1','Only valid in the mandible','Required for medicolegal reasons'],a:1,
+ e:'Restorations function well even with a crown three to four times the implant length. Tidy mathematical ratios do not map neatly onto biology.'},
+{s:'evid',t:'Grafting comparison',q:'For vertical gain, comparative studies suggested which technique performed better?',
+ o:['Onlay block-only grafting','Interposition grafting','Guided bone regeneration alone','Distraction osteogenesis'],a:1,
+ e:'Interposition grafting outperformed onlay block-only grafting; vertical GBR was difficult to study as cases were rarely forthcoming.'},
+{s:'evid',t:'Risk asymmetry',q:'The decisive practical argument for trying a short implant first is that:',
+ o:['Short implants never fail','If a short implant fails you can still graft afterwards','Grafting is always contraindicated','Short implants cost more but last longer'],a:1,
+ e:'If a short implant fails you can still graft. If you graft first and lose it, you may be unable to place even a short implant — so the short-first route preserves options.'},
+{s:'design',t:'Connection',q:'Very short implants frequently require an external or transmucosal connection because:',
+ o:['Internal connections are weaker in general','There is no room for an internal screw','External connections osseointegrate faster','Transmucosal designs resist peri-implantitis'],a:1,
+ e:'When the implant is very short there is simply no vertical room for an internal screw, so an external connection or a transmucosal design is used.'},
+{s:'design',t:'Connection',q:'The Bicon system is notable in this context for its:',
+ o:['Extra-long internal screw','Locking-taper connection needing little vertical space','Resorbable body','Built-in drill stop'],a:1,
+ e:'Bicon’s locking-taper connection provides a genuine seal and needs little vertical space — attractive for short implants, though it remains under-studied.'},
+{s:'design',t:'Displacement',q:'A narrow-necked transmucosal implant placed in soft maxillary bone is particularly prone to:',
+ o:['Screw loosening','Migration into the sinus','Galvanic corrosion','Cement washout'],a:1,
+ e:'The protruding narrow neck meets chewing forces; in soft bone the implant can migrate into the sinus. One trial lost an implant this way, prompting a changed indication.'},
+{s:'design',t:'Narrow implants',q:'The principal long-term concern with very narrow (≤3 mm) implants is:',
+ o:['Excessive osseointegration','Fracture, especially with an internal connection','Inability to load','Radiographic invisibility'],a:1,
+ e:'Narrow implants risk fracture over time, particularly with an internal connection — which is why two are often used to support a molar.'},
+{s:'design',t:'Nerve safety',q:'The main avoidable disaster with mandibular short implants, and its safeguard, are:',
+ o:['Overheating; copious irrigation','Cutting the inferior alveolar nerve; drills with a built-in stop','Screw fracture; torque wrenches','Sinus perforation; piezo tips'],a:1,
+ e:'Losing depth control in the mandible can sever the inferior alveolar nerve. Idiot-proof drills with a built-in depth stop remove the need to remember a separate stopper.'},
+{s:'peri',t:'Diagnosis',q:'Bleeding on probing around an implant is best described as:',
+ o:['The definitive test for peri-implantitis','The least specific single sign — investigate further','Irrelevant and safely ignored','Diagnostic only when painful'],a:1,
+ e:'Bleeding on probing is the least specific single sign (it also occurs with mucositis or heavy probing). Don’t ignore it — corroborate with probing depth, attachment loss and a radiograph.'},
+{s:'peri',t:'Diagnosis',q:'At surgery, the extent of peri-implant bone loss compared with the radiograph is usually:',
+ o:['Less than the radiograph suggested','About the same','Worse than the radiograph suggested','Impossible to judge'],a:2,
+ e:'Reality is almost always worse than the radiograph. What looked like 3 mm of loss is frequently greater once a flap is raised.'},
+{s:'peri',t:'Bone-loss pattern',q:'Around implants, thicker bone tends to lose bone as a ___ defect, whereas thinner bone loses it ___.',
+ o:['horizontal … vertically','crater-like … horizontally/generally','circumferential … apically','undetectable … rapidly'],a:1,
+ e:'Thick bone tends toward a crater-like (more contained) defect; thin bone tends to horizontal, generalised loss that is harder to regenerate.'},
+{s:'peri',t:'Phenotype',q:'On the shine-through test, a THIN periodontal phenotype is indicated when:',
+ o:['The probe is not visible through the gingiva','The probe shows through the gingiva','Bleeding occurs on probing','The sulcus exceeds 4 mm'],a:1,
+ e:'If the probe’s shadow shows through the gingiva, the tissue is thin — flagging higher recession risk and the need for soft-tissue planning before placement.'},
+{s:'peri',t:'Cement',q:'A periapical radiograph’s key limitation when checking for excess cement is that it:',
+ o:['Over-estimates cement volume','Shows only mesial/distal, never buccolingual','Cannot image radiopaque cement','Requires sedation'],a:1,
+ e:'Even with radiopaque cement, a PA shows only the mesial and distal aspects — never the buccolingual — so you cannot rely on it alone.'},
+{s:'peri',t:'Retrograde lesion',q:'Recognised causes of retrograde peri-implantitis include all EXCEPT:',
+ o:['Over-torque (~80 Ncm)','Placement into a previously infected site','Overheating / over-irrigation','Using a radiopaque cement'],a:3,
+ e:'The three classic causes are over-torque, a previously infected site, and overheating/over-irrigation. Radiopaque cement is a diagnostic aid, not a cause of retrograde lesions.'},
+{s:'peri',t:'Decontamination',q:'For cleaning an implant surface around the threads, the preferred approach is:',
+ o:['Bulky hand curettes only','Ultrasonic/sonic instrumentation (cavitation)','Air abrasion is contraindicated','No cleaning — observe only'],a:1,
+ e:'Ultrasonic/sonic instruments are preferred: the cavitation effect helps dislodge bacteria and reach between threads where bulky hand instruments cannot. Doing nothing is not an option.'}
+];
+
+const SECLABEL={tech:'Augment / Technique',evid:'Evidence',design:'Design / Complications',peri:'Peri-implant'};
+const root=document.getElementById('root');
+let idx=0, score=0, seen=0, answered=false;
+const responses=[]; // {chosen, correct}
+
+function startScreen(){
+  document.getElementById('scorePill').style.display='none';
+  document.getElementById('progWrap').style.display='none';
+  root.innerHTML=`<div class="card hero">
+    <div class="kick">30 questions · 5 topics · instant feedback</div>
+    <h1>Test your <em>implant</em> decision-making</h1>
+    <p>Thirty questions drawn straight from the lecture — short implants, the sinus, the RCT evidence, complications and peri-implant health. Pick an answer to see why it’s right, and review everything at the end.</p>
+    <div class="chips">
+      <span class="chip">Augment vs short</span><span class="chip">Sinus technique</span>
+      <span class="chip">RCT &amp; meta-analysis</span><span class="chip">Design &amp; complications</span>
+      <span class="chip">Peri-implant disease</span>
+    </div>
+    <button class="btn gold" id="startBtn">Start the quiz →</button>
+  </div>`;
+  document.getElementById('startBtn').onclick=()=>{idx=0;score=0;seen=0;responses.length=0;render();};
+}
+
+function render(){
+  answered=false;
+  document.getElementById('scorePill').style.display='';
+  document.getElementById('progWrap').style.display='';
+  document.getElementById('scoreNow').textContent=score;
+  document.getElementById('scoreSeen').textContent=seen;
+  document.getElementById('progBar').style.width=((idx)/QUESTIONS.length*100)+'%';
+  const Q=QUESTIONS[idx];
+  root.innerHTML=`<div class="card">
+    <div class="qmeta">
+      <span class="qtag ${Q.s}">${SECLABEL[Q.s]}</span>
+      <span class="qnum">Question ${idx+1} / ${QUESTIONS.length}</span>
+    </div>
+    <div class="qtext">${Q.q}</div>
+    <div class="opts" id="opts">${Q.o.map((o,i)=>`
+      <button class="opt" data-i="${i}"><span class="key">${'ABCD'[i]}</span><span>${o}</span></button>`).join('')}</div>
+    <div class="explain" id="explain"></div>
+    <div class="actions"><button class="btn" id="nextBtn" disabled>${idx===QUESTIONS.length-1?'See results':'Next'} →</button></div>
+  </div>`;
+  document.querySelectorAll('#opts .opt').forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+  document.getElementById('nextBtn').onclick=next;
+}
+
+function choose(i){
+  if(answered)return; answered=true; seen++;
+  const Q=QUESTIONS[idx]; const correct=(i===Q.a);
+  if(correct)score++;
+  responses[idx]={chosen:i,correct};
+  document.querySelectorAll('#opts .opt').forEach(b=>{
+    const bi=+b.dataset.i; b.disabled=true;
+    if(bi===Q.a)b.classList.add('correct');
+    else if(bi===i)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const ex=document.getElementById('explain');
+  ex.className='explain show'+(correct?'':' miss');
+  ex.innerHTML=`<span class="k">${correct?'Correct':'Not quite — answer: '+'ABCD'[Q.a]}</span><p>${Q.e}</p>`;
+  document.getElementById('scoreNow').textContent=score;
+  document.getElementById('scoreSeen').textContent=seen;
+  document.getElementById('nextBtn').disabled=false;
+}
+function next(){ if(!answered)return; idx++; if(idx>=QUESTIONS.length){results();}else{render();} }
+
+function results(){
+  document.getElementById('progBar').style.width='100%';
+  const pct=Math.round(score/QUESTIONS.length*100);
+  const grade=pct>=85?'Excellent — exam-ready':pct>=70?'Strong — minor gaps':pct>=50?'Fair — worth revising':'Review the lecture and retry';
+  // section breakdown
+  const secs={}; QUESTIONS.forEach((Q,i)=>{(secs[Q.s]=secs[Q.s]||{c:0,t:0}); secs[Q.s].t++; if(responses[i]&&responses[i].correct)secs[Q.s].c++;});
+  const R=2*Math.PI*52; const off=R*(1-score/QUESTIONS.length);
+  let breakdown=Object.keys(SECLABEL).filter(s=>secs[s]).map(s=>{
+    const o=secs[s],p=Math.round(o.c/o.t*100);
+    return `<div class="brow"><span class="nm">${SECLABEL[s]}</span><div class="bbar"><span data-w="${p}"></span></div><span class="vl">${o.c}/${o.t}</span></div>`;
+  }).join('');
+  let review=QUESTIONS.map((Q,i)=>{
+    const r=responses[i]||{chosen:-1,correct:false};
+    const yourOk=r.correct;
+    const your=r.chosen>=0?`${'ABCD'[r.chosen]}. ${Q.o[r.chosen]}`:'—';
+    const corr=`${'ABCD'[Q.a]}. ${Q.o[Q.a]}`;
+    return `<div class="ritem">
+      <div class="rq">${i+1}. ${Q.q}</div>
+      <div class="ra you ${yourOk?'ok':'no'}"><span class="mk">${yourOk?'✓':'✗'} Your answer:</span><span>${your}</span></div>
+      ${yourOk?'':`<div class="ra corr"><span class="mk">→ Correct:</span><span>${corr}</span></div>`}
+      <div class="rex">${Q.e}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('scorePill').style.display='none';
+  root.innerHTML=`<div class="card hero">
+    <svg class="ring" width="130" height="130" viewBox="0 0 130 130">
+      <circle cx="65" cy="65" r="52" fill="none" stroke="#EBE3D2" stroke-width="11"/>
+      <circle cx="65" cy="65" r="52" fill="none" stroke="#3E8E84" stroke-width="11" stroke-linecap="round"
+        stroke-dasharray="${R.toFixed(1)}" stroke-dashoffset="${R.toFixed(1)}" transform="rotate(-90 65 65)" id="ring"/>
+    </svg>
+    <div class="result-score">${score}<span style="font-size:.4em;color:#8a98a6">/${QUESTIONS.length}</span></div>
+    <div class="result-grade">${pct}% · ${grade}</div>
+    <div class="breakdown">${breakdown}</div>
+    <button class="btn gold" id="againBtn">Retake quiz ↻</button>
+  </div>
+  <div class="review"><h3>Review all answers &amp; explanations</h3>${review}</div>`;
+  setTimeout(()=>{document.getElementById('ring').style.transition='stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)';
+    document.getElementById('ring').style.strokeDashoffset=off.toFixed(1);
+    document.querySelectorAll('.bbar>span').forEach(b=>b.style.width=b.dataset.w+'%');},60);
+  document.getElementById('againBtn').onclick=startScreen;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(['1','2','3','4'].includes(e.key)){const b=document.querySelector(`#opts .opt[data-i="${+e.key-1}"]`);if(b&&!answered)choose(+e.key-1);}
+  else if(e.key==='Enter'){const nb=document.getElementById('nextBtn');if(nb&&!nb.disabled)next();}
+});
+
+startScreen();
+</script>
+</body>
+</html>

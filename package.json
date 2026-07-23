@@ -1,0 +1,36 @@
+{
+  "name": "baird-learning-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run knowledge:sync && npm run build:static",
+    "build:static": "node scripts/build-site.mjs",
+    "dev": "npx --yes netlify-cli@17.38.1 dev",
+    "knowledge:init": "node scripts/knowledge-init.mjs",
+    "knowledge:check": "node scripts/knowledge-sync.mjs --check",
+    "knowledge:sync": "node scripts/knowledge-sync.mjs",
+    "test": "node --import tsx --test tests/unit/*.test.mjs",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.0.10",
+    "@netlify/functions": "^4.2.5",
+    "acorn": "^8.15.0",
+    "cheerio": "1.0.0",
+    "google-auth-library": "^10.9.0",
+    "openai": "^6.15.0",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@netlify/plugin-emails": "^1.1.1",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^20.17.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}

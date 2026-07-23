@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L1 · Soft Tissue Fundamentals — Baird Implant Course</title>
+<style>
+/* ================================================
+   SHARED DESIGN SYSTEM (same tokens in all 6 files)
+   ================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+
+:root {
+  --bg:#080c10; --surface:#121a24; --surface2:#1a2738;
+  --border:#1d2e40; --border2:#243848;
+  --gold:#c9a84c; --gold2:#e8c97a;
+  --text:#e2eaf0; --text2:#8fa8bc; --text3:#4a6a80;
+  --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+  --accent:#2dd4bf; --accent2:#5eead4;  /* L1 = teal */
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:16px; }
+body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; overflow:hidden; }
+
+/* ================================================
+   COURSE NAV BAR — appears on all 6 files
+   ================================================ */
+#course-nav {
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  background:rgba(8,12,16,.97); border-bottom:1px solid var(--border);
+  padding:5px 20px; display:flex; align-items:center; gap:14px;
+  backdrop-filter:blur(16px); min-height:36px; flex-wrap:nowrap;
+}
+.nav-brand { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; }
+.nav-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; }
+.nav-lbl { font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3); letter-spacing:.15em; text-transform:uppercase; white-space:nowrap; }
+.nav-grp { display:flex; gap:4px; }
+.np { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:600; padding:2px 8px; border:1px solid var(--border); color:var(--text3); text-decoration:none; border-radius:2px; transition:all .2s; white-space:nowrap; }
+.np:hover { border-color:var(--text2); color:var(--text); }
+.np.here { border-color:var(--accent); color:var(--accent); background:rgba(45,212,191,.08); }
+.np.qp { }
+.np.qp:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ================================================
+   LECTURE HEADER (below course nav)
+   ================================================ */
+#hdr {
+  position:fixed; top:36px; left:0; right:0; z-index:200;
+  background:linear-gradient(180deg,rgba(8,12,16,.98),rgba(8,12,16,.88));
+  border-bottom:1px solid var(--border);
+  padding:8px 28px; display:flex; align-items:center; justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
+.hdr-l .lbl { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:.2em; text-transform:uppercase; }
+.hdr-l .ttl { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold); font-weight:300; }
+.hdr-r { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text3); text-align:right; }
+.hdr-r .kbd-hint { font-size:9px; color:var(--text3); margin-top:2px; }
+
+/* ================================================
+   PROGRESS BAR
+   ================================================ */
+#pgbar { position:fixed; top:96px; left:0; right:0; z-index:199; height:2px; background:var(--border); }
+#pgfill { height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .4s ease; width:3.33%; }
+
+/* ================================================
+   SLIDES CONTAINER
+   ================================================ */
+#sc { position:fixed; top:98px; bottom:52px; left:0; right:0; overflow:hidden; }
+
+.slide {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  padding:32px 52px; display:flex; flex-direction:column;
+  opacity:0; pointer-events:none; transform:translateX(56px);
+  transition:opacity .4s cubic-bezier(.4,0,.2,1), transform .4s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.slide.active { opacity:1; pointer-events:all; transform:translateX(0); }
+.slide.prev { opacity:0; transform:translateX(-56px); }
+
+/* ================================================
+   TITLE SLIDE
+   ================================================ */
+.title-slide {
+  justify-content:center; align-items:center; text-align:center;
+  background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(45,212,191,.07) 0%,transparent 70%);
+}
+.t-tag { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent); letter-spacing:.3em; text-transform:uppercase; border:1px solid rgba(45,212,191,.3); padding:3px 14px; display:inline-block; margin-bottom:20px; }
+.t-h1 { font-family:'Cormorant Garamond',serif; font-size:52px; font-weight:300; line-height:1.1; margin-bottom:14px; }
+.t-h1 em { color:var(--gold); font-style:italic; }
+.t-rule { width:64px; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); margin:0 auto 20px; }
+.t-sub { font-size:13px; color:var(--text2); letter-spacing:.15em; margin-bottom:8px; }
+.t-mod { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:.12em; }
+.t-cta { margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-primary { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; background:rgba(45,212,191,.12); border:1px solid var(--accent); color:var(--accent); padding:10px 28px; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block; }
+.btn-primary:hover { background:rgba(45,212,191,.22); box-shadow:0 0 20px rgba(45,212,191,.18); }
+.btn-outline { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--text2); padding:10px 28px; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block; }
+.btn-outline:hover { border-color:var(--text2); color:var(--text); }
+
+/* ================================================
+   SLIDE CONTENT COMPONENTS
+   ================================================ */
+.sh { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:300; color:var(--gold); margin-bottom:4px; line-height:1.2; }
+.ss { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:.2em; text-transform:uppercase; margin-bottom:24px; }
+.body2 { display:flex; gap:28px; flex:1; align-items:flex-start; }
+.body2.col { flex-direction:column; }
+.cc { flex:1; min-width:0; }
+.dc { flex:0 0 300px; }
+
+p.lead { font-size:17px; color:var(--text); line-height:1.7; margin-bottom:14px; }
+p.body { font-size:15px; color:var(--text2); line-height:1.7; margin-bottom:12px; }
+
+/* Cards */
+.card { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold); padding:14px 18px; margin-bottom:12px; border-radius:2px; }
+.card .ct { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:.2em; text-transform:uppercase; margin-bottom:7px; }
+.card p { font-size:14px; color:var(--text2); line-height:1.6; }
+.card.acc { border-left-color:var(--accent); } .card.acc .ct { color:var(--accent); }
+.card.red { border-left-color:var(--red); } .card.red .ct { color:var(--red); }
+.card.grn { border-left-color:var(--green); } .card.grn .ct { color:var(--green); }
+
+/* Key rule */
+.key-rule { background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03)); border:1px solid rgba(201,168,76,.3); padding:18px 22px; margin:14px 0; text-align:center; }
+.key-rule .kr-text { font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--gold); font-style:italic; }
+.key-rule .kr-lbl { font-size:11px; color:var(--text3); letter-spacing:.2em; text-transform:uppercase; margin-top:4px; }
+
+/* Bullet list */
+.blist { list-style:none; }
+.blist li { display:flex; gap:10px; margin-bottom:12px; font-size:15px; color:var(--text); line-height:1.5; }
+.blist li::before { content:'▸'; color:var(--accent); flex-shrink:0; margin-top:2px; font-size:11px; }
+.blist li .hl { color:var(--gold); font-weight:600; }
+.blist li .em { color:var(--accent2); }
+
+/* 2-col / 3-col grids */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+
+/* Compare cols */
+.cmp { background:var(--surface); border:1px solid var(--border); padding:14px; }
+.cmp .ct { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; margin-bottom:10px; }
+.cmp.a .ct { color:var(--accent); } .cmp.b .ct { color:var(--gold); }
+.cmp.good .ct { color:var(--green); } .cmp.bad .ct { color:var(--red); }
+.cmp ul { list-style:none; }
+.cmp ul li { font-size:13px; color:var(--text2); padding:4px 0; border-bottom:1px solid rgba(255,255,255,.04); line-height:1.5; }
+.cmp ul li:last-child { border-bottom:none; }
+
+/* Obj list */
+.obj-item { display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); align-items:flex-start; }
+.obj-item:last-child { border-bottom:none; }
+.obj-n { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold); opacity:.4; flex-shrink:0; line-height:1; min-width:28px; }
+.obj-t { font-size:16px; color:var(--text2); line-height:1.6; }
+.obj-t strong { color:var(--text); }
+
+/* Stats */
+.stat { background:var(--surface); border:1px solid var(--border); padding:16px; text-align:center; }
+.stat .sv { font-family:'Cormorant Garamond',serif; font-size:36px; color:var(--gold); line-height:1; }
+.stat .su { font-size:12px; color:var(--accent); }
+.stat .sd { font-size:12px; color:var(--text3); margin-top:4px; line-height:1.4; }
+
+/* Summary box */
+.sbox { background:linear-gradient(135deg,rgba(45,212,191,.06),rgba(45,212,191,.02)); border:1px solid rgba(45,212,191,.2); padding:18px 22px; margin:14px 0; }
+.sbox .st { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent); letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px; }
+
+/* Warning */
+.warn { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.25); padding:12px 16px; margin:10px 0; }
+.warn .wt { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--red); letter-spacing:.2em; text-transform:uppercase; margin-bottom:5px; }
+.warn p { font-size:14px; color:var(--text2); line-height:1.5; }
+
+/* ================================================
+   INTERACTIVE COMPONENTS
+   ================================================ */
+
+/* Zone buttons (Slide 4) */
+.zone-btns { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+.zbtn { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:.1em; background:var(--surface); border:1px solid var(--border); color:var(--text2); padding:9px 14px; cursor:pointer; transition:all .2s; text-align:left; }
+.zbtn:hover, .zbtn.on { border-color:var(--accent); color:var(--accent); background:rgba(45,212,191,.07); }
+.zone-detail { display:none; background:var(--surface2); border:1px solid var(--border); border-left:3px solid var(--accent); padding:14px 16px; font-size:14px; color:var(--text2); line-height:1.6; border-radius:2px; }
+.zone-detail.show { display:block; }
+.zone-detail strong { color:var(--text); }
+
+/* Accordion (multiple uses) */
+.accordion { margin-bottom:8px; }
+.acc-hdr { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:12px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; letter-spacing:.05em; transition:all .2s; }
+.acc-hdr:hover { border-color:var(--accent); color:var(--accent); }
+.acc-hdr .arrow { transition:transform .25s; font-size:12px; color:var(--text3); }
+.acc-hdr.open { border-color:var(--accent); color:var(--accent); background:rgba(45,212,191,.05); }
+.acc-hdr.open .arrow { transform:rotate(180deg); color:var(--accent); }
+.acc-body { display:none; background:var(--surface2); border:1px solid var(--border); border-top:none; padding:14px 16px; font-size:14px; color:var(--text2); line-height:1.6; }
+.acc-body.open { display:block; }
+
+/* Phenotype Toggle (Slide 12) */
+.toggle-wrap { display:flex; gap:0; margin-bottom:16px; }
+.tog-btn { flex:1; padding:10px; background:var(--surface); border:1px solid var(--border); color:var(--text3); cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; transition:all .2s; }
+.tog-btn:first-child { border-radius:2px 0 0 2px; }
+.tog-btn:last-child { border-radius:0 2px 2px 0; }
+.tog-btn.on { background:rgba(45,212,191,.1); border-color:var(--accent); color:var(--accent); }
+.phenotype-panel { display:none; }
+.phenotype-panel.show { display:block; }
+
+/* KM Evidence Accordion */
+.evidence-item { margin-bottom:8px; }
+.ev-hdr { background:var(--surface); border:1px solid var(--border); padding:11px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--text2); transition:all .2s; }
+.ev-hdr:hover { border-color:var(--accent); color:var(--text); }
+.ev-hdr.open { border-color:var(--accent); color:var(--text); }
+.ev-body { display:none; background:var(--surface2); border:1px solid var(--border); border-top:none; padding:12px 14px; font-size:13px; color:var(--text2); line-height:1.6; }
+.ev-body.open { display:block; }
+
+/* Interactive Checklist (Slide 22) */
+.check-item { display:flex; align-items:flex-start; gap:12px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.04); cursor:pointer; transition:background .2s; border-radius:2px; }
+.check-item:hover { background:rgba(255,255,255,.03); }
+.check-item.done { background:rgba(34,197,94,.04); }
+.check-box { width:20px; height:20px; border:1px solid var(--border); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; transition:all .2s; color:transparent; }
+.check-item.done .check-box { border-color:var(--green); color:var(--green); background:rgba(34,197,94,.08); }
+.check-label { font-size:14px; color:var(--text2); line-height:1.5; flex:1; }
+.check-item.done .check-label { color:var(--text3); text-decoration:line-through; }
+.check-sub { font-size:12px; color:var(--text3); margin-top:2px; }
+
+/* Flip cards */
+.flip-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:8px; }
+.flip-card { height:130px; perspective:800px; cursor:pointer; }
+.flip-inner { position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
+.flip-card:hover .flip-inner, .flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+.flip-front, .flip-back { position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; align-items:center; justify-content:center; padding:14px; text-align:center; border:1px solid var(--border); }
+.flip-front { background:var(--surface); flex-direction:column; gap:6px; }
+.flip-front .ff-icon { font-size:22px; }
+.flip-front .ff-lbl { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--text); }
+.flip-back { background:var(--surface2); border-color:var(--accent); transform:rotateY(180deg); font-size:13px; color:var(--text2); line-height:1.5; }
+
+/* Scenario card */
+.scenario { background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02)); border:1px solid rgba(201,168,76,.25); padding:18px 22px; margin:12px 0; }
+.scenario .sc-lbl { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:.25em; text-transform:uppercase; margin-bottom:8px; }
+.scenario .sc-text { font-size:15px; color:var(--text); line-height:1.6; }
+
+/* Tab system */
+.tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.tab-btn { font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:7px 14px; background:var(--surface); border:1px solid var(--border); color:var(--text3); cursor:pointer; transition:all .2s; }
+.tab-btn.on, .tab-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(45,212,191,.06); }
+.tab-panel { display:none; }
+.tab-panel.show { display:block; }
+
+/* Step flow */
+.step-box { display:flex; gap:14px; background:var(--surface); border:1px solid var(--border); padding:12px 14px; margin-bottom:8px; }
+.step-n { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--accent); opacity:.7; flex-shrink:0; line-height:1; min-width:26px; }
+.step-t { font-size:14px; color:var(--text2); line-height:1.5; }
+.step-t strong { color:var(--text); display:block; font-size:15px; margin-bottom:2px; }
+
+/* ================================================
+   BOTTOM NAVIGATION
+   ================================================ */
+#nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  background:rgba(8,12,16,.96); border-top:1px solid var(--border);
+  padding:8px 28px; display:flex; align-items:center; justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
+.nav-btn { font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--text2); padding:7px 20px; cursor:pointer; transition:all .2s; }
+.nav-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.nav-btn:disabled { opacity:.2; cursor:default; }
+.dots { display:flex; gap:5px; align-items:center; flex-wrap:wrap; justify-content:center; max-width:50vw; }
+.dot { width:5px; height:5px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; flex-shrink:0; }
+.dot.on { background:var(--accent); transform:scale(1.5); }
+.dot:hover { background:var(--text3); }
+
+/* ================================================
+   MOBILE RESPONSIVE
+   ================================================ */
+@media (max-width:768px) {
+  #course-nav { padding:5px 12px; gap:8px; overflow-x:auto; }
+  .nav-lbl { display:none; }
+  #hdr { padding:6px 16px; }
+  .hdr-l .ttl { font-size:14px; }
+  .hdr-r .kbd-hint { display:none; }
+  #pgbar { top:88px; }
+  #pgfill { top:0; }
+  #sc { top:90px; bottom:48px; }
+  .slide { padding:20px 18px; }
+  .sh { font-size:26px; }
+  .t-h1 { font-size:36px; }
+  .body2 { flex-direction:column; gap:16px; }
+  .dc { flex:none; width:100%; }
+  .g2, .g3 { grid-template-columns:1fr; }
+  #nav { padding:6px 16px; }
+  .nav-btn { padding:5px 14px; font-size:11px; }
+  .np { font-size:10px; padding:2px 6px; }
+  .flip-grid { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:480px) {
+  .t-h1 { font-size:28px; }
+  .flip-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================
+     COURSE NAVIGATION BAR
+     ================================================ -->
+<nav id="course-nav" aria-label="Course navigation">
+  <span class="nav-brand">🦷 Baird Implant</span>
+  <div class="nav-sep"></div>
+  <span class="nav-lbl">Lectures</span>
+  <div class="nav-grp">
+    <a href="lecture-1.html" class="np here" aria-current="page">L1 Fundamentals</a>
+    <a href="lecture-2.html" class="np">L2 Management</a>
+    <a href="lecture-3.html" class="np">L3 Flap Design</a>
+  </div>
+  <div class="nav-sep"></div>
+  <span class="nav-lbl">Quizzes</span>
+  <div class="nav-grp">
+    <a href="quiz-1.html" class="np qp">Q1</a>
+    <a href="quiz-2.html" class="np qp">Q2</a>
+    <a href="quiz-3.html" class="np qp">Q3</a>
+  </div>
+</nav>
+
+<!-- LECTURE HEADER -->
+<header id="hdr" role="banner">
+  <div class="hdr-l">
+    <div class="lbl">Baird Implant Course · Module 2</div>
+    <div class="ttl">Lecture 1 — Soft Tissue Fundamentals</div>
+  </div>
+  <div class="hdr-r">
+    <div>Slide <span id="cur">1</span> / <span id="tot">30</span></div>
+    <div class="kbd-hint">← → Arrow keys to navigate</div>
+  </div>
+</header>
+
+<div id="pgbar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="30"><div id="pgfill"></div></div>
+
+<!-- ================================================
+     SLIDES
+     ================================================ -->
+<main id="sc" aria-live="polite" aria-atomic="true">
+
+<!-- ===== S1 TITLE ===== -->
+<div class="slide title-slide active" data-slide="1" role="article" aria-label="Slide 1: Title">
+  <div class="t-tag">Baird Implant Course · Lecture Series</div>
+  <div class="t-h1">Soft Tissue<br><em>Fundamentals</em><br>in Implant Dentistry</div>
+  <div class="t-rule"></div>
+  <div class="t-sub">LECTURE 1 OF 3 · FOUNDATIONS OF PERI-IMPLANT SOFT TISSUE</div>
+  <div class="t-mod">Module 2 · Day 2 · Surgical Skills &amp; Soft Tissue Management</div>
+  <div class="t-cta">
+    <button class="btn-primary" onclick="goTo(2)">Start Lecture →</button>
+    <a href="quiz-1.html" class="btn-outline">Go to Quiz 1</a>
+  </div>
+</div>
+
+<!-- ===== S2 OBJECTIVES ===== -->
+<div class="slide" data-slide="2" role="article" aria-label="Slide 2: Learning Objectives">
+  <div class="sh">Learning Objectives</div>
+  <div class="ss">What you will understand by the end of this lecture</div>
+  <div class="obj-item"><div class="obj-n">01</div><div class="obj-t">Understand why <strong>soft tissue integration</strong> is the central challenge of modern implant dentistry</div></div>
+  <div class="obj-item"><div class="obj-n">02</div><div class="obj-t">Describe the <strong>four peri-implant zones</strong> and the clinical significance of each</div></div>
+  <div class="obj-item"><div class="obj-n">03</div><div class="obj-t">Apply the <strong>2+3 rule</strong> for soft tissue height and thickness around implants</div></div>
+  <div class="obj-item"><div class="obj-n">04</div><div class="obj-t">Explain <strong>biological width (supracrestal attachment)</strong> in implants vs natural teeth</div></div>
+  <div class="obj-item"><div class="obj-n">05</div><div class="obj-t">Classify patients by <strong>gingival phenotype</strong> and predict clinical consequences</div></div>
+  <div class="obj-item"><div class="obj-n">06</div><div class="obj-t">Perform a structured <strong>pre-extraction soft tissue assessment</strong></div></div>
+</div>
+
+<!-- ===== S3 MODERN CHALLENGE ===== -->
+<div class="slide" data-slide="3" role="article" aria-label="Slide 3: The Modern Challenge">
+  <div class="sh">The Modern Challenge</div>
+  <div class="ss">Why implant dentistry evolved beyond osseointegration</div>
+  <div class="body2">
+    <div class="cc">
+      <p class="lead">In the 1970s, the challenge was getting titanium to integrate with bone. Today — <em style="color:var(--gold)">any titanium rod will integrate.</em></p>
+      <p class="body">The real challenges of modern implant dentistry are:</p>
+      <ul class="blist">
+        <li><span class="hl">Preserving osseointegration</span> over the long term</li>
+        <li>Maintaining <span class="hl">bone levels</span> which support soft tissue</li>
+        <li>Achieving <span class="hl">stable, healthy soft tissue</span></li>
+        <li>Understanding that <span class="em">losing soft tissue = losing bone</span> and vice versa</li>
+      </ul>
+      <div class="card acc">
+        <div class="ct">Key Principle</div>
+        <p>An implant is a foreign body. Success depends on building the right biological environment around it — adequate bone and stable soft tissue — not merely on the implant integrating.</p>
+      </div>
+    </div>
+    <div class="dc">
+      <svg viewBox="0 0 280 280" width="100%" aria-hidden="true">
+        <rect x="10" y="20" width="260" height="55" rx="2" fill="rgba(201,168,76,.06)" stroke="rgba(201,168,76,.2)" stroke-width="1"/>
+        <text x="140" y="42" fill="#c9a84c" font-family="JetBrains Mono" font-size="9" text-anchor="middle" letter-spacing="2">1970s CHALLENGE</text>
+        <text x="140" y="60" fill="#8fa8bc" font-family="Rajdhani" font-size="13" text-anchor="middle">Get titanium to integrate → SOLVED</text>
+        <text x="140" y="105" fill="#2dd4bf" font-family="JetBrains Mono" font-size="9" text-anchor="middle" letter-spacing="2">TODAY'S CHALLENGE</text>
+        <rect x="10" y="115" width="78" height="68" rx="2" fill="rgba(45,212,191,.05)" stroke="rgba(45,212,191,.2)" stroke-width="1"/>
+        <text x="49" y="145" fill="#2dd4bf" font-family="Rajdhani" font-size="11" text-anchor="middle">Preserve</text><text x="49" y="160" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">integration</text>
+        <rect x="101" y="115" width="78" height="68" rx="2" fill="rgba(45,212,191,.05)" stroke="rgba(45,212,191,.2)" stroke-width="1"/>
+        <text x="140" y="145" fill="#2dd4bf" font-family="Rajdhani" font-size="11" text-anchor="middle">Maintain</text><text x="140" y="160" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">bone levels</text>
+        <rect x="192" y="115" width="78" height="68" rx="2" fill="rgba(45,212,191,.05)" stroke="rgba(45,212,191,.2)" stroke-width="1"/>
+        <text x="231" y="145" fill="#2dd4bf" font-family="Rajdhani" font-size="11" text-anchor="middle">Stable</text><text x="231" y="160" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">soft tissue</text>
+        <rect x="30" y="210" width="220" height="50" rx="2" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.25)" stroke-width="1"/>
+        <text x="140" y="230" fill="#c9a84c" font-family="Rajdhani" font-size="12" text-anchor="middle" font-weight="600">Lose soft tissue → Lose bone</text>
+        <text x="140" y="250" fill="#c9a84c" font-family="Rajdhani" font-size="12" text-anchor="middle" font-weight="600">Lose bone → Lose soft tissue</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S4 PERI-IMPLANT ZONES (INTERACTIVE) ===== -->
+<div class="slide" data-slide="4" role="article" aria-label="Slide 4: Peri-Implant Zones">
+  <div class="sh">Peri-Implant Zones</div>
+  <div class="ss">Click each zone to explore its clinical significance</div>
+  <div class="body2">
+    <div class="cc">
+      <div class="zone-btns" role="tablist" aria-label="Peri-implant zones">
+        <button class="zbtn" onclick="showZone('e')" id="zbtn-e" role="tab" aria-controls="zone-e">▸ E Zone — Aesthetic Zone</button>
+        <button class="zbtn" onclick="showZone('b')" id="zbtn-b" role="tab" aria-controls="zone-b">▸ B Zone — Biological Seal</button>
+        <button class="zbtn" onclick="showZone('c')" id="zbtn-c" role="tab" aria-controls="zone-c">▸ C Zone — Crestal Defence</button>
+        <button class="zbtn" onclick="showZone('dz')" id="zbtn-dz" role="tab" aria-controls="zone-dz">▸ Dead / Transitional Zone</button>
+      </div>
+      <div id="zone-e" class="zone-detail" role="tabpanel"><strong>E Zone (Aesthetic Zone)</strong><br>The visible portion of the peri-implant mucosa. What the patient sees. Goal: correct colour, texture, and emergence profile. Supported entirely by the bone and tissue beneath it.</div>
+      <div id="zone-b" class="zone-detail" role="tabpanel"><strong>B Zone (Biological Seal)</strong><br>Where <strong>hemidesmosomal attachment</strong> occurs to the abutment. In health, this creates a partial seal slowing bacterial spread. Requires clean, polished titanium — not glazed zirconia.</div>
+      <div id="zone-c" class="zone-detail" role="tabpanel"><strong>C Zone (Crestal Zone)</strong><br>If bacteria reach here — the body dispatches leukocytes which damage bone non-selectively. Result: marginal bone loss and initiation of peri-implantitis.</div>
+      <div id="zone-dz" class="zone-detail" role="tabpanel"><strong>Dead / Transitional Zone</strong><br>Between B and C. Thickness influenced by soft tissue thickness, oral hygiene, and abutment material/polish. Thicker tissue = deeper dead zone = better bone protection.</div>
+      <div class="card acc" style="margin-top:12px">
+        <div class="ct">Clinical Implication</div>
+        <p>The entire architecture exists to stop bacteria reaching Zone C. Every clinical decision — tissue thickness, phenotype, KM width, abutment material — affects this defence.</p>
+      </div>
+    </div>
+    <div class="dc">
+      <svg viewBox="0 0 260 320" width="100%" aria-hidden="true">
+        <rect x="85" y="10" width="90" height="45" rx="3" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+        <text x="130" y="32" fill="#c9a84c" font-family="Rajdhani" font-size="12" text-anchor="middle" font-weight="600">CROWN</text>
+        <text x="130" y="47" fill="#8fa8bc" font-family="Rajdhani" font-size="9" text-anchor="middle">Abutment + Restoration</text>
+        <rect x="65" y="55" width="130" height="48" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.25)"/>
+        <text x="130" y="76" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">E ZONE</text>
+        <text x="130" y="94" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Aesthetic · Visible mucosa</text>
+        <rect x="65" y="103" width="130" height="48" fill="rgba(45,212,191,.08)" stroke="rgba(45,212,191,.22)"/>
+        <text x="130" y="124" fill="#2dd4bf" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">B ZONE</text>
+        <text x="130" y="142" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Hemidesmosomal seal</text>
+        <rect x="65" y="151" width="130" height="32" fill="rgba(100,100,100,.07)" stroke="rgba(100,100,100,.18)"/>
+        <text x="130" y="171" fill="#4a6a80" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">DEAD ZONE</text>
+        <rect x="65" y="183" width="130" height="38" fill="rgba(239,68,68,.07)" stroke="rgba(239,68,68,.22)"/>
+        <text x="130" y="200" fill="#ef4444" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">C ZONE · CRESTAL</text>
+        <text x="130" y="215" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">Bacteria here = bone loss</text>
+        <rect x="105" y="221" width="50" height="70" rx="3" fill="rgba(100,140,180,.2)" stroke="rgba(100,140,180,.35)" stroke-width="1.5"/>
+        <text x="130" y="260" fill="#8fa8bc" font-family="Rajdhani" font-size="10" text-anchor="middle">IMPLANT</text>
+        <rect x="50" y="221" width="55" height="22" fill="rgba(200,180,130,.09)" stroke="rgba(200,180,130,.2)"/>
+        <rect x="155" y="221" width="55" height="22" fill="rgba(200,180,130,.09)" stroke="rgba(200,180,130,.2)"/>
+        <text x="30" y="235" fill="#8fa8bc" font-family="Rajdhani" font-size="9">Bone</text>
+        <text x="212" y="235" fill="#8fa8bc" font-family="Rajdhani" font-size="9">Bone</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S5 HEMIDESMOSOMAL ===== -->
+<div class="slide" data-slide="5" role="article" aria-label="Slide 5: Hemidesmosomal Attachment">
+  <div class="sh">Hemidesmosomal Attachment</div>
+  <div class="ss">The partial biological seal around implant abutments</div>
+  <div class="body2">
+    <div class="cc">
+      <p class="lead">The hemidesmosomal attachment is the implant's equivalent of the junctional epithelium — forming a partial biological seal between mucosa and abutment surface.</p>
+      <div class="card acc"><div class="ct">What Forms It</div><p>A partial seal of half-desmosomes (hemidesmosomes) between the junctional epithelium and the abutment surface. It is weaker than the natural tooth PDL attachment but functional in health.</p></div>
+      <div class="card grn"><div class="ct">Surfaces That Support Hemidesmosomes</div><p><strong>Polished titanium</strong> — the gold standard. Clean surface allows epithelial cells to form partial desmosomes. <strong>Polished (not glazed) zirconia</strong> — also acceptable if surface is correct.</p></div>
+      <div class="card red"><div class="ct">Surfaces That Do Not Support Hemidesmosomes</div><p><strong>Glazed zirconia</strong> — too smooth, epithelium cannot attach. Creates a pocket rather than a seal. Rough or sandblasted surfaces — also problematic. <strong>Result: pocket formation, bacterial entry.</strong></p></div>
+    </div>
+    <div class="dc">
+      <div class="card acc" style="margin-bottom:12px"><div class="ct">At Annual Review — Important</div><p>Removing a crown from a healthy implant causes bleeding points at the abutment-tissue interface — this is <strong>disrupted hemidesmosomes, not disease</strong>. This is why routine crown removal at check-ups is not recommended unless signs of disease are present.</p></div>
+      <div class="card"><div class="ct">Abutment Selection</div><p>The abutment material and surface quality directly affect the biological seal quality. Never overlook this as a "prosthetic detail" — it determines the security of the entire B-zone defence.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S6 2+3 RULE ===== -->
+<div class="slide" data-slide="6" role="article" aria-label="Slide 6: The 2+3 Rule">
+  <div class="sh">The 2+3 Rule</div>
+  <div class="ss">Minimum soft tissue requirements around dental implants</div>
+  <div class="body2">
+    <div class="cc">
+      <p class="lead">For the peri-implant biological architecture to function, two minimum dimensions must be satisfied — one for thickness, one for height.</p>
+      <div class="g2" style="margin-bottom:14px">
+        <div class="stat"><div class="sv">2</div><div class="su">mm THICKNESS</div><div class="sd">Minimum soft tissue thickness around the implant circumference</div></div>
+        <div class="stat"><div class="sv">3</div><div class="su">mm HEIGHT</div><div class="sd">Minimum soft tissue height above the implant shoulder</div></div>
+      </div>
+      <div class="card red"><div class="ct">What Happens If Violated</div><p>The body enforces biological width through bone resorption. If only 1mm of mucosa is present above the implant, the body needs 3mm total — so it resorbs 2mm of bone. <strong>This is not a failure of the implant — it is biology correcting a dimensional problem.</strong></p></div>
+      <div class="card acc"><div class="ct">Clinical Application</div><p>A patient with thin tissue (1mm) + implant placed at bone level = predicted marginal bone loss of 2mm. Solution: place the implant 2mm deeper, or perform CTG to augment tissue thickness to ≥2mm before placement.</p></div>
+    </div>
+    <div class="dc">
+      <svg viewBox="0 0 240 280" width="100%" aria-hidden="true">
+        <text x="120" y="18" fill="#c9a84c" font-family="JetBrains Mono" font-size="8" text-anchor="middle" letter-spacing="2">THE 2+3 RULE</text>
+        <rect x="20" y="25" width="200" height="70" rx="2" fill="rgba(200,180,130,.07)" stroke="rgba(200,180,130,.2)"/>
+        <text x="120" y="55" fill="#8fa8bc" font-family="Rajdhani" font-size="13" text-anchor="middle">CROWN / ABUTMENT</text>
+        <line x1="20" y1="95" x2="220" y2="95" stroke="rgba(45,212,191,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="228" y="99" fill="#2dd4bf" font-family="JetBrains Mono" font-size="7">GML</text>
+        <rect x="20" y="95" width="200" height="70" rx="2" fill="rgba(45,212,191,.08)" stroke="rgba(45,212,191,.25)"/>
+        <text x="120" y="120" fill="#2dd4bf" font-family="Rajdhani" font-size="13" text-anchor="middle" font-weight="600">SOFT TISSUE</text>
+        <line x1="215" y1="95" x2="215" y2="165" stroke="rgba(45,212,191,.7)" stroke-width="1.5"/>
+        <line x1="210" y1="95" x2="220" y2="95" stroke="rgba(45,212,191,.7)" stroke-width="1.5"/>
+        <line x1="210" y1="165" x2="220" y2="165" stroke="rgba(45,212,191,.7)" stroke-width="1.5"/>
+        <text x="232" y="134" fill="#2dd4bf" font-family="JetBrains Mono" font-size="9" font-weight="600">3mm</text>
+        <text x="232" y="146" fill="#4a6a80" font-family="JetBrains Mono" font-size="7">HEIGHT</text>
+        <line x1="20" y1="165" x2="220" y2="165" stroke="rgba(201,168,76,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="228" y="169" fill="#c9a84c" font-family="JetBrains Mono" font-size="7">ISH</text>
+        <rect x="85" y="165" width="70" height="75" rx="3" fill="rgba(100,140,180,.18)" stroke="rgba(100,140,180,.35)" stroke-width="1.5"/>
+        <text x="120" y="205" fill="#8fa8bc" font-family="Rajdhani" font-size="11" text-anchor="middle">IMPLANT</text>
+        <rect x="20" y="240" width="65" height="20" fill="rgba(200,180,130,.09)" stroke="rgba(200,180,130,.2)"/>
+        <rect x="155" y="240" width="65" height="20" fill="rgba(200,180,130,.09)" stroke="rgba(200,180,130,.2)"/>
+        <line x1="5" y1="95" x2="5" y2="260" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+        <line x1="0" y1="95" x2="10" y2="95" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+        <line x1="0" y1="260" x2="10" y2="260" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+        <text x="-10" y="155" fill="#c9a84c" font-family="JetBrains Mono" font-size="7" transform="rotate(-90 -10 155)" text-anchor="middle" font-weight="600">2mm thickness</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S7 BIOLOGICAL WIDTH ===== -->
+<div class="slide" data-slide="7" role="article" aria-label="Slide 7: Biological Width">
+  <div class="sh">Biological Width</div>
+  <div class="ss">Supracrestal attachment — the non-negotiable dimensional requirement</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="card acc"><div class="ct">Natural Teeth</div><p>Biological width = 2–3mm. Composed of: junctional epithelium + connective tissue attachment. Measured from the gingival crest to the crest of the alveolar bone.</p></div>
+      <div class="card acc"><div class="ct">Dental Implants</div><p>Biological width = 3–4mm. Larger because implants lack sulcular epithelium — the continuous distance from mucosa crest to bone is wider. Non-negotiable for bone stability.</p></div>
+    </div>
+    <div class="key-rule"><div class="kr-text">"The body will always establish biological width — if not created surgically, it will be created by bone resorption."</div><div class="kr-lbl">Core biological principle</div></div>
+    <div class="g2">
+      <div class="card red"><div class="ct">Consequence of Violation</div><p>Implant placed too shallow → inadequate tissue height → bone resorbs apically to create required 3–4mm distance. Digital guides may violate this if tissue depth is not accounted for.</p></div>
+      <div class="card"><div class="ct">Modern Terminology</div><p>Biological width is increasingly called <strong>supracrestal attachment</strong> in contemporary literature. Be familiar with both terms. They describe the same concept.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S8 CROWN DESIGN ===== -->
+<div class="slide" data-slide="8" role="article" aria-label="Slide 8: Crown Design and Soft Tissue">
+  <div class="sh">Crown Design &amp; Soft Tissue</div>
+  <div class="ss">How subgingival profile determines tissue health and aesthetics</div>
+  <div class="body2">
+    <div class="cc">
+      <p class="body">The subgingival contour of the implant crown directly impacts how soft tissue adapts around it — and whether it thrives or recedes.</p>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="cmp bad"><div class="ct">✗ Convex Profile</div><ul><li>Pushes on soft tissue as crown is seated</li><li>Pressure-induced ischaemia → recession</li><li>Especially damaging in thin phenotype</li><li>Common error in lab-fabricated crowns</li></ul></div>
+        <div class="cmp good"><div class="ct">✓ Concave Profile</div><ul><li>Allows tissue to drape naturally</li><li>No pressure on labial mucosa</li><li>Use for temporary crown initially</li><li>Progressively increase convexity to sculpt</li></ul></div>
+      </div>
+      <div class="card acc"><div class="ct">Prosthetic Sculpting Protocol</div><p>Start with concave profile at abutment connection. Progressively add composite to increase convexity at 4–6 week intervals. The final crown should replicate the tissue architecture created by the temporary.</p></div>
+    </div>
+    <div class="dc">
+      <div class="card red"><div class="ct">The Cervical "Waist" Myth</div><p>Some clinicians believe narrowing the crown at the gingival margin automatically provides good tissue support. This is wrong. The <em>subgingival</em> contour — the part hidden below the gum — determines tissue response, not the visible cervical line.</p></div>
+      <div class="card" style="margin-top:8px"><div class="ct">Abutment vs Crown Profile</div><p>Both the abutment and the crown subgingival contour matter. A well-designed abutment with a poorly contoured crown, or vice versa, will not achieve ideal tissue response.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S9 IMPLANT DEPTH ===== -->
+<div class="slide" data-slide="9" role="article" aria-label="Slide 9: Implant Placement Depth">
+  <div class="sh">Implant Placement Depth</div>
+  <div class="ss">Positioning the implant shoulder relative to future gingival margin</div>
+  <div class="body2 col">
+    <div class="g3">
+      <div class="stat"><div class="sv">3</div><div class="su">mm</div><div class="sd">Below planned gingival margin — thick phenotype guideline</div></div>
+      <div class="stat"><div class="sv">4</div><div class="su">mm</div><div class="sd">Below planned gingival margin — thin phenotype guideline</div></div>
+      <div class="stat"><div class="sv">1</div><div class="su">mm</div><div class="sd">Minimum expected recession even with perfect extraction technique</div></div>
+    </div>
+    <div class="g2" style="margin-top:12px">
+      <div class="card"><div class="ct">Thin Phenotype — 4mm Depth</div><p>Thin tissue provides less "buffer" above the biological width requirement. Placing 4mm deep gives extra tissue height to compensate for the thinner tissue that sits above the implant.</p></div>
+      <div class="card acc"><div class="ct">Never Compromise Depth for Bone Concerns</div><p>If there is insufficient bone to place at the correct depth — use a shorter implant, perform a sinus lift, or place bone graft. Do not sacrifice implant depth to avoid bone issues. Depth is non-negotiable for long-term tissue health.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S10 PHENOTYPE INTRO ===== -->
+<div class="slide" data-slide="10" role="article" aria-label="Slide 10: Gingival Phenotype">
+  <div class="sh">Gingival Phenotype</div>
+  <div class="ss">The single most important patient variable in implant soft tissue management</div>
+  <div class="body2 col">
+    <p class="lead">Phenotype determines how tissue responds to surgery, trauma, and inflammation. Getting this assessment right changes every clinical decision that follows.</p>
+    <div class="g2">
+      <div class="card"><div class="ct">How to Assess Clinically</div><p>Insert a periodontal probe <strong>1mm</strong> into the sulcus at the mid-labial of adjacent teeth. If you can see the metal shadow through the tissue: <strong>thin phenotype.</strong> If invisible: <strong>thick phenotype.</strong> No anaesthesia required.</p></div>
+      <div class="card acc"><div class="ct">Why It Matters So Much</div><p>Thick phenotype: forgiving, predictable healing, accepts surgery well. Thin phenotype: unpredictable, high recession risk, requires completely different approach. Same surgery on different phenotypes = very different outcomes.</p></div>
+    </div>
+    <div class="key-rule"><div class="kr-text">"You cannot treat thin phenotype the same way as thick phenotype."</div><div class="kr-lbl">The most important clinical principle in this lecture</div></div>
+  </div>
+</div>
+
+<!-- ===== S11 PHENOTYPE DETAILS ===== -->
+<div class="slide" data-slide="11" role="article" aria-label="Slide 11: Phenotype Details">
+  <div class="sh">Phenotype — Detailed Characteristics</div>
+  <div class="ss">Gingival thickness ≥2mm = thick · &lt;1.5mm = thin</div>
+  <div class="body2">
+    <div class="cc">
+      <div class="card red" style="margin-bottom:10px"><div class="ct">Thin Phenotype</div>
+        <p>• Triangular or cylindrical shaped teeth<br>• Incisal location of contact areas<br>• High gingival scallop<br>• Thin band of keratinized gingiva<br>• Thin cortical plate (fenestration or dehiscence)<br>• More apical alveolar crest position<br>• Thin and pointed interdental papilla<br>• <strong>&gt;50% volume loss after extraction</strong></p>
+      </div>
+    </div>
+    <div class="dc">
+      <div class="card grn"><div class="ct">Thick Phenotype</div>
+        <p>• Square or rectangular shaped teeth<br>• More apically positioned contact area<br>• Fairly flat gingival scallop and CEJ<br>• Thick keratinized gingiva and cortical plate<br>• Broader mesiodistal root dimension<br>• High/more coronal alveolar crest position<br>• Thick and prominent interdental papilla<br>• <strong>5–20% volume loss after extraction</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S12 PHENOTYPE TOGGLE (INTERACTIVE) ===== -->
+<div class="slide" data-slide="12" role="article" aria-label="Slide 12: Phenotype Clinical Consequences">
+  <div class="sh">Phenotype — Clinical Consequences</div>
+  <div class="ss">Select phenotype to see implications across clinical scenarios</div>
+  <div class="body2 col">
+    <div class="toggle-wrap" role="tablist" aria-label="Phenotype type">
+      <button class="tog-btn" onclick="setPhenotype('thick')" id="tog-thick" role="tab" aria-selected="false">Thick Phenotype</button>
+      <button class="tog-btn" onclick="setPhenotype('thin')" id="tog-thin" role="tab" aria-selected="false">Thin Phenotype</button>
+    </div>
+    <div id="phen-thick" class="phenotype-panel">
+      <div class="g2">
+        <div class="card grn"><div class="ct">Inflammation Response</div><p>Cyanosis, oedema, fibrosis, bleeding, bone loss with pocket formation and infra-bony defects. Responds to treatment.</p></div>
+        <div class="card grn"><div class="ct">Surgery Outcome</div><p>Predictable soft and hard tissue contours after surgery. Healing reliable. Suitable for more aggressive procedures.</p></div>
+        <div class="card grn"><div class="ct">Flap Design</div><p>Higher risk of <strong>scarring</strong>, less risk of recession. Avoid vertical lines if possible, but recession is less likely if you must use them.</p></div>
+        <div class="card grn"><div class="ct">Extraction (XLA)</div><p>Minimal ridge atrophy: <strong>5–20% volume loss</strong>. Bone acts as a barrier, self-contained bony defect. Predictable healing.</p></div>
+      </div>
+    </div>
+    <div id="phen-thin" class="phenotype-panel">
+      <div class="g2">
+        <div class="card red"><div class="ct">Inflammation Response</div><p>Rapid bone loss with soft tissue recession. Tissue does not mount fibrotic response — bone loss happens quickly and quietly.</p></div>
+        <div class="card red"><div class="ct">Surgery Outcome</div><p>Difficult to predict where tissue will heal and stabilise. Higher chance of unexpected recession even with careful technique.</p></div>
+        <div class="card red"><div class="ct">Flap Design</div><p>Higher risk of <strong>recession</strong>, less risk of scarring. Avoid involving papillae if possible. Papillary-preserving flap strongly preferred.</p></div>
+        <div class="card red"><div class="ct">Extraction (XLA)</div><p>Ridge absorbs in apical and lingual direction: <strong>&gt;50% volume loss</strong>. Thin labial bone rapidly resorbed, facilitating soft tissue ingrowth.</p></div>
+      </div>
+    </div>
+    <div id="phen-default" class="phenotype-panel show">
+      <div class="sbox"><div class="st">Select a phenotype above to see its clinical implications</div><p style="font-size:14px;color:var(--text2)">The same clinical scenario produces fundamentally different outcomes depending on whether the patient is thick or thin phenotype. Understanding this drives every treatment planning decision.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S13 KERATINIZED MUCOSA ===== -->
+<div class="slide" data-slide="13" role="article" aria-label="Slide 13: Keratinized Mucosa">
+  <div class="sh">Keratinized Mucosa</div>
+  <div class="ss">The minimum 2mm evidence-based requirement</div>
+  <div class="body2">
+    <div class="cc">
+      <p class="lead">A minimum 2mm band of keratinized mucosa around dental implants is now evidence-based consensus — not opinion.</p>
+      <div class="card acc"><div class="ct">Why KM Matters at Implants</div><p>Keratinized tissue is resistant to mechanical forces and acts as a bacterial barrier. Non-keratinized mobile mucosa moves during function — disrupting the biological seal, accumulating plaque, and causing patient discomfort on brushing.</p></div>
+      <div class="card"><div class="ct">Consensus Support</div><p>Italian Academy of Periodontology and Academy of Osseointegration both state: inadequate KM is associated with increased plaque, bleeding, recession, marginal bone loss, patient discomfort, and compromised oral hygiene maintenance.</p></div>
+      <div class="card red"><div class="ct">Recording at Baseline</div><p>Always record KM width <strong>before extraction</strong> and warn the patient of the risk of reduction after tooth removal. This is a consent point, not merely a clinical note.</p></div>
+    </div>
+    <div class="dc">
+      <div class="card grn"><div class="ct">When to Intervene</div><p>Cases with minimal or no KM may require FGG or Mucoderm to increase keratinized width.<br><br>Not all deficiencies require surgery — patients with no KM but excellent oral hygiene using a soft brush may be managed without intervention. Assess individually.</p></div>
+      <div class="card" style="margin-top:8px"><div class="ct">FGG vs CTG — Quick Reference</div><p><strong>FGG</strong> = epithelium kept → placed on periosteum → increases KM <em>width</em><br><strong>CTG</strong> = epithelium removed → placed under flap → increases tissue <em>volume</em></p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S14 KM EVIDENCE (ACCORDION) ===== -->
+<div class="slide" data-slide="14" role="article" aria-label="Slide 14: KM Evidence Base">
+  <div class="sh">Keratinized Mucosa — Evidence Base</div>
+  <div class="ss">What the research tells us — click each finding to expand</div>
+  <div class="body2 col" style="overflow-y:auto">
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">14-year follow-up — Grafted vs Non-grafted Sites <span class="arrow">▾</span></button>
+      <div class="acc-body">Cases reviewed at 14 years post-FGG show stable keratinized mucosa, with healthy tissue on grafted sides versus persistent inflammation and recession on non-grafted control sites. The grafted tissue behaves as native KM in all measurable parameters including plaque index, recession rates, bone levels, and brushing comfort.</div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">The 1.5mm KM Threshold — Timing of Intervention <span class="arrow">▾</span></button>
+      <div class="acc-body">FGG is technically easier to perform when at least 1.5mm of KM remains. Waiting until complete deficiency makes the procedure technically harder and outcomes less predictable. Act early — don't wait for complete loss before intervening.</div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">KM &amp; Marginal Bone Loss — Longitudinal Data <span class="arrow">▾</span></button>
+      <div class="acc-body">Multiple longitudinal studies demonstrate a direct association between inadequate KM (&lt;2mm) and increased marginal bone loss over 5+ years. The mechanism: mobile tissue disrupts the biological seal, allowing bacteria to reach Zone C, triggering non-selective bone resorption from leukocyte activity.</div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">Patient-Reported Outcomes — Discomfort on Brushing <span class="arrow">▾</span></button>
+      <div class="acc-body">Patients with non-keratinized mobile mucosa around implants report significantly higher pain scores on toothbrushing. This leads to avoidance of the implant site during oral hygiene — creating a vicious cycle of plaque accumulation, inflammation, and further tissue and bone loss.</div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">When NOT to Graft — Individual Assessment <span class="arrow">▾</span></button>
+      <div class="acc-body">Some patients with minimal or no KM who maintain careful cleaning with a soft toothbrush and exhibit consistently good oral hygiene do not require surgical intervention. The decision must be individual — KM width is one factor among several. Perfect oral hygiene can partially compensate for reduced KM.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S15-S21 — Abbreviated but complete slides ===== -->
+<div class="slide" data-slide="15" role="article" aria-label="Slide 15: Papilla Stability">
+  <div class="sh">Papilla Stability</div><div class="ss">Five conditions required to maintain or regain papilla height</div>
+  <div class="body2 col">
+    <p class="body">The interdental papilla is supported by five biological requirements. All five must be present for the papilla to maintain its height:</p>
+    <div class="g2" style="margin-bottom:8px">
+      <div class="card acc"><div class="ct">1. Contact Area</div><p>A contact area between adjacent teeth or restorations provides the anatomical reference for papilla height. No contact area = papilla behaves like flat mid-labial mucosa.</p></div>
+      <div class="card acc"><div class="ct">2. Bony Peak ≤3mm</div><p>Bone sounding at the papilla base ≤3mm from the mucosa crest. Above 3mm, tissue cannot maintain height — biological width forces recession when the papilla is disturbed.</p></div>
+      <div class="card acc"><div class="ct">3. Embrasure Space</div><p>The interdental embrasure space must be adequate but not excessive. Very wide embrasures cannot be filled by papilla regardless of all other conditions.</p></div>
+      <div class="card acc"><div class="ct">4. Oral Hygiene</div><p>Plaque in the gingival embrasure causes chronic inflammation at the papilla base → tissue volume loss over time. Perfect hygiene is a prerequisite for papilla stability.</p></div>
+    </div>
+    <div class="card"><div class="ct">5. Blood Supply</div><p>Adequate blood supply to papillary mucosa — compromised by smoking, inflamed adjacent restorations, and adjacent implants (no PDL = no blood supply from that side).</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="16" role="article" aria-label="Slide 16: Pre-Extraction Assessment">
+  <div class="sh">Pre-Extraction Assessment</div><div class="ss">Four factors to assess and document before every extraction prior to implant</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="card acc"><div class="ct">Factor 1 — KM Width</div><p>Measure and record the keratinized mucosa width at the planned implant site. Warn the patient of expected reduction after extraction. Plan FGG timing if width is already marginal.</p></div>
+      <div class="card acc"><div class="ct">Factor 2 — Phenotype</div><p>Probe shadow test at mid-labial. Document thick or thin. This determines implant timing, grafting strategy, flap design, and whether immediate placement is appropriate.</p></div>
+      <div class="card acc"><div class="ct">Factor 3 — Tissue Thickness</div><p>Bone sounding or CBCT measurement of labial soft tissue thickness at the implant site. &lt;2mm = augmentation required (CTG) to meet the 2+3 rule minimum.</p></div>
+      <div class="card acc"><div class="ct">Factor 4 — Supracrestal Attachment</div><p>Probe the mesial/distal papillae to establish the bone-to-mucosa distance. ≤3mm = favourable. &gt;3mm = papilla cannot be safely elevated without causing recession.</p></div>
+    </div>
+    <div class="sbox" style="margin-top:8px"><div class="st">Clinical Flow</div><p style="font-size:14px;color:var(--text2)">Document all four factors at the pre-extraction consultation. Your findings directly determine: implant timing, grafting requirements, flap design, and expected aesthetic outcome. This assessment takes 5 minutes and changes everything.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="17" role="article" aria-label="Slide 17: Interactive Checklist">
+  <div class="sh">Pre-Extraction Checklist</div><div class="ss">Interactive — click each item to mark as reviewed</div>
+  <div class="body2 col">
+    <p class="body" style="margin-bottom:12px">Use this checklist at the pre-extraction consultation. Click each item to mark as completed.</p>
+    <div id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Measure keratinized mucosa width at implant site</div><div class="check-sub">Record mm and note if FGG likely required</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Perform phenotype assessment (probe shadow test)</div><div class="check-sub">1mm probe into sulcus mid-labial of adjacent teeth</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Measure soft tissue thickness (bone sounding or CBCT)</div><div class="check-sub">&lt;2mm = CTG augmentation required</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Bone sound mesial and distal papillae</div><div class="check-sub">≤3mm = favourable; &gt;3mm = document and preserve papilla</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Assess smile line and aesthetic demands</div><div class="check-sub">High smile line changes risk tolerance for all decisions</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Document systemic factors (smoking, diabetes, medications)</div><div class="check-sub">Each factor affects healing capacity and flap strategy</div></div></div>
+      <div class="check-item" onclick="toggleCheck(this)" role="checkbox" aria-checked="false" tabindex="0"><div class="check-box">✓</div><div><div class="check-label">Obtain informed consent — include soft tissue risks</div><div class="check-sub">Patient must understand: recession, papilla loss, black triangles are possible</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="18" role="article" aria-label="Slide 18: Immediate vs Delayed Implant Placement">
+  <div class="sh">Immediate vs Delayed Placement</div><div class="ss">How phenotype determines the right timing</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="cmp good"><div class="ct">Thick Phenotype — Immediate</div><ul><li>Intact labial plate (multi-layered cortical bone)</li><li>Predictable bone preservation</li><li>5–20% ridge volume loss expected</li><li>CTG still often beneficial but not always essential</li><li>Outcomes predictable and reliable</li></ul></div>
+      <div class="cmp bad"><div class="ct">Thin Phenotype — Challenging to Contraindicated</div><ul><li>Labial plate is predominantly bundle bone</li><li>Bundle bone disappears after PDL removal</li><li>Socket collapses rapidly — &gt;50% volume loss</li><li>If immediate: CTG mandatory, risk still higher</li><li>Delayed placement often preferable to allow assessment</li></ul></div>
+    </div>
+    <div class="card acc" style="margin-top:12px"><div class="ct">The Bundle Bone Problem</div><p>Thin phenotype labial bone is almost entirely bundle bone — bone whose existence is dependent on the periodontal ligament. Once the PDL is removed at extraction, the bundle bone has no stimulus to exist and rapidly resorbs. No technique reliably prevents this in thin phenotype.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="19" role="article" aria-label="Slide 19: Digital Planning and CBCT">
+  <div class="sh">Digital Planning &amp; CBCT</div><div class="ss">Using technology to satisfy the 2+3 rule and phenotype requirements</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="card acc"><div class="ct">CBCT Measurement of Labial Plate</div><p>CBCT allows measurement of the labial bone plate thickness. &lt;1mm = high risk zone, especially in thin phenotype. Measure at the planned implant level. This data drives the decision for bone grafting before or at implant placement.</p></div>
+      <div class="card"><div class="ct">Surgical Guide Limitations</div><p>Surgical guides planned on CBCT must account for soft tissue thickness. A guide that places the implant "at bone level" on the scan may be placing it too shallow in real life if soft tissue thickness is not measured and incorporated into the plan.</p></div>
+    </div>
+    <div class="card red" style="margin-top:8px"><div class="ct">The Digital Guide Trap</div><p>Many digital surgical guides are designed to optimal bone-centric positions. They do not automatically satisfy the 2+3 rule unless the planning explicitly incorporates soft tissue measurements. Always verify: does the planned depth satisfy biological width given the patient's tissue thickness?</p></div>
+    <div class="sbox"><div class="st">Planning Checklist</div><p style="font-size:14px;color:var(--text2)">1. Measure soft tissue thickness at implant site on CBCT or by bone sounding. 2. Add 3–4mm biological width requirement. 3. This gives you the minimum depth from the planned gingival margin to the implant shoulder. 4. Verify the guide achieves this depth.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="20" role="article" aria-label="Slide 20: Soft Tissue Routes">
+  <div class="sh">Five Routes to Ideal Soft Tissue</div><div class="ss">The complete management toolkit — an overview</div>
+  <div class="body2 col">
+    <div class="step-box"><div class="step-n">1</div><div class="step-t"><strong>Flap Design</strong> — The most critical decision. Wrong flap = wrong result regardless of everything else. Covered in Lecture 3.</div></div>
+    <div class="step-box"><div class="step-n">2</div><div class="step-t"><strong>Tension-Free Closure</strong> — Requires periosteal release. Tension → dehiscence → bacterial contamination → bone loss. Covered in Lecture 2.</div></div>
+    <div class="step-box"><div class="step-n">3</div><div class="step-t"><strong>Soft Tissue Grafting</strong> — CTG for volume/thickness; FGG for keratinized width. Dedicated day with specialist. Overview in Lecture 2.</div></div>
+    <div class="step-box"><div class="step-n">4</div><div class="step-t"><strong>Closure Technique</strong> — Vertical/horizontal mattress sutures to maintain papilla. Interrupted sutures flatten papillae. Practice session tomorrow.</div></div>
+    <div class="step-box"><div class="step-n">5</div><div class="step-t"><strong>Prosthetic Soft Tissue Sculpting</strong> — Temporary crown contouring to guide and maintain soft tissue emergence profile. Separate module.</div></div>
+  </div>
+</div>
+
+<!-- Slides 21–29: condensed content preserving all key facts -->
+<div class="slide" data-slide="21" role="article" aria-label="Slide 21: Soft Tissue Anatomy Around Implants">
+  <div class="sh">Soft Tissue Architecture</div><div class="ss">What healthy peri-implant tissue looks like</div>
+  <div class="body2 col">
+    <div class="g3">
+      <div class="card acc"><div class="ct">Attached Gingiva</div><p>Keratinized, firmly bound to bone. Resistant to mechanical forces. The priority tissue around implants. Goal: ≥2mm width around all implants.</p></div>
+      <div class="card"><div class="ct">Free Marginal Gingiva</div><p>The 1–2mm collar around the abutment. Forms the sulcus. Contains the hemidesmosomal B-zone attachment. After extraction, free gingiva collapses — it is gone.</p></div>
+      <div class="card"><div class="ct">Alveolar Mucosa</div><p>Non-keratinized, mobile, loosely attached. Does not provide protective properties. Moving during function disrupts the biological seal. Must be kept away from the implant margin.</p></div>
+    </div>
+    <div class="card red" style="margin-top:12px"><div class="ct">The Free Gingiva After Extraction</div><p>Once a tooth is removed, the free gingiva collapses and merges with surrounding tissue — effectively disappearing. This is why planning must account for soft tissue changes at extraction, not just bone changes.</p></div>
+    <div class="card" style="margin-top:8px"><div class="ct">Connective Tissue Fibres — Implants vs Teeth</div><p>Around natural teeth: CT fibres run <strong>perpendicular</strong> to the root (Sharpey's fibres — anchored in cementum). Around implants: CT fibres run <strong>parallel</strong> to the implant surface — weaker attachment, less resistance to bacterial invasion.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="22" role="article" aria-label="Slide 22: Clinical Scenarios">
+  <div class="sh">Clinical Scenarios</div><div class="ss">Applying soft tissue fundamentals to real cases</div>
+  <div class="body2 col">
+    <div class="scenario"><div class="sc-lbl">Scenario A</div><div class="sc-text">A 28-year-old presents with triangular tooth shapes, high scalloping, and 0.5mm labial tissue at UL1 which needs extracting. They request an immediate implant. What are your primary concerns?</div></div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">Reveal Clinical Analysis <span class="arrow">▾</span></button>
+      <div class="acc-body"><strong>Thin phenotype indicators:</strong> triangular teeth, high scalloping, 0.5mm labial tissue. Immediate implant is high-risk or contraindicated. Bundle bone will disappear after extraction → &gt;50% volume loss. Plan: consider delayed placement (8 weeks), socket graft at extraction, CTG at implant placement, inform patient of high recession risk regardless of technique.</div>
+    </div>
+    <div class="scenario" style="margin-top:14px"><div class="sc-lbl">Scenario B</div><div class="sc-text">A 52-year-old with square tooth shapes, 3mm KM at the implant site, and 3.2mm labial tissue has an extraction planned. They have 1mm KM remaining at the adjacent site. What do you prioritise?</div></div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)" aria-expanded="false">Reveal Clinical Analysis <span class="arrow">▾</span></button>
+      <div class="acc-body"><strong>Thick phenotype indicators:</strong> square teeth, adequate KM, good tissue thickness — this is a good immediate placement candidate. However: 1mm KM at adjacent site is below the 2mm threshold. Consider performing FGG at adjacent site 4–6 weeks before implant surgery to bring it to ≥2mm. Immediate placement with socket graft and CTG is appropriate here.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="23" role="article" aria-label="Slide 23: Maintenance and Monitoring">
+  <div class="sh">Maintenance &amp; Monitoring</div><div class="ss">Keeping peri-implant tissue healthy long term</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="card acc"><div class="ct">Annual Review Protocol</div><p>Comfort/pain • Stability (crown, abutment, implant) • Occlusion • Gum health: recession, discharge on pressure, BOP (1–2mm lateral probing only) • Loss of attachment (pockets debatable)</p></div>
+      <div class="card"><div class="ct">BAIRD Probing Protocol</div><p>Insert probe 1–2mm only, lateral movement. Inflamed mucosa bleeds; healthy does not. Do NOT probe for pocket depth around implants — considered irrelevant and potentially harmful to the hemidesmosomal seal.</p></div>
+    </div>
+    <div class="card red" style="margin-top:8px"><div class="ct">If BOP Detected at Review</div><p>Remove the prosthesis. Use a periodontal probe to check for loss of attachment at the implant level. Plan treatment accordingly. Do not probe through the crown — this gives false negatives and risks disrupting the biological seal.</p></div>
+    <div class="card" style="margin-top:8px"><div class="ct">Radiographic Protocol</div><p>Post-op periapical at crown fitting (mandatory baseline). Every 2 years if stable. Immediately if signs of disease. Patient-specific factors (smoking, periodontal history) may require more frequent imaging.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="24" role="article" aria-label="Slide 24: Tissue Thickness and Recession Risk">
+  <div class="sh">Tissue Thickness &amp; Recession Risk</div><div class="ss">Why thin tissue creates a cascade of problems</div>
+  <div class="body2 col">
+    <p class="lead">Tissue thickness is the most modifiable risk factor for peri-implant soft tissue complications.</p>
+    <div class="g3">
+      <div class="stat"><div class="sv">&lt;2</div><div class="su">mm</div><div class="sd">Insufficient — bone resorption risk, poor biological seal, recession likely</div></div>
+      <div class="stat"><div class="sv">2–3</div><div class="su">mm</div><div class="sd">Acceptable — minimum requirement met, 2+3 rule satisfied</div></div>
+      <div class="stat"><div class="sv">&gt;3</div><div class="su">mm</div><div class="sd">Ideal — generous buffer, better zone architecture, more forgiving</div></div>
+    </div>
+    <div class="key-rule" style="margin-top:12px"><div class="kr-text">"Thick tissue protects everything beneath it. Thin tissue protects nothing."</div><div class="kr-lbl">Clinical corollary of the 2+3 rule</div></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="25" role="article" aria-label="Slide 25: Implant Position — T-Concept">
+  <div class="sh">Implant Position — The T-Concept</div><div class="ss">Correct 3D positioning underpins every soft tissue strategy</div>
+  <div class="body2 col">
+    <div class="g3">
+      <div class="card acc"><div class="ct">Apicocoronal (Depth)</div><p>3–4mm below future gingival margin. Thin phenotype: 4mm. Thick phenotype: 3mm. Never compromise depth for bone concerns — use shorter implant or augment instead.</p></div>
+      <div class="card acc"><div class="ct">Mesiodistal</div><p>≥1.5mm from adjacent tooth roots. ≥3mm between adjacent implants. Closer than this: interdental bone resorbs → papilla lost → black triangles.</p></div>
+      <div class="card acc"><div class="ct">Buccopalatal (T-Concept)</div><p>As palatal as possible — aimed at the cingulum. Protects the labial plate, preserves buccal bone, and creates the "jumping gap" for labial bone grafting.</p></div>
+    </div>
+    <div class="warn" style="margin-top:12px"><div class="wt">Wrong Position = Inevitable Failure</div><p>An implant placed at the bone crest with 2mm of thin mucosa above it will lose bone through biological width re-establishment. No flap design, no graft, no technique prevents this. Correct position at placement is the only solution.</p></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="26" role="article" aria-label="Slide 26: Socket Grafting Overview">
+  <div class="sh">Socket Grafting at Extraction</div><div class="ss">Preserving ridge volume for future implant placement</div>
+  <div class="body2 col">
+    <div class="g2">
+      <div class="card acc"><div class="ct">When to Socket Graft</div><p>Thin phenotype + high aesthetic zone + anticipated significant bone loss + insufficient bone for early placement stability. Socket graft at extraction preserves ridge volume for later implant placement.</p></div>
+      <div class="card"><div class="ct">When Not to Socket Graft</div><p>Thick phenotype + non-aesthetic zone + adequate residual bone + patient prefers fewer procedures. The extra procedure may not be justified in favourable cases.</p></div>
+    </div>
+    <div class="step-box" style="margin-top:8px"><div class="step-n">1</div><div class="step-t"><strong>Atraumatic extraction</strong> — Preserve labial plate. Periotomes, minimal bone elevation.</div></div>
+    <div class="step-box"><div class="step-n">2</div><div class="step-t"><strong>Degranulation</strong> — Remove all granulation tissue. Degranulation burs at 800rpm are efficient and bone-sparing.</div></div>
+    <div class="step-box"><div class="step-n">3</div><div class="step-t"><strong>Graft packing</strong> — Bone graft material packed into socket. Collagen membrane over graft.</div></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="27" role="article" aria-label="Slide 27: CBCT and Treatment Planning">
+  <div class="sh">CBCT in Soft Tissue Planning</div><div class="ss">Using cross-sectional imaging for tissue assessment</div>
+  <div class="body2 col">
+    <div class="tabs" role="tablist" aria-label="CBCT uses">
+      <button class="tab-btn on" onclick="showTab('t1',this)" role="tab">Labial Plate</button>
+      <button class="tab-btn" onclick="showTab('t2',this)" role="tab">Tissue Thickness</button>
+      <button class="tab-btn" onclick="showTab('t3',this)" role="tab">Implant Depth Planning</button>
+      <button class="tab-btn" onclick="showTab('t4',this)" role="tab">Bone Peaks</button>
+    </div>
+    <div id="t1" class="tab-panel show"><div class="card acc"><div class="ct">Labial Bone Plate Assessment</div><p>CBCT shows labial plate thickness. &lt;1mm = high risk, especially thin phenotype. This predicts whether immediate placement is appropriate and whether bone graft is required. Measure at the planned implant level, not just the crest.</p></div></div>
+    <div id="t2" class="tab-panel"><div class="card acc"><div class="ct">Soft Tissue Thickness Measurement</div><p>CBCT can measure soft tissue thickness on the cross-sectional view. The mucosal layer appears as a grey band above the bone. Measurements &lt;2mm confirm augmentation need before implant placement.</p></div></div>
+    <div id="t3" class="tab-panel"><div class="card acc"><div class="ct">Implant Depth Calculation</div><p>From planned gingival margin: add 3–4mm (biological width) + adjust for phenotype. This gives the minimum depth of the implant shoulder below the gingival margin. Verify the surgical guide achieves this. Never trust a guide that only plans for bone position.</p></div></div>
+    <div id="t4" class="tab-panel"><div class="card acc"><div class="ct">Interdental Bone Peaks</div><p>CBCT and periapical radiographs show the interdental bone peak levels. Mesial/distal peaks &gt;3mm from the planned papilla crest predicts papilla loss after flap elevation. This directly influences flap design choices (Lecture 3).</p></div></div>
+  </div>
+</div>
+
+<div class="slide" data-slide="28" role="article" aria-label="Slide 28: Key Terminology">
+  <div class="sh">Key Terminology Reference</div><div class="ss">Essential terms for this lecture and the course</div>
+  <div class="body2 col" style="overflow-y:auto">
+    <div class="g2">
+      <div class="card"><div class="ct">Biological Width / Supracrestal Attachment</div><p>The minimum tissue height required between gingival crest and alveolar bone: 2–3mm in teeth, 3–4mm in implants. The body enforces this through bone resorption if violated.</p></div>
+      <div class="card"><div class="ct">Hemidesmosomal Attachment (B Zone)</div><p>Half-desmosome connection between junctional epithelium and implant abutment surface. Forms a partial biological seal. Requires clean, polished titanium or appropriate zirconia surface.</p></div>
+      <div class="card"><div class="ct">Keratinized Mucosa</div><p>Attached, keratinized gingival tissue resistant to mechanical forces. Minimum 2mm required around implants for peri-implant health and stable oral hygiene access.</p></div>
+      <div class="card"><div class="ct">Phenotype (Biotype)</div><p>The thickness and architecture of the gingival tissues. ≥2mm = thick phenotype; &lt;1.5mm = thin phenotype. Determines risk of recession, scarring, and predictability of surgical outcomes.</p></div>
+      <div class="card"><div class="ct">Peri-implant Mucosa</div><p>The soft tissue collar surrounding a dental implant. Differs from natural tooth gingiva in: blood supply, CT fibre direction (parallel), fibroblast density, junctional epithelium permeability, and KM requirements.</p></div>
+      <div class="card"><div class="ct">Bone Sounding</div><p>Measuring the distance from the soft tissue crest to underlying bone by passing a probe through the tissue (requires anaesthesia). Essential for papilla and flap design decisions.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-slide="29" role="article" aria-label="Slide 29: What We Did Not Cover">
+  <div class="sh">Bridging to Lectures 2 &amp; 3</div><div class="ss">Topics covered in the rest of the lecture series</div>
+  <div class="body2 col">
+    <p class="body">This lecture covered the foundational science. Lectures 2 and 3 build directly on this foundation:</p>
+    <div class="g2">
+      <div class="card acc"><div class="ct">Lecture 2 — Soft Tissue Management &amp; Grafting</div><p>• Periosteal release technique (the 1mm notch, 5° blade angle)<br>• Frenectomy — indications and technique<br>• Free gingival graft (FGG) — technique, 50% shrinkage planning<br>• Connective tissue graft (CTG) — de-epithelialisation technique<br>• Mucoderm — porcine alternative<br>• Wound dehiscence prevention<br>• Suturing — vertical mattress, technical specifications</p></div>
+      <div class="card"><div class="ct">Lecture 3 — Flap Design &amp; Decision-Making</div><p>• Four basic flap designs<br>• Three questions framework<br>• Four Yeses system for papilla assessment<br>• Bone sounding technique and thresholds<br>• Golf Club incision — vertical + oblique components<br>• Remote palatal incision — five advantages<br>• Scarring rules — horizontal/vertical/convexity rules<br>• Asymmetric flap design</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S30 SUMMARY + QUIZ CTA ===== -->
+<div class="slide title-slide" data-slide="30" role="article" aria-label="Slide 30: Summary and Key Takeaways">
+  <div class="t-tag">Lecture 1 Complete</div>
+  <div class="t-h1" style="font-size:38px">Key <em>Takeaways</em></div>
+  <div class="t-rule"></div>
+  <div style="text-align:left;max-width:680px;margin:0 auto 16px">
+    <ul class="blist">
+      <li>Any implant integrates — the challenge is <span class="hl">maintaining bone and soft tissue long-term</span></li>
+      <li>Bacteria reaching the <span class="hl">C Zone</span> triggers non-selective bone loss — all zones exist to prevent this</li>
+      <li>The <span class="hl">2+3 rule</span>: 2mm thickness + 3mm height — violations trigger biological width-driven bone resorption</li>
+      <li>Phenotype: <span class="hl">thick = 5–20% XLA loss</span>, thin = <span class="hl">&gt;50% loss</span> in apical/lingual direction</li>
+      <li>Always assess 4 factors before extraction: <span class="hl">KM width, phenotype, tissue thickness, supracrestal attachment</span></li>
+      <li>Minimum <span class="hl">2mm keratinized mucosa</span> is evidence-based consensus — not preference</li>
+      <li>CT fibres around implants run <span class="hl">parallel</span> (not perpendicular) — inherently weaker biological seal</li>
+    </ul>
+  </div>
+  <div class="t-cta">
+    <a href="quiz-1.html" class="btn-primary">Take Quiz 1 →</a>
+    <a href="lecture-2.html" class="btn-outline">Lecture 2: Management →</a>
+  </div>
+</div>
+
+</main><!-- /sc -->
+
+<!-- BOTTOM NAV -->
+<nav id="nav" aria-label="Slide navigation">
+  <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled aria-label="Previous slide">← Previous</button>
+  <div class="dots" id="dots" role="tablist" aria-label="Slide selector"></div>
+  <button class="nav-btn" id="next-btn" onclick="changeSlide(1)" aria-label="Next slide">Next →</button>
+</nav>
+
+<script>
+/* ================================================
+   SLIDE ENGINE
+   ================================================ */
+let cur = 1;
+const TOTAL = 30;
+document.getElementById('tot').textContent = TOTAL;
+
+const dotsC = document.getElementById('dots');
+for (let i = 1; i <= TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 1 ? ' on' : '');
+  d.setAttribute('role', 'tab');
+  d.setAttribute('aria-label', 'Go to slide ' + i);
+  d.setAttribute('aria-selected', i === 1 ? 'true' : 'false');
+  d.onclick = () => goTo(i);
+  dotsC.appendChild(d);
+}
+
+function updateUI() {
+  document.getElementById('cur').textContent = cur;
+  document.getElementById('pgfill').style.width = (cur / TOTAL * 100) + '%';
+  document.querySelector('#pgbar').setAttribute('aria-valuenow', cur);
+  document.getElementById('prev-btn').disabled = cur === 1;
+  document.getElementById('next-btn').disabled = cur === TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('on', i + 1 === cur);
+    d.setAttribute('aria-selected', i + 1 === cur ? 'true' : 'false');
+  });
+}
+
+function goTo(n) {
+  if (n === cur || n < 1 || n > TOTAL) return;
+  const prev = document.querySelector('.slide.active');
+  const next = document.querySelector('[data-slide="' + n + '"]');
+  if (!prev || !next) return;
+  prev.classList.remove('active');
+  if (n > cur) prev.classList.add('prev');
+  next.classList.remove('prev');
+  next.classList.add('active');
+  setTimeout(() => prev.classList.remove('prev'), 500);
+  cur = n;
+  updateUI();
+}
+
+function changeSlide(dir) { goTo(cur + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+/* ================================================
+   ZONE INTERACTIVE (Slide 4)
+   ================================================ */
+function showZone(z) {
+  ['e','b','c','dz'].forEach(id => {
+    const el = document.getElementById('zone-' + id);
+    const btn = document.getElementById('zbtn-' + id);
+    if (el) { el.classList.remove('show'); el.setAttribute('aria-hidden', 'true'); }
+    if (btn) { btn.classList.remove('on'); btn.setAttribute('aria-selected', 'false'); }
+  });
+  const el = document.getElementById('zone-' + z);
+  const btn = document.getElementById('zbtn-' + z);
+  if (el) { el.classList.add('show'); el.setAttribute('aria-hidden', 'false'); }
+  if (btn) { btn.classList.add('on'); btn.setAttribute('aria-selected', 'true'); }
+}
+
+/* ================================================
+   ACCORDION
+   ================================================ */
+function toggleAcc(hdr) {
+  const body = hdr.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  hdr.classList.toggle('open', !isOpen);
+  hdr.setAttribute('aria-expanded', String(!isOpen));
+}
+
+/* ================================================
+   PHENOTYPE TOGGLE (Slide 12)
+   ================================================ */
+function setPhenotype(type) {
+  ['thick','thin','default'].forEach(t => {
+    const el = document.getElementById('phen-' + t);
+    if (el) el.classList.remove('show');
+  });
+  const el = document.getElementById('phen-' + type);
+  if (el) el.classList.add('show');
+  document.getElementById('tog-thick')?.classList.toggle('on', type === 'thick');
+  document.getElementById('tog-thin')?.classList.toggle('on', type === 'thin');
+  document.getElementById('tog-thick')?.setAttribute('aria-selected', type === 'thick' ? 'true' : 'false');
+  document.getElementById('tog-thin')?.setAttribute('aria-selected', type === 'thin' ? 'true' : 'false');
+}
+
+/* ================================================
+   TABS (Slide 27)
+   ================================================ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-selected', 'false'); });
+  const panel = document.getElementById(id);
+  if (panel) panel.classList.add('show');
+  if (btn) { btn.classList.add('on'); btn.setAttribute('aria-selected', 'true'); }
+}
+
+/* ================================================
+   CHECKLIST (Slide 17)
+   ================================================ */
+function toggleCheck(el) {
+  const isDone = el.classList.toggle('done');
+  el.setAttribute('aria-checked', String(isDone));
+  el.querySelector('.check-box').textContent = isDone ? '✓' : '';
+}
+
+// Keyboard for checklist items
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    if (e.target.classList.contains('check-item')) {
+      e.preventDefault();
+      toggleCheck(e.target);
+    }
+  }
+});
+
+/* ================================================
+   FLIP CARDS (click to flip)
+   ================================================ */
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+  card.addEventListener('keydown', e => { if (e.key === 'Enter') card.classList.toggle('flipped'); });
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-label', 'Flip card to reveal answer');
+});
+
+updateUI();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE PROGRESS SYSTEM  (identical block in all 6 files)
+     Stores progress in localStorage under one shared key so the
+     3 lectures + 3 quizzes behave as a single connected course:
+       · ✓ ticks and quiz best-scores in the top course nav
+       · a 6-segment course completion meter in the nav bar
+       · lectures remember your furthest slide ("Resume")
+       · quizzes remember best score, attempts and pass status
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── 1 · Page identity (edited per file) ─────────────────────── */
+var CP_PAGE = 'l1';        // key for THIS file: l1/l2/l3/q1/q2/q3
+var CP_PASS = 60;              // pass mark (%) — matches quiz grading
+
+/* ── 2 · Storage helpers ─────────────────────────────────────── */
+var KEY = 'bairdM2D2Progress';
+function cpLoad(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function cpSave(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+
+/* ── 3 · Injected styles (nav ticks, chips, meter, resume btn) ─ */
+var st = document.createElement('style');
+st.textContent =
+  '.cp-tick{color:var(--green);margin-left:4px;font-size:10px;font-weight:700}' +
+  '.cp-chip{font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gold);margin-left:5px;opacity:.9}' +
+  '.cp-meter{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;padding-left:10px}' +
+  '.cp-meter-lbl{font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;white-space:nowrap}' +
+  '.cp-segs{display:flex;gap:3px}' +
+  '.cp-seg{width:13px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}' +
+  '.cp-seg.done{background:linear-gradient(90deg,var(--accent),var(--gold))}' +
+  '.cp-resume{font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}' +
+  '.cp-resume:hover{background:rgba(201,168,76,.22);box-shadow:0 0 20px rgba(201,168,76,.18)}' +
+  '.cp-note{font-family:JetBrains Mono,monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-top:14px}' +
+  '.cp-note .ok{color:var(--green)}.cp-note .gold{color:var(--gold)}' +
+  '.cp-best-line{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text2);letter-spacing:.06em;margin:0 auto 18px;max-width:500px}' +
+  '.cp-best-line .gold{color:var(--gold)}.cp-best-line .ok{color:var(--green)}' +
+  '@media(max-width:768px){.cp-meter-lbl{display:none}.cp-seg{width:9px}}';
+document.head.appendChild(st);
+
+/* ── 4 · Decorate the course nav (ticks, best scores, meter) ─── */
+var ORDER = ['l1','q1','l2','q2','l3','q3'];   // course sequence
+var HREF  = { 'lecture-1.html':'l1','lecture-2.html':'l2','lecture-3.html':'l3',
+              'quiz-1.html':'q1','quiz-2.html':'q2','quiz-3.html':'q3' };
+
+function decorateNav(){
+  var p = cpLoad();
+  var nav = document.getElementById('course-nav') || document.getElementById('cnav');
+  if(!nav) return;
+
+  /* ticks + score chips on each pill */
+  nav.querySelectorAll('a').forEach(function(a){
+    var k = HREF[a.getAttribute('href')]; if(!k) return;
+    a.querySelectorAll('.cp-tick,.cp-chip').forEach(function(n){ n.remove(); });
+    var d = p[k]; if(!d) return;
+    if(k.charAt(0)==='q' && typeof d.best === 'number'){
+      var chip = document.createElement('span');
+      chip.className = 'cp-chip'; chip.textContent = d.best + '%';
+      a.appendChild(chip);
+    }
+    if(d.done){
+      var t = document.createElement('span');
+      t.className = 'cp-tick'; t.textContent = '✓';
+      t.setAttribute('aria-label','completed');
+      a.appendChild(t);
+    }
+  });
+
+  /* 6-segment completion meter, right-aligned in the nav */
+  var meter = nav.querySelector('.cp-meter');
+  if(!meter){
+    meter = document.createElement('div');
+    meter.className = 'cp-meter';
+    meter.innerHTML = '<span class="cp-meter-lbl"></span><div class="cp-segs"></div>';
+    nav.appendChild(meter);
+  }
+  var doneN = ORDER.filter(function(k){ return p[k] && p[k].done; }).length;
+  meter.querySelector('.cp-meter-lbl').textContent = 'Course ' + doneN + '/6';
+  meter.setAttribute('role','img');
+  meter.setAttribute('aria-label','Course progress: ' + doneN + ' of 6 parts complete');
+  var segs = meter.querySelector('.cp-segs'); segs.innerHTML = '';
+  ORDER.forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'cp-seg' + (p[k] && p[k].done ? ' done' : '');
+    segs.appendChild(s);
+  });
+}
+decorateNav();
+
+/* ── 5 · LECTURE HOOKS ───────────────────────────────────────── */
+var CP_QUIZ = 'q1';            // matching quiz for this lecture
+var CP_QUIZ_NAME = 'Quiz 1';
+
+/* total slides, read from the existing header counter */
+var totEl = document.getElementById('tot');
+var TOTL  = totEl ? parseInt(totEl.textContent, 10) : 30;
+
+/* record furthest slide reached; mark lecture done on final slide */
+function onSlideShown(){
+  var curEl = document.getElementById('cur');
+  var n = curEl ? parseInt(curEl.textContent, 10) : 1;
+  var p = cpLoad();
+  var d = p[CP_PAGE] || {};
+  d.slide = Math.max(d.slide || 1, n);
+  d.total = TOTL;
+  if(n >= TOTL) d.done = true;
+  p[CP_PAGE] = d; cpSave(p);
+  if(n >= TOTL) decorateNav();   // refresh tick the moment it completes
+}
+
+/* wrap the existing goTo() (dots, buttons and arrow keys all route
+   through it) — no changes needed to the original slide engine    */
+if(typeof window.goTo === 'function'){
+  var _goTo = window.goTo;
+  window.goTo = function(n){ _goTo(n); onSlideShown(); };
+}
+
+/* "Resume" button + quiz status line on the title slide */
+function setupTitleSlide(){
+  var p = cpLoad();
+  var cta = document.querySelector('.t-cta, .tcta');
+  if(!cta) return;
+  var d = p[CP_PAGE];
+  if(d && d.slide > 1 && d.slide < TOTL){
+    var b = document.createElement('button');
+    b.className = 'cp-resume';
+    b.textContent = 'Resume at slide ' + d.slide + ' →';
+    b.onclick = function(){ window.goTo(d.slide); };
+    cta.insertBefore(b, cta.firstChild);
+  }
+  var note = document.createElement('div');
+  note.className = 'cp-note';
+  var q = p[CP_QUIZ];
+  var bits = [];
+  if(d && d.done) bits.push('<span class="ok">✓ Lecture completed</span>');
+  if(q && typeof q.best === 'number'){
+    bits.push(CP_QUIZ_NAME + ' personal best: <span class="gold">' + q.best + '%</span>' +
+              (q.done ? ' <span class="ok">· passed</span>' : ''));
+  } else {
+    bits.push(CP_QUIZ_NAME + ' not attempted yet — take it after this lecture');
+  }
+  note.innerHTML = bits.join(' &nbsp;·&nbsp; ');
+  cta.insertAdjacentElement('afterend', note);
+}
+setupTitleSlide();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3 · Flap Design &amp; Decision-Making — Baird Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+:root{--bg:#080c10;--surface:#121a24;--surface2:#1a2738;--border:#1d2e40;--gold:#c9a84c;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--accent:#f97316}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+#cnav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(8,12,16,.97);border-bottom:1px solid var(--border);padding:5px 20px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(16px);min-height:36px;overflow-x:auto}
+.nb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.ns{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.nl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.ng{display:flex;gap:4px}
+.np{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border:1px solid var(--border);color:var(--text3);text-decoration:none;border-radius:2px;transition:all .2s;white-space:nowrap}
+.np:hover{border-color:var(--text2);color:var(--text)}
+.np.here{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+.np.lhov:hover{border-color:var(--accent);color:var(--accent)}
+#main{flex:1;overflow-y:auto;padding:52px 24px 24px;display:flex;flex-direction:column;align-items:center}
+.inner{width:100%;max-width:760px}
+#start{text-align:center;padding:40px 0}
+.sbdg{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.3em;text-transform:uppercase;border:1px solid rgba(249,115,22,.3);padding:3px 14px;display:inline-block;margin-bottom:20px}
+.sh1{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;line-height:1.1;margin-bottom:10px}
+.sh1 em{color:var(--gold);font-style:italic}
+.smeta{font-size:14px;color:var(--text2);margin-bottom:28px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0 32px;text-align:left}
+.sm{background:var(--surface);border:1px solid var(--border);padding:14px}
+.sm .sv{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--accent)}
+.sm .sl{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;margin-top:2px}
+.sm .sd{font-size:13px;color:var(--text2);margin-top:4px}
+.stops{background:var(--surface);border:1px solid var(--border);padding:16px 20px;text-align:left;margin-bottom:28px}
+.stops h3{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 9px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--accent);border-radius:2px}
+.bstart{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(249,115,22,.12);border:1px solid var(--accent);color:var(--accent);padding:12px 36px;cursor:pointer;transition:all .2s}
+.bstart:hover{background:rgba(249,115,22,.22)}
+#pgwrap{width:100%;margin-bottom:16px}
+#pgbar{height:4px;background:var(--border);border-radius:2px;margin-bottom:6px}
+#pgfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .35s ease}
+.pgm{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.qcard{background:var(--surface);border:1px solid var(--border);padding:26px 28px;border-radius:3px}
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+.qbdg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:var(--accent);border-radius:2px}
+.qsc{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.2);padding:12px 16px;margin-bottom:16px;border-radius:2px}
+.qsc .qslbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}
+.qsc .qstxt{font-size:14px;color:var(--text2);line-height:1.5}
+.qtxt{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:18px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left;border-radius:2px}
+.opt:hover:not(.lk){border-color:var(--accent);background:rgba(249,115,22,.05)}
+.opt.sel{border-color:var(--accent);background:rgba(249,115,22,.07)}
+.opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.09)!important}
+.opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.09)!important}
+.opt.lk{cursor:default}
+.ol{font-family:'JetBrains Mono',monospace;font-size:12px;width:22px;height:22px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;border-radius:2px;transition:all .2s}
+.opt.sel .ol{border-color:var(--accent);color:var(--accent)}
+.opt.correct .ol{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.1)}
+.opt.wrong .ol{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1)}
+.ot{font-size:15px;color:var(--text2);line-height:1.5;flex:1}
+.opt.correct .ot,.opt.wrong .ot{color:var(--text)}
+.fb{display:none;margin-top:14px;padding:14px 16px;border-radius:2px}
+.fb.show{display:block}
+.fb.fc{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.25)}
+.fb.fw{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25)}
+.fbh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fbi{font-size:18px}
+.fbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.fb.fc .fbl{color:var(--green)}.fb.fw .fbl{color:var(--red)}
+.fbe{font-size:14px;color:var(--text2);line-height:1.6}
+.fbe strong{color:var(--text)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.slv{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3)}
+.slv span{color:var(--accent)}
+.bnxt{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 22px;cursor:pointer;transition:all .2s;display:none}
+.bnxt.show{display:block}
+.bnxt:hover{border-color:var(--accent);color:var(--accent)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake .35s ease}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.pulse{animation:pulse .5s ease}
+#results{display:none;text-align:center;padding:32px 0}
+.rrw{display:flex;justify-content:center;margin-bottom:20px}
+.rring{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.rinn{background:var(--bg);width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rpct{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold)}
+.rlbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)}
+.gbdg{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.2em;padding:6px 20px;border:1px solid;margin-bottom:12px;display:inline-block}
+.gbdg.dist{border-color:var(--gold);color:var(--gold)}.gbdg.merit{border-color:var(--accent);color:var(--accent)}.gbdg.pass{border-color:var(--green);color:var(--green)}.gbdg.fail{border-color:var(--red);color:var(--red)}
+.rg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:380px;margin:0 auto 24px}
+.rbox{background:var(--surface);border:1px solid var(--border);padding:14px;text-align:center}
+.rbox .rv{font-family:'Cormorant Garamond',serif;font-size:36px}
+.rbox .rl{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-top:3px;letter-spacing:.1em}
+.rv.c{color:var(--green)}.rv.w{color:var(--red)}
+.rmsg{font-size:15px;color:var(--text2);max-width:500px;margin:0 auto 24px;line-height:1.7}
+.tbd{background:var(--surface);border:1px solid var(--border);padding:18px 20px;max-width:560px;margin:0 auto 24px;text-align:left}
+.tbdttl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px}
+.tbrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tblbl{font-size:13px;color:var(--text2);flex:1;min-width:0}
+.tbbar{flex:2;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.tbfill{height:100%;border-radius:3px;transition:width .6s ease}
+.tbsc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);flex-shrink:0;min-width:36px;text-align:right}
+.rctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bp{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.12);border:1px solid var(--accent);color:var(--accent);padding:10px 26px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bp:hover{background:rgba(249,115,22,.22)}
+.bo{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:10px 26px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.bo:hover{border-color:var(--text2);color:var(--text)}
+#review{display:none;max-width:760px;width:100%;margin:0 auto}
+.rvhdr{background:var(--surface);border:1px solid var(--border);padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.rvhdr h2{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300}
+.rvitem{background:var(--surface);border:1px solid var(--border);padding:18px 20px;margin-bottom:10px}
+.rvitem.rr{border-left:3px solid var(--green)}.rvitem.rw{border-left:3px solid var(--red)}
+.rvmeta{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.rvbdg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:2px}
+.rvbdg.correct{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.rvbdg.wrong{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.rvq{font-size:15px;color:var(--text);margin-bottom:8px;font-weight:500}
+.rva{font-size:13px;color:var(--text2);margin-bottom:6px}
+.rva span{color:var(--green);font-weight:600}
+.rvexp{font-size:13px;color:var(--text3);line-height:1.5;border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
+.rvexp strong{color:var(--text2)}
+.complete-banner{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.3);padding:18px 24px;max-width:520px;margin:0 auto 24px;text-align:center}
+.complete-banner h3{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300;margin-bottom:8px}
+.complete-banner p{font-size:14px;color:var(--text2);line-height:1.6}
+@media(max-width:640px){#main{padding:48px 14px 14px}.qcard{padding:18px 16px}.qtxt{font-size:15px}.ot{font-size:14px}.sgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<!-- ═══ COURSE NAVIGATION BAR (consistent across all 6 files) ═══ -->
+<nav id="cnav" aria-label="Course navigation">
+  <span class="nb">🦷 Baird Implant</span><div class="ns"></div>
+  <span class="nl">Lectures</span>
+  <div class="ng">
+    <a href="lecture-1.html" class="np lhov">L1 Fundamentals</a>
+    <a href="lecture-2.html" class="np lhov">L2 Management</a>
+    <a href="lecture-3.html" class="np lhov">L3 Flap Design</a>
+  </div>
+  <div class="ns"></div><span class="nl">Quizzes</span>
+  <div class="ng">
+    <a href="quiz-1.html" class="np">Q1</a>
+    <a href="quiz-2.html" class="np">Q2</a>
+    <a href="quiz-3.html" class="np here" aria-current="page">Q3</a>
+  </div>
+</nav>
+
+<div id="main"><div class="inner">
+
+<!-- START -->
+<div id="start">
+  <div class="sbdg">Quiz 3 of 3 · Final Assessment</div>
+  <div class="sh1">Flap Design &amp;<br><em>Decision-Making</em></div>
+  <div class="smeta">30 questions · Four Yeses, bone sounding, Golf Club, incision rules, remote palatal incision</div>
+  <div class="sgrid">
+    <div class="sm"><div class="sv">30</div><div class="sl">QUESTIONS</div><div class="sd">Multiple choice, one correct answer</div></div>
+    <div class="sm"><div class="sv">~18</div><div class="sl">MINUTES</div><div class="sd">Several clinical scenario questions</div></div>
+    <div class="sm"><div class="sv">60</div><div class="sl">% TO PASS</div><div class="sd">70% Merit · 85% Distinction</div></div>
+  </div>
+  <div class="stops"><h3>Topics Covered</h3><div class="chips"><span class="chip">Four Basic Flaps</span><span class="chip">Three Questions Framework</span><span class="chip">Four Yeses System</span><span class="chip">Bone Sounding</span><span class="chip">Neighbour Rule</span><span class="chip">Golf Club Technique</span><span class="chip">Incision Rules</span><span class="chip">Remote Palatal Incision</span><span class="chip">Phenotype &amp; Flap</span><span class="chip">Asymmetric Design</span><span class="chip">Maintain vs Obtain</span></div></div>
+  <button class="bstart" onclick="startQuiz()">Begin Final Quiz →</button>
+</div>
+
+<div id="quiz" style="display:none">
+  <div id="pgwrap"><div id="pgbar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0"><div id="pgfill" style="width:0%"></div></div><div class="pgm"><span id="pglbl">Question 1 of 30</span><span id="pgtop"></span></div></div>
+  <div id="qwrap"></div>
+</div>
+
+<!-- ═══ RESULTS SCREEN — score ring, grade, topic breakdown ═══ -->
+<div id="results">
+  <div class="rrw"><div class="rring" id="rring"><div class="rinn"><div class="rpct" id="rpct">0%</div><div class="rlbl">SCORE</div></div></div></div>
+  <div class="gbdg" id="gbdg">PASS</div>
+  <div class="rg2"><div class="rbox"><div class="rv c" id="rvc">0</div><div class="rl">CORRECT</div></div><div class="rbox"><div class="rv w" id="rvw">0</div><div class="rl">INCORRECT</div></div></div>
+  <p class="rmsg" id="rmsg"></p>
+  <div class="complete-banner" id="cbanner" style="display:none">
+    <h3>🦷 Module 2 Complete</h3>
+    <p>You have completed all three quizzes in the Baird Implant Course Module 2. Return to any lecture or quiz to consolidate any areas where gaps remain.</p>
+  </div>
+  <div class="tbd" id="tbd"><div class="tbdttl">Performance by Topic</div><div id="tbrows"></div></div>
+  <div class="rctas">
+    <button class="bp" onclick="showReview()" id="rvbtn">Review Incorrect Answers</button>
+    <a href="lecture-3.html" class="bo">← Lecture 3</a>
+    <a href="lecture-1.html" class="bo">Back to L1</a>
+    <button class="bo" onclick="location.reload()">Retake Quiz</button>
+  </div>
+</div>
+
+<!-- ═══ REVIEW MODE — re-read every question with explanation ═══ -->
+<div id="review">
+  <div class="rvhdr"><h2>Review: Incorrect Answers</h2><button class="bo" onclick="backToRes()">← Back</button></div>
+  <div id="rvitems"></div>
+</div>
+
+</div></div>
+
+<script>
+/* ═══ QUESTION BANK — 30 questions, each tagged with a topic for
+   the per-topic results breakdown ═══ */
+const Qs=[
+  {topic:"Four Basic Flaps",q:"Which flap design involves no vertical releasing incisions?",opts:["Three-sided flap","Envelope (sulcular) flap","Two-sided flap","Papillary-preserving flap"],ans:1,exp:"The <strong>envelope (sulcular) flap</strong> uses a sulcular incision only with no vertical lines. It is the most conservative in terms of scarring risk but requires that all papillae involved have confirmed four yeses."},
+  {topic:"Four Basic Flaps",q:"Which flap design provides maximum access and tissue reflection for bone block grafting?",opts:["Envelope flap","Papillary-preserving flap","Flapless","Three-sided flap"],ans:3,exp:"The <strong>three-sided flap</strong> (envelope + two vertical releasing incisions) provides the best access and reflection. It allows coronal advancement and is the preferred design for bone block grafting and large GBR cases."},
+  {topic:"Three Questions Framework",q:"What is the correct order of the Three Questions Framework for flap design?",opts:["Vertical lines first, then extent, then papilla decision","Extent first, then papilla decision, then vertical lines","Raise papilla or preserve? → How big? → Need vertical lines?","Phenotype first, then bone sounding, then vertical lines"],ans:2,exp:"The correct order: <strong>(1) Raise this papilla or preserve it?</strong> (Four Yeses system) → (2) How big does the flap need to be? → (3) Do I need vertical lines, and where? Each question depends on the answer to the previous."},
+  {topic:"Four Yeses System",q:"In the Four Yeses System, which factor is assessed FIRST and is considered the most important?",opts:["Phenotype (thick vs thin)","Neighbour quality","Bone sounding at the mesial/distal papilla base","Patient's aesthetic demands"],ans:2,exp:"<strong>Bone sounding at the papilla base</strong> is assessed first and is the most important factor. If bone sounding &gt;3mm, the papilla must be preserved regardless of all other factors. No other assessment is needed when this result is unfavourable."},
+  {topic:"Four Yeses System",q:"A bone sounding of 4mm at the mesial papilla base means:",opts:["The papilla is robust and will recover well after elevation","The papilla must be preserved — elevation guarantees permanent recession","The papilla can be raised if phenotype is thick","Insufficient information to decide — assess neighbour quality first"],ans:1,exp:"A bone sounding &gt;3mm means the tissue above 3mm from the bone has inadequate blood supply. After elevation, biological width re-establishes at 3mm, and the tissue above this level undergoes <strong>necrosis and permanent recession</strong>. No other factor overrides this."},
+  {topic:"Four Yeses System",q:"Why is the phenotype considered the LEAST important of the four yeses factors?",opts:["Phenotype cannot be reliably assessed clinically","It has no impact on papilla healing","Bone sounding and neighbour quality are more decisive — if those are favourable, thick phenotype confirms safety; but thin phenotype alone rarely overrides three other yeses","Phenotype only affects scarring, not papilla viability"],ans:2,exp:"Phenotype is the <strong>least important</strong> because bone sounding and neighbour quality are more decisive biological factors. If all other three yeses are favourable, thick phenotype confirms safety. However, thin phenotype even with three other yeses should prompt strong consideration of preserving the papilla."},
+  {topic:"Bone Sounding",q:"Bone sounding at the mid-labial of adjacent teeth is performed to assess:",opts:["The thickness of the labial cortical plate","Whether the flap elevation will cause recession on the adjacent teeth","The depth of the gingival sulcus","Whether the adjacent tooth needs extraction"],ans:1,exp:"Mid-labial bone sounding of adjacent teeth assesses whether <strong>flap elevation will cause recession on neighbouring teeth</strong>. A result &gt;3mm means the flap will cause permanent labial recession on that tooth — the most common devastating mistake in implant surgery."},
+  {topic:"Bone Sounding",q:"What is the minimum equipment required to perform bone sounding?",opts:["CBCT and periapical radiograph","Blunt periodontal probe — but local anaesthesia is required","A sharp explorer — no anaesthesia needed","Only CBCT is required for accurate bone level assessment"],ans:1,exp:"Bone sounding requires a <strong>blunt periodontal probe with local anaesthesia</strong> — the probe must pass through the junctional epithelium and connective tissue to contact bone, which is painful without anaesthesia. Note: phenotype assessment (1mm probe in sulcus) does NOT require anaesthesia."},
+  {topic:"Neighbour Rule",q:"A patient needs an implant adjacent to an existing dental implant. What is the correct four yeses assessment for the papilla between the two implants?",opts:["Assess bone sounding first — if ≤3mm, proceed with papilla elevation","This papilla is ALWAYS a NO — the existing implant has no PDL and provides no blood supply to the papilla","Only relevant if the patient has thin phenotype","Assess neighbour quality and phenotype together"],ans:1,exp:"A papilla adjacent to an existing implant is <strong>always a NO</strong>. The existing implant has no periodontal ligament, which means no blood supply to the papilla from that side. What appears as a papilla is functionally scar tissue. Elevating it guarantees permanent loss."},
+  {topic:"Neighbour Rule",q:"What type of adjacent restoration constitutes a 'bad neighbour' for the four yeses assessment?",opts:["A well-fitting, full-coverage gold crown","A leaking crown with clinically visible marginal inflammation","A crown placed more than 5 years ago","Any ceramic crown regardless of marginal fit"],ans:1,exp:"A <strong>leaking crown with marginal inflammation</strong> = bad neighbour. Inflamed periapical or periodontal tissue in the adjacent tooth compromises the papilla's healing capacity, even if bone sounding is favourable."},
+  {topic:"Golf Club Technique",q:"Where is the vertical shaft of the Golf Club incision placed?",opts:["Over the maximum root convexity for best access","At the mid-point of the mesio-distal width of the papilla base, away from root convexity","At the gingival margin of the adjacent tooth","At the distal line angle of the adjacent tooth"],ans:1,exp:"The vertical shaft is placed at the <strong>mid-point of the mesio-distal width of the papilla base</strong>, on the flat surface between two roots. Placing it over maximum root convexity would cause mid-labial recession at the scar site."},
+  {topic:"Golf Club Technique",q:"The oblique extension (club head) of the Golf Club incision runs:",opts:["Horizontally into the attached gingiva","Vertically straight downward — a simple straight incision","Obliquely, parallel to the mesial curvature of the posterior tooth","At 90 degrees to the vertical shaft"],ans:2,exp:"The oblique extension runs <strong>parallel to the mesial curvature of the posterior tooth</strong>. This specific angle directs the incision away from the papilla's vascular supply and creates the characteristic golf club shape, leaving a ≥3mm papilla island."},
+  {topic:"Golf Club Technique",q:"What is the minimum papilla island size that must be left behind the Golf Club oblique extension?",opts:["1mm","3mm","5mm","2mm"],ans:1,exp:"A minimum <strong>3mm papilla island</strong> must remain between the oblique extension and the papilla tip. This provides adequate tissue for suturing and sufficient vascularity for the retained papilla to survive and maintain its architecture."},
+  {topic:"Incision Rules",q:"Which type of incision in attached (keratinized) gingiva is absolutely prohibited by the BAIRD scarring rules?",opts:["Vertical incisions","Oblique incisions","Horizontal incisions","All incisions in attached gingiva"],ans:2,exp:"<strong>Horizontal incisions in attached gingiva</strong> are absolutely prohibited. They produce the worst scars of all — visible step defects that persist 5–7 years. Vertical incisions in KM are acceptable following Golf Club rules."},
+  {topic:"Incision Rules",q:"A vertical incision should NOT be placed over maximum root convexity because:",opts:["It reduces visual access during surgery","Scarring at the convexity creates permanent mid-labial recession","The bone is thicker over the convexity and harder to reflect","It increases the risk of haematoma"],ans:1,exp:"Placing a vertical incision over maximum root convexity causes <strong>permanent mid-labial recession</strong> at the scar line. The incision must be placed on the flat zone between roots. Identify the convexity on CBCT or by clinical palpation before planning."},
+  {topic:"Incision Rules",q:"Why do vertical incisions in mobile mucosa scar badly?",opts:["Mobile mucosa has less blood supply","Mobile mucosa is thinner and contains more sebaceous glands","Movement of mobile mucosa during healing pulls the wound edges apart repeatedly, preventing clean primary healing","Vertical incisions in mobile mucosa always become infected"],ans:2,exp:"Mobile mucosa <strong>moves constantly during function</strong> — speaking, swallowing, lip movement. This repeated mechanical disruption prevents clean primary healing and produces prominent, wide scars. The Golf Club oblique component directs the incision away from mobile mucosa."},
+  {topic:"Remote Palatal Incision",q:"In the maxilla, a remote palatal incision is offset palatally from the mid-crest. One advantage is that if dehiscence occurs:",opts:["The opening is larger and easier to treat","The opening is on the implant — protected by the graft","The opening is flanked by keratinized mucosa on both sides, allowing rapid quality re-epithelialisation","The opening is hidden behind the palate and invisible to the patient"],ans:2,exp:"Palatal offset means any dehiscence is flanked by <strong>keratinized mucosa on both sides</strong> (palatal KM + buccal KM). This provides the ideal healing environment for rapid, quality re-epithelialisation — far superior to dehiscence over mobile alveolar mucosa."},
+  {topic:"Remote Palatal Incision",q:"In the MANDIBLE, which crestal incision position is preferred?",opts:["Remote palatal offset — same as maxilla","Mid-crestal incision — equal KM labially and lingually","Labially offset incision","Lingual offset, equivalent to the palatal offset in the maxilla"],ans:1,exp:"In the mandible, <strong>mid-crestal incision</strong> is preferred. The lingual mandible has very limited keratinized mucosa — a lingual offset would place the incision on non-keratinized mobile tissue. The maxillary palate has abundant KM allowing palatal offset; this logic does not apply to the lingual mandible."},
+  {topic:"Flap Extent",q:"For a single implant case with no GBR required, what is the recommended minimum flap extension?",opts:["Involve all teeth in the quadrant","1 unit each side of the implant site","3 units each side","Just the implant site — no extension"],ans:1,exp:"<strong>1 unit each side</strong> for a simple implant without GBR. The flap should be matched precisely to surgical needs — over-extending unnecessarily disturbs more papillae and increases soft tissue morbidity without any surgical benefit."},
+  {topic:"Flap Extent",q:"Why must flap margins rest on vital bone in a GBR case?",opts:["Vital bone is more rigid and supports sutures better","If the margin rests over membrane or graft material, any minor dehiscence exposes the graft directly to bacteria","Membranes are too smooth for sutures to hold","Vital bone margins promote better periosteal healing"],ans:1,exp:"If flap margins rest over membrane or graft material, even a minor dehiscence <strong>directly exposes the graft to oral bacteria</strong> — causing contamination, infection, and graft failure. GBR flaps must extend wide enough for margins to sit firmly over solid, vital bone margins."},
+  {topic:"Four Basic Flaps",q:"The papillary-preserving flap has a known limitation when GBR is performed within the same surgical field. This limitation is:",opts:["It creates too small a field for membrane placement","The flap cannot be sutured adequately","A step or cleft effect occurs where the central elevated tissue meets the preserved papillae at a different height","It requires a second incision to close adequately"],ans:2,exp:"When GBR is performed with a papillary-preserving flap, the central flap is elevated over the graft/membrane while the papillae are preserved at a lower level. The junction creates a <strong>step or cleft scar effect</strong>. For large GBR, a flap design that elevates all tissue uniformly is preferred."},
+  {topic:"Four Yeses System",scenario:"Bone sounding findings: mesial papilla 2.5mm, distal papilla 4.2mm. Adjacent teeth: both natural, healthy crowns. Phenotype: thick. Smile line: high.",q:"What is the correct flap design decision?",opts:["Elevate both papillae — thick phenotype and healthy neighbours override the distal bone sounding","Preserve both papillae — both sides are too risky","Elevate the mesial papilla (YES), preserve the distal papilla (NO from bone sounding) — asymmetric flap","Perform flapless surgery — no papillae to be disturbed"],ans:2,exp:"<strong>Asymmetric flap design.</strong> Mesial papilla: bone sounding 2.5mm ≤3mm + healthy neighbour + thick phenotype = four yeses → elevate. Distal papilla: bone sounding 4.2mm &gt;3mm = NO regardless of other factors → preserve. Biology determines each papilla individually."},
+  {topic:"Incision Rules",q:"'Vertical lines heal better than curved ones' is the rationale for which aspect of the Golf Club design?",opts:["Using a curved incision at the papilla base","Transitioning to an oblique (straighter) line at the MGJ rather than continuing with a curved vertical","Placing the incision parallel to muscle fibres","Using a wider flap base for better blood supply"],ans:1,exp:"<strong>Transitioning to an oblique line at the MGJ</strong> rather than continuing with a curved vertical line is supported by the principle that vertical/straighter lines heal better than curved ones. This is why the Golf Club has the characteristic angled transition rather than a smooth continuous curve."},
+  {topic:"Phenotype and Flaps",q:"A thin phenotype patient needs an implant with GBR. You determine that all four yeses are met for both papillae. What additional consideration applies?",opts:["None — four yeses is sufficient; proceed with envelope flap","Even with four yeses, thin phenotype is a flag — carefully consider papillary-preserving as additional risk mitigation, especially in the aesthetic zone","Thin phenotype cases require three-sided flaps regardless of four yeses","Thin phenotype = flapless surgery always"],ans:1,exp:"Even when four yeses are technically met, <strong>thin phenotype in the aesthetic zone warrants careful reconsideration</strong> of whether papillary-preserving design is more appropriate. The four yeses give permission to elevate; good clinical judgment weighs the cumulative risk."},
+  {topic:"Remote Palatal Incision",q:"When placing a healing abutment at high torque (≥25Ncm) with a remote palatal incision, which additional soft tissue benefit may occur?",opts:["Immediate keratinization of the buccal mucosa","The abutment physically pushes palatal keratinized mucosa buccally — a natural FGG effect","The high torque stimulates collagen formation","This has no soft tissue effect"],ans:1,exp:"A long healing abutment at ≥25Ncm <strong>pushes palatal keratinized mucosa buccally</strong> — effectively acting as a natural free gingival graft. This can potentially eliminate the need for a separate FGG in some cases."},
+  {topic:"Three Questions Framework",q:"For a single implant in an aesthetic zone — same answer for Question 1 (preserve mesial papilla due to poor bone sounding) but GBR is required. How does this affect Question 2 (flap extent)?",opts:["Less GBR access needed — keep the flap small","GBR requires the flap to extend 2 units each side — maintain this even with the papilla-preserving design on the mesial side","The GBR cannot be performed if papilla is preserved","GBR extent does not affect flap design decisions"],ans:1,exp:"<strong>GBR always requires ≥2 units each side</strong> for adequate access and to ensure flap margins rest on vital bone. This applies regardless of whether one or both papillae are preserved. The flap design (papillary-preserving mesially) and the flap extent (2 units) are answered separately."},
+  {topic:"Bone Sounding",scenario:"You have a new patient with a missing upper lateral incisor. Adjacent teeth: healthy central (natural) and healthy canine (natural). You bone sound: mesial papilla (between central and lateral space) 2mm. Before bone sounding the distal side, what else must you also measure?",q:"Which additional bone sounding is essential before finalising the flap design?",opts:["Labial bone plate of the planned implant site only","Mid-labial of the central incisor AND mid-labial of the canine","Only the distal papilla base (between lateral space and canine)","CBCT is sufficient — clinical bone sounding not needed"],ans:1,exp:"<strong>Mid-labial bone sounding of ALL adjacent natural teeth</strong> is required — both the central incisor and the canine. This determines whether flap elevation will cause recession on either neighbouring tooth. It is the most commonly omitted assessment and the source of the most damaging unintended outcomes."},
+  {topic:"Four Basic Flaps",q:"The two-sided flap's relieving incision is placed posteriorly (rather than anteriorly) only when:",opts:["The surgeon is left-handed","The patient has a high smile line where an anterior scar would be visible in the smile","The GBR requires posterior extension","The implant is in the posterior region"],ans:1,exp:"The relieving incision is placed posteriorly only when <strong>aesthetics explicitly demand it</strong> — specifically in the aesthetic zone where a high smile line would make an anterior scar visible. The default is anterior (better access, easier suturing)."},
+  {topic:"Golf Club Technique",scenario:"You are planning a papillary-preserving flap. The vertical shaft is correctly placed. You are now extending the oblique component.",q:"The oblique extension must run parallel to:",opts:["The buccal surface of the crown","The distal curvature of the anterior tooth","The mesial curvature of the posterior tooth","The long axis of the implant"],ans:2,exp:"The oblique extension runs <strong>parallel to the mesial curvature of the posterior tooth</strong>. This specific orientation creates the classic golf club shape and directs the incision away from the papilla's blood supply while leaving a ≥3mm papilla island."},
+  {topic:"Four Yeses System",q:"After applying the Four Yeses System to both papillae of a planned implant site, you find: mesial = four yeses, distal = three yeses (phenotype is thin). What is the correct approach?",opts:["Proceed with envelope flap — three yeses is sufficient","Preserve the distal papilla — thin phenotype with three yeses is borderline, and the aesthetic zone warrants caution; asymmetric design","Both papillae must have four yeses or both must be preserved — mixed designs are not allowed","Perform FGG before surgery to convert thin to thick phenotype"],ans:1,exp:"<strong>Preserve the distal papilla.</strong> Three yeses with thin phenotype in an aesthetic zone is borderline. The fourth yes (phenotype) failing is a strong signal to preserve — particularly given the permanent consequences of wrong papilla handling. An asymmetric design with mesial elevation and distal preservation is the safe and correct clinical choice."}
+];
+
+let qIdx=0,score=0;
+const answers=[];
+const topicStats={};
+
+function startQuiz(){document.getElementById('start').style.display='none';document.getElementById('quiz').style.display='block';renderQ();}
+
+function renderQ(){
+  const q=Qs[qIdx];const L=['A','B','C','D'];
+  document.getElementById('pglbl').textContent=`Question ${qIdx+1} of ${Qs.length}`;
+  document.getElementById('pgtop').textContent=q.topic;
+  document.getElementById('pgfill').style.width=(qIdx/Qs.length*100)+'%';
+  let h=`<div class="qcard"><div class="qtop"><span class="qnum">Q${qIdx+1}/${Qs.length}</span><span class="qbdg">${q.topic}</span></div>`;
+  if(q.scenario)h+=`<div class="qsc"><div class="qslbl">Clinical Scenario</div><div class="qstxt">${q.scenario}</div></div>`;
+  h+=`<div class="qtxt">${q.q}</div><div class="opts" role="radiogroup" aria-label="Answer options">${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})" id="o${i}" role="radio" aria-checked="false"><span class="ol">${L[i]}</span><span class="ot">${o}</span></button>`).join('')}</div>
+  <div class="fb" id="fb" role="alert"></div>
+  <div class="qfoot"><div class="slv">Score: <span id="ls">${score}</span>/${qIdx}</div><button class="bnxt" id="bnxt" onclick="nextQ()">${qIdx<Qs.length-1?'Next Question →':'Finish &amp; See Results →'}</button></div></div>`;
+  document.getElementById('qwrap').innerHTML=h;
+}
+
+function pick(i){
+  const opts=document.querySelectorAll('.opt');
+  if([...opts].some(o=>o.classList.contains('lk')))return;
+  const q=Qs[qIdx];const ok=i===q.ans;
+  opts.forEach(o=>o.classList.add('lk'));
+  opts[i].classList.add('sel',ok?'correct':'wrong');
+  if(!ok){opts[q.ans].classList.add('correct');opts[i].classList.add('shake');}
+  else{opts[i].classList.add('pulse');score++;document.getElementById('ls').textContent=score;}
+  const fb=document.getElementById('fb');
+  fb.className=`fb show ${ok?'fc':'fw'}`;
+  fb.innerHTML=`<div class="fbh"><span class="fbi">${ok?'✓':'✗'}</span><span class="fbl">${ok?'Correct':'Incorrect'}</span></div><div class="fbe">${q.exp}</div>`;
+  answers.push({correct:ok,qIdx});
+  if(!topicStats[q.topic])topicStats[q.topic]={c:0,t:0};
+  topicStats[q.topic].t++;
+  if(ok)topicStats[q.topic].c++;
+  document.getElementById('bnxt').classList.add('show');
+}
+
+function nextQ(){if(qIdx<Qs.length-1){qIdx++;renderQ();}else showResults();}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  const r=document.getElementById('results');r.style.display='block';
+  const pct=Math.round(score/Qs.length*100);
+  const deg=Math.round(score/Qs.length*360);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('rvc').textContent=score;
+  document.getElementById('rvw').textContent=Qs.length-score;
+  document.getElementById('rring').style.background=`conic-gradient(var(--accent) ${deg}deg, var(--border) ${deg}deg)`;
+  document.getElementById('cbanner').style.display='block';
+  let grade,gc,msg;
+  if(pct>=85){grade='DISTINCTION';gc='dist';msg='Outstanding mastery of flap design and surgical decision-making. You are ready to apply these principles clinically with confidence.';}
+  else if(pct>=70){grade='MERIT';gc='merit';msg='Solid understanding of the framework. Review the topics below scoring under 70% — particularly the four yeses and Golf Club technique — before clinical application.';}
+  else if(pct>=60){grade='PASS';gc='pass';msg='Passing standard achieved. Revisit Lecture 3 to consolidate the areas showing gaps. The four yeses system is non-negotiable in clinical practice.';}
+  else{grade='NEEDS REVIEW';gc='fail';msg='Review Lecture 3 thoroughly before retaking. Focus on bone sounding thresholds, the neighbour rule, Golf Club anatomy, and all six scarring rules.';}
+  document.getElementById('gbdg').textContent=grade;
+  document.getElementById('gbdg').className='gbdg '+gc;
+  document.getElementById('rmsg').textContent=msg;
+  const tbr=document.getElementById('tbrows');tbr.innerHTML='';
+  Object.entries(topicStats).forEach(([t,s])=>{const p=Math.round(s.c/s.t*100);const col=p>=70?'var(--green)':p>=50?'var(--yellow)':'var(--red)';tbr.innerHTML+=`<div class="tbrow"><div class="tblbl">${t}</div><div class="tbbar"><div class="tbfill" style="width:${p}%;background:${col}"></div></div><div class="tbsc">${s.c}/${s.t}</div></div>`;});
+  if(answers.every(a=>a.correct))document.getElementById('rvbtn').style.display='none';
+}
+
+function showReview(){
+  document.getElementById('results').style.display='none';
+  const rv=document.getElementById('review');rv.style.display='block';
+  const L=['A','B','C','D'];const items=document.getElementById('rvitems');items.innerHTML='';
+  answers.forEach(a=>{const q=Qs[a.qIdx];const cls=a.correct?'rr':'rw';const bdg=a.correct?'<span class="rvbdg correct">✓ Correct</span>':'<span class="rvbdg wrong">✗ Incorrect</span>';items.innerHTML+=`<div class="rvitem ${cls}"><div class="rvmeta">${bdg}<span style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace">${q.topic}</span></div><div class="rvq">${a.qIdx+1}. ${q.q}</div><div class="rva">Correct: <span>${L[q.ans]}. ${q.opts[q.ans]}</span></div><div class="rvexp">${q.exp}</div></div>`;});
+  window.scrollTo(0,0);
+}
+
+function backToRes(){document.getElementById('review').style.display='none';document.getElementById('results').style.display='block';window.scrollTo(0,0);}
+</script>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE PROGRESS SYSTEM  (identical block in all 6 files)
+     Stores progress in localStorage under one shared key so the
+     3 lectures + 3 quizzes behave as a single connected course:
+       · ✓ ticks and quiz best-scores in the top course nav
+       · a 6-segment course completion meter in the nav bar
+       · lectures remember your furthest slide ("Resume")
+       · quizzes remember best score, attempts and pass status
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+
+/* ── 1 · Page identity (edited per file) ─────────────────────── */
+var CP_PAGE = 'q3';        // key for THIS file: l1/l2/l3/q1/q2/q3
+var CP_PASS = 60;              // pass mark (%) — matches quiz grading
+
+/* ── 2 · Storage helpers ─────────────────────────────────────── */
+var KEY = 'bairdM2D2Progress';
+function cpLoad(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function cpSave(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+
+/* ── 3 · Injected styles (nav ticks, chips, meter, resume btn) ─ */
+var st = document.createElement('style');
+st.textContent =
+  '.cp-tick{color:var(--green);margin-left:4px;font-size:10px;font-weight:700}' +
+  '.cp-chip{font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gold);margin-left:5px;opacity:.9}' +
+  '.cp-meter{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;padding-left:10px}' +
+  '.cp-meter-lbl{font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;white-space:nowrap}' +
+  '.cp-segs{display:flex;gap:3px}' +
+  '.cp-seg{width:13px;height:4px;border-radius:2px;background:var(--border);transition:background .3s}' +
+  '.cp-seg.done{background:linear-gradient(90deg,var(--accent),var(--gold))}' +
+  '.cp-resume{font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold);padding:10px 28px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}' +
+  '.cp-resume:hover{background:rgba(201,168,76,.22);box-shadow:0 0 20px rgba(201,168,76,.18)}' +
+  '.cp-note{font-family:JetBrains Mono,monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-top:14px}' +
+  '.cp-note .ok{color:var(--green)}.cp-note .gold{color:var(--gold)}' +
+  '.cp-best-line{font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text2);letter-spacing:.06em;margin:0 auto 18px;max-width:500px}' +
+  '.cp-best-line .gold{color:var(--gold)}.cp-best-line .ok{color:var(--green)}' +
+  '@media(max-width:768px){.cp-meter-lbl{display:none}.cp-seg{width:9px}}';
+document.head.appendChild(st);
+
+/* ── 4 · Decorate the course nav (ticks, best scores, meter) ─── */
+var ORDER = ['l1','q1','l2','q2','l3','q3'];   // course sequence
+var HREF  = { 'lecture-1.html':'l1','lecture-2.html':'l2','lecture-3.html':'l3',
+              'quiz-1.html':'q1','quiz-2.html':'q2','quiz-3.html':'q3' };
+
+function decorateNav(){
+  var p = cpLoad();
+  var nav = document.getElementById('course-nav') || document.getElementById('cnav');
+  if(!nav) return;
+
+  /* ticks + score chips on each pill */
+  nav.querySelectorAll('a').forEach(function(a){
+    var k = HREF[a.getAttribute('href')]; if(!k) return;
+    a.querySelectorAll('.cp-tick,.cp-chip').forEach(function(n){ n.remove(); });
+    var d = p[k]; if(!d) return;
+    if(k.charAt(0)==='q' && typeof d.best === 'number'){
+      var chip = document.createElement('span');
+      chip.className = 'cp-chip'; chip.textContent = d.best + '%';
+      a.appendChild(chip);
+    }
+    if(d.done){
+      var t = document.createElement('span');
+      t.className = 'cp-tick'; t.textContent = '✓';
+      t.setAttribute('aria-label','completed');
+      a.appendChild(t);
+    }
+  });
+
+  /* 6-segment completion meter, right-aligned in the nav */
+  var meter = nav.querySelector('.cp-meter');
+  if(!meter){
+    meter = document.createElement('div');
+    meter.className = 'cp-meter';
+    meter.innerHTML = '<span class="cp-meter-lbl"></span><div class="cp-segs"></div>';
+    nav.appendChild(meter);
+  }
+  var doneN = ORDER.filter(function(k){ return p[k] && p[k].done; }).length;
+  meter.querySelector('.cp-meter-lbl').textContent = 'Course ' + doneN + '/6';
+  meter.setAttribute('role','img');
+  meter.setAttribute('aria-label','Course progress: ' + doneN + ' of 6 parts complete');
+  var segs = meter.querySelector('.cp-segs'); segs.innerHTML = '';
+  ORDER.forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'cp-seg' + (p[k] && p[k].done ? ' done' : '');
+    segs.appendChild(s);
+  });
+}
+decorateNav();
+
+/* ── 5 · QUIZ HOOKS ──────────────────────────────────────────── */
+
+/* Shuffle answer positions once per attempt. The original question
+   bank had ~78% of correct answers at option B, so the quiz could be
+   passed by pattern-guessing. Shuffling each question's options (and
+   remapping its correct index) removes that bias without changing a
+   single word of content. Runs before the first renderQ() call.     */
+Qs.forEach(function(q){
+  var order = q.opts.map(function(_, i){ return i; });
+  for(var i = order.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = order[i]; order[i] = order[j]; order[j] = t;
+  }
+  q.opts = order.map(function(i){ return q.opts[i]; });
+  q.ans  = order.indexOf(q.ans);
+});
+
+/* record an attempt when results are shown; keep the best score.
+   `score` and `Qs` are top-level bindings from the quiz engine
+   above, visible from this later script block.                    */
+if(typeof window.showResults === 'function'){
+  var _showResults = window.showResults;
+  window.showResults = function(){
+    _showResults();
+    var pct = Math.round(score / Qs.length * 100);
+    var p = cpLoad();
+    var d = p[CP_PAGE] || {};
+    d.attempts = (d.attempts || 0) + 1;
+    var newBest = (typeof d.best !== 'number') || pct > d.best;
+    d.best = newBest ? pct : d.best;
+    if(pct >= CP_PASS) d.done = true;
+    p[CP_PAGE] = d; cpSave(p);
+    decorateNav();
+
+    /* personal best / attempts line under the grade message */
+    var anchor = document.getElementById('res-msg') || document.getElementById('rmsg');
+    if(anchor){
+      var line = document.createElement('p');
+      line.className = 'cp-best-line';
+      line.innerHTML =
+        (newBest && d.attempts > 1 ? '<span class="ok">★ New personal best!</span> &nbsp;' : '') +
+        'Personal best: <span class="gold">' + d.best + '%</span> · ' +
+        d.attempts + (d.attempts === 1 ? ' attempt' : ' attempts');
+      anchor.insertAdjacentElement('afterend', line);
+    }
+
+    /* Quiz 3 only: reveal the "Module 2 Complete" banner once all
+       three quizzes have been passed                              */
+    var banner = document.getElementById('cbanner');
+    if(banner){
+      var allDone = ['q1','q2','q3'].every(function(k){ return p[k] && p[k].done; });
+      banner.style.display = allDone ? 'block' : 'none';
+    }
+  };
+}
+
+/* mirror selection state for screen readers when an option is picked */
+if(typeof window.pick === 'function'){
+  var _pick = window.pick;
+  window.pick = function(i){
+    _pick(i);
+    var o = document.getElementById('opt-' + i) || document.getElementById('o' + i);
+    if(o) o.setAttribute('aria-checked', 'true');
+  };
+}
+
+/* keyboard answering: 1–4 / A–D select an option, Enter or → for next */
+document.addEventListener('keydown', function(e){
+  if(e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  var k = (e.key || '').toLowerCase();
+  var i = '1234'.indexOf(k); if(i < 0) i = 'abcd'.indexOf(k);
+  if(i > -1){
+    var opts = document.querySelectorAll('.opt');
+    if(opts.length && opts[i] &&
+       !opts[0].classList.contains('locked') && !opts[0].classList.contains('lk')){
+      e.preventDefault(); opts[i].click(); return;
+    }
+  }
+  if(k === 'enter' || k === 'arrowright'){
+    var nb = document.querySelector('.btn-next.show, .bnxt.show');
+    if(nb){ e.preventDefault(); nb.click(); }
+  }
+});
+
+/* show previous best + keyboard hint on the start screen */
+(function(){
+  var startBtn = document.querySelector('#start button');
+  if(!startBtn) return;
+  var p = cpLoad(); var d = p[CP_PAGE];
+  var note = document.createElement('div');
+  note.className = 'cp-note';
+  var bits = [];
+  if(d && typeof d.best === 'number'){
+    bits.push('Personal best: <span class="gold">' + d.best + '%</span> · ' +
+              (d.attempts || 1) + (d.attempts === 1 ? ' attempt' : ' attempts') +
+              (d.done ? ' <span class="ok">· passed ✓</span>' : ''));
+  }
+  bits.push('Keyboard: 1–4 or A–D to answer · Enter for next question');
+  note.innerHTML = bits.join('<br>');
+  startBtn.insertAdjacentElement('afterend', note);
+})();
+
+})();
+</script>
+</body>
+</html>

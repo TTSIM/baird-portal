@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 01 — Bone Grafting | Baird Implant Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b12;--surface:#0d1220;--surface2:#121929;--teal:#00b4d8;--gold:#d4a94a;--text:#e2e8f0;--muted:#718096;--subtle:#1e2840;--green:#48bb78;--orange:#fb923c;--r:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(13,18,32,.95);border-bottom:1px solid var(--subtle);position:sticky;top:0;z-index:10;}
+.back-btn{font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--subtle);padding:5px 12px;border-radius:4px;}
+.back-btn:hover{color:var(--teal);}
+.quiz-badge{font-size:.68rem;background:rgba(0,180,216,.12);color:var(--teal);border:1px solid rgba(0,180,216,.3);padding:4px 10px;border-radius:12px;}
+.prog-text{font-size:.8rem;color:var(--muted);}
+.prog-text span{color:var(--teal);font-weight:600;}
+.progress-track{height:3px;background:var(--subtle);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s ease;}
+main{flex:1;max-width:720px;margin:0 auto;padding:36px 24px;width:100%;}
+.screen{display:none;}
+.screen.active{display:block;}
+/* Start screen */
+.start-hero{text-align:center;padding:40px 0;}
+.start-hero h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;margin-bottom:12px;}
+.start-hero h1 em{color:var(--teal);font-style:italic;}
+.start-hero p{color:var(--muted);font-size:1rem;line-height:1.7;max-width:460px;margin:0 auto 28px;}
+.meta-grid{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
+.meta-item{text-align:center;}.meta-num{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--teal);}
+.meta-lbl{font-size:.72rem;color:var(--muted);letter-spacing:.08em;}
+.start-btn{background:rgba(0,180,216,.15);color:var(--teal);border:1px solid rgba(0,180,216,.3);padding:14px 36px;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+.start-btn:hover{background:rgba(0,180,216,.25);}
+/* Question screen */
+.q-tag{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;line-height:1.35;margin-bottom:24px;color:var(--text);}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.opt{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 18px;cursor:pointer;font-size:.9rem;color:var(--text);transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif;display:flex;align-items:flex-start;gap:12px;}
+.opt:hover:not(:disabled){background:rgba(0,180,216,.06);border-color:rgba(0,180,216,.3);}
+.opt-letter{width:22px;height:22px;border-radius:50%;background:var(--surface2);border:1px solid var(--subtle);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;}
+.opt.correct{background:rgba(72,187,120,.1);border-color:rgba(72,187,120,.4);}
+.opt.correct .opt-letter{background:var(--green);color:#000;border-color:var(--green);}
+.opt.wrong{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);}
+.opt.wrong .opt-letter{background:var(--orange);color:#000;border-color:var(--orange);}
+.opt.reveal{background:rgba(72,187,120,.06);border-color:rgba(72,187,120,.2);}
+.opt:disabled{cursor:not-allowed;}
+.explanation{background:rgba(0,180,216,.08);border:1px solid rgba(0,180,216,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;display:none;}
+.explanation.show{display:block;}
+.explanation p{font-size:.88rem;color:var(--text);line-height:1.6;}
+.explanation p strong{color:var(--teal);}
+.next-btn{background:rgba(0,180,216,.15);color:var(--teal);border:1px solid rgba(0,180,216,.3);padding:11px 28px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;display:none;}
+.next-btn.show{display:inline-block;}
+.next-btn:hover{background:rgba(0,180,216,.25);}
+.score-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;}
+.score-dot{width:18px;height:18px;border-radius:50%;background:var(--subtle);transition:background .3s;}
+.score-dot.correct{background:var(--green);}
+.score-dot.wrong{background:var(--orange);}
+/* Results */
+.results{text-align:center;padding:40px 0;}
+.score-big{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;line-height:1;}
+.score-big span{color:var(--teal);}
+.grade{font-size:1.1rem;margin:8px 0 20px;color:var(--muted);}
+.review-list{text-align:left;margin:24px 0;}
+.review-item{background:var(--surface);border:1px solid var(--subtle);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;}
+.review-item.wr{border-color:rgba(251,146,60,.3);}
+.review-item.co{border-color:rgba(72,187,120,.3);}
+.review-q{font-size:.88rem;color:var(--text);margin-bottom:5px;}
+.review-a{font-size:.82rem;color:var(--muted);}
+.review-a span.cr{color:var(--green);}
+.review-a span.wr{color:var(--orange);}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+.res-btn{padding:11px 24px;border-radius:6px;font-size:.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;}
+.res-btn.primary{background:rgba(0,180,216,.15);color:var(--teal);border:1px solid rgba(0,180,216,.3);}
+.res-btn.secondary{background:transparent;color:var(--muted);border:1px solid var(--subtle);}
+.res-btn:hover{filter:brightness(1.15);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="back-btn">← Back</a>
+  <span class="quiz-badge">Quiz 01 — Bone Grafting</span>
+  <span class="prog-text">Q <span id="qNum">0</span> / 30</span>
+</nav>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<main>
+
+<div class="screen active" id="startScreen">
+  <div class="start-hero">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Assessment Quiz</div>
+    <h1>Bone Grafting &<br><em>Augmentation</em></h1>
+    <p>Test your knowledge of intelligent bone grafting, augmentation techniques, materials and clinical decision-making from Lecture 01.</p>
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-num">30</div><div class="meta-lbl">Questions</div></div>
+      <div class="meta-item"><div class="meta-num">MCQ</div><div class="meta-lbl">Format</div></div>
+      <div class="meta-item"><div class="meta-num">∞</div><div class="meta-lbl">Attempts</div></div>
+    </div>
+    <div id="resumeNotice" style="display:none;margin-bottom:16px;padding:10px 20px;background:rgba(72,187,120,.08);border:1px solid rgba(72,187,120,.2);border-radius:var(--r);font-size:.82rem;color:var(--green);">Saved progress found — resuming from where you left off.</div>
+    <button class="start-btn" onclick="startQuiz()">Begin Quiz →</button>
+  </div>
+</div>
+
+<div class="screen" id="quizScreen">
+  <div class="score-bar" id="scoreDots"></div>
+  <div class="q-tag" id="qTag">Question 1 of 30</div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="optionsContainer"></div>
+  <div class="explanation" id="explanation"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<div class="screen" id="resultsScreen">
+  <div class="results">
+    <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Quiz Complete</div>
+    <div class="score-big"><span id="scoreNum">0</span><span style="font-size:2rem;color:var(--muted);">/30</span></div>
+    <div class="grade" id="gradeText"></div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="results-btns">
+      <button class="res-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="lecture_01_bone_grafting.html" class="res-btn secondary" style="text-decoration:none;display:inline-flex;align-items:center;">Review Lecture 01</a>
+      <a href="quiz_02_gbr_socket_grafting.html" class="res-btn primary" style="text-decoration:none;display:inline-flex;align-items:center;">Next Quiz →</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+const KEY = 'baird_quiz1';
+const questions = [
+  {q:"What term does the lecturer use to describe modern minimally invasive bone grafting?",opts:["Evidence-based grafting","Intelligent bone grafting","Digital bone grafting","Staged bone grafting"],ans:1,exp:"The lecturer specifically coins the term <strong>Intelligent Bone Grafting</strong> to describe the philosophy of choosing the least invasive technique that still delivers optimal biological outcomes."},
+  {q:"What is the primary advantage of allograft blocks over autogenous blocks?",opts:["Better biological integration","No second surgical site — eliminates donor trauma","Cheaper material cost","Faster osseointegration"],ans:1,exp:"The key advantage is <strong>eliminating the second surgical site</strong> — no harvesting means no black eyes, no morphine, no donor-site trauma. The biology is slightly less ideal but the patient experience is dramatically better."},
+  {q:"How long does placement of a CAD-CAM bone block take compared to traditional block shaping?",opts:["30 minutes vs 45 minutes","45 seconds vs 45 minutes","15 minutes vs 1 hour","5 minutes vs 30 minutes"],ans:1,exp:"CAD-CAM block placement takes approximately <strong>45 seconds</strong> vs the <strong>45 minutes</strong> traditionally required for harvesting, shaping, and adapting an autogenous or standard allograft block."},
+  {q:"Where is the human tissue bank that supplies CAD-CAM customised bone blocks located?",opts:["Germany","United Kingdom","Austria","Switzerland"],ans:2,exp:"The human tissue bank that mills patient-specific CAD-CAM blocks is located in <strong>Austria</strong> (referenced as 'Botiss' tissue bank). The CBCT is sent there and the custom block is mailed back."},
+  {q:"What percentage of GBR failure is attributed to poor flap management and suturing?",opts:["20%","30%","40%","50%"],ans:2,exp:"The lecturer states that up to <strong>40% of GBR failure</strong> is attributable to wrong flap suturing and management — not the graft material. This is why CAD-CAM blocks free the surgeon's time to focus on flap closure."},
+  {q:"What is the Sausage Technique?",opts:["A technique using sausage-shaped CAD-CAM blocks","A membrane tent with bone particles underneath, resembling a sausage shape","A technique using porcine-derived collagen","A bone harvesting technique from the mandibular symphysis"],ans:1,exp:"The Sausage Technique uses a <strong>non-resorbable membrane as a tent</strong> with bone particles packed underneath. The resulting shape resembles a sausage. It offers better vascularisation than blocks but less volume stability."},
+  {q:"What is the current recommended ratio of autogenous to xenograft in the Sausage Technique for implant sites?",opts:["50% autogenous / 50% cerabone","70% autogenous / 30% cerabone","60% autogenous / 40% cerabone","80% autogenous / 20% cerabone"],ans:2,exp:"The current recommendation is <strong>60% autogenous / 40% cerabone</strong>. Previously it was 50/50, but research shows we don't need as much xenograft for stability, and more autogenous is preferred when implants are planned."},
+  {q:"What is the gelatinous layer found beneath PTFE membranes on removal?",opts:["Periosteal reaction / body's rejection response","Granulation tissue from infection","Osteoid (unmineralised bone)","Fibrin clot remnants"],ans:0,exp:"The shiny gelatinous layer found under PTFE membranes on removal is described as a <strong>periosteal reaction / rejection/separation response</strong> — the body's way of defending its bone from the non-resorbable membrane. Attempting to remove it may strip the bone underneath."},
+  {q:"What happens to bone quality underneath a PTFE membrane?",opts:["It becomes denser and more cortical","It becomes very soft and poorly mineralised","It remodels normally","It ossifies rapidly and becomes hard to drill"],ans:1,exp:"Under PTFE membranes, bone quality is characteristically <strong>very poor and soft</strong> — 'like drilling in a battery.' This is one of the main reasons PTFE has been largely superseded by magnesium membranes in modern practice."},
+  {q:"Who developed the Cortical Plate technique (also known as the Khoury Plate)?",opts:["Hassan (course director)","Marco Esposito","Fouad Khoury","Joseph Kahn"],ans:2,exp:"The cortical plate technique is named after <strong>Fouad Khoury</strong>, a Lebanese surgeon who spent his career in Germany. He made the technique famous through his own academy and teaching. The technique uses a thin cortical plate to create a box filled with autogenous bone."},
+  {q:"What are magnesium membranes broken down into after resorption?",opts:["Calcium phosphate","Hydroxyapatite","Magnesium salts","Collagen fragments"],ans:2,exp:"Magnesium membranes resorb into <strong>magnesium salts (Mg²⁺)</strong>. These salts actively strengthen the bone underneath, producing dense cortical bone rather than the gelatinous layer seen with PTFE."},
+  {q:"What property does a magnesium membrane's exposure to air create?",opts:["Acidic environment that kills bacteria","Alkaline environment that is bacteriostatic","Neutral pH environment","Hydrogen-depleted environment"],ans:1,exp:"When a magnesium membrane is exposed to air, the interaction with oxygen molecules increases pH, creating an <strong>alkaline environment</strong>. This is bacteriostatic — the opposite of the acidic biofilm environment seen with PTFE exposure."},
+  {q:"What is the approximate material cost of a CAD-CAM bone block from the human tissue bank?",opts:["£300","£600","£1,200","£2,400"],ans:2,exp:"A patient-specific CAD-CAM bone block from the tissue bank costs approximately <strong>£1,200</strong>. This is justified by the time saved (avoiding 45 minutes of block harvesting) and the dramatically improved patient experience. The surgeon charges £3,600 per hour of surgical time."},
+  {q:"How many fixation screws are typically needed for a magnesium membrane compared to a Khoury cortical plate?",opts:["Same number — 2 for both","2 for magnesium vs up to 8 for Khoury plate","4 for magnesium vs 2 for Khoury plate","1 for magnesium vs 4 for Khoury plate"],ans:1,exp:"The magnesium membrane requires only <strong>2 screws</strong> (one on each side) because it is solid and rigid. The Khoury cortical plate is fragile and may require <strong>up to 8 fixation screws</strong> because it is prone to cracking."},
+  {q:"Why does the lecturer prefer non-resorbable membranes for the Sausage Technique?",opts:["They are cheaper","They are more biocompatible","Bone particles need more time than collagen membranes last","They are easier to handle"],ans:2,exp:"Collagen membranes resorb in 12–16 weeks. This is fine for autogenous bone, but when using xenograft or mixed materials, <strong>longer protection is needed</strong>. Non-resorbable or slow-resorbing membranes (including magnesium) provide this."},
+  {q:"What is the main disadvantage of the Sausage Technique compared to bone block augmentation?",opts:["Higher infection risk","More expensive","Greater volume loss (particles shrink more than blocks)","More difficult technique"],ans:2,exp:"The main disadvantage of the Sausage Technique is <strong>greater volume loss</strong>. Because it uses particulate material rather than a solid block, there is more shrinkage and compression over time. You must account for this when planning."},
+  {q:"In the case of Charles (72), how much initial bone was present at the grafting site?",opts:["1mm","2mm","4mm","5mm"],ans:1,exp:"Charles presented with only <strong>2mm of bone</strong> in the target area on CBCT. Five months after CAD-CAM block augmentation, the central measurement was 7.5mm — representing more than a 3-fold increase."},
+  {q:"What type of incision did the surgeon use for vertical/horizontal augmentation in Charles' case to minimise tension?",opts:["Mid-crestal incision","Paramarginal incision","Vestibular flap (tension in vestibule, not crest)","Envelope flap"],ans:2,exp:"A <strong>vestibular flap</strong> was used, which places the flap tension in the vestibule rather than at the crest. This reduces the risk of dehiscence over the graft at the most critical location."},
+  {q:"How long after CAD-CAM block placement did follow-up CBCT confirm integration in Charles' case?",opts:["3 months","4 months","5 months","6 months"],ans:2,exp:"The follow-up CBCT was taken at <strong>5 months</strong>, showing nicely integrated bone (2mm → 7.5mm centrally). The surgeon then waited one more month before re-entering to place the implants."},
+  {q:"What additional procedure was described to slow down resorption of the pure cancellous CAD-CAM block?",opts:["BMP application","Platelet-rich fibrin membrane","Adjacent collagen membrane (e.g. Jason membrane)","Autogenous particulate overlay"],ans:2,exp:"Because CAD-CAM blocks are made of pure cancellous bone, an <strong>adjacent membrane (Jason membrane)</strong> was placed on top to slow down resorption and maintain volume during integration."},
+  {q:"What was Charles's chief complaint that motivated seeking implant treatment?",opts:["Aesthetic dissatisfaction","Unable to eat for the last 20 years","Recurring infection","Denture instability"],ans:1,exp:"Charles stated at the 2024 review (age 77): <strong>'I can eat apples for the first time in 20 years'</strong>. His primary motivation was functional — the inability to eat properly for two decades. This underscores the life-changing impact of successful implant rehabilitation."},
+  {q:"What does Botiss's Cerabone+ contain in addition to standard cerabone?",opts:["Platelet-derived growth factor","Collagen fibres","Hyaluronic acid","Bone morphogenetic protein"],ans:2,exp:"Cerabone+ is cerabone with added <strong>hyaluronic acid (HA)</strong>. This makes it sticky and mouldable — 'chewing gum consistency' — which improves handling significantly, especially for socket grafting where small sausage shapes need to be formed."},
+  {q:"In the Sausage Technique using a titanium mesh, what is a significant complication?",opts:["Block rejection","Perforation and difficult removal","Allergic reaction","Nerve damage"],ans:1,exp:"Titanium mesh has a high rate of <strong>perforation and difficult removal</strong>. While pre-milled titanium frames are now available, the complications of mesh exposure and removal led to the development of magnesium membranes as an alternative."},
+  {q:"What study finding supports membrane fixation in GBR?",opts:["Fixation makes no difference to bone volume","Group with apical + coronal fixation had best outcomes","PTFE membranes outperformed magnesium","Collagen membranes outperformed PTFE"],ans:1,exp:"The Chinese study (published 2004–2024) showed that the group using <strong>apical and coronal pin fixation</strong> had the best GBR outcomes. No fixation produced the worst results. CBCT taken at Day 1 and Day 180 confirmed this."},
+  {q:"What is meant by 'Stage 1 grafting' taking the patient from -10 to 0?",opts:["A grading system for bone quality","The goal of creating adequate bone for implant placement, not perfection","The number of surgery stages involved","The healing time in months"],ans:1,exp:"'Taking from -10 to 0' means Stage 1 grafting aims to create <strong>sufficient bone volume and quality for implant placement</strong>. It is not about perfection. Ridge contouring and any additional GBR at implant placement are separate subsequent steps."},
+  {q:"What is the approximate time saving when using CAD-CAM blocks vs traditional allograft block placement?",opts:["10 minutes","20 minutes","40–45 minutes","1 hour"],ans:2,exp:"Traditional allograft block preparation (shaping, contouring, adapting) takes approximately <strong>45 minutes</strong>. The CAD-CAM block fits precisely in <strong>45 seconds</strong>. This frees the surgeon to focus on the critical flap management phase."},
+  {q:"Which magnesium screw size was mentioned as the smallest option?",opts:["1.5mm","2.0mm","3.5mm (extra small)","4.0mm"],ans:2,exp:"The extra small magnesium screws are approximately <strong>3.5mm</strong>. These come in extra small, small, medium, and large sizes. They provide stable fixation for the magnesium membrane without requiring the large number of fixation points needed for cortical plates."},
+  {q:"Why does the lecturer prefer to use non-resorbable nylon sutures over braided resorbable ones?",opts:["Nylon is stronger","Nylon is monofilament and traps less plaque; braided sutures trap more","Nylon is cheaper","Nylon causes less tissue reaction"],ans:1,exp:"<strong>Nylon (non-resorbable) sutures are monofilament</strong>, which means they have a smooth surface and trap less food and plaque. Resorbable sutures are typically braided, which creates a surface that accumulates more plaque — important in a grafted site."},
+  {q:"In the Japanese lady case, what ratio of autogenous to MaxGraph was used due to the large defect?",opts:["70/30 autogenous/MaxGraph","60/40 autogenous/MaxGraph","50/50 autogenous/MaxGraph","Pure autogenous only"],ans:2,exp:"Due to the very large defect, a <strong>50/50 mix of autogenous bone and MaxGraph</strong> was used. The large defect meant the surgeon ran out of autogenous bone (collected from the ascending ramus) and needed to supplement with the allograft. The 60/40 ratio is preferred for smaller cases."},
+  {q:"What is the key principle for why cover screws should NOT be used in modern GBR?",opts:["They are too expensive","They press on the graft, compressing bone particles","They cause peri-implant mucositis","They prevent osseointegration"],ans:1,exp:"Cover screws <strong>press on the graft material</strong>, compressing the bone particles beneath the soft tissue closure. This mechanical pressure impairs healing. Modern protocol uses <strong>healing abutments</strong> instead, which tent the soft tissue over the graft without compressing it."}
+];
+
+let current = 0, score = 0, answers = [], answered = false;
+
+function buildDots() {
+  const d = document.getElementById('scoreDots');
+  d.innerHTML = '';
+  for(let i=0;i<30;i++){
+    const dot = document.createElement('div');
+    dot.className = 'score-dot';
+    dot.id = 'dot'+i;
+    d.appendChild(dot);
+  }
+}
+
+function startQuiz() {
+  const saved = loadState();
+  if(saved && saved.current > 0) {
+    current = saved.current; score = saved.score; answers = saved.answers;
+  }
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.add('active');
+  buildDots();
+  answers.forEach((a,i)=>{
+    const d = document.getElementById('dot'+i);
+    if(d) d.classList.add(a.correct?'correct':'wrong');
+  });
+  showQuestion();
+}
+
+function showQuestion() {
+  if(current >= questions.length) { showResults(); return; }
+  const q = questions[current];
+  document.getElementById('qTag').textContent = `Question ${current+1} of 30`;
+  document.getElementById('qNum').textContent = current+1;
+  document.getElementById('progressFill').style.width = ((current+1)/30*100)+'%';
+  document.getElementById('qText').textContent = q.q;
+  const cont = document.getElementById('optionsContainer');
+  cont.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    cont.appendChild(btn);
+  });
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = questions[current];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  if(correct) score++;
+  opts[idx].classList.add(correct?'correct':'wrong');
+  if(!correct) opts[q.ans].classList.add('reveal');
+  const dot = document.getElementById('dot'+current);
+  if(dot) dot.classList.add(correct?'correct':'wrong');
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<p>${correct?'✓ Correct! ':'✗ Incorrect. '}${q.exp}</p>`;
+  exp.className = 'explanation show';
+  document.getElementById('nextBtn').className = 'next-btn show';
+  answers[current] = {chosen: idx, correct};
+  saveState();
+}
+
+function nextQuestion() {
+  current++;
+  if(current >= questions.length) { showResults(); return; }
+  showQuestion();
+  saveState();
+}
+
+function showResults() {
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('resultsScreen').classList.add('active');
+  document.getElementById('scoreNum').textContent = score;
+  const pct = Math.round(score/30*100);
+  let grade = pct>=90?'Excellent — Outstanding knowledge':'pct>=70?'Good — Solid understanding':'pct>=50?'Pass — Review areas below':'Needs Review — Please revisit Lecture 01';
+  if(pct>=90) grade='Excellent — Outstanding knowledge 🏆';
+  else if(pct>=70) grade='Good — Solid understanding ✓';
+  else if(pct>=50) grade='Pass — Some areas to review';
+  else grade='Needs improvement — Revisit Lecture 01';
+  document.getElementById('gradeText').textContent = grade;
+  const rev = document.getElementById('reviewList');
+  rev.innerHTML = '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.2rem;margin-bottom:12px;color:var(--text);">Question Review</h3>';
+  questions.forEach((q,i)=>{
+    const a = answers[i];
+    if(!a) return;
+    const div = document.createElement('div');
+    div.className = `review-item ${a.correct?'co':'wr'}`;
+    div.innerHTML = `<div class="review-q">${i+1}. ${q.q}</div><div class="review-a">Your answer: <span class="${a.correct?'cr':'wr'}">${q.opts[a.chosen]}</span>${!a.correct?` | Correct: <span class="cr">${q.opts[q.ans]}</span>`:''}</div>`;
+    rev.appendChild(div);
+  });
+  localStorage.removeItem(KEY);
+}
+
+function retakeQuiz() {
+  current=0; score=0; answers=[];
+  localStorage.removeItem(KEY);
+  document.getElementById('resultsScreen').classList.remove('active');
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('startScreen').classList.add('active');
+}
+
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify({current, score, answers})); } catch(e){}
+}
+function loadState() {
+  try { const d=localStorage.getItem(KEY); return d?JSON.parse(d):null; } catch(e){ return null; }
+}
+
+// Check for saved state
+const s = loadState();
+if(s && s.current > 0) document.getElementById('resumeNotice').style.display='block';
+</script>
+</body>
+</html>

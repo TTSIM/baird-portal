@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 2 · Surgical Protocol & Placement Day | Implant Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg-0:#08090b; --bg-1:#101216; --bg-2:#171a1f; --line:#2a2d33;
+  --gold:#c9a86a; --gold-bright:#e6c98a;
+  --accent:#7fa9c9; --accent-dim:#3d5a6e;
+  --text:#e8e6df; --text-dim:#9b9b93; --text-faint:#6a6a64;
+  --danger:#c96a6a; --good:#7fc98a; --amber:#d5a94a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{background:radial-gradient(ellipse at top left, #12151a 0%, var(--bg-0) 60%); color:var(--text); font-family:'Rajdhani',sans-serif; overflow:hidden;}
+.app{display:grid; grid-template-columns:260px 1fr; height:100vh;}
+.sidebar{background:var(--bg-1); border-right:1px solid var(--line); padding:28px 20px; display:flex; flex-direction:column; overflow-y:auto;}
+.sidebar-title{font-family:'Cormorant Garamond',serif; font-weight:700; font-style:italic; color:var(--gold); font-size:1.3rem; letter-spacing:.02em; margin-bottom:2px;}
+.sidebar-sub{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:26px;}
+.progress-ring-wrap{display:flex; align-items:center; gap:12px; margin-bottom:26px; padding:14px; background:var(--bg-2); border:1px solid var(--line); border-radius:8px;}
+.progress-num{font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:var(--accent);}
+.progress-label{font-size:.65rem; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase;}
+.module-nav{flex:1; display:flex; flex-direction:column; gap:2px;}
+.module-item{font-size:.78rem; padding:8px 10px; border-radius:5px; color:var(--text-dim); cursor:pointer; border-left:2px solid transparent; transition:.15s; line-height:1.35;}
+.module-item:hover{background:var(--bg-2); color:var(--text);}
+.module-item.active{color:var(--gold-bright); border-left-color:var(--gold); background:var(--bg-2);}
+.module-item.done::before{content:"✓ "; color:var(--good);}
+.sidebar-footer{margin-top:20px; padding-top:16px; border-top:1px solid var(--line); font-size:.65rem; color:var(--text-faint); letter-spacing:.04em; line-height:1.6;}
+.main{position:relative; display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 44px 0 44px;}
+.kicker{font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.12em; color:var(--accent); text-transform:uppercase;}
+.slide-count{font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--text-faint);}
+.progressbar{height:2px; background:var(--line); margin:14px 44px 0 44px; border-radius:2px; overflow:hidden;}
+.progressbar-fill{height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--gold)); width:3.3%; transition:width .35s ease;}
+.slide-viewport{flex:1; overflow-y:auto; padding:26px 44px 40px 44px;}
+.slide{max-width:900px; animation:fadein .4s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+h1.slide-title{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:2.5rem; color:var(--text); margin-bottom:6px; letter-spacing:.01em;}
+h1.slide-title .accent-word{color:var(--gold);}
+.slide-strap{font-size:1rem; color:var(--text-dim); font-style:italic; font-family:'Cormorant Garamond',serif; margin-bottom:22px;}
+.slide-body{font-size:1.02rem; line-height:1.65; color:var(--text);}
+.slide-body p{margin-bottom:14px;}
+.slide-body ul, .slide-body ol{margin:10px 0 16px 22px;}
+.slide-body li{margin-bottom:8px;}
+.slide-body strong{color:var(--gold-bright); font-weight:600;}
+.callout{border-left:3px solid var(--accent); background:var(--bg-2); padding:14px 18px; border-radius:0 6px 6px 0; margin:16px 0; font-size:.95rem;}
+.callout.warn{border-left-color:var(--danger);}
+.callout.gold{border-left-color:var(--gold);}
+.callout.good{border-left-color:var(--good);}
+.callout-label{font-family:'JetBrains Mono',monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;}
+.callout.warn .callout-label{color:var(--danger);}
+.callout.gold .callout-label{color:var(--gold);}
+.callout.good .callout-label{color:var(--good);}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;}
+.grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0;}
+.card{background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:16px 18px;}
+.card-h{font-family:'Rajdhani',sans-serif; font-weight:700; color:var(--gold-bright); font-size:.92rem; letter-spacing:.03em; text-transform:uppercase; margin-bottom:8px;}
+table.dtab{width:100%; border-collapse:collapse; margin:14px 0; font-size:.92rem;}
+table.dtab th{text-align:left; padding:8px 10px; color:var(--gold-bright); border-bottom:1px solid #5a4c2e; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;}
+table.dtab td{padding:8px 10px; border-bottom:1px solid var(--line); color:var(--text-dim);}
+table.dtab tr:hover td{color:var(--text); background:var(--bg-2);}
+.svg-wrap{background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:14px; margin:16px 0; display:flex; justify-content:center;}
+.reveal-btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.04em; background:transparent; color:var(--accent); border:1px solid var(--accent-dim); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:.85rem; margin:8px 0; transition:.15s;}
+.reveal-btn:hover{background:var(--accent-dim); color:var(--text);}
+.reveal-content{max-height:0; overflow:hidden; transition:max-height .4s ease;}
+.reveal-content.open{max-height:800px; margin-top:10px;}
+.check-item{display:flex; align-items:flex-start; gap:10px; padding:8px 0; cursor:pointer; user-select:none;}
+.check-box{width:18px; height:18px; border:1px solid var(--accent-dim); border-radius:4px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--gold);}
+.check-item.checked .check-box{background:var(--accent-dim); border-color:var(--accent);}
+.check-item.checked span.ct{color:var(--text-faint); text-decoration:line-through;}
+.clock-pick{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0;}
+.clock-opt{background:var(--bg-2); border:1px solid var(--line); padding:8px 14px; border-radius:20px; font-size:.85rem; cursor:pointer; color:var(--text-dim);}
+.clock-opt.correct{border-color:var(--good); color:var(--good);}
+.clock-opt.wrong{border-color:var(--danger); color:var(--danger);}
+/* checkpoint timeline */
+.cp-timeline{display:flex; flex-direction:column; gap:0; margin:16px 0;}
+.cp-step{display:flex; gap:14px; align-items:flex-start; position:relative; padding-bottom:18px;}
+.cp-step:not(:last-child)::before{content:''; position:absolute; left:15px; top:32px; bottom:0; width:2px; background:var(--accent-dim);}
+.cp-marker{width:32px; height:32px; border-radius:50%; background:var(--bg-2); border:2px solid var(--accent); color:var(--accent); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:.8rem; flex-shrink:0; z-index:1;}
+.cp-body{padding-top:4px;}
+.cp-body .cp-h{font-weight:700; color:var(--gold-bright); font-size:.95rem;}
+.cp-body .cp-d{font-size:.86rem; color:var(--text-dim);}
+/* decision language */
+.dl-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0;}
+.dl{border-radius:8px; padding:12px; text-align:center; border:1px solid var(--line); background:var(--bg-2);}
+.dl .dl-word{font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:.05em; font-size:.95rem;}
+.dl .dl-desc{font-size:.72rem; color:var(--text-dim); margin-top:4px;}
+.dl.c{border-color:var(--good);} .dl.c .dl-word{color:var(--good);}
+.dl.p{border-color:var(--amber);} .dl.p .dl-word{color:var(--amber);}
+.dl.a{border-color:var(--accent);} .dl.a .dl-word{color:var(--accent);}
+.dl.s{border-color:var(--danger);} .dl.s .dl-word{color:var(--danger);}
+/* scenario tapper */
+.scenario{background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:14px 0;}
+.scenario .sc-q{font-size:.98rem; margin-bottom:12px;}
+.sc-opts{display:flex; gap:8px; flex-wrap:wrap;}
+.sc-opt{flex:1; min-width:90px; padding:9px; border-radius:7px; border:1px solid var(--line); background:var(--bg-1); cursor:pointer; text-align:center; font-family:'JetBrains Mono',monospace; font-size:.82rem; color:var(--text-dim); transition:.15s;}
+.sc-opt:hover{border-color:var(--accent);}
+.sc-opt.right{border-color:var(--good); color:var(--good); background:rgba(127,201,138,.1);}
+.sc-opt.wrong{border-color:var(--danger); color:var(--danger); background:rgba(201,106,106,.1);}
+.sc-fb{font-size:.86rem; margin-top:10px; color:var(--text-dim); display:none;}
+.sc-fb.show{display:block;}
+/* ordering exercise */
+.order-list{list-style:none; margin:14px 0; padding:0;}
+.order-item{display:flex; align-items:center; gap:12px; background:var(--bg-2); border:1px solid var(--line); border-radius:8px; padding:11px 14px; margin-bottom:8px; cursor:grab;}
+.order-item .oi-num{font-family:'JetBrains Mono',monospace; color:var(--text-faint); font-size:.8rem; width:20px;}
+.order-item .oi-txt{flex:1; font-size:.9rem;}
+.order-item .oi-arrows{display:flex; flex-direction:column; gap:2px;}
+.oi-arrows button{background:var(--bg-1); border:1px solid var(--line); color:var(--accent); border-radius:4px; width:26px; height:20px; cursor:pointer; font-size:.7rem; line-height:1;}
+.oi-arrows button:hover{border-color:var(--accent); color:var(--gold-bright);}
+.order-item.correct-pos{border-color:var(--good);}
+.order-check{margin-top:6px;}
+/* torque calc */
+.torque-wrap{margin:14px 0;}
+.islider{width:100%; margin:10px 0; -webkit-appearance:none; height:6px; border-radius:4px; background:linear-gradient(90deg,var(--danger) 0%,var(--danger) 25%,var(--amber) 25%,var(--amber) 45%,var(--good) 45%,var(--good) 100%); outline:none;}
+.islider::-webkit-slider-thumb{-webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--gold-bright); border:2px solid var(--bg-0); cursor:pointer;}
+.islider::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:var(--gold-bright); border:2px solid var(--bg-0); cursor:pointer;}
+.tq-readout{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:.8rem; margin-top:6px;}
+.tq-arch{display:flex; gap:8px; margin:10px 0;}
+.tq-arch button{flex:1; padding:8px; border-radius:7px; border:1px solid var(--line); background:var(--bg-2); color:var(--text-dim); cursor:pointer; font-size:.85rem;}
+.tq-arch button.sel{border-color:var(--accent); color:var(--gold-bright); background:rgba(127,169,201,.1);}
+.navbar{display:flex; align-items:center; justify-content:space-between; padding:14px 44px; border-top:1px solid var(--line); background:var(--bg-1);}
+.nav-btn{font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.03em; background:var(--bg-2); border:1px solid var(--line); color:var(--text); padding:10px 22px; border-radius:6px; cursor:pointer; font-size:.9rem; display:flex; align-items:center; gap:8px; transition:.15s;}
+.nav-btn:hover:not(:disabled){border-color:var(--gold); color:var(--gold-bright);}
+.nav-btn:disabled{opacity:.3; cursor:default;}
+.nav-btn.primary{background:linear-gradient(120deg,var(--accent-dim),var(--accent)); border:none; color:#0a0d10; font-weight:700;}
+.nav-btn.primary:hover{filter:brightness(1.1);}
+.dots{display:flex; gap:5px;}
+.dot{width:6px; height:6px; border-radius:50%; background:var(--line); cursor:pointer;}
+.dot.active{background:var(--gold); width:18px; border-radius:3px;}
+.dot.done{background:var(--accent-dim);}
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg-1);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+@media(max-width:900px){.app{grid-template-columns:1fr;} .sidebar{display:none;} .grid2,.grid4,.dl-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-title">Baird Implant Course</div>
+    <div class="sidebar-sub">Lecture 2 · Placement Day</div>
+    <div class="progress-ring-wrap">
+      <div class="progress-num" id="pctNum">0%</div>
+      <div><div class="progress-label">Complete</div><div style="font-size:.7rem;color:var(--text-dim);" id="pctSlides">0 / 30 slides</div></div>
+    </div>
+    <nav class="module-nav" id="moduleNav"></nav>
+    <div class="sidebar-footer">Treatment-planning weekend transcript<br>Structured for your first placement</div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div class="kicker" id="kicker">Module —</div><div class="slide-count" id="slideCount">01 / 30</div></div>
+    <div class="progressbar"><div class="progressbar-fill" id="pbFill"></div></div>
+    <div class="slide-viewport" id="viewport"></div>
+    <div class="navbar">
+      <button class="nav-btn" id="prevBtn">← Prev</button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'module5_weekend_lecture2_surgery_v1';
+
+const modules = [
+  {name:"Placement-Day Mindset", range:[0,4]},
+  {name:"Setup & Sterility", range:[4,8]},
+  {name:"Anaesthesia & Imaging", range:[8,12]},
+  {name:"Flap & Positioning", range:[12,16]},
+  {name:"Osteotomy & Guided Kit", range:[16,22]},
+  {name:"Decisions, Problems & Records", range:[22,27]},
+  {name:"Post-Op & Summary", range:[27,30]},
+];
+
+function svgClock(){
+  return `<svg viewBox="0 0 380 300" width="380" height="300">
+  <circle cx="190" cy="150" r="90" fill="none" stroke="#2a2d33" stroke-width="1.5"/>
+  ${[...Array(12)].map((_,i)=>{const a=(i*30-90)*Math.PI/180,x1=190+80*Math.cos(a),y1=150+80*Math.sin(a),x2=190+90*Math.cos(a),y2=150+90*Math.sin(a),lx=190+105*Math.cos(a),ly=150+105*Math.sin(a),hr=i===0?12:i;return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#3d4148" stroke-width="1.5"/><text x="${lx}" y="${ly+4}" text-anchor="middle" font-size="11" fill="#6a6a64" font-family="JetBrains Mono">${hr}</text>`;}).join('')}
+  <ellipse cx="190" cy="150" rx="34" ry="52" fill="#171a1f" stroke="#7fa9c9" stroke-width="1.5"/>
+  <text x="190" y="154" text-anchor="middle" font-size="11" fill="#9b9b93" font-family="Rajdhani">Patient</text>
+  <circle cx="${190+90*Math.cos((270-90)*Math.PI/180)}" cy="${150+90*Math.sin((270-90)*Math.PI/180)}" r="7" fill="#c9a86a" stroke="#fff" stroke-width="1"/>
+  <text x="${190+90*Math.cos((270-90)*Math.PI/180)}" y="${150+90*Math.sin((270-90)*Math.PI/180)-14}" text-anchor="middle" font-size="10" fill="#e6c98a" font-family="Rajdhani" font-weight="700">You (default)</text></svg>`;
+}
+function svgInfiltration(){
+  return `<svg viewBox="0 0 420 220" width="420" height="220">
+  <ellipse cx="210" cy="110" rx="150" ry="50" fill="none" stroke="#2a2d33" stroke-width="2"/>
+  ${[[100,90,'B-mesial'],[210,70,'B-mid'],[320,90,'B-distal'],[100,130,'L-mesial'],[210,150,'L-mid'],[320,130,'L-distal']].map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#7fa9c9"/><text x="${p[0]}" y="${p[1]+(i<3?-14:22)}" text-anchor="middle" font-size="10" fill="#9b9b93" font-family="JetBrains Mono">${i+1}. ${p[2]}</text>`).join('')}
+  <text x="210" y="20" text-anchor="middle" font-size="12" fill="#e6c98a" font-family="Rajdhani" font-weight="700">SIX-POINT INFILTRATION</text></svg>`;
+}
+function svgGuidedDrill(){
+  return `<svg viewBox="0 0 420 230" width="420" height="230">
+  <rect x="60" y="150" width="300" height="30" rx="4" fill="#171a1f" stroke="#2a2d33"/>
+  <text x="210" y="169" text-anchor="middle" font-size="11" fill="#9b9b93" font-family="Rajdhani">Ridge / bone crest</text>
+  <rect x="170" y="110" width="80" height="14" rx="3" fill="#171a1f" stroke="#7fa9c9" stroke-width="1.5"/>
+  <text x="210" y="105" text-anchor="middle" font-size="10" fill="#7fa9c9" font-family="JetBrains Mono">SURGICAL GUIDE</text>
+  <rect x="200" y="45" width="20" height="75" fill="#c9a86a"/>
+  <rect x="192" y="35" width="36" height="14" rx="2" fill="#e6c98a"/>
+  <text x="210" y="29" text-anchor="middle" font-size="10" fill="#e6c98a" font-family="JetBrains Mono">5mm BARREL</text>
+  <text x="70" y="215" font-size="10" fill="#6a6a64" font-family="Rajdhani">Pack up in stages so the barrel engages the guide before cutting bone.</text></svg>`;
+}
+
+const slides = [
+// ===== MODULE 0: MINDSET =====
+// 0
+{mod:0, kicker:"Placement-Day Mindset", title:"Surgical Protocol &<br><span class='accent-word'>Placement Day</span>", strap:"Lecture 2 of 2 · Taking your verified plan safely from scrubbing in to discharge",
+body:`
+<p>Lecture 1 got your case planned and signed off. This lecture takes it into surgery — the exact sequence your mentor will walk you through on the day.</p>
+<div class="callout gold"><div class="callout-label">The placement-day promise</div><strong>Slow is smooth; smooth is safe.</strong> Almost every complication on this course traces to a step skipped, rushed, or done out of order — not to a lack of surgical skill. Work slowly, verify each transition, and preserve your options.</div>
+<p style="color:var(--text-faint); font-size:.85rem;">Use the sidebar or arrow keys. Your place saves automatically.</p>
+`},
+// 1  mentor checkpoints (interactive timeline)
+{mod:0, kicker:"Placement-Day Mindset", title:"Your Mentor Checkpoints", strap:"Ask before the step becomes irreversible",
+body:`
+<p>Agree these explicit inspection points with your mentor <em>before</em> the patient enters. At each, you stop and your mentor approves before you continue — none of them is optional.</p>
+<div class="cp-timeline">
+  <div class="cp-step"><div class="cp-marker">1</div><div class="cp-body"><div class="cp-h">Case approval</div><div class="cp-d">Suitability and the finalised plan confirmed before the patient sits down.</div></div></div>
+  <div class="cp-step"><div class="cp-marker">2</div><div class="cp-body"><div class="cp-h">Guide / plan review</div><div class="cp-d">Guide seated and re-seated; plan re-checked against the CBCT.</div></div></div>
+  <div class="cp-step"><div class="cp-marker">3</div><div class="cp-body"><div class="cp-h">After flap reflection</div><div class="cp-d">Bone exposed — does what you see match what you planned?</div></div></div>
+  <div class="cp-step"><div class="cp-marker">4</div><div class="cp-body"><div class="cp-h">After pilot osteotomy</div><div class="cp-d">The last low-cost chance to correct position before you widen.</div></div></div>
+  <div class="cp-step"><div class="cp-marker">5</div><div class="cp-body"><div class="cp-h">Before final insertion</div><div class="cp-d">Confirm size, depth and trajectory before the implant goes in.</div></div></div>
+</div>
+<div class="callout"><div class="callout-label">Why fixed checkpoints</div>They convert "ask if you're worried" — which a nervous first-timer often won't do in time — into "always stop here." The checkpoint removes the judgement of <em>whether</em> to ask.</div>
+`},
+// 2  decision language + interactive scenarios
+{mod:0, kicker:"Placement-Day Mindset", title:"Interactive: Continue · Pause · Ask · Stop", strap:"One shared decision language for the whole team",
+body:`
+<p>Everyone in the room uses the same four words, so an intention is never ambiguous mid-procedure:</p>
+<div class="dl-grid">
+  <div class="dl c"><div class="dl-word">CONTINUE</div><div class="dl-desc">On plan, verified — proceed.</div></div>
+  <div class="dl p"><div class="dl-word">PAUSE</div><div class="dl-desc">Stop the drill, reassess, don't commit further.</div></div>
+  <div class="dl a"><div class="dl-word">ASK</div><div class="dl-desc">Bring the mentor in before the next step.</div></div>
+  <div class="dl s"><div class="dl-word">STOP</div><div class="dl-desc">End safely; a non-placement can be the right call.</div></div>
+</div>
+<p>Pick the right word for each moment:</p>
+<div class="scenario" id="sc1">
+  <div class="sc-q"><strong>1.</strong> Your pilot X-ray shows the trajectory drifting toward the adjacent root.</div>
+  <div class="sc-opts">
+    <div class="sc-opt" onclick="scPick('sc1',this,false)">CONTINUE</div>
+    <div class="sc-opt" onclick="scPick('sc1',this,true)">PAUSE</div>
+    <div class="sc-opt" onclick="scPick('sc1',this,false)">CONTINUE FAST</div>
+  </div>
+  <div class="sc-fb" id="fb-sc1">PAUSE — the pilot stage is the last low-cost chance to correct. Reassess before you widen and lock the error in.</div>
+</div>
+<div class="scenario" id="sc2">
+  <div class="sc-q"><strong>2.</strong> Bone feels far softer than the CBCT suggested and you're unsure whether to change implant size.</div>
+  <div class="sc-opts">
+    <div class="sc-opt" onclick="scPick('sc2',this,false)">CONTINUE</div>
+    <div class="sc-opt" onclick="scPick('sc2',this,true)">ASK</div>
+    <div class="sc-opt" onclick="scPick('sc2',this,false)">STOP</div>
+  </div>
+  <div class="sc-fb" id="fb-sc2">ASK — this is a sizing judgement within a checkpoint's remit. Bring your mentor in before the next drill rather than guessing.</div>
+</div>
+<div class="scenario" id="sc3">
+  <div class="sc-q"><strong>3.</strong> You cannot achieve any primary stability, and the pre-agreed fallback was to graft and place later.</div>
+  <div class="sc-opts">
+    <div class="sc-opt" onclick="scPick('sc3',this,false)">CONTINUE</div>
+    <div class="sc-opt" onclick="scPick('sc3',this,false)">PAUSE</div>
+    <div class="sc-opt" onclick="scPick('sc3',this,true)">STOP</div>
+  </div>
+  <div class="sc-fb" id="fb-sc3">STOP — execute the pre-agreed staged plan. A safe non-placement, already consented, is a sound decision, not a failure.</div>
+</div>
+`},
+// 3  case selection recap / stopping rules
+{mod:0, kicker:"Placement-Day Mindset", title:"Stopping Rules & Safe Non-Placement", strap:"Decide these before you start, not in the moment",
+body:`
+<p>Write your stopping rules into the plan in advance, so the decision is already made when you're under pressure:</p>
+<ul>
+<li>No adequate primary stability achievable → <strong>graft and stage</strong> (pre-consented).</li>
+<li>Bone markedly thinner than expected once the flap is raised → <strong>pause, involve mentor, re-plan</strong>.</li>
+<li>Any doubt about proximity to a critical structure that imaging can't resolve → <strong>stop</strong>.</li>
+</ul>
+<div class="callout good"><div class="callout-label">Frame it for the patient in advance</div>The patient should never feel that a sound stopping decision is a failure. Told beforehand that "if the bone isn't right on the day, the safest thing is to graft and place a little later," they'll experience a staged plan as careful, not as something going wrong.</div>
+`},
+// ===== MODULE 1: SETUP =====
+// 4
+{mod:1, kicker:"Setup & Sterility", title:"The Half-Hour Before Surgery", strap:"Antibiotics, calm, and your job in this window",
+body:`
+<p>Every patient receives <strong>preoperative antibiotics on arrival</strong>, timed so surgery starts once absorption is underway.</p>
+<div class="grid2">
+<div class="card"><div class="card-h">Standard dose</div>Amoxicillin <strong>2 g</strong> given in-surgery (not sent home) at the start.</div>
+<div class="card"><div class="card-h">If high-dose declined</div>A normal dose taken <strong>48 hours before</strong> surgery is the accepted alternative.</div>
+</div>
+<p>Given in-practice because it confirms the dose was taken, the small raised anaphylaxis risk is better managed chairside, and it buys setup time.</p>
+<div class="callout warn"><div class="callout-label">A regimen, not a universal rule</div>This is <em>this course's</em> protocol. Antibiotic choice and prophylaxis should always be matched to the individual patient and current guidance — don't carry one course's regimen across every case unthinkingly.</div>
+`},
+// 5
+{mod:1, kicker:"Setup & Sterility", title:"Team Setup: Why Two Nurses", strap:"What a trained assistant does for you",
+body:`
+<ul>
+<li>A <strong>clean nurse</strong> and a <strong>dirty nurse</strong> set up in parallel while you review the plan, consent and CBCT.</li>
+<li>Your scrubbed nurse opens packets, photographs, and <strong>writes the operative notes as you go</strong> — narrate each step ("three-sided flap, papilla preserved…") so notes are accurate without you stopping.</li>
+</ul>
+<div class="callout"><div class="callout-label">Practical takeaway</div>An untrained assistant is one of the most common things that slows or destabilises an otherwise competent first placement. Two cleanly separated workflows (clean vs dirty) keep the field safe.</div>
+`},
+// 6
+{mod:1, kicker:"Setup & Sterility", title:"Scrubbing, Gowning & the Sterile Field", strap:"Build the field in one direction",
+body:`
+<p>Two minutes of hand washing, covering every finger and around the wrist — not up to the elbow.</p>
+<div class="callout gold"><div class="callout-label">The tell-tale sign</div>How you <strong>dry your hands</strong> reveals your training. Wash so dirty water runs from clean fingers toward the elbow — never reverse. Dry hands-up with <strong>sterile towels only</strong>.</div>
+<p>Gown on first, hands raised, secured from behind; gloves last. Then <strong>hands stay above the waist and in front of the body</strong>, touching only sterile-draped items.</p>
+<div class="callout warn"><div class="callout-label">If in doubt</div>If you're not sure something is sterile, treat it as not sterile.</div>
+`},
+// 7
+{mod:1, kicker:"Setup & Sterility", title:"Preparing the Patient & Skin Antisepsis", strap:"Protect eyes, airway and field",
+body:`
+<ol>
+<li>Chlorhexidine mouth rinse for one minute, then spit and dry. Useful adjunct — but note real risks (staining; rare hypersensitivity).</li>
+<li><strong>Eye protection</strong> — non-negotiable; a dropped bur caused a real GDC complaint after inadequate eye protection.</li>
+<li>Hat, chair supine, sterile apron covering everything except the face.</li>
+</ol>
+<div class="svg-wrap"><svg viewBox="0 0 360 180" width="360" height="180">
+<circle cx="180" cy="90" r="62" fill="none" stroke="#2a2d33" stroke-width="1.5" stroke-dasharray="4 4"/>
+<circle cx="180" cy="90" r="40" fill="none" stroke="#7fa9c9" stroke-width="1.5" stroke-dasharray="4 4"/>
+<circle cx="180" cy="90" r="18" fill="#171a1f" stroke="#e6c98a" stroke-width="2"/>
+<text x="180" y="94" text-anchor="middle" font-size="9" fill="#e6c98a" font-family="Rajdhani">Start</text>
+<text x="180" y="168" text-anchor="middle" font-size="11" fill="#9b9b93" font-family="Rajdhani">Clean in small, expanding circles — never back-and-forth</text></svg></div>
+`},
+// ===== MODULE 2: ANAESTHESIA & IMAGING =====
+// 8
+{mod:2, kicker:"Anaesthesia & Imaging", title:"Why Infiltration, Not ID Block", strap:"Choose anaesthesia deliberately",
+body:`
+<ol>
+<li>A block isn't usually needed for implant surgery.</li>
+<li>ID block is a <strong>blind technique</strong> — anatomy varies, so it can miss.</li>
+<li>Infiltration with adrenaline gives useful <strong>local haemostasis</strong>.</li>
+<li>It preserves a <strong>pain safety margin</strong>: an incompletely-numb nerve lets the patient warn you if a drill strays close — a warning a block can mask.</li>
+<li>It's simpler and more reproducible while you build muscle memory.</li>
+</ol>
+<div class="callout warn"><div class="callout-label">Nuance</div>Patient-reported pain near the nerve is a fallback, not something to rely on deliberately — careful planning and technique come first.</div>
+`},
+// 9
+{mod:2, kicker:"Anaesthesia & Imaging", title:"Six-Point Infiltration Technique", strap:"Buccal ×3, lingual/palatal ×3",
+body:`
+<div class="svg-wrap">${svgInfiltration()}</div>
+<p>Infiltrate at six points around the site: <strong>mesio-, mid-, disto-buccal</strong> and three lingual/palatal equivalents — this numbs the suturing area too, which infiltrating around the tooth alone often misses.</p>
+<div class="callout"><div class="callout-label">Remember</div>Bone away from the nerve canal isn't innervated — pain, bleeding and regeneration come from the <strong>periosteum</strong>, which is why flaps stay mucoperiosteal.</div>
+`},
+// 10
+{mod:2, kicker:"Anaesthesia & Imaging", title:"Reading Your CBCT Before You Start", strap:"Heat is a system problem",
+body:`
+<p>Density colour map: broadly <strong style="color:#c96a6a">red = soft</strong>, <strong style="color:#7fa9c9">blue = dense</strong>. Review it for every case before scrubbing in.</p>
+<div class="callout warn"><div class="callout-label">Thermal risk in dense bone</div>Drilling dry can overheat bone before you see it — watch for pale/white debris packing onto the flutes, a heat warning sign.</div>
+<ul>
+<li>Irrigate with saline <strong>from beneath the drill</strong>, under the guide if fully guided — guide-directed irrigation can hit the shank, not the hotter tip.</li>
+<li>Or irrigate, then let saline sit briefly before drilling further.</li>
+<li>Use <strong>cold (fridge) saline</strong>, prepared in advance so there's no mid-procedure delay.</li>
+</ul>
+`},
+// 11
+{mod:2, kicker:"Anaesthesia & Imaging", title:"Interactive: Match the CBCT Signal", strap:"Click to reveal what you'd do",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">🔵 Uniformly dense (blue)</div>
+<button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('open')">What do you do?</button>
+<div class="reveal-content">Anticipate high heat. Cold saline ready, irrigate from under the guide, consider skipping the widest drill to slightly under-prepare.</div></div>
+<div class="card"><div class="card-h">🔴 Very soft (red)</div>
+<button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('open')">What do you do?</button>
+<div class="reveal-content">Under-prepare relative to the planned diameter for stability; expect lower torque and a longer healing period before loading.</div></div>
+</div>
+`},
+// ===== MODULE 3: FLAP & POSITIONING =====
+// 12
+{mod:3, kicker:"Flap & Positioning", title:"Flap Design & Elevation", strap:"Tissue trauma accumulates",
+body:`
+<p>Before you cut, <strong>probe the site with your mentor</strong> to check papilla status and confirm the incision line — say it out loud, document it.</p>
+<ul>
+<li><strong>Blade:</strong> 15C for manoeuvrability into socket sites.</li>
+<li><strong>Elevation:</strong> gentle tension with the non-dominant hand while scraping bone (not pushing mucosa) to detach periosteum cleanly.</li>
+<li>Never force or perforate the flap.</li>
+</ul>
+<div class="callout"><div class="callout-label">Why</div>A true mucoperiosteal flap minimises bruising, bleeding and pain. Peeling rather than cutting cleanly to bone increases swelling.</div>
+`},
+// 13
+{mod:3, kicker:"Flap & Positioning", title:"X-Ray Checkpoints You Shouldn't Skip", strap:"Do not drill through doubt",
+body:`
+<table class="dtab">
+<tr><th>Guide type</th><th>X-ray checkpoint</th></tr>
+<tr><td>Prosthetic guide</td><td>After the first pilot drill — confirm parallelism and position</td></tr>
+<tr><td>Pilot guide</td><td>After the pilot drill — same rationale</td></tr>
+<tr><td>Fully guided</td><td>Not required at pilot stage — trajectory is trusted</td></tr>
+<tr><td>All types</td><td>After fitting the healing abutment — confirm full seating</td></tr>
+</table>
+<p>Principle: <strong>the less mechanically constrained the system, the more you verify with imaging</strong> before committing to depth.</p>
+`},
+// 14
+{mod:3, kicker:"Flap & Positioning", title:"Where You Sit: The Clock-Face System", strap:"One platform, controlled angles",
+body:`
+<div class="svg-wrap">${svgClock()}</div>
+<p>Default: <strong>9 o'clock</strong> (right-handed), controlling mesiodistal angle; assistant at 12 o'clock (90° to you) watches buccolingual.</p>
+<div class="grid2">
+<div class="card"><div class="card-h">Two exceptions</div>Lower-left → <strong>3 o'clock</strong>. Anterior → <strong>12 o'clock</strong>, patient flat.</div>
+<div class="card"><div class="card-h">Avoid</div><strong>11 & 1 o'clock</strong> — neither plane is independently controllable.</div>
+</div>
+<div class="callout gold"><div class="callout-label">Principle</div>You and your assistant sit <strong>90° apart</strong>, each controlling one plane — this prevents drift. Stay seated: standing mid-case reads to an experienced team as a sign something's wrong.</div>
+`},
+// 15
+{mod:3, kicker:"Flap & Positioning", title:"Quick Check: Where Do You Sit?", strap:"Lower-left, right-handed",
+body:`
+<p><strong>Scenario:</strong> lower-left quadrant, right-handed. Where do you sit?</p>
+<div class="clock-pick" id="clockQuiz">
+<div class="clock-opt" data-correct="false" onclick="pickClock(this,false)">9 o'clock</div>
+<div class="clock-opt" data-correct="true" onclick="pickClock(this,true)">3 o'clock</div>
+<div class="clock-opt" data-correct="false" onclick="pickClock(this,false)">12 o'clock</div>
+<div class="clock-opt" data-correct="false" onclick="pickClock(this,false)">1 o'clock</div>
+</div>
+<p id="clockFeedback" style="font-size:.9rem; color:var(--text-dim);"></p>
+`},
+// ===== MODULE 4: OSTEOTOMY =====
+// 16  interactive ordering
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Interactive: Order the Guided Sequence", strap:"Advance in controlled increments",
+body:`
+<p>Use the arrows to put the guided drilling steps into the correct order, then check.</p>
+<ul class="order-list" id="orderList"></ul>
+<button class="reveal-btn" onclick="checkOrder()">Check my order</button>
+<div class="order-check" id="orderResult" style="font-size:.9rem;"></div>
+<div class="callout gold" style="margin-top:14px;"><div class="callout-label">Why order matters</div>Skipping straight to the working drill without the initial pilot lets the tip skid on the bone surface before it engages — losing accuracy at the most position-critical moment. Large single jumps also generate more heat.</div>
+`, init:'buildOrder'},
+// 17
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Guided vs Freehand Drills", strap:"A guide constrains motion; it does not guarantee accuracy",
+body:`
+<div class="svg-wrap">${svgGuidedDrill()}</div>
+<ol>
+<li><strong>No lance/marking drill</strong> — start with an <em>initial</em> then <em>second</em> drill.</li>
+<li><strong>Pack up to guide-engaging length in stages</strong> — keeps the drill in the sleeve throughout cutting, minimising deviation.</li>
+<li><strong>Full-length guidance</strong> — every step passes through the guide for depth and orientation together.</li>
+</ol>
+<div class="callout warn"><div class="callout-label">Accuracy is a whole-chain property</div>The scan, the merge, the printed guide, the fit on the day and your technique all contribute. A guide doesn't remove the need to verify — it just constrains motion.</div>
+`},
+// 18
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Freehand Sequence & Bone Collection", strap:"Adapt only within a validated protocol",
+body:`
+<p>Work progressively through diameters before moving to adjacent sites. <strong>Prepare gradually</strong> — don't jump from a narrow pilot to a much wider final drill (heat and resistance).</p>
+<div class="callout"><div class="callout-label">A deliberate exception</div>If bone is dense and you want to <strong>collect bone</strong> for grafting, you can intentionally skip a step to collect more on the flutes — a controlled, purposeful variation, not a shortcut for speed.</div>
+`},
+// 19
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Speed, Thermal Control & Irrigation", strap:"The sleeve can hide the hottest zone",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Guided speed</div>Run <strong>lower</strong> than freehand — reduced feedback, higher sleeve resistance. Initial drill roughly <strong>300–800 rpm</strong>.</div>
+<div class="card"><div class="card-h">Practical ceiling</div><strong>~600–800 rpm</strong> for the initial drill; higher meaningfully increases frictional heat.</div>
+</div>
+<div class="callout warn"><div class="callout-label">Guided irrigation trap</div>Irrigating over the top of the guide can wet the drill shank while the hotter <em>tip</em> stays dry inside the osteotomy. Direct irrigation from beneath, or pause to let cold saline sit in the osteotomy.</div>
+`},
+// 20
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Inserting the Implant: Carriers & Orientation", strap:"Final rotation may be prosthetically important",
+body:`
+<ul>
+<li><strong>Torque-wrench carrier</strong> for final, accurate seating.</li>
+<li><strong>Handpiece carrier</strong> to start faster, then swap for hand-finishing.</li>
+</ul>
+<div class="callout gold"><div class="callout-label">Correct seating — both must be true</div>1. One <strong>flat side</strong> of the octagonal carrier fully visible in the window. 2. The <strong>green line</strong> level with the top of the guide.</div>
+<p>Because the guide (not a hard stop) controls trajectory, you can drive deeper than the nominal stop if you judge it safe — deliberate flexibility.</p>
+`},
+// 21
+{mod:4, kicker:"Osteotomy & Guided Kit", title:"Finishing by Hand", strap:"The last turns are yours",
+body:`
+<p>Start with the <strong>handpiece</strong> for speed, remove the adapter, then <strong>finish by hand</strong> with the torque wrench.</p>
+<div class="callout"><div class="callout-label">Why</div>Hand-finishing gives finer control at the critical last part of seating, where final rotational orientation (for the restorative connection) and torque feel both matter most.</div>
+`},
+// ===== MODULE 5: DECISIONS, PROBLEMS, RECORDS =====
+// 22  interactive torque calculator
+{mod:5, kicker:"Decisions, Problems & Records", title:"Interactive: Torque → Healing Time", strap:"A measurement, not a feeling of success",
+body:`
+<p>Set the insertion torque and arch to see the indicative minimum healing time from the course's experience:</p>
+<div class="tq-arch" id="tqArch">
+  <button class="sel" onclick="setArch('mand',this)">Mandible</button>
+  <button onclick="setArch('max',this)">Maxilla</button>
+</div>
+<input type="range" min="10" max="45" value="25" step="1" class="islider" id="tqSlider" oninput="updateTorque(this.value)">
+<div class="tq-readout"><span>10 Ncm</span><span style="color:var(--gold-bright)" id="tqVal">25 Ncm</span><span>45 Ncm</span></div>
+<div class="callout" id="tqVerdict" style="margin-top:12px;"></div>
+<div class="callout warn"><div class="callout-label">Anecdotal, not a fixed protocol</div>These figures are the course's clinical experience, not a rigid published guideline — treat them as a starting reference and cross-check against current evidence.</div>
+`, init:'updateTorque'},
+// 23
+{mod:5, kicker:"Decisions, Problems & Records", title:"Unexpected Low Stability", strap:"Slow down and protect the site",
+body:`
+<p>If you can't get adequate primary stability, this is a legitimate stopping point — not a failure.</p>
+<ul>
+<li><strong>Under-prepare</strong> relative to plan rather than forcing to the planned diameter; expect lower torque, plan longer healing.</li>
+<li>If stability still isn't achievable, execute the <strong>pre-consented staged plan</strong> — graft now, place later.</li>
+<li>Use the decision language: this is a <strong>STOP</strong>, communicated calmly to the whole team.</li>
+</ul>
+<div class="callout good"><div class="callout-label">Remember the mindset</div>A pre-warned patient experiences a staged plan as careful, not as something going wrong. This is exactly the "controlled success, not independence" principle from Lecture 1 in action.</div>
+`},
+// 24
+{mod:5, kicker:"Decisions, Problems & Records", title:"Common First-Operator Traps", strap:"Recognise the error before it develops",
+body:`
+<div class="grid2">
+<div class="card"><div class="card-h">Widening an error</div>Drifting at pilot then widening anyway — locking the deviation in. Fix at pilot, or ASK.</div>
+<div class="card"><div class="card-h">Drilling through doubt</div>Not re-seating the guide, or continuing past an unclear X-ray. Verify first.</div>
+<div class="card"><div class="card-h">Tilting a drifted implant</div>Adding angular tilt on top of drift in soft bone. Drift position; hold angle.</div>
+<div class="card"><div class="card-h">Chasing stability with force</div>Over-torquing into soft bone instead of under-preparing or staging.</div>
+</div>
+`},
+// 25
+{mod:5, kicker:"Decisions, Problems & Records", title:"Healing Abutment, GBR & Suturing", strap:"Know what's yours and what to hand off",
+body:`
+<ul>
+<li>Default for non-immediate loading: <strong>standard-thread implant with a healing abutment</strong> (not a cover screw).</li>
+<li>GBR decision — and usually the grafting — sits with your <strong>mentor</strong>; harder on a live patient than on models, so you observe/assist first.</li>
+<li>Suturing is yours once grafting is complete.</li>
+</ul>
+<div class="callout"><div class="callout-label">Practical takeaway</div>Knowing which steps to hand to your mentor without hesitation is part of what's assessed. Deferring GBR isn't a skill gap — it's the expected structure of your first cases.</div>
+`},
+// 26
+{mod:5, kicker:"Decisions, Problems & Records", title:"Documenting Your Case as You Go", strap:"Convert the first implant into durable learning",
+body:`
+<ul>
+<li><strong>Photos:</strong> four intraoral views, plus your model/wax-up and your surgical guide.</li>
+<li><strong>Operative notes:</strong> dictate as you go (flap design, implant reference/lot/expiry, graft material, torque achieved).</li>
+<li><strong>Digital plan:</strong> reference provisional vs finalised if they differ.</li>
+<li><strong>Reflection points:</strong> what you'd do differently (CBCT timing, communication, flap choice, suturing) — expected in a strong presentation, not an admission of weakness.</li>
+</ul>
+<div class="callout gold"><div class="callout-label">Debrief habit</div>Debrief with your mentor while it's fresh, and put a photo next to each point in your presentation — it reviews more easily and reads as reflective practice.</div>
+`},
+// ===== MODULE 6: POST-OP =====
+// 27
+{mod:6, kicker:"Post-Op & Summary", title:"The 72-Hour Critical Window", strap:"What you tell the patient immediately after",
+body:`
+<div class="callout gold"><div class="callout-label">Why 72 hours</div>The fibrin clot and collagen either stabilise the wound or are disrupted (dehiscence) in this window — instructions protect it.</div>
+<ul>
+<li>No hot drinks/food, no strenuous exercise, no long walks.</li>
+<li><strong>No mouthwash</strong> — gel only, 3–5×/day; minimal spitting.</li>
+<li>Very gentle brushing elsewhere.</li>
+</ul>
+<p>After 72h: introduce mouthwash and resume gentle site brushing with a soft brush.</p>
+`},
+// 28
+{mod:6, kicker:"Post-Op & Summary", title:"Medication, Swelling & Follow-Up", strap:"Set expectations, close the loop",
+body:`
+<table class="dtab">
+<tr><th>Item</th><th>Typical approach</th></tr>
+<tr><td>Antibiotics</td><td>Continue the course (~5–5.5 days total), three times daily</td></tr>
+<tr><td>Ibuprofen</td><td>Four times daily where not contraindicated (avoid if stomach-ulcer history → paracetamol ± co-codamol)</td></tr>
+<tr><td>Ice packs</td><td>~5 min on / 2 min off, ~2 hours on the day; patients under-comply, so instruct generously</td></tr>
+<tr><td>Sutures</td><td>Self-dissolving, ~2 weeks; book review within that window</td></tr>
+</table>
+<div class="callout warn"><div class="callout-label">Warn in advance</div>Swelling is expected to <strong>worsen the next day</strong>, peaking ~24h before settling. Flag any intraoperative change of plan (e.g. added grafting) at review.</div>
+`},
+// 29
+{mod:6, kicker:"Post-Op & Summary", title:"Before You Place Your First Implant", strap:"Your placement-day checklist",
+body:`
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">My five mentor checkpoints are agreed before the patient enters</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">My team and I share the Continue / Pause / Ask / Stop language</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">My stopping rules are written down and the patient is pre-warned</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Scrub/gown/drape sequence and eye protection sorted</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Six-point infiltration; cold saline ready if bone looks dense</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">I know where I'm sitting — 9 / 3 / 12 o'clock as appropriate</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">Guided sequence order clear; I'll verify at the pilot X-ray</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">I'll record torque and use it to set healing time</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">My photos and operative notes for the case presentation are planned</span></div>
+<div class="check-item" onclick="this.classList.toggle('checked')"><div class="check-box">✓</div><span class="ct">I can give the 72-hour instructions from memory</span></div>
+<div class="callout gold" style="margin-top:20px;"><div class="callout-label">You're ready</div>Two 30-question quizzes accompany these lectures — Quiz 1 (Planning) and Quiz 2 (Surgery). Revisit any module from the sidebar before a real case.</div>
+`},
+];
+
+let current=0; const total=slides.length; let visitedSet=new Set();
+function saveProgress(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({current, visited:[...visitedSet]})); }
+function loadProgress(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); current=Math.min(d.current||0,total-1); visitedSet=new Set(d.visited||[]); } }catch(e){} }
+function buildSidebar(){ document.getElementById('moduleNav').innerHTML = modules.map((m,i)=>`<div class="module-item" data-mod="${i}" onclick="jumpToModule(${i})">${m.name}</div>`).join(''); }
+function jumpToModule(i){ current=modules[i].range[0]; render(); }
+function currentModule(){ return modules.findIndex(m=>current>=m.range[0] && current<m.range[1]); }
+function buildDots(){ document.getElementById('dots').innerHTML = slides.map((_,i)=>`<div class="dot" data-i="${i}" onclick="goTo(${i})"></div>`).join(''); }
+function goTo(i){ current=Math.max(0,Math.min(total-1,i)); visitedSet.add(current); render(); }
+function render(){
+  const s=slides[current];
+  document.getElementById('kicker').textContent=s.kicker;
+  document.getElementById('slideCount').textContent=String(current+1).padStart(2,'0')+' / '+total;
+  document.getElementById('pbFill').style.width=((current+1)/total*100)+'%';
+  document.getElementById('viewport').innerHTML=`<div class="slide"><h1 class="slide-title">${s.title}</h1><div class="slide-strap">${s.strap}</div><div class="slide-body">${s.body}</div></div>`;
+  document.getElementById('viewport').scrollTop=0;
+  const activeMod=currentModule();
+  document.querySelectorAll('.module-item').forEach((el,i)=>{ el.classList.toggle('active', i===activeMod); el.classList.toggle('done', modules[i].range[1]<=Math.max(...visitedSet,0)+1); });
+  document.querySelectorAll('.dot').forEach((d,i)=>{ d.classList.toggle('active', i===current); d.classList.toggle('done', visitedSet.has(i) && i!==current); });
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').textContent = current===total-1 ? 'Finish ✓' : 'Next →';
+  const pct=Math.round((visitedSet.size/total)*100);
+  document.getElementById('pctNum').textContent=pct+'%';
+  document.getElementById('pctSlides').textContent=visitedSet.size+' / '+total+' slides';
+  if(s.init && typeof window[s.init]==='function'){ window[s.init](); }
+  saveProgress();
+}
+document.getElementById('prevBtn').onclick=()=>goTo(current-1);
+document.getElementById('nextBtn').onclick=()=>{ if(current===total-1){ window.scrollTo(0,0); return; } goTo(current+1); };
+document.addEventListener('keydown', e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowRight') goTo(current+1); if(e.key==='ArrowLeft') goTo(current-1); });
+
+// clock quiz
+function pickClock(el, correct){
+  document.querySelectorAll('#clockQuiz .clock-opt').forEach(o=>o.classList.remove('correct','wrong'));
+  el.classList.add(correct?'correct':'wrong');
+  document.getElementById('clockFeedback').textContent = correct ? "Correct — lower-left is the exception where you move to 3 o'clock." : "Not quite — lower-left is the exception: move to 3 o'clock, not the 9 o'clock default.";
+  if(!correct){ document.querySelectorAll('#clockQuiz .clock-opt').forEach(o=>{ if(o.dataset.correct==='true') o.classList.add('correct'); }); }
+}
+// scenario tapper
+function scPick(id, el, correct){
+  const box=document.getElementById(id);
+  box.querySelectorAll('.sc-opt').forEach(o=>o.style.pointerEvents='none');
+  el.classList.add(correct?'right':'wrong');
+  if(!correct){ box.querySelectorAll('.sc-opt').forEach(o=>{ if(o.textContent.trim()===document.getElementById('fb-'+id).textContent.split(' —')[0]) o.classList.add('right'); }); }
+  document.getElementById('fb-'+id).classList.add('show');
+}
+// ordering exercise
+const correctOrder=['Initial drill','Second drill','Staged working-diameter depths (7→8.5→10→…)','Full working diameter to final depth','Insert implant through the guide'];
+let orderArr=[];
+function buildOrder(){
+  const list=document.getElementById('orderList'); if(!list) return;
+  if(orderArr.length===0){ orderArr=[2,0,4,1,3].map(i=>correctOrder[i]); } // shuffled start
+  list.innerHTML=orderArr.map((t,i)=>`<li class="order-item"><span class="oi-num">${i+1}</span><span class="oi-txt">${t}</span><span class="oi-arrows"><button onclick="moveOrder(${i},-1)">▲</button><button onclick="moveOrder(${i},1)">▼</button></span></li>`).join('');
+  const r=document.getElementById('orderResult'); if(r) r.textContent='';
+}
+function moveOrder(i,d){
+  const j=i+d; if(j<0||j>=orderArr.length) return;
+  [orderArr[i],orderArr[j]]=[orderArr[j],orderArr[i]];
+  buildOrder();
+}
+function checkOrder(){
+  const r=document.getElementById('orderResult');
+  const ok=orderArr.every((t,i)=>t===correctOrder[i]);
+  document.querySelectorAll('#orderList .order-item').forEach((el,i)=>el.classList.toggle('correct-pos', orderArr[i]===correctOrder[i]));
+  if(ok){ r.style.color='var(--good)'; r.textContent='✓ Correct — initial, then second, then staged depths, then full diameter, then insert.'; }
+  else { r.style.color='var(--amber)'; r.textContent='Not yet — remember it starts initial → second (never straight to the working drill), and you pack up through staged depths before the full diameter.'; }
+}
+// torque calculator
+let arch='mand';
+function setArch(a,btn){ arch=a; document.querySelectorAll('#tqArch button').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); updateTorque(document.getElementById('tqSlider').value); }
+function updateTorque(v){
+  v=parseInt(v); const val=document.getElementById('tqVal'); if(!val) return;
+  val.textContent=v+' Ncm';
+  const vd=document.getElementById('tqVerdict');
+  let base = arch==='mand' ? 8 : 12; // weeks minimum at ~20Ncm
+  let msg, cls;
+  if(v>=20){ cls='callout good'; msg=`At ${v} Ncm in the ${arch==='mand'?'mandible':'maxilla'}, a typical minimum healing is around <strong>${base} weeks</strong> before exposure/loading is considered.`; }
+  else if(v>=15){ cls='callout'; msg=`At ${v} Ncm the bone is softer — extend beyond the ${base}-week baseline (an extra ~8 weeks was used as an example on the course). Plan a longer healing period.`; }
+  else { cls='callout warn'; msg=`At ${v} Ncm (≤15) this is soft bone — strongly consider under-preparing further, a longer healing period, or staging. Confirm the approach with your mentor.`; }
+  vd.className=cls; vd.innerHTML='<div class="callout-label">Indicative healing</div>'+msg;
+}
+
+loadProgress(); visitedSet.add(current); buildSidebar(); buildDots(); render();
+</script>
+</body>
+</html>
