@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 — Soft Tissue Fundamentals</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--surface:#141e27;--border:#1e3040;--gold:#c9a84c;--teal:#2dd4bf;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  #header{background:rgba(8,12,16,.98);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .h-left .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+  .h-left .title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-weight:300}
+  .score-display{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);text-align:right}
+  .score-display span{color:var(--teal);font-size:18px;font-weight:400}
+  #progress-outer{height:3px;background:var(--border);flex-shrink:0}
+  #progress-inner{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s ease;width:0%}
+  #main{flex:1;overflow-y:auto;padding:32px 60px;max-width:900px;margin:0 auto;width:100%}
+  /* Start / end screens */
+  .screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center}
+  .screen .big-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--text);margin-bottom:12px}
+  .screen .big-title em{color:var(--gold);font-style:italic}
+  .screen .desc{font-size:16px;color:var(--text2);margin-bottom:32px;max-width:560px;line-height:1.7}
+  .btn-primary{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(45,212,191,.05));border:1px solid var(--teal);color:var(--teal);padding:14px 40px;cursor:pointer;transition:all .2s}
+  .btn-primary:hover{background:rgba(45,212,191,.2);box-shadow:0 0 20px rgba(45,212,191,.15)}
+  /* Question card */
+  .q-card{background:var(--surface);border:1px solid var(--border);padding:28px 32px;margin-bottom:20px}
+  .q-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .q-topic{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold)}
+  .q-text{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:20px;font-weight:500}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left}
+  .opt:hover:not(.disabled){border-color:var(--teal);background:rgba(45,212,191,.05)}
+  .opt.selected{border-color:var(--teal);background:rgba(45,212,191,.08)}
+  .opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.08)!important}
+  .opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.08)!important}
+  .opt.disabled{cursor:default}
+  .opt-letter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);min-width:20px;flex-shrink:0;margin-top:1px}
+  .opt.correct .opt-letter{color:var(--green)}
+  .opt.wrong .opt-letter{color:var(--red)}
+  .opt.selected:not(.correct):not(.wrong) .opt-letter{color:var(--teal)}
+  .opt-text{font-size:15px;color:var(--text2);line-height:1.5}
+  .opt.correct .opt-text{color:var(--text)}
+  .explanation{margin-top:16px;padding:14px 16px;background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);font-size:14px;color:var(--text2);line-height:1.6;display:none}
+  .explanation.show{display:block}
+  .explanation strong{color:var(--teal)}
+  .q-footer{margin-top:16px;display:flex;justify-content:flex-end}
+  .btn-next{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s;display:none}
+  .btn-next.show{display:block}
+  .btn-next:hover{border-color:var(--teal);color:var(--teal)}
+  /* Results */
+  .result-ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--teal) 0deg, var(--border) 0deg);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative}
+  .result-inner{background:var(--bg);width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .result-pct{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1}
+  .result-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em}
+  .result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;max-width:400px;margin:20px auto}
+  .rb-box{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+  .rb-val{font-family:'Cormorant Garamond',serif;font-size:32px}
+  .rb-val.correct{color:var(--green)}
+  .rb-val.wrong{color:var(--red)}
+  .rb-label{font-size:12px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+  .grade-badge{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.2em;padding:8px 24px;border:1px solid;margin-bottom:16px;display:inline-block}
+  .grade-badge.pass{border-color:var(--green);color:var(--green)}
+  .grade-badge.merit{border-color:var(--teal);color:var(--teal)}
+  .grade-badge.dist{border-color:var(--gold);color:var(--gold)}
+  .grade-badge.fail{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="h-left">
+    <div class="label">Baird Implant Course · Assessment</div>
+    <div class="title">Quiz 1 — Soft Tissue Fundamentals</div>
+  </div>
+  <div class="score-display">
+    Q <span id="q-cur">0</span>/30 &nbsp;|&nbsp; Score <span id="score">0</span>
+  </div>
+</div>
+<div id="progress-outer"><div id="progress-inner"></div></div>
+<div id="main">
+
+<div id="start-screen" class="screen">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(45,212,191,.3);padding:4px 16px;display:inline-block">Quiz 1 of 3</div>
+  <div class="big-title">Soft Tissue<br><em>Fundamentals</em></div>
+  <p class="desc">30 questions covering peri-implant zones, biological width, the 2+3 rule, phenotype, keratinized mucosa, and pre-extraction assessment.</p>
+  <button class="btn-primary" onclick="startQuiz()">Begin Quiz</button>
+</div>
+
+<div id="quiz-area" style="display:none"></div>
+<div id="end-screen" class="screen" style="display:none"></div>
+
+</div>
+
+<script>
+const questions = [
+  {topic:"Peri-Implant Zones",q:"Which zone of the peri-implant tissues represents the area visible to the patient — the aesthetic zone?",opts:["B Zone","C Zone","E Zone","Dead Zone"],ans:2,exp:"The <strong>E Zone</strong> (Aesthetic Zone) is the visible portion of the peri-implant mucosa — what the patient sees above the gingival margin."},
+  {topic:"Peri-Implant Zones",q:"What happens if bacteria reach the C Zone (crestal zone) around an implant?",opts:["Hemidesmosomal attachment strengthens","The body sends leukocytes which cause non-selective bone damage","The E zone improves aesthetically","The implant immediately fails through loss of osseointegration"],ans:1,exp:"Bacteria in the <strong>C Zone (crestal zone)</strong> trigger a leukocyte response — white blood cells that damage bone non-selectively. This initiates marginal bone loss and peri-implantitis."},
+  {topic:"The 2+3 Rule",q:"What is the minimum soft tissue HEIGHT required above the implant shoulder according to the 2+3 rule?",opts:["1 mm","2 mm","3 mm","4 mm"],ans:2,exp:"The 2+3 rule states: minimum <strong>3mm height</strong> of soft tissue above the implant shoulder. Below this threshold, biological width will cause bone resorption to re-establish the required height."},
+  {topic:"The 2+3 Rule",q:"What is the minimum soft tissue THICKNESS required around a dental implant?",opts:["1 mm","2 mm","3 mm","4 mm"],ans:1,exp:"Minimum <strong>2mm thickness</strong> of soft tissue around the implant. Thinner tissue provides less protection for the underlying bone and reduced blood supply."},
+  {topic:"Biological Width",q:"What is the modern (updated) term for biological width?",opts:["Periosteal attachment","Supracrestal attachment","Mucosal seal","Peri-implant biotype"],ans:1,exp:"Biological width is increasingly called <strong>supracrestal attachment</strong> in contemporary literature. Be familiar with both terms."},
+  {topic:"Biological Width",q:"The biological width around natural teeth is approximately 2–3mm. What is the typical biological width requirement around dental implants?",opts:["1–2 mm","2–3 mm","3–4 mm","4–5 mm"],ans:2,exp:"Implants require <strong>3–4mm</strong> because they lack sulcular epithelium — which means the continuous space from mucosa crest to bone is wider and biological width must accommodate this."},
+  {topic:"Hemidesmosomal Attachment",q:"Hemidesmosomal attachment will form reliably on which of the following abutment surfaces?",opts:["Glazed zirconia","Clean polished titanium","Rough-sandblasted titanium","Acrylic provisional material"],ans:1,exp:"<strong>Polished titanium</strong> supports hemidesmosomal attachment. Glazed zirconia (too smooth, creates a pocket), rough surfaces, and acrylic do not reliably support hemidesmosomes."},
+  {topic:"Hemidesmosomal Attachment",q:"At annual review, you remove a screw-retained crown from a healthy implant and notice bleeding points at the abutment-tissue interface. This represents:",opts:["Early peri-implantitis","Active infection requiring treatment","Disrupted hemidesmosomal attachments — a normal finding","Failure of osseointegration"],ans:2,exp:"Bleeding points when removing a healthy crown represent <strong>disrupted hemidesmosomes</strong> — not disease. This is why routine crown removal at annual review should be avoided unless signs of disease are present."},
+  {topic:"Phenotype",q:"A patient has triangular-shaped teeth, long papillae, and a visible metal shadow through the gingiva when a probe is placed in the sulcus. This patient is:",opts:["Thick phenotype","Thin phenotype","Mixed phenotype","Insufficient data to determine"],ans:1,exp:"<strong>Thin phenotype</strong> characteristics include triangular teeth, high scalloping, long papillae, and a visible probe shadow through tissue (tissue <2mm thick)."},
+  {topic:"Phenotype",q:"In a thick phenotype patient, what percentage of labial plate bone is typically lost after tooth extraction?",opts:["5–20%","30–40%","50–60%","Over 70%"],ans:0,exp:"<strong>5–20%</strong> bone loss is typical for thick phenotype. Compare this to 50%+ for thin phenotype, making thick phenotype far more predictable for implant placement."},
+  {topic:"Phenotype",q:"Which statement is TRUE regarding thin phenotype and immediate implant placement?",opts:["Thin phenotype is the ideal indication for immediate placement","Thin phenotype is considered challenging or even contraindicated for immediate placement","Phenotype has no bearing on implant timing","Thin phenotype requires only a longer implant"],ans:1,exp:"<strong>Thin phenotype is challenging to contraindicated</strong> for immediate implant placement. The thin labial plate (predominantly bundle bone) disappears after PDL removal, leaving a deficient socket."},
+  {topic:"Keratinized Mucosa",q:"What is the minimum width of keratinized mucosa recommended around dental implants based on current evidence?",opts:["1 mm","2 mm","3 mm","4 mm"],ans:1,exp:"<strong>2mm</strong> keratinized mucosa width is the evidence-based minimum. This is now supported by consensus statements from the Italian Academy of Periodontology and the Academy of Osseointegration."},
+  {topic:"Keratinized Mucosa",q:"A patient has non-keratinized mobile mucosa around their mandibular implant and reports pain every time they brush. The primary reason for their discomfort is:",opts:["The implant is failing","Mobile mucosa is inherently more sensitive and painful to brush","There is peri-implantitis present","The crown is too tight"],ans:1,exp:"<strong>Mobile (non-keratinized) mucosa is painful to brush</strong> — this is a physiological property of non-keratinized tissue. Patients cannot clean effectively, leading to plaque accumulation and further inflammation."},
+  {topic:"Keratinized Mucosa",q:"What type of soft tissue graft increases the WIDTH of keratinized mucosa?",opts:["Connective tissue graft (CTG)","Free gingival graft (FGG)","Socket graft","Mucoderm membrane"],ans:1,exp:"<strong>Free gingival graft (FGG)</strong> — with epithelium intact, placed on periosteum — increases keratinized mucosa width. CTG increases thickness/volume but does not directly increase the keratinized band width."},
+  {topic:"Pre-Extraction Assessment",q:"Which of the following is NOT one of the four pre-extraction assessment factors for patients being considered for dental implants?",opts:["Width of keratinized mucosa","Soft tissue phenotype","Root morphology of the tooth to be extracted","Supracrestal attachment (biological width)"],ans:2,exp:"The four factors are: keratinized mucosa width, phenotype, soft tissue thickness, and supracrestal attachment. <strong>Root morphology</strong> is not one of the four pre-extraction soft tissue assessment factors."},
+  {topic:"Soft Tissue Zones",q:"The B Zone around a dental implant is significant because:",opts:["It is the primary aesthetic zone","It contains hemidesmosomal attachment providing a partial biological seal","It is where the implant threads are visible","It represents the crestal bone level"],ans:1,exp:"The <strong>B Zone</strong> contains hemidesmosomal attachment to the abutment — forming a partial biological seal that slows bacterial ingress toward the crestal zone."},
+  {topic:"Crown Design",q:"Regarding the subgingival contour of an implant crown: which profile is correct?",opts:["Convex — to support the soft tissue","Concave or flat — to avoid pressure on thin tissue","A flat profile creates food traps and must be avoided","The shape does not matter once osseointegration is achieved"],ans:1,exp:"The subgingival profile should be <strong>concave or flat</strong>. A convex profile pushes on the soft tissue as the crown is tightened, causing pressure-induced recession — especially in thin phenotype patients."},
+  {topic:"Tooth Loss",q:"After tooth extraction, even with the most atraumatic technique, what is the minimum recession expected immediately?",opts:["0 mm","1 mm","2 mm","3 mm"],ans:1,exp:"Even with perfect atraumatic extraction, <strong>≥1mm recession</strong> is expected immediately due to disruption of periodontal ligaments supporting the marginal gingiva."},
+  {topic:"Papilla",q:"For interdental papilla to maintain or regain its height, how many conditions should ideally be met?",opts:["2","3","4","5"],ans:3,exp:"<strong>Five conditions</strong>: contact area, healthy bony peaks (crest), embrasure space, clean embrasure (oral hygiene), and adequate soft tissue thickness. All five contribute to papilla stability."},
+  {topic:"Implant Depth",q:"A patient has 1mm of peri-implant mucosa. To satisfy the biological width principle, the implant shoulder should be placed:",opts:["At the bone crest","1mm below the bone crest","2mm below the bone crest","4mm below the bone crest"],ans:2,exp:"With <strong>1mm mucosa</strong>: the body needs 3mm biological width total. Since mucosa is only 1mm, the implant must be placed <strong>2mm below the bone</strong> so bone can resorb to 2mm, giving 1mm mucosa + 2mm resorbed bone = 3mm biological width."},
+  {topic:"Biological Width",q:"A digital surgical guide places the implant shoulder only 2mm below the planned gingival margin. The likely long-term consequence is:",opts:["No consequence — 2mm is adequate","Marginal bone resorption as biological width re-establishes itself","Improved aesthetics from a more superficial implant","Accelerated osseointegration"],ans:1,exp:"<strong>Marginal bone resorption</strong> will occur as biological width (3–4mm) cannot be satisfied with only 2mm of soft tissue. The bone resorbs to create the required distance."},
+  {topic:"Phenotype Assessment",q:"How do you clinically assess gingival phenotype at the chairside?",opts:["Raise a partial-thickness flap and measure with calipers","Press firmly on the mucosa and assess resilience","Insert a probe into the sulcus 1mm and check if the metal shadow is visible","Take a CBCT and measure labial plate thickness"],ans:2,exp:"Insert a periodontal probe <strong>1mm into the sulcus</strong> — if you can see the metal shadow through the tissue: thin phenotype. If invisible: thick phenotype. No anaesthesia required. Simple and reliable."},
+  {topic:"Soft Tissue After Extraction",q:"On CBCT at 8 weeks post-extraction in a thick phenotype patient, the socket fill appears dense and white. This most likely represents:",opts:["Granulation tissue — indicating poor healing","Woven bone — indicating normal thick-phenotype healing","Infected tissue — requiring debridement","Blood clot — indicating delayed healing"],ans:1,exp:"Dense white fill in a thick phenotype socket at 8 weeks = <strong>woven bone</strong>. In thin phenotype, the same grey appearance may indicate granulation tissue. The key is whether a labial wall remains."},
+  {topic:"Keratinized Mucosa",q:"A patient presents with 0.5mm keratinized mucosa around their implant placed 5 years ago. They report tenderness on brushing. Evidence suggests the BEST management is:",opts:["Reassure the patient and monitor","Perform a free gingival graft to increase keratinized mucosa width","Prescribe antiseptic mouthwash only","Extract the implant and re-place with bone grafting"],ans:1,exp:"<strong>Free gingival graft</strong> to increase keratinized mucosa is evidence-based management. Minimal KM = increased peri-implantitis risk, more recession, more discomfort. It is better to act before the situation deteriorates further."},
+  {topic:"Connective Tissue Graft",q:"Why is the epithelium REMOVED from a connective tissue graft before placement?",opts:["To reduce graft thickness","Epithelium under a flap creates a pocket — epithelium does not fuse with adjacent tissue","To improve colour matching at the recipient site","To enable the graft to provide keratinized width"],ans:1,exp:"<strong>Epithelium creates pockets</strong> when buried — it is designed for protection, not union. Connective tissue fuses with surrounding connective tissue. The epithelium must be removed for proper graft integration."},
+  {topic:"Peri-Implant Zones",q:"The 'dead zone' between the B and C zones is protective. Which factors influence its thickness?",opts:["Crown material only","Soft tissue thickness, patient oral hygiene, and abutment material/polish","Implant diameter and length","Bone density and type"],ans:1,exp:"The dead zone thickness is influenced by: <strong>soft tissue thickness</strong> (more tissue = deeper dead zone), <strong>patient oral hygiene</strong> (cleaner = less bacteria penetrating), and <strong>abutment material/polish</strong> (polished titanium/zirconia = better hemidesmosomal seal)."},
+  {topic:"Phenotype",q:"Thick phenotype is associated with which tooth shape?",opts:["Triangular teeth with long pointed cusps","Square or rectangular tooth forms","Spatulated wide teeth","No correlation between tooth shape and phenotype"],ans:1,exp:"<strong>Square/rectangular tooth forms</strong> are associated with thick phenotype. Triangular teeth are associated with thin phenotype and high scalloping."},
+  {topic:"Soft Tissue",q:"Which statement about immediate implant placement is CORRECT?",opts:["It is contraindicated in all thin phenotype patients","CTG is never used with immediate placement","It is most predictable in thick phenotype patients with intact labial plates","It always requires simultaneous GBR"],ans:2,exp:"Immediate placement is <strong>most predictable in thick phenotype</strong> patients where the labial plate is thick, multi-layered cortical bone — not just bundle bone. Connective tissue graft is often used simultaneously to augment the labial soft tissue."},
+  {topic:"Keratinized Mucosa",q:"When is it BEST to perform a free gingival graft relative to implant surgery?",opts:["At the same visit as bone grafting","Only after peri-implantitis develops","Before surgery or after implant healing — NOT at the same time as bone augmentation","During impression-taking at the restorative phase"],ans:2,exp:"FGG is performed <strong>before or after implant surgery</strong> — never simultaneously with bone augmentation. The tissue needs a stable, vascularised base (periosteum on healed bone) for graft take."},
+  {topic:"The 2+3 Rule",q:"A patient's mucosa is 3mm thick and the implant is placed at bone level. What is the expected outcome?",opts:["Bone resorption to establish 3mm biological width","Exposed threads due to inadequate coverage","Stable bone levels — biological width is satisfied","Marginal bone loss of approximately 1mm"],ans:2,exp:"With <strong>3mm thick mucosa and implant at bone level</strong>, biological width (3–4mm) is satisfied — the mucosa alone provides the needed dimension. Bone levels should remain stable long-term."}
+];
+
+let current=0,score=0,answered=[];
+function startQuiz(){
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQuestion();
+}
+function renderQuestion(){
+  const q=questions[current];
+  const qa=document.getElementById('quiz-area');
+  const letters=['A','B','C','D'];
+  document.getElementById('q-cur').textContent=current+1;
+  document.getElementById('progress-inner').style.width=((current/30)*100)+'%';
+  qa.innerHTML=`
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num">QUESTION ${current+1} / 30</span>
+        <span class="q-topic">${q.topic}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" onclick="selectOpt(${i})" id="opt${i}"><span class="opt-letter">${letters[i]}</span><span class="opt-text">${o}</span></button>`).join('')}
+      </div>
+      <div class="explanation" id="exp"><strong>Explanation:</strong> ${q.exp}</div>
+      <div class="q-footer"><button class="btn-next" id="next-btn" onclick="nextQ()">${current===29?'See Results':'Next Question →'}</button></div>
+    </div>`;
+}
+function selectOpt(i){
+  if(document.querySelector('.opt.correct')||document.querySelector('.opt.wrong'))return;
+  const q=questions[current];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+  document.getElementById('opt'+i).classList.add('selected');
+  if(i===q.ans){
+    document.getElementById('opt'+i).classList.add('correct');
+    score++;
+    document.getElementById('score').textContent=score;
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+q.ans).classList.add('correct');
+  }
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('next-btn').classList.add('show');
+  answered.push(i===q.ans);
+}
+function nextQ(){
+  if(current<29){current++;renderQuestion();}
+  else showResults();
+}
+function showResults(){
+  document.getElementById('quiz-area').style.display='none';
+  const end=document.getElementById('end-screen');
+  end.style.display='flex';
+  const pct=Math.round((score/30)*100);
+  document.getElementById('progress-inner').style.width='100%';
+  let grade,gclass;
+  if(pct>=85){grade='DISTINCTION';gclass='dist';}
+  else if(pct>=70){grade='MERIT';gclass='merit';}
+  else if(pct>=60){grade='PASS';gclass='pass';}
+  else{grade='NEEDS REVIEW';gclass='fail';}
+  const deg=Math.round((score/30)*360);
+  end.innerHTML=`
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);margin-bottom:8px">Quiz Complete</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em">SOFT TISSUE FUNDAMENTALS</div>
+    <div class="result-ring" style="background:conic-gradient(var(--teal) ${deg}deg, var(--border) ${deg}deg)">
+      <div class="result-inner"><div class="result-pct">${pct}%</div><div class="result-lbl">SCORE</div></div>
+    </div>
+    <div class="grade-badge ${gclass}">${grade}</div>
+    <div class="result-breakdown">
+      <div class="rb-box"><div class="rb-val correct">${score}</div><div class="rb-label">CORRECT</div></div>
+      <div class="rb-box"><div class="rb-val wrong">${30-score}</div><div class="rb-label">INCORRECT</div></div>
+    </div>
+    <p style="font-size:15px;color:var(--text2);max-width:500px;line-height:1.7;margin-bottom:28px">
+      ${pct>=85?'Excellent — you have a strong grasp of soft tissue fundamentals. Ready to proceed to clinical application.':pct>=70?'Good understanding of the core concepts. Review any topics where you were uncertain before progressing.':pct>=60?'Passing standard achieved. Revisit Lecture 1 to consolidate the areas where gaps remain.':'Review Lecture 1 thoroughly before retaking this quiz. Focus on biological width, the 2+3 rule, and phenotype classification.'}
+    </p>
+    <button class="btn-primary" onclick="location.reload()">Retake Quiz</button>`;
+}
+</script>
+</body>
+</html>

@@ -48,36 +48,73 @@ const desiredPaths = new Set(result.records.map((record) => record.relativePath)
 
 let uploaded = 0;
 let unchanged = 0;
+let metadataUpdated = 0;
 let removed = 0;
+const pendingRecords = [];
 
 for (const record of result.records) {
   const current = currentByPath.get(record.relativePath);
   if (current?.attributes?.content_sha256 === record.hash && current.status === "completed") {
-    unchanged += 1;
+    const metadataMatches = Object.entries(record.attributes)
+      .every(([key, value]) => current.attributes?.[key] === value);
+    if (metadataMatches) {
+      unchanged += 1;
+    } else {
+      await client.vectorStores.files.update(current.id, {
+        vector_store_id: vectorStoreId,
+        attributes: record.attributes
+      });
+      metadataUpdated += 1;
+      console.log(`Updated access metadata for ${record.relativePath}`);
+    }
     continue;
   }
 
-  const openaiFile = await client.files.create({
-    file: await toFile(record.buffer, record.filename),
-    purpose: "assistants"
-  });
+  pendingRecords.push({ record, current });
+}
 
-  const attached = await client.vectorStores.files.createAndPoll(vectorStoreId, {
-    file_id: openaiFile.id,
-    attributes: record.attributes
-  });
+if (pendingRecords.length) {
+  const uploadedFiles = new Array(pendingRecords.length);
+  const iterator = pendingRecords.entries();
+  const workerCount = Math.min(5, pendingRecords.length);
 
-  if (attached.status !== "completed") {
-    throw new Error(`OpenAI could not index ${record.relativePath}: ${attached.last_error?.message || attached.status}`);
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      for (const [index, { record }] of iterator) {
+        uploadedFiles[index] = await client.files.create({
+          file: await toFile(record.buffer, record.filename),
+          purpose: "assistants"
+        });
+      }
+    })
+  );
+
+  const timeoutSignal = AbortSignal.timeout(20 * 60 * 1_000);
+  const batch = await client.vectorStores.fileBatches.createAndPoll(
+    vectorStoreId,
+    {
+      files: pendingRecords.map(({ record }, index) => ({
+        file_id: uploadedFiles[index].id,
+        attributes: record.attributes
+      }))
+    },
+    { pollIntervalMs: 5_000, signal: timeoutSignal }
+  );
+
+  if (batch.status !== "completed" || batch.file_counts.failed > 0) {
+    throw new Error(
+      `OpenAI could not index the course library: ${batch.status}; ${batch.file_counts.failed} file(s) failed`
+    );
   }
 
-  if (current) {
-    await client.vectorStores.files.delete(current.id, { vector_store_id: vectorStoreId });
-    await client.files.delete(current.id).catch(() => undefined);
+  for (const { record, current } of pendingRecords) {
+    if (current) {
+      await client.vectorStores.files.delete(current.id, { vector_store_id: vectorStoreId });
+      await client.files.delete(current.id).catch(() => undefined);
+    }
+    uploaded += 1;
+    console.log(`Synced ${record.relativePath}`);
   }
-
-  uploaded += 1;
-  console.log(`Synced ${record.relativePath}`);
 }
 
 for (const current of managedFiles) {
@@ -89,4 +126,4 @@ for (const current of managedFiles) {
   console.log(`Removed stale source ${sourcePath || current.id}`);
 }
 
-console.log(`Knowledge sync complete: ${uploaded} uploaded, ${unchanged} unchanged, ${removed} removed.`);
+console.log(`Knowledge sync complete: ${uploaded} uploaded, ${metadataUpdated} metadata updated, ${unchanged} unchanged, ${removed} removed.`);

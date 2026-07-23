@@ -22,6 +22,12 @@ The page, course extractor, Netlify function, rate limiting, and automated tests
    - `OPENAI_API_KEY`
    - `OPENAI_VECTOR_STORE_ID`
    - `OPENAI_MODEL=gpt-5.4-mini` (optional; this is already the default)
+   - `GOOGLE_CLIENT_ID`
+   - `SESSION_SECRET` (at least 32 random characters)
+   - `BAIRD_OWNER_EMAILS=simsingh@gmail.com`
+   - `BAIRD_ADMIN_EMAILS` (comma-separated initial administrator emails)
+
+   Add the local Netlify origin and production origin to the Google OAuth web client's authorised JavaScript origins.
 
 4. Upload and index all current course sources:
 
@@ -37,7 +43,9 @@ The page, course extractor, Netlify function, rate limiting, and automated tests
 
 ## Adding materials later
 
-Copy text-searchable PDF, Word, PowerPoint, HTML, Markdown, or text files into `knowledge/additional/`. Run `npm run knowledge:check` before committing. The Netlify production build runs the full sync automatically and publishes the new reference files with the portal.
+Administrators can upload files up to 4 MB from the private Knowledge screen. The originals are stored in a private Netlify Blob store and are not published with the site.
+
+For larger text-searchable PDF, Word, PowerPoint, HTML, Markdown, or text files, copy them into `knowledge/additional/` and assign each file to a course in `knowledge/additional/manifest.json`. Run `npm run knowledge:check` before committing. The production build syncs these private AI-only references but does not publish the originals.
 
 ## Verification
 

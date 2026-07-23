@@ -4,12 +4,20 @@ export const MAX_TURNS = 12;
 export const MAX_MESSAGE_LENGTH = 2_000;
 export const MAX_REQUEST_BYTES = 32 * 1024;
 export const RATE_LIMIT_COUNT = 20;
-export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1_000;
+export const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1_000;
 export const COURSE_ONLY_FALLBACK = "I couldn’t find enough information in the available BAIRD course materials to answer that reliably. Try rephrasing the question or ask about a specific lecture or quiz.";
 
 export type ChatRole = "user" | "assistant";
 export type ChatMessage = { role: ChatRole; content: string };
-export type Citation = { label: string; href: string; type: string; excerpt: string };
+export type Citation = {
+  label: string;
+  href?: string;
+  type: string;
+  excerpt: string;
+  private?: boolean;
+  courseId?: string;
+  moduleId?: string;
+};
 
 export class RequestValidationError extends Error {
   code: string;
@@ -104,15 +112,22 @@ export function collectCitations(response: OpenAIResponse): Citation[] {
   for (const fileId of citedIds) {
     const result = results.get(fileId);
     const attributes = result?.attributes || {};
+    const isPrivate = attributes.source_visibility === "private_ai_only";
     const href = safeLocalHref(attributes.source_href);
-    if (!href || seen.has(href)) continue;
-    seen.add(href);
+    const key = isPrivate ? `private:${fileId}` : href;
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
 
     citations.push({
-      label: typeof attributes.source_title === "string" ? attributes.source_title : result?.filename || "BAIRD source",
-      href,
-      type: typeof attributes.source_type === "string" ? attributes.source_type : "Course material",
-      excerpt: cleanExcerpt(result?.text)
+      label: isPrivate
+        ? "Additional BAIRD course reference"
+        : typeof attributes.source_title === "string" ? attributes.source_title : result?.filename || "BAIRD source",
+      ...(href && !isPrivate ? { href } : {}),
+      type: isPrivate ? "Private course reference" : typeof attributes.source_type === "string" ? attributes.source_type : "Course material",
+      excerpt: isPrivate ? "" : cleanExcerpt(result?.text),
+      ...(isPrivate ? { private: true } : {}),
+      ...(typeof attributes.course_id === "string" ? { courseId: attributes.course_id } : {}),
+      ...(typeof attributes.module_id === "string" ? { moduleId: attributes.module_id } : {})
     });
   }
 

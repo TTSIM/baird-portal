@@ -7,11 +7,12 @@ const output = path.join(root, "dist");
 
 const sources = [
   "index.html",
+  "login.html",
   "baird_implant_portal.html",
   "ask-dr-hassan.html",
+  "admin.html",
   "assets",
-  "materials",
-  path.join("knowledge", "additional")
+  "materials"
 ];
 
 await fs.rm(output, { recursive: true, force: true });

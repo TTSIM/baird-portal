@@ -12,7 +12,8 @@ const mimeTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".md": "text/markdown; charset=utf-8",
-  ".pdf": "application/pdf"
+  ".pdf": "application/pdf",
+  ".webp": "image/webp"
 };
 
 createServer(async (request, response) => {

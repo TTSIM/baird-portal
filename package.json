@@ -19,11 +19,12 @@
     "@netlify/functions": "^4.2.5",
     "acorn": "^8.15.0",
     "cheerio": "1.0.0",
+    "google-auth-library": "^10.9.0",
     "openai": "^6.15.0"
   },
   "devDependencies": {
-    "@types/node": "^20.17.0",
     "@playwright/test": "^1.57.0",
+    "@types/node": "^20.17.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },

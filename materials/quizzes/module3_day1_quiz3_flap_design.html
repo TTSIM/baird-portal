@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 3 — Flap Design &amp; Decision-Making</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--surface:#141e27;--border:#1e3040;--gold:#c9a84c;--teal:#2dd4bf;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--orange:#f97316}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  #header{background:rgba(8,12,16,.98);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .h-left .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+  .h-left .title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-weight:300}
+  .score-display{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);text-align:right}
+  .score-display span{color:var(--orange);font-size:18px;font-weight:400}
+  #progress-outer{height:3px;background:var(--border);flex-shrink:0}
+  #progress-inner{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));transition:width .4s ease;width:0%}
+  #main{flex:1;overflow-y:auto;padding:32px 60px;max-width:900px;margin:0 auto;width:100%}
+  .screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center}
+  .screen .big-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--text);margin-bottom:12px}
+  .screen .big-title em{color:var(--gold);font-style:italic}
+  .screen .desc{font-size:16px;color:var(--text2);margin-bottom:32px;max-width:560px;line-height:1.7}
+  .btn-primary{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(249,115,22,.05));border:1px solid var(--orange);color:var(--orange);padding:14px 40px;cursor:pointer;transition:all .2s}
+  .btn-primary:hover{background:rgba(249,115,22,.2);box-shadow:0 0 20px rgba(249,115,22,.15)}
+  .q-card{background:var(--surface);border:1px solid var(--border);padding:28px 32px;margin-bottom:20px}
+  .q-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .q-topic{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:var(--orange)}
+  .q-text{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:20px;font-weight:500}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left}
+  .opt:hover:not(.disabled){border-color:var(--orange);background:rgba(249,115,22,.05)}
+  .opt.selected{border-color:var(--orange);background:rgba(249,115,22,.08)}
+  .opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.08)!important}
+  .opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.08)!important}
+  .opt.disabled{cursor:default}
+  .opt-letter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);min-width:20px;flex-shrink:0;margin-top:1px}
+  .opt.correct .opt-letter{color:var(--green)}
+  .opt.wrong .opt-letter{color:var(--red)}
+  .opt.selected:not(.correct):not(.wrong) .opt-letter{color:var(--orange)}
+  .opt-text{font-size:15px;color:var(--text2);line-height:1.5}
+  .opt.correct .opt-text{color:var(--text)}
+  .explanation{margin-top:16px;padding:14px 16px;background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.15);font-size:14px;color:var(--text2);line-height:1.6;display:none}
+  .explanation.show{display:block}
+  .explanation strong{color:var(--orange)}
+  .q-footer{margin-top:16px;display:flex;justify-content:flex-end}
+  .btn-next{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s;display:none}
+  .btn-next.show{display:block}
+  .btn-next:hover{border-color:var(--orange);color:var(--orange)}
+  .result-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative}
+  .result-inner{background:var(--bg);width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .result-pct{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1}
+  .result-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em}
+  .result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:400px;margin:20px auto}
+  .rb-box{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+  .rb-val{font-family:'Cormorant Garamond',serif;font-size:32px}
+  .rb-val.correct{color:var(--green)}
+  .rb-val.wrong{color:var(--red)}
+  .rb-label{font-size:12px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+  .grade-badge{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.2em;padding:8px 24px;border:1px solid;margin-bottom:16px;display:inline-block}
+  .grade-badge.pass{border-color:var(--green);color:var(--green)}
+  .grade-badge.merit{border-color:var(--teal);color:var(--teal)}
+  .grade-badge.dist{border-color:var(--gold);color:var(--gold)}
+  .grade-badge.fail{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="h-left">
+    <div class="label">Baird Implant Course · Assessment</div>
+    <div class="title">Quiz 3 — Flap Design &amp; Decision-Making</div>
+  </div>
+  <div class="score-display">Q <span id="q-cur">0</span>/30 &nbsp;|&nbsp; Score <span id="score">0</span></div>
+</div>
+<div id="progress-outer"><div id="progress-inner"></div></div>
+<div id="main">
+
+<div id="start-screen" class="screen">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--orange);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(249,115,22,.3);padding:4px 16px;display:inline-block">Quiz 3 of 3</div>
+  <div class="big-title">Flap Design &amp;<br><em>Decision-Making</em></div>
+  <p class="desc">30 questions covering the four basic flaps, the three questions framework, the four yeses system, bone sounding, vertical incision rules, Golf Club technique, and the remote palatal incision.</p>
+  <button class="btn-primary" onclick="startQuiz()">Begin Quiz</button>
+</div>
+
+<div id="quiz-area" style="display:none"></div>
+<div id="end-screen" class="screen" style="display:none"></div>
+
+</div>
+<script>
+const questions=[
+  {topic:"Flap Design Principles",q:"Which statement best reflects the core principle of evidence-based flap design?",opts:["Use an envelope flap for every implant case to minimise scarring","Apply the same flap design consistently to develop surgical efficiency","Choose the flap design based on the individual biology of each case — one size does not fit all","The papillary-preserving flap is always the safest choice"],ans:2,exp:"<strong>One size does not fit all.</strong> Flap design must be individually tailored based on bone sounding, phenotype, neighbour quality, and surgical need. Defaulting to one design regardless of clinical findings leads to predictable complications."},
+  {topic:"Four Basic Flaps",q:"The papillary-preserving (trapezoid) flap preserves the papilla by leaving how much tissue at its base?",opts:["0.5 mm","1.5 mm","3 mm","5 mm"],ans:2,exp:"The Baird course specification is a minimum of <strong>3mm</strong> of papilla island at the base. This 3mm island preserves adequate blood supply to the retained papilla tissue and provides sufficient tissue width for suturing. Less than 3mm results in inadequate vascularity and recession still occurs."},
+  {topic:"Four Basic Flaps",q:"Which flap design uses only a sulcular incision with no vertical lines?",opts:["Three-sided flap","Papillary-preserving flap","Envelope flap","Two-sided flap"],ans:2,exp:"The <strong>envelope (sulcular) flap</strong> uses only an intrasulcular incision — no vertical releasing lines. It is the most conservative design, preserving blood supply and avoiding scars, but elevates all papillae in the zone."},
+  {topic:"Three Questions Framework",q:"What is the FIRST of the three questions in the framework for designing an implant flap?",opts:["How large should the flap be?","Do I need vertical incisions?","Should I raise this papilla or preserve it?","What suture technique will I use?"],ans:2,exp:"The first question is always: <strong>raise this papilla or preserve it?</strong> This is the most important decision. Answer it for each papilla individually using the four yeses system. The other two questions (extent and vertical lines) follow from this."},
+  {topic:"Four Yeses System",q:"In the four yeses system, which factor is considered the MOST important and is assessed first?",opts:["Phenotype (thick vs thin)","Quality of the neighbouring tooth","Mid-labial bone sounding of adjacent teeth","Mesial/distal bone sounding at the papilla base"],ans:3,exp:"<strong>Mesial/distal bone sounding at the papilla base</strong> is the most important factor and must be assessed first. If the bone-to-tissue distance exceeds 3mm, the papilla cannot be safely elevated regardless of phenotype or neighbour quality."},
+  {topic:"Four Yeses System",q:"Bone sounding at the papilla base reveals a distance of 4mm from the mucosa crest to bone. What should you do?",opts:["Raise the papilla — 4mm is within acceptable range","Preserve the papilla — a distance greater than 3mm is unfavourable","Perform a CTG first then reassess","Use a thin-bladed elevator to minimise trauma when raising"],ans:1,exp:"A bone-sounding distance of <strong>greater than 3mm</strong> is unfavourable — stop here. The coronal tissue above 3mm from bone has inadequate blood supply from the underlying bone. After elevation, biological width will re-establish at 3mm, causing the coronal tissue to necrose and result in permanent recession."},
+  {topic:"Four Yeses System",q:"Which of the following neighbours would immediately result in a NO in the four yeses system?",opts:["A healthy natural tooth with a well-fitting crown","An adjacent dental implant","A tooth with mild gingivitis controlled with hygiene","A tooth with a recently placed but well-adapted ceramic crown"],ans:1,exp:"An <strong>adjacent dental implant</strong> is always a NO. Implants have no periodontal ligament, which means no blood supply to the papilla from that side. The papilla between two implants is functionally scar tissue — if elevated, it will not recover."},
+  {topic:"Four Yeses System",q:"The four yeses system identifies phenotype as which factor in the hierarchy?",opts:["Most important — assessed first","Second most important","Third most important","Least important — assessed last"],ans:3,exp:"Phenotype is the <strong>least important</strong> factor — assessed last. Even with thin phenotype, if the first three factors are favourable, elevation may proceed (with care). Conversely, even thick phenotype cannot save a papilla with >3mm bone sounding or an implant neighbour."},
+  {topic:"Bone Sounding",q:"Why does bone sounding require local anaesthesia, while phenotype assessment does not?",opts:["Bone sounding is more painful due to deeper soft tissue penetration","Phenotype assessment is performed with the probe in the sulcus only (1mm) — bone sounding requires penetrating through the junctional epithelium and connective tissue to reach bone","Bone sounding takes longer and requires the patient to be completely still","Anaesthesia improves bleeding control during bone sounding"],ans:1,exp:"Phenotype assessment only requires inserting a probe <strong>1mm into the sulcus</strong> — a painless procedure. Bone sounding requires driving the probe through the junctional epithelium, connective tissue, and periosteum to contact bone — this is uncomfortable without anaesthesia."},
+  {topic:"Bone Sounding",q:"Bone sounding at the mid-labial surface of a tooth adjacent to an implant site shows 4.5mm. The significance is:",opts:["The adjacent tooth needs root canal treatment","Elevation of a flap at this site will cause recession on the adjacent tooth","This is within normal limits and has no clinical significance","The implant should be placed 4.5mm deeper to compensate"],ans:1,exp:"Mid-labial bone sounding &gt;3mm on adjacent teeth means raising a flap in this area will cause <strong>recession on the neighbouring tooth</strong>. This is as damaging as losing a papilla — and is the single most common oversight in flap design planning."},
+  {topic:"Vertical Incisions",q:"Which of the following is an absolute rule regarding vertical incisions in attached (keratinized) mucosa?",opts:["Vertical lines in attached mucosa are always acceptable","Horizontal incision lines in attached mucosa should be avoided — they scar badly","Only one vertical line is permitted per surgical site","Vertical lines in attached mucosa must extend to the bone crest"],ans:1,exp:"<strong>No horizontal lines in attached/keratinized mucosa.</strong> Horizontal incisions in this zone create step-like scars that are highly visible and can persist for 5–7 years. This is an absolute rule — no exceptions."},
+  {topic:"Vertical Incisions",q:"Which of the following is an absolute rule regarding vertical incisions in mobile mucosa?",opts:["True vertical lines in mobile mucosa are preferred for clean healing","Horizontal lines in mobile mucosa produce the worst scarring","True vertical lines in mobile mucosa scar badly — transition to oblique at the MGJ","Multiple vertical lines are acceptable in mobile mucosa"],ans:2,exp:"<strong>No true vertical lines in mobile mucosa.</strong> When a vertical incision crosses the MGJ into mobile mucosa, it must transition to an oblique angle. Continuing straight vertical into mobile mucosa results in significant, visible scarring."},
+  {topic:"Golf Club Technique",q:"The golf club technique places the vertical incision on:",opts:["The maximum convexity of the adjacent tooth root","The midpoint of the interdental papilla","The flat bony surface between root convexities","At the base of the frenum for maximum access"],ans:2,exp:"The Golf Club technique positions the vertical incision on the <strong>flat bony surface between root convexities</strong>. This avoids the maximum convexity where recession is guaranteed, keeps distance from the papilla base, and places the scar line in the natural anatomical crease."},
+  {topic:"Golf Club Technique",q:"When placing a Golf Club incision, the minimum clearance from the papilla base and from the implant margin is:",opts:["1 mm","3 mm","5 mm","10 mm"],ans:1,exp:"The Golf Club vertical incision should maintain a minimum clearance of <strong>3mm</strong> from the papilla base and 3mm from the implant margin. This protects the papilla blood supply and prevents GBR membrane exposure through the vertical incision line."},
+  {topic:"Golf Club Technique",q:"What is the recommended direction of cutting for a vertical incision using the Golf Club technique?",opts:["Away from yourself — for better visibility","Toward yourself — for greater control and a cleaner incision","Horizontally first then vertically","Direction does not matter"],ans:1,exp:"Cut <strong>toward yourself</strong>. This provides better control of the blade, allows more consistent pressure, and produces a cleaner, more accurate incision. Cutting away introduces an element of uncontrolled hand movement."},
+  {topic:"Remote Palatal Incision",q:"Which of the following is an advantage of a palatally-offset crestal incision over a mid-crestal incision?",opts:["It provides better visibility of the labial plate","If dehiscence occurs, it is away from the implant and graft, flanked by keratinized mucosa on both sides","It eliminates the need for periosteal release","It is easier to suture accurately"],ans:1,exp:"A key advantage is that if dehiscence occurs, <strong>the gap is away from the graft</strong> and flanked by keratinized mucosa (palatal KM and buccal KM). This means rapid re-epithelialisation with healthy tissue, and reduced bacterial contamination of the graft."},
+  {topic:"Remote Palatal Incision",q:"A palatally-offset incision combined with a long healing abutment at high torque can produce which additional benefit?",opts:["Faster osseointegration","Pushes palatal keratinized mucosa buccally — a free gingival graft effect potentially eliminating a separate FGG","Eliminates the need for a bone graft","Reduces the need for periosteal release"],ans:1,exp:"When a long healing abutment is torqued at ≥25Ncm, the palatal keratinized mucosa is <strong>pushed buccally</strong> — effectively acting as a free gingival graft. This can eliminate or reduce the need for a separate FGG procedure."},
+  {topic:"Flap Extent",q:"For a case requiring GBR (guided bone regeneration), what minimum flap extent is recommended on each side of the surgical site?",opts:["0.5 units — keep the flap as small as possible","1 unit each side","2 units each side","3 units each side for GBR cases"],ans:2,exp:"For GBR cases, the flap must extend a minimum of <strong>2 units each side</strong>. This ensures the membrane can be placed with its margins well away from the flap edges (which must rest on vital bone, not graft material) and provides adequate access for correct GBR technique."},
+  {topic:"Flap Extent",q:"For a simple implant placement with no GBR, the minimum recommended flap extent is:",opts:["0.5 units each side","1 unit each side","2 units each side","3 units each side"],ans:1,exp:"For a simple implant with no bone augmentation, <strong>1 unit each side</strong> of the surgical site is sufficient. Over-extending the flap unnecessarily disturbs more papillae and increases the risk of aesthetic complications."},
+  {topic:"Scarring",q:"A patient with thick phenotype requires a vertical releasing incision. You inform them:",opts:["There will be no visible change to the gingiva after healing","There will likely be visible scarring initially, but this fades over 3–5 years — and this is preferable to the alternative of black triangles","The scar will be permanent and unchanged for life","Scarring only occurs in thin phenotype patients"],ans:1,exp:"Thick phenotype scars more than thin phenotype because of the dense fibrous tissue. However, <strong>scars fade over 3–5 years</strong> and are always preferable to the alternative — black triangles from papilla loss — which are permanent and far more difficult to correct."},
+  {topic:"Asymmetric Flap Design",q:"You are placing an implant between a healthy natural tooth (mesially) and an existing implant (distally). The correct flap design approach is:",opts:["Identical flap design on both sides for surgical efficiency","Raise the mesial papilla if the four yeses confirm it, always preserve the distal papilla adjacent to the existing implant","Always preserve both papillae in the presence of adjacent implants","Always raise both papillae for maximum access"],ans:1,exp:"The distal papilla adjacent to an existing implant is <strong>always preserved</strong> — no PDL means no blood supply, so the four yeses will always give a NO on the neighbour factor. The mesial papilla is assessed independently with the four yeses system."},
+  {topic:"Flapless Surgery",q:"Flapless implant surgery using a tissue punch is most appropriate when:",opts:["Any implant case where the patient is anxious about scars","Bone volume is adequate, no GBR is needed, and soft tissue architecture can be maintained with a punch","Bone grafting is needed but the patient declines flap surgery","Adjacent teeth have poor bone sounding results"],ans:1,exp:"Flapless surgery is appropriate when <strong>bone is adequate, no GBR is required</strong>, and the tissue punch will adequately manage the soft tissue. CBCT confirmation of ≥2mm bone on all surfaces is essential before proceeding flaplessly."},
+  {topic:"Four Yeses — Phenotype",q:"All four yeses are confirmed. However, the patient is thin phenotype. You should:",opts:["Proceed with confidence — four yeses means safe elevation","Proceed with caution — thin phenotype remains a risk factor even with four yeses, and considering papillary preservation is still reasonable","Do not proceed — thin phenotype is always a contraindication","Perform a CTG first to convert thin to thick phenotype before proceeding"],ans:1,exp:"Even with four yeses, <strong>thin phenotype remains a risk factor</strong>. Four yeses means you may proceed, but with appropriate caution. The option to preserve the papilla should always be considered, especially in high aesthetic demand cases."},
+  {topic:"Bone Sounding",q:"CBCT shows no interdental bone loss and healthy bony peaks on a periapical radiograph. Is bone sounding still required?",opts:["No — CBCT and radiographs provide sufficient information","Yes — bone sounding confirms the soft tissue to bone distance, which cannot be reliably read from imaging alone","Only if the patient is thin phenotype","Only if there is visible papilla recession clinically"],ans:1,exp:"<strong>Yes — bone sounding is still required.</strong> CBCT and radiographs show bone position, but cannot reliably tell you the soft tissue thickness above the bone. The actual mucosal-to-bone distance must be probed directly."},
+  {topic:"Flap Design — Case",q:"A patient presents for an implant. You note: thin phenotype, adjacent implant on one side, healthy natural tooth on the other, bone sounding at the natural tooth side = 2mm. The best flap design is:",opts:["Envelope flap elevating all papillae for maximum access","Papillary-preserving on the implant side; assess four yeses for the natural tooth side — can raise that papilla if all confirmed","Flapless surgery — given the complexity of the case","Two vertical releasing incisions — one on each side — for maximum field"],ans:1,exp:"The implant-adjacent papilla is always preserved (<strong>no PDL = no blood supply = always NO</strong>). The natural tooth side: bone sounding is 2mm (favourable), healthy neighbour (YES), thin phenotype (caution). With 3 of 4 factors favourable, you may cautiously raise this papilla while informing the patient of the thin-phenotype risk."},
+  {topic:"GBR and Flap",q:"After GBR, the flap margin should rest on:",opts:["The top of the membrane — to protect it from exposure","Vital (native) bone — away from the graft material and membrane","The implant healing abutment","The graft material itself — to encourage integration"],ans:1,exp:"After GBR, flap margins must rest on <strong>vital bone</strong> — not on membrane or graft material. If the margin sits over the graft, any minor dehiscence exposes the membrane directly to the oral environment, causing graft failure."},
+  {topic:"Flap Design — Scarring",q:"You place a vertical incision in attached mucosa, running parallel to the tooth root. The patient returns at 3 years with a visible horizontal scar line between attached and mobile mucosa. The most likely cause was:",opts:["Incorrect suture technique","The incision was continued as a horizontal line into the attached mucosa at some point","Normal scar maturation","The patient's poor wound healing"],ans:1,exp:"A horizontal scar line at the MGJ indicates that <strong>a horizontal incision was made in the attached mucosa</strong> — either at the base of the vertical incision or as a separate releasing cut. This is the most common scarring error and produces a visible, slow-to-resolve step-scar."},
+  {topic:"Implant Position",q:"The T-concept in implant positioning refers primarily to:",opts:["Temporal placement relative to extraction","The tip of the implant touching the lingual/palatal cortex — implant positioned as far palatally as possible","Total implant length and diameter selection","Two-stage vs single-stage implant surgery"],ans:1,exp:"The T-concept means the <strong>implant tip should point toward and contact the lingual/palatal cortex</strong> — positioned as palatally as possible. This protects the labial plate, preserves labial bone volume, and creates the jumping gap for labial grafting."},
+  {topic:"Maintain vs Obtain",q:"Which approach represents the easiest and most predictable soft tissue management strategy?",opts:["Obtaining lost tissue through grafting after a complication","Maintaining existing tissue through correct pre-surgical planning and technique","Treating peri-implantitis once detected","Performing all soft tissue procedures simultaneously with implant surgery"],ans:1,exp:"<strong>Maintaining existing tissue</strong> is always easier, more predictable, and less morbid than trying to recover tissue after it has been lost. Correct flap design, tension-free closure, and pre-surgical tissue preparation are the tools of maintenance."},
+  {topic:"Pre-Surgical Planning",q:"At what stage of treatment should bone sounding be performed?",opts:["At the start of the implant surgery, after raising the flap","During the pre-surgical consultation, with the patient anaesthetised","Only if recession is already visible clinically","At the restorative phase when placing the final crown"],ans:1,exp:"Bone sounding should be performed at the <strong>pre-surgical consultation visit, with the patient anaesthetised</strong>. This allows you to plan the flap design before the day of surgery — not improvise it after raising a flap incorrectly."},
+  {topic:"Four Yeses System",q:"A clinician always uses an envelope flap for every implant case, regardless of findings. The most significant risk of this approach is:",opts:["Increased operative time","Predictable black triangles in thin phenotype patients and cases with implant neighbours, where papillae cannot safely be elevated","Reduced visibility during GBR","Higher suture failure rate"],ans:1,exp:"Defaulting to an envelope flap without applying the four yeses system will predictably cause <strong>black triangles</strong> in cases where the papilla was not suitable for elevation — thin phenotype, implant neighbours, unfavourable bone sounding. Black triangles are permanent and difficult to correct."}
+];
+
+let current=0,score=0;
+function startQuiz(){
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQ();
+}
+function renderQ(){
+  const q=questions[current];
+  const L=['A','B','C','D'];
+  document.getElementById('q-cur').textContent=current+1;
+  document.getElementById('progress-inner').style.width=((current/30)*100)+'%';
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="q-card">
+      <div class="q-meta"><span class="q-num">QUESTION ${current+1} / 30</span><span class="q-topic">${q.topic}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})" id="o${i}"><span class="opt-letter">${L[i]}</span><span class="opt-text">${o}</span></button>`).join('')}
+      </div>
+      <div class="explanation" id="exp"><strong>Explanation:</strong> ${q.exp}</div>
+      <div class="q-footer"><button class="btn-next" id="nb" onclick="nextQ()">${current===29?'See Results':'Next Question →'}</button></div>
+    </div>`;
+}
+function pick(i){
+  if(document.querySelector('.opt.correct')||document.querySelector('.opt.wrong'))return;
+  const q=questions[current];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+  document.getElementById('o'+i).classList.add('selected');
+  if(i===q.ans){document.getElementById('o'+i).classList.add('correct');score++;document.getElementById('score').textContent=score;}
+  else{document.getElementById('o'+i).classList.add('wrong');document.getElementById('o'+q.ans).classList.add('correct');}
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nb').classList.add('show');
+}
+function nextQ(){
+  if(current<29){current++;renderQ();}else showResults();
+}
+function showResults(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('progress-inner').style.width='100%';
+  const end=document.getElementById('end-screen');
+  end.style.display='flex';
+  const pct=Math.round((score/30)*100);
+  let grade,gc;
+  if(pct>=85){grade='DISTINCTION';gc='dist';}
+  else if(pct>=70){grade='MERIT';gc='merit';}
+  else if(pct>=60){grade='PASS';gc='pass';}
+  else{grade='NEEDS REVIEW';gc='fail';}
+  const deg=Math.round((score/30)*360);
+  end.innerHTML=`
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);margin-bottom:8px">Quiz Complete</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em">FLAP DESIGN &amp; DECISION-MAKING</div>
+    <div class="result-ring" style="background:conic-gradient(var(--orange) ${deg}deg, var(--border) ${deg}deg)">
+      <div class="result-inner"><div class="result-pct">${pct}%</div><div class="result-lbl">SCORE</div></div>
+    </div>
+    <div class="grade-badge ${gc}">${grade}</div>
+    <div class="result-breakdown">
+      <div class="rb-box"><div class="rb-val correct">${score}</div><div class="rb-label">CORRECT</div></div>
+      <div class="rb-box"><div class="rb-val wrong">${30-score}</div><div class="rb-label">INCORRECT</div></div>
+    </div>
+    <p style="font-size:15px;color:var(--text2);max-width:500px;line-height:1.7;margin-bottom:28px">
+      ${pct>=85?'Excellent — your understanding of evidence-based flap design and the four yeses system is strong. Confident to apply this clinically.':pct>=70?'Good grasp of the key concepts. Review the four yeses hierarchy and the Golf Club incision rules if any questions were uncertain.':pct>=60?'Passing standard achieved. Revisit Lecture 3 — particularly the three questions framework, bone sounding, and vertical incision rules.':'Review Lecture 3 thoroughly before retaking. Focus on the four yeses system, bone sounding thresholds, and scarring rules for incision placement.'}
+    </p>
+    <button class="btn-primary" onclick="location.reload()">Retake Quiz</button>`;
+}
+</script>
+</body>
+</html>

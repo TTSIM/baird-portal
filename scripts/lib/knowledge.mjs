@@ -264,8 +264,9 @@ function uploadName(prefix, relativePath, replacementExtension) {
   return `${prefix}__${withExtension.replace(/[\\/]+/g, "__").replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 }
 
-function createRecord({ buffer, relativePath, title, type, filename }) {
+function createRecord({ buffer, relativePath, title, type, filename, access, privateAiOnly = false }) {
   const hash = createHash("sha256").update(buffer).digest("hex");
+  const href = privateAiOnly ? null : encodeLocalHref(relativePath);
   return {
     buffer,
     filename,
@@ -273,14 +274,26 @@ function createRecord({ buffer, relativePath, title, type, filename }) {
     title,
     type,
     hash,
-    href: encodeLocalHref(relativePath),
+    href,
     attributes: {
       managed_by: MANAGED_BY,
       source_path: relativePath.slice(0, 512),
-      source_href: encodeLocalHref(relativePath).slice(0, 512),
       source_title: title.slice(0, 512),
       source_type: type,
-      content_sha256: hash
+      content_sha256: hash,
+      ...(href ? { source_href: href.slice(0, 512) } : {}),
+      ...(privateAiOnly
+        ? {
+            scope: "course",
+            course_id: access.courseId,
+            source_visibility: "private_ai_only"
+          }
+        : {
+            scope: "module",
+            course_id: access.courseId,
+            module_id: access.moduleId,
+            source_visibility: "course_material"
+          })
     }
   };
 }
@@ -289,6 +302,20 @@ export async function buildKnowledgeRecords(rootDirectory) {
   const root = path.resolve(rootDirectory);
   const materialRoot = path.join(root, "materials");
   const additionalRoot = path.join(root, "knowledge", "additional");
+  const catalog = JSON.parse(await fs.readFile(path.join(root, "data", "course-catalog.json"), "utf8"));
+  const materialAssignments = new Map();
+  for (const module of catalog.modules) {
+    for (const file of module.knowledgeFiles || []) {
+      materialAssignments.set(file, { courseId: module.courseId, moduleId: module.id });
+    }
+    for (const day of module.days || []) {
+      for (const lecture of day.lectures || []) {
+        for (const resource of lecture.materials || []) {
+          materialAssignments.set(resource.file, { courseId: module.courseId, moduleId: module.id });
+        }
+      }
+    }
+  }
 
   const allMaterialFiles = await walkFiles(materialRoot);
   const courseFiles = allMaterialFiles.filter((file) => {
@@ -303,6 +330,8 @@ export async function buildKnowledgeRecords(rootDirectory) {
   for (const file of courseFiles) {
     const relativePath = path.relative(root, file);
     try {
+      const access = materialAssignments.get(relativePath);
+      if (!access) throw new Error("course and module assignment is missing from data/course-catalog.json");
       const extracted = await extractHtmlParts(file);
       const title = extracted.title || humanizeFilename(file);
       const type = inferType(relativePath);
@@ -322,7 +351,8 @@ export async function buildKnowledgeRecords(rootDirectory) {
         relativePath,
         title,
         type,
-        filename: uploadName("course", relativePath, ".md")
+        filename: uploadName("course", relativePath, ".md"),
+        access
       }));
     } catch (error) {
       errors.push(`${relativePath}: ${error instanceof Error ? error.message : String(error)}`);
@@ -336,10 +366,23 @@ export async function buildKnowledgeRecords(rootDirectory) {
     if (error?.code !== "ENOENT") throw error;
   }
 
+  let additionalManifest = { sources: {} };
+  try {
+    additionalManifest = JSON.parse(await fs.readFile(path.join(additionalRoot, "manifest.json"), "utf8"));
+  } catch (error) {
+    if (error?.code !== "ENOENT") errors.push(`knowledge/additional/manifest.json: ${error.message}`);
+  }
+
   for (const file of additionalFiles) {
     const extension = path.extname(file).toLowerCase();
     if (!SUPPORTED_ADDITIONAL_EXTENSIONS.has(extension) || path.basename(file).toLowerCase() === "readme.md") continue;
     const relativePath = path.relative(root, file);
+    const manifestKey = path.relative(additionalRoot, file).split(path.sep).join("/");
+    const assignment = additionalManifest.sources?.[manifestKey];
+    if (!assignment || !catalog.courses.some((course) => course.id === assignment.courseId)) {
+      errors.push(`${relativePath}: valid courseId assignment is required in knowledge/additional/manifest.json`);
+      continue;
+    }
     const buffer = await fs.readFile(file);
     if (!buffer.length) {
       errors.push(`${relativePath}: file is empty`);
@@ -349,9 +392,11 @@ export async function buildKnowledgeRecords(rootDirectory) {
     records.push(createRecord({
       buffer,
       relativePath,
-      title: humanizeFilename(file),
+      title: normalizeWhitespace(assignment.title) || humanizeFilename(file),
       type: "Additional material",
-      filename: uploadName("additional", relativePath)
+      filename: uploadName("additional", relativePath),
+      access: { courseId: assignment.courseId },
+      privateAiOnly: true
     }));
   }
 

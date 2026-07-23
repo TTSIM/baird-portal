@@ -1,0 +1,127 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: #172033;
+  background: #f4f6f8;
+  --line: #d8dee6;
+  --muted: #667085;
+  --blue: #1769e0;
+  --danger: #b42318;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+  background: white;
+}
+
+.kicker { margin: 0 0 4px; color: var(--blue); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 0; font-size: 1.4rem; }
+h2 { margin: 0 0 5px; font-size: 1.25rem; }
+p { color: var(--muted); }
+.section-heading p { margin: 0; font-size: .85rem; }
+
+.account { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .82rem; }
+.account a, .account button { color: inherit; border: 0; background: transparent; text-decoration: none; }
+
+.admin-nav {
+  display: flex;
+  gap: 4px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--line);
+  background: white;
+}
+
+.admin-nav button {
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  background: transparent;
+}
+
+.admin-nav button.active { border-color: var(--blue); color: #172033; font-weight: 700; }
+main { padding: 24px 28px 50px; }
+.global-status { min-height: 1.2em; margin: 0 0 10px; color: var(--danger); font-size: .85rem; }
+.admin-section { display: none; }
+.admin-section.active { display: block; }
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.filters, .inline-form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+label { display: grid; gap: 5px; color: var(--muted); font-size: .75rem; font-weight: 700; }
+input, select { min-height: 34px; padding: 6px 8px; border: 1px solid #c7ced8; border-radius: 4px; background: white; color: #172033; }
+button { min-height: 34px; padding: 6px 11px; border: 1px solid #bcc5d0; border-radius: 4px; background: white; color: #172033; }
+button.primary, form > button[type="submit"] { border-color: var(--blue); color: white; background: var(--blue); }
+button.danger { color: var(--danger); }
+button:disabled { cursor: default; opacity: .5; }
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(110px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metric { padding: 12px; border: 1px solid var(--line); background: white; }
+.metric strong { display: block; margin-top: 5px; font-size: 1.25rem; }
+.metric span { color: var(--muted); font-size: .72rem; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); background: white; }
+table { width: 100%; border-collapse: collapse; font-size: .79rem; }
+th, td { padding: 10px; border-bottom: 1px solid #e8ebef; text-align: left; vertical-align: top; }
+th { color: #4c596b; background: #f8f9fa; font-size: .7rem; text-transform: uppercase; white-space: nowrap; }
+td.question { min-width: 260px; max-width: 430px; white-space: normal; }
+.muted { color: var(--muted); }
+.status { font-weight: 700; text-transform: capitalize; }
+.status-failed, .status-provider_error { color: var(--danger); }
+.status-ready, .status-success { color: #147a3d; }
+.pagination { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 12px; font-size: .8rem; }
+
+.edit-row[hidden] { display: none; }
+.edit-panel { display: grid; gap: 12px; padding: 6px 0; }
+.edit-basics { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.course-grants { display: grid; gap: 8px; }
+.course-grants fieldset { display: flex; flex-wrap: wrap; gap: 10px 16px; padding: 10px; border: 1px solid var(--line); }
+.course-grants legend { padding: 0 5px; font-weight: 700; }
+.course-grants label { display: flex; align-items: center; gap: 5px; font-weight: 400; }
+.course-grants input { min-height: auto; }
+.editor-actions { display: flex; gap: 8px; }
+.form-note { flex-basis: 100%; margin: 0; font-size: .75rem; }
+.filename { display: block; margin-top: 3px; color: var(--muted); font-size: .72rem; }
+.error-detail { display: block; max-width: 320px; margin-top: 4px; color: var(--danger); font-size: .7rem; }
+
+@media (max-width: 850px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .admin-header { align-items: start; }
+  .account { flex-wrap: wrap; justify-content: flex-end; }
+}
+
+@media (max-width: 560px) {
+  .admin-header, main { padding-left: 14px; padding-right: 14px; }
+  .admin-nav { padding: 0 8px; overflow-x: auto; }
+}

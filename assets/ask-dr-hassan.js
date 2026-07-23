@@ -10,9 +10,82 @@ const clearButton = document.getElementById("clear-button");
 const suggestions = document.getElementById("suggestions");
 const liveStatus = document.getElementById("live-status");
 const messageTemplate = document.getElementById("message-template");
+const companionMount = document.getElementById("companion-mount");
+const companionHomeSlot = document.getElementById("companion-home-slot");
+const chatCompanionSlot = document.getElementById("chat-companion-slot");
+const companion = document.getElementById("dr-hassan-companion");
+const companionCharacter = document.getElementById("companion-character");
+const companionToggle = document.getElementById("companion-toggle");
+const companionReveal = document.getElementById("companion-reveal");
+const companionBubble = document.getElementById("companion-bubble");
+const accountName = document.getElementById("account-name");
+const adminLink = document.getElementById("admin-link");
+const logoutButton = document.getElementById("logout-button");
+
+const COMPANION_HIDDEN_KEY = "baird-dr-hassan-companion-hidden";
+const GREETING_QUIPS = [
+  "Ask away — the notes are open and the coffee is imaginary.",
+  "I brought the beard; you bring the question.",
+  "Revision first, dramatic sigh later.",
+  "No judgement here. The quiz has already claimed that job."
+];
 
 let history = [];
 let isBusy = false;
+let companionStateTimer;
+let companionBubbleTimer;
+
+function storedCompanionHidden() {
+  try {
+    return window.localStorage.getItem(COMPANION_HIDDEN_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function persistCompanionHidden(hidden) {
+  try {
+    window.localStorage.setItem(COMPANION_HIDDEN_KEY, String(hidden));
+  } catch {
+    // The companion still works when browser storage is unavailable.
+  }
+}
+
+function showCompanionBubble(message, duration = 0) {
+  window.clearTimeout(companionBubbleTimer);
+  companionBubble.textContent = message || "";
+  companionBubble.hidden = !message;
+
+  if (message && duration) {
+    companionBubbleTimer = window.setTimeout(() => {
+      companionBubble.hidden = true;
+    }, duration);
+  }
+}
+
+function setCompanionState(state, message = "", returnToIdleAfter = 0) {
+  window.clearTimeout(companionStateTimer);
+  companion.dataset.state = state;
+  showCompanionBubble(message);
+
+  if (returnToIdleAfter) {
+    companionStateTimer = window.setTimeout(() => {
+      companion.dataset.state = "idle";
+      showCompanionBubble("");
+    }, returnToIdleAfter);
+  }
+}
+
+function setCompanionVisible(visible, persist = true) {
+  companion.hidden = !visible;
+  companionReveal.hidden = visible;
+  if (!visible) showCompanionBubble("");
+  if (persist) persistCompanionHidden(!visible);
+}
+
+function moveCompanion(destination) {
+  if (companionMount.parentElement !== destination) destination.append(companionMount);
+}
 
 function setStatus(message) {
   liveStatus.textContent = "";
@@ -36,6 +109,7 @@ function resizeInput() {
 function beginConversation() {
   document.body.classList.add("chat-active");
   conversation.hidden = false;
+  moveCompanion(chatCompanionSlot);
 }
 
 function createMessage(role, text = "") {
@@ -67,8 +141,9 @@ function renderSources(messageElement, citations) {
   const unique = new Map();
   for (const citation of Array.isArray(citations) ? citations : []) {
     const href = safeSourceHref(citation.href);
-    if (!href || unique.has(href)) continue;
-    unique.set(href, { ...citation, href });
+    const key = href || (citation.private ? `private:${citation.label}` : "");
+    if (!key || unique.has(key)) continue;
+    unique.set(key, { ...citation, href });
   }
 
   if (!unique.size) return;
@@ -77,11 +152,13 @@ function renderSources(messageElement, citations) {
   const list = messageElement.querySelector(".source-list");
 
   for (const citation of unique.values()) {
-    const link = document.createElement("a");
-    link.className = "source-link";
-    link.href = citation.href;
-    link.target = "_blank";
-    link.rel = "noopener";
+    const link = document.createElement(citation.href ? "a" : "div");
+    link.className = `source-link${citation.href ? "" : " private-source"}`;
+    if (citation.href) {
+      link.href = citation.href;
+      link.target = "_blank";
+      link.rel = "noopener";
+    }
 
     const type = document.createElement("span");
     type.className = "source-type";
@@ -154,6 +231,18 @@ async function getErrorMessage(response) {
   }
 }
 
+async function loadAccount() {
+  const response = await fetch("/api/me", { headers: { Accept: "application/json" } });
+  if (response.status === 401) {
+    location.assign(`/?next=${encodeURIComponent(location.pathname)}`);
+    return;
+  }
+  if (!response.ok) throw new Error("Your account could not be loaded.");
+  const { user } = await response.json();
+  accountName.textContent = user.name;
+  adminLink.hidden = user.role !== "admin" && user.role !== "owner";
+}
+
 async function ask(question) {
   if (isBusy) return;
 
@@ -171,6 +260,7 @@ async function ask(question) {
   const assistantMessage = createMessage("assistant");
   assistantMessage.classList.add("loading");
   setMessageText(assistantMessage, "Looking through your course materials");
+  setCompanionState("searching", "Let me interrogate the lecture notes. Politely.");
 
   input.value = "";
   resizeInput();
@@ -179,6 +269,7 @@ async function ask(question) {
 
   let answer = "";
   let citations = [];
+  let hasStartedStreaming = false;
 
   try {
     const response = await fetch("/api/ask-dr-hassan", {
@@ -196,6 +287,10 @@ async function ask(question) {
       if (!event) return;
 
       if (event.type === "delta") {
+        if (!hasStartedStreaming) {
+          hasStartedStreaming = true;
+          setCompanionState("answering", "Found it. Educational goodness incoming.");
+        }
         answer += event.text || "";
         setMessageText(assistantMessage, answer);
       } else if (event.type === "done") {
@@ -203,6 +298,7 @@ async function ask(question) {
         citations = event.citations || [];
         setMessageText(assistantMessage, answer);
         renderSources(assistantMessage, citations);
+        setCompanionState("success", "Lovely. Sources attached — even my jokes need evidence.", 2800);
       } else if (event.type === "error") {
         throw new Error(event.error || "Dr Hassan could not complete the answer.");
       }
@@ -218,6 +314,7 @@ async function ask(question) {
     assistantMessage.classList.add("error");
     setMessageText(assistantMessage, error instanceof Error ? error.message : "Dr Hassan could not answer just now.");
     history = history.filter((item, index) => index !== history.length - 1 || item.role !== "user");
+    setCompanionState("error", "I couldn’t complete that answer. Please try again.", 3200);
     setStatus("Dr Hassan could not complete the answer.");
   } finally {
     setBusy(false);
@@ -252,10 +349,42 @@ clearButton.addEventListener("click", () => {
   messagesElement.replaceChildren();
   conversation.hidden = true;
   document.body.classList.remove("chat-active");
+  moveCompanion(companionHomeSlot);
+  setCompanionState("idle");
   input.value = "";
   resizeInput();
   input.focus();
   setStatus("Chat cleared.");
 });
 
+companionCharacter.addEventListener("click", () => {
+  if (isBusy) {
+    showCompanionBubble("I’m on it — the notes are putting up a fight.", 2400);
+    return;
+  }
+
+  const quip = GREETING_QUIPS[Math.floor(Math.random() * GREETING_QUIPS.length)];
+  setCompanionState("greeting", quip, 2800);
+});
+
+companionToggle.addEventListener("click", () => {
+  setCompanionVisible(false);
+  companionReveal.focus();
+  setStatus("Dr Hassan companion hidden.");
+});
+
+companionReveal.addEventListener("click", () => {
+  setCompanionVisible(true);
+  setCompanionState("greeting", "I’m back. The notes missed me.", 2400);
+  companionCharacter.focus();
+  setStatus("Dr Hassan companion shown.");
+});
+
+logoutButton.addEventListener("click", async () => {
+  await fetch("/api/auth/logout", { method: "POST" });
+  location.assign("/");
+});
+
+loadAccount().catch((error) => setStatus(error instanceof Error ? error.message : "Your account could not be loaded."));
+setCompanionVisible(!storedCompanionHidden(), false);
 resizeInput();

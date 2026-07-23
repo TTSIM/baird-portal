@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 2 — Soft Tissue Management &amp; Grafting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+  :root{--bg:#080c10;--surface:#141e27;--border:#1e3040;--gold:#c9a84c;--teal:#2dd4bf;--red:#ef4444;--green:#22c55e;--text:#e2eaf0;--text2:#8fa8bc;--text3:#4a6a80;--purple:#a855f7}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  #header{background:rgba(8,12,16,.98);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .h-left .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+  .h-left .title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-weight:300}
+  .score-display{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);text-align:right}
+  .score-display span{color:var(--purple);font-size:18px;font-weight:400}
+  #progress-outer{height:3px;background:var(--border);flex-shrink:0}
+  #progress-inner{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));transition:width .4s ease;width:0%}
+  #main{flex:1;overflow-y:auto;padding:32px 60px;max-width:900px;margin:0 auto;width:100%}
+  .screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center}
+  .screen .big-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--text);margin-bottom:12px}
+  .screen .big-title em{color:var(--gold);font-style:italic}
+  .screen .desc{font-size:16px;color:var(--text2);margin-bottom:32px;max-width:560px;line-height:1.7}
+  .btn-primary{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(168,85,247,.05));border:1px solid var(--purple);color:var(--purple);padding:14px 40px;cursor:pointer;transition:all .2s}
+  .btn-primary:hover{background:rgba(168,85,247,.2);box-shadow:0 0 20px rgba(168,85,247,.15)}
+  .q-card{background:var(--surface);border:1px solid var(--border);padding:28px 32px;margin-bottom:20px}
+  .q-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.15em}
+  .q-topic{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);color:var(--purple)}
+  .q-text{font-size:17px;color:var(--text);line-height:1.6;margin-bottom:20px;font-weight:500}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:left}
+  .opt:hover:not(.disabled){border-color:var(--purple);background:rgba(168,85,247,.05)}
+  .opt.selected{border-color:var(--purple);background:rgba(168,85,247,.08)}
+  .opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.08)!important}
+  .opt.wrong{border-color:var(--red)!important;background:rgba(239,68,68,.08)!important}
+  .opt.disabled{cursor:default}
+  .opt-letter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);min-width:20px;flex-shrink:0;margin-top:1px}
+  .opt.correct .opt-letter{color:var(--green)}
+  .opt.wrong .opt-letter{color:var(--red)}
+  .opt.selected:not(.correct):not(.wrong) .opt-letter{color:var(--purple)}
+  .opt-text{font-size:15px;color:var(--text2);line-height:1.5}
+  .opt.correct .opt-text{color:var(--text)}
+  .explanation{margin-top:16px;padding:14px 16px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.15);font-size:14px;color:var(--text2);line-height:1.6;display:none}
+  .explanation.show{display:block}
+  .explanation strong{color:var(--purple)}
+  .q-footer{margin-top:16px;display:flex;justify-content:flex-end}
+  .btn-next{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:none;border:1px solid var(--border);color:var(--text2);padding:8px 24px;cursor:pointer;transition:all .2s;display:none}
+  .btn-next.show{display:block}
+  .btn-next:hover{border-color:var(--purple);color:var(--purple)}
+  .result-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative}
+  .result-inner{background:var(--bg);width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .result-pct{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1}
+  .result-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em}
+  .result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:400px;margin:20px auto}
+  .rb-box{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center}
+  .rb-val{font-family:'Cormorant Garamond',serif;font-size:32px}
+  .rb-val.correct{color:var(--green)}
+  .rb-val.wrong{color:var(--red)}
+  .rb-label{font-size:12px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+  .grade-badge{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.2em;padding:8px 24px;border:1px solid;margin-bottom:16px;display:inline-block}
+  .grade-badge.pass{border-color:var(--green);color:var(--green)}
+  .grade-badge.merit{border-color:var(--teal);color:var(--teal)}
+  .grade-badge.dist{border-color:var(--gold);color:var(--gold)}
+  .grade-badge.fail{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="h-left">
+    <div class="label">Baird Implant Course · Assessment</div>
+    <div class="title">Quiz 2 — Soft Tissue Management &amp; Grafting</div>
+  </div>
+  <div class="score-display">Q <span id="q-cur">0</span>/30 &nbsp;|&nbsp; Score <span id="score">0</span></div>
+</div>
+<div id="progress-outer"><div id="progress-inner"></div></div>
+<div id="main">
+
+<div id="start-screen" class="screen">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:.3em;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(168,85,247,.3);padding:4px 16px;display:inline-block">Quiz 2 of 3</div>
+  <div class="big-title">Soft Tissue <em>Management</em><br>&amp; Grafting</div>
+  <p class="desc">30 questions covering tension-free closure, periosteal release, frenectomy, FGG, CTG, Mucoderm, suturing techniques, wound dehiscence, and socket grafting.</p>
+  <button class="btn-primary" onclick="startQuiz()">Begin Quiz</button>
+</div>
+
+<div id="quiz-area" style="display:none"></div>
+<div id="end-screen" class="screen" style="display:none"></div>
+
+</div>
+<script>
+const questions=[
+  {topic:"Tension-Free Closure",q:"Research indicates that flap tension above which threshold leads to wound dehiscence?",opts:["10 Newton centimetres","25 Newton centimetres","40 Newton centimetres","50 Newton centimetres"],ans:1,exp:"A threshold of <strong>25 Newton centimetres</strong> has been identified in the research literature as the point at which wound dehiscence becomes likely. While we cannot measure this clinically, this is why the tweezers test and visual assessment for blanching are essential."},
+  {topic:"Tension-Free Closure",q:"You place sutures after implant surgery. You notice the tissue at the wound margins is white. This indicates:",opts:["Normal primary healing response","Ischaemia from excessive suture tension — remove and resuture with periosteal release","Correct suture placement with appropriate tissue compression","A sign of adequate haemostasis"],ans:1,exp:"<strong>White blanching</strong> at wound margins indicates ischaemia from tension. The pressure is cutting off blood supply to the margin. Remove sutures, perform periosteal release, and resuture. Ignoring this guarantees dehiscence at 7–10 days."},
+  {topic:"Tension-Free Closure",q:"Even without bone grafting, periosteal release is often required after implant placement. The primary reason is:",opts:["Implant placement is inherently traumatic and requires extra healing support","The osteotomy expands the ridge on implant insertion, creating tension even without GBR","Periosteal release always improves aesthetics","The flap is always too short to reach the crestal incision"],ans:1,exp:"The implant osteotomy is drilled slightly smaller than the implant to achieve primary stability. When the implant is placed, it <strong>expands the ridge</strong>, increasing flap tension. This means tension — and the need for release — exists even without bone grafting."},
+  {topic:"Tweezers Test",q:"During the tweezers test, you grasp the flap edge, bring it to the desired closure position, and release it. It stays for 4 seconds then gently retracts. You should:",opts:["Perform periosteal release before suturing","Proceed to suture — this is passive closure","Extend the flap further before suturing","Apply tissue adhesive to hold the flap in place"],ans:1,exp:"The flap holding for 3–5 seconds before slowly retracting indicates <strong>passive closure</strong> — the correct result. You may proceed to suture. If the flap springs back immediately, periosteal release is required first."},
+  {topic:"Periosteal Release",q:"At which anatomical landmark must periosteal release be performed — and why?",opts:["At the attached gingiva, because this is where the tissue is thinnest","At or just above the mucogingival junction (MGJ), because the muscle layer with vessels and nerves lies apical to it","At the bone crest, because this is where the periosteum is thickest","2mm apical to the MGJ for maximum tissue mobility"],ans:1,exp:"Release must be at or just <strong>above (coronal to) the MGJ</strong>. Below the MGJ lies the muscle layer containing the infraorbital/mental nerves and vessels. Cutting apical to the MGJ risks nerve damage (numbness) and vessel damage (haematoma)."},
+  {topic:"Periosteal Release",q:"What is the correct depth of the periosteal release incision?",opts:["3–4 mm to ensure full periosteal division","1 mm only — the left hand provides the stretch","5 mm to reach the muscle layer","As deep as needed until the flap moves freely"],ans:1,exp:"The blade enters the periosteum by <strong>1mm only</strong>. One millimetre of the blade tip, combined with the left-hand stretch tension, provides 5–10mm of effective tissue release. Deeper cuts dramatically increase perforation risk with no additional benefit."},
+  {topic:"Periosteal Release",q:"What is the correct blade angle during periosteal release?",opts:["90 degrees — perpendicular to the tissue surface","45 degrees — standard cutting angle","5 degrees — nearly parallel to the flap, just enough to engage the periosteum","30 degrees — to ensure the full blade engages"],ans:2,exp:"The blade should be nearly <strong>parallel to the flap surface</strong>, with the tip pointing toward bone, then rotated just <strong>5 degrees</strong> upright. This angle allows only the tip to engage the periosteum without the blade body perforating the overlying mucosa."},
+  {topic:"Periosteal Release",q:"During periosteal release you encounter bleeding. The most likely explanation is:",opts:["You have successfully released the periosteum — some bleeding is normal","You are cutting too apically, in the muscle layer below the MGJ","You are cutting too superficially, in the mucosa only","The blade is too sharp"],ans:1,exp:"<strong>Bleeding during periosteal release indicates you are in the muscle layer</strong> — too apical, below the MGJ. Correct periosteal release is a dry procedure. Reposition your blade more coronally. Stop and reassess the MGJ position before continuing."},
+  {topic:"Periosteal Release",q:"After a correct periosteal release, the expected amount of additional tissue mobility is:",opts:["1–2 mm","5–10 mm","15–20 mm","Over 20 mm"],ans:1,exp:"A correctly executed periosteal release produces <strong>5–10mm of additional tissue mobility</strong>. This is achieved by the 1mm notch releasing the periosteal 'glue' combined with the left-hand stretch of the elastic mucosa above."},
+  {topic:"Frenectomy",q:"When should a frenectomy ideally be performed relative to implant surgery?",opts:["On the same day as implant placement to minimise patient visits","4–6 weeks before implant surgery to allow full healing","Immediately after implant placement at the same visit","Only after the final crown is placed"],ans:1,exp:"Frenectomy should be performed <strong>4–6 weeks before</strong> implant surgery to allow complete healing. If performed at the same time as surgery, the weakened tissue is at increased risk of perforation through the surgical flap."},
+  {topic:"Frenectomy",q:"After frenectomy, the incision lines are VERTICAL. The sutures are placed:",opts:["Vertically — parallel to the incision lines","Horizontally — across the wound, perpendicular to the incision lines","As interrupted sutures placed randomly","Only on one side of the wound"],ans:1,exp:"Although the incisions are vertical, sutures are placed <strong>horizontally</strong> — across the wound from side to side. This is a fundamental surgical principle: sutures run perpendicular to the incision line to bring wound edges together."},
+  {topic:"Frenectomy",q:"Why must you undermine the mucosa during frenectomy before suturing?",opts:["To allow the wound to heal by secondary intention","To ensure you are suturing mucosa to mucosa — not muscle to muscle, which would not heal","To remove more frenum tissue than initially planned","To create a larger defect for better scarring"],ans:1,exp:"Undermining separates mucosa from the underlying muscle on both sides of the wound. This allows you to suture <strong>mucosa to mucosa</strong> — not muscle. Muscle-to-muscle closure does not heal well and causes permanent tethering."},
+  {topic:"Frenectomy",q:"Does frenectomy alter the patient's smile arc?",opts:["Yes — removing the frenum weakens the upper lip musculature","No — the frenum attaches mucosa to lip tissue, not the smile musculature itself","Only in patients with very high smile lines","Yes — it can improve smile symmetry"],ans:1,exp:"<strong>No</strong>. The frenum attaches mucosa to the lip tissue, not to the muscles of facial expression that define the smile arc. Frenectomy does not affect the smile line aesthetically."},
+  {topic:"Free Gingival Graft",q:"During FGG recipient site preparation, which structure must be preserved at all costs?",opts:["The marginal gingiva","The periosteum — it provides blood supply for graft take","The mobile mucosa beneath the recipient site","The junctional epithelium of adjacent teeth"],ans:1,exp:"The <strong>periosteum must be left intact</strong> on the bone at the recipient site. It provides the blood supply that allows the FGG to survive via plasma diffusion (days 0–3) and then neovascularisation. Remove the periosteum and the graft has no blood supply — it will necrose."},
+  {topic:"Free Gingival Graft",q:"Approximately what percentage shrinkage should you expect from an FGG during healing?",opts:["10–15%","25–30%","50%","75%"],ans:2,exp:"<strong>Approximately 50% shrinkage</strong> is expected during FGG healing. Plan accordingly — harvest a graft approximately twice the desired final keratinized mucosa width to achieve the target result."},
+  {topic:"Free Gingival Graft",q:"When harvesting an FGG from the palate, yellow tissue is visible on the deep surface. You should:",opts:["Include the yellow tissue — it improves graft thickness","Remove all yellow fatty tissue — it impedes vascular ingrowth","Use a thicker graft to bury the fat","Only harvest from the edentulous ridge to avoid this problem"],ans:1,exp:"<strong>Yellow fatty tissue must be removed</strong> from the deep surface of the FGG. Fat impedes revascularisation and integration at the recipient site. The graft should be uniformly connective tissue — 1–2mm thickness, no fat."},
+  {topic:"Free Gingival Graft",q:"A 14-year follow-up study of FGG sites shows:",opts:["Keratinized tissue gradually converted back to mobile mucosa","Stable keratinized mucosa with better health parameters than non-grafted control sites","No significant difference between grafted and non-grafted sides","The graft tissue had completely resorbed"],ans:1,exp:"FGG outcomes at <strong>14-year follow-up</strong> demonstrate stable keratinized mucosa behaving as native tissue in all measurable parameters — including plaque index, bleeding scores, recession rates, bone levels, and patient-reported comfort during brushing."},
+  {topic:"Connective Tissue Graft",q:"A CTG is used in preference to an FGG when the clinical goal is:",opts:["Increasing keratinized mucosa width","Increasing soft tissue thickness and volume","Reducing tissue inflammation","Treating peri-implantitis"],ans:1,exp:"CTG is chosen to increase <strong>soft tissue thickness and volume</strong>. FGG addresses keratinized mucosa width. CTG addresses volume — both are essential tools for different clinical presentations."},
+  {topic:"Connective Tissue Graft",q:"How is epithelium identified versus connective tissue during CTG harvest?",opts:["Epithelium is red; connective tissue is pale","Epithelium is shiny; connective tissue is matte and dull","Epithelium is rough to palpation; connective tissue is smooth","They cannot be distinguished without histological examination"],ans:1,exp:"<strong>Epithelium is shiny; connective tissue is matte and dull.</strong> During de-epithelialisation of a CTG, once the shiny surface disappears, you are at the connective tissue layer. The epithelium is approximately 0.3–0.4mm thick."},
+  {topic:"Connective Tissue Graft",q:"In the tunnel technique for CTG placement, what holds the graft in position?",opts:["Mattress sutures through the graft","The tunnel itself stabilises the graft — sutures through the graft are not required","Tissue adhesive","Healing abutment pressure only"],ans:1,exp:"In the tunnel technique, the <strong>tunnel itself holds the CTG</strong> — the graft is inserted and the snug-fitting tunnel prevents displacement. Sling or interrupted sutures close the tunnel entrance, but sutures through the graft body are not required."},
+  {topic:"Mucoderm",q:"Mucoderm is derived from which source?",opts:["Bovine (cow) collagen","Porcine (pig) dermis","Human cadaveric tissue","Synthetic resorbable polymer"],ans:1,exp:"Mucoderm is an acellular collagen matrix derived from <strong>porcine (pig) dermis</strong>. This is clinically relevant — religious or cultural considerations may preclude its use in some patients."},
+  {topic:"Mucoderm",q:"What is the primary advantage of Mucoderm over autogenous CTG?",opts:["It produces better long-term outcomes","No second surgical site — reduced patient morbidity and unlimited supply","It costs less than autogenous grafting","It contains living cells that enhance integration"],ans:1,exp:"The primary advantage of Mucoderm is <strong>no second surgical site</strong> — eliminating palatal donor site morbidity and providing unlimited supply. However, it remains a second-choice material — autogenous CTG produces superior outcomes when available."},
+  {topic:"Suturing",q:"Why are interrupted sutures alone considered suboptimal for papilla management in implant surgery?",opts:["They are too difficult to place accurately near papillae","They flatten and compress interdental papillae, reducing their height","They cause excessive scarring at suture sites","They have insufficient tensile strength for flap closure"],ans:1,exp:"Interrupted sutures alone pull the papilla tips in a horizontal direction, <strong>flattening and blunting</strong> the papillae. Vertical mattress sutures are preferred because they evert the tissue margins and maintain papilla height."},
+  {topic:"Suturing",q:"Which suture technique is preferred for maintaining papilla height in the aesthetic zone?",opts:["Simple interrupted sutures","Horizontal mattress sutures","Vertical mattress sutures","Figure-of-eight sutures"],ans:2,exp:"<strong>Vertical mattress sutures</strong> evert wound margins and hold the papilla at its natural height. They distribute tension over a broader area and are the preferred technique for papilla preservation in aesthetic implant surgery."},
+  {topic:"Wound Dehiscence",q:"A patient returns at 10 days post-surgery with a wound that has opened. White tissue is visible centrally. This white appearance represents:",opts:["Exposed bone graft — requiring emergency management","Necrotic tissue with re-epithelialisation beginning — dehiscence has occurred","Normal healing granulation tissue","The membrane becoming exposed — acceptable outcome"],ans:1,exp:"White tissue visible at a dehisced wound at 10 days represents <strong>necrotic tissue with early re-epithelialisation</strong>. The area died from lack of blood supply (tension-induced ischaemia) and is now beginning to cover with new epithelium. Even if it re-epithelialises, bacteria have already reached the graft."},
+  {topic:"Wound Dehiscence",q:"What is the most significant consequence of wound dehiscence over a bone graft?",opts:["Temporary colour change in adjacent teeth","Guaranteed marginal bone loss once the wound remains open beyond 48 hours","Delayed osseointegration only","Increased post-operative pain with no long-term sequelae"],ans:1,exp:"<strong>Marginal bone loss is guaranteed</strong> if a dehiscence remains open for more than 48 hours. Bacteria penetrate the wound and contaminate the graft or implant surface, triggering bone resorption. This is why prevention — through periosteal release and tension-free closure — is critical."},
+  {topic:"Fixed Temporisation",q:"Why is fixed temporisation superior to a removable denture during implant healing?",opts:["Fixed temporaries require fewer patient visits","A removable denture rests on the soft tissue, compressing and starving the papilla of blood supply","Fixed temporaries are always cheaper to fabricate","Removable dentures cause osseointegration failure"],ans:1,exp:"A removable denture rests directly on the soft tissue, <strong>compressing the papilla and starving it of blood supply</strong>. This causes papilla atrophy and loss of the anatomical reference. Fixed temporaries maintain the papilla support throughout healing."},
+  {topic:"Socket Grafting",q:"When performing socket grafting, why is it important to leave periosteum on bone at the donor and recipient areas?",opts:["Periosteum must be removed to allow graft contact with bone","Periosteum provides blood supply critical for graft integration and survival","Periosteum prevents infection","Periosteum holds sutures more securely"],ans:1,exp:"The <strong>periosteum provides blood supply</strong> to the graft. Whether for socket grafting or FGG, the periosteum must remain on the bone surface. Without it, there is no vascular bed for the graft to integrate with and the graft will fail."},
+  {topic:"Prosthetic Sculpting",q:"In prosthetic soft tissue sculpting, the initial temporary crown subgingival profile should be:",opts:["Convex — to push tissue into the desired emergence profile from day one","Concave — to allow tissue to relax into a natural position before progressive contouring","Flat — as a neutral starting point","Identical to the final crown profile — to establish tissue contour immediately"],ans:1,exp:"The initial subgingival profile should be <strong>concave</strong> — this allows the tissue to settle and heal without pressure. Progressive convexity is then added at intervals to gently push and mould the tissue into the desired emergence profile over weeks to months."},
+  {topic:"Implant Healing",q:"When is fixed temporisation for prosthetic sculpting typically initiated after implant placement?",opts:["Immediately on the day of placement","At 2 weeks (suture removal visit)","At 8–12 weeks after confirmed osseointegration","Only after the final impression — using the definitive crown"],ans:2,exp:"Prosthetic sculpting begins at <strong>8–12 weeks</strong> after surgery, once osseointegration is confirmed. Beginning too early risks micro-movement of the implant during the critical early healing phase. The temporary crown is placed and contouring begins progressively."},
+  {topic:"Socket Grafting",q:"Which instrument is particularly well-suited for degranulation of extraction sockets prior to grafting?",opts:["High-speed handpiece with diamond bur at 250,000 rpm","Degranulation burs running at 800 rpm","Ultrasonic scaler","Standard periodontal curette only"],ans:1,exp:"<strong>Degranulation burs at 800 rpm</strong> are specifically designed for this purpose. Fast enough to efficiently remove granulation tissue, but too slow to damage bone. They come in graduated sizes for complete socket degranulation. A good long-term investment for any implant practice."}
+];
+
+let current=0,score=0;
+function startQuiz(){
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQ();
+}
+function renderQ(){
+  const q=questions[current];
+  const L=['A','B','C','D'];
+  document.getElementById('q-cur').textContent=current+1;
+  document.getElementById('progress-inner').style.width=((current/30)*100)+'%';
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="q-card">
+      <div class="q-meta"><span class="q-num">QUESTION ${current+1} / 30</span><span class="q-topic">${q.topic}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})" id="o${i}"><span class="opt-letter">${L[i]}</span><span class="opt-text">${o}</span></button>`).join('')}
+      </div>
+      <div class="explanation" id="exp"><strong>Explanation:</strong> ${q.exp}</div>
+      <div class="q-footer"><button class="btn-next" id="nb" onclick="nextQ()">${current===29?'See Results':'Next Question →'}</button></div>
+    </div>`;
+}
+function pick(i){
+  if(document.querySelector('.opt.correct')||document.querySelector('.opt.wrong'))return;
+  const q=questions[current];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+  document.getElementById('o'+i).classList.add('selected');
+  if(i===q.ans){document.getElementById('o'+i).classList.add('correct');score++;document.getElementById('score').textContent=score;}
+  else{document.getElementById('o'+i).classList.add('wrong');document.getElementById('o'+q.ans).classList.add('correct');}
+  document.getElementById('exp').classList.add('show');
+  document.getElementById('nb').classList.add('show');
+}
+function nextQ(){
+  if(current<29){current++;renderQ();}else showResults();
+}
+function showResults(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('progress-inner').style.width='100%';
+  const end=document.getElementById('end-screen');
+  end.style.display='flex';
+  const pct=Math.round((score/30)*100);
+  let grade,gc;
+  if(pct>=85){grade='DISTINCTION';gc='dist';}
+  else if(pct>=70){grade='MERIT';gc='merit';}
+  else if(pct>=60){grade='PASS';gc='pass';}
+  else{grade='NEEDS REVIEW';gc='fail';}
+  const deg=Math.round((score/30)*360);
+  end.innerHTML=`
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);margin-bottom:8px">Quiz Complete</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em">SOFT TISSUE MANAGEMENT &amp; GRAFTING</div>
+    <div class="result-ring" style="background:conic-gradient(var(--purple) ${deg}deg, var(--border) ${deg}deg)">
+      <div class="result-inner"><div class="result-pct">${pct}%</div><div class="result-lbl">SCORE</div></div>
+    </div>
+    <div class="grade-badge ${gc}">${grade}</div>
+    <div class="result-breakdown">
+      <div class="rb-box"><div class="rb-val correct">${score}</div><div class="rb-label">CORRECT</div></div>
+      <div class="rb-box"><div class="rb-val wrong">${30-score}</div><div class="rb-label">INCORRECT</div></div>
+    </div>
+    <p style="font-size:15px;color:var(--text2);max-width:500px;line-height:1.7;margin-bottom:28px">
+      ${pct>=85?'Excellent — strong command of soft tissue management and grafting concepts. Ready for clinical application.':pct>=70?'Good understanding. Review periosteal release technique and FGG/CTG distinctions if any questions arose.':pct>=60?'Passing standard. Revisit Lecture 2, particularly periosteal release steps and wound dehiscence prevention.':'Review Lecture 2 in full. Focus on periosteal release anatomy, the five steps to ideal tissue, and graft selection criteria.'}
+    </p>
+    <button class="btn-primary" onclick="location.reload()">Retake Quiz</button>`;
+}
+</script>
+</body>
+</html>

@@ -86,7 +86,24 @@ test("drops external citation targets and falls back when citations are absent",
   assert.equal(groundedAnswer(uncited, collectCitations(uncited)), COURSE_ONLY_FALLBACK);
 });
 
-test("allows twenty requests per ten-minute window and reports retry timing", () => {
+test("anonymises private AI-only citations without exposing a link or excerpt", () => {
+  const response = responseFixture({ href: undefined });
+  response.output[0].results[0].attributes = {
+    source_title: "Confidential external lecture",
+    source_type: "Additional material",
+    source_visibility: "private_ai_only",
+    course_id: "implant-dentistry-2026"
+  };
+  assert.deepEqual(collectCitations(response), [{
+    label: "Additional BAIRD course reference",
+    type: "Private course reference",
+    excerpt: "",
+    private: true,
+    courseId: "implant-dentistry-2026"
+  }]);
+});
+
+test("allows twenty requests per daily window and reports retry timing", () => {
   const now = 1_000_000;
   let record = null;
   for (let count = 0; count < RATE_LIMIT_COUNT; count += 1) {
