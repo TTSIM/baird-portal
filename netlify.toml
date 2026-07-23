@@ -4,6 +4,7 @@ publish = "dist"
 
 [build.environment]
 NODE_VERSION = "20"
+NETLIFY_EMAILS_DIRECTORY = "./email-templates"
 
 [context.deploy-preview.environment]
 COMMUNITY_ENABLED = "true"
@@ -11,6 +12,9 @@ COMMUNITY_ENABLED = "true"
 [functions]
 directory = "netlify/functions"
 node_bundler = "esbuild"
+
+[functions.emails]
+node_bundler = "zisi"
 
 [[plugins]]
 package = "@netlify/plugin-emails"
