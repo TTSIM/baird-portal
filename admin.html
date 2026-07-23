@@ -3,30 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f94">
   <title>Administration | BAIRD Learning Portal</title>
+  <script src="assets/theme.js"></script>
+  <link rel="stylesheet" href="assets/theme.css">
   <link rel="stylesheet" href="assets/admin.css">
 </head>
 <body>
   <header class="admin-header">
-    <div>
-      <p class="kicker">BAIRD Academy</p>
-      <h1>Portal administration</h1>
-    </div>
+    <a class="admin-brand" href="baird_implant_portal.html" aria-label="Return to BAIRD Learning Portal">
+      <img src="assets/baird-logo.gif" alt="BAIRD" width="1280" height="326">
+      <span>Operations</span>
+    </a>
     <div class="account">
-      <a href="baird_implant_portal.html">Portal</a>
+      <a class="portal-return" href="baird_implant_portal.html">Learning portal</a>
+      <button class="admin-theme-toggle" type="button" data-theme-toggle>
+        <span data-theme-label>Dark mode</span>
+      </button>
       <span id="account-name"></span>
       <button id="logout-button" type="button">Sign out</button>
     </div>
   </header>
 
-  <nav class="admin-nav" aria-label="Administration sections">
-    <button class="active" type="button" data-section="usage">Ask Dr Hassan</button>
-    <button type="button" data-section="delegates">Users</button>
-    <button type="button" data-section="knowledge">Knowledge</button>
-    <button type="button" data-section="community">Community</button>
-  </nav>
+  <main class="admin-main">
+    <section class="admin-intro" aria-labelledby="admin-title">
+      <div>
+        <p class="kicker">BAIRD control room</p>
+        <h1 id="admin-title">Portal operations.</h1>
+      </div>
+      <p>Manage people, protected knowledge, community safety and the performance of Ask Dr Hassan.</p>
+    </section>
 
-  <main>
+    <nav class="admin-nav" aria-label="Administration sections">
+      <button class="active" type="button" data-section="usage">Ask Dr Hassan</button>
+      <button type="button" data-section="delegates">Users</button>
+      <button type="button" data-section="knowledge">Knowledge</button>
+      <button type="button" data-section="community">Community</button>
+    </nav>
+
     <p class="global-status" id="global-status" role="status"></p>
 
     <section class="admin-section active" id="section-usage">

@@ -193,6 +193,11 @@ test("creates, discusses, reacts to, reports, and resolves community threads", a
 
   await page.goto("/baird_implant_portal.html?tab=community");
   await expect(page.getByRole("button", { name: "Community", exact: true })).toHaveAttribute("aria-current", "page");
+  const activityPlacement = await page.locator("#community-notification-button").evaluate((button) => ({
+    position: getComputedStyle(button).position,
+    inHeader: Boolean(button.closest(".portal-actions"))
+  }));
+  expect(activityPlacement).toEqual({ position: "static", inHeader: true });
   await expect(page.getByText("Need support with immediate loading")).toBeVisible();
   await expect(page.getByRole("button", { name: "Load more" })).toBeHidden();
   await page.getByText("Need support with immediate loading").click();

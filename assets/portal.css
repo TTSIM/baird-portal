@@ -225,13 +225,21 @@ body {
 }
 
 .activity-button {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  z-index: 12;
-  color: var(--baird-surface-strong);
-  background: var(--baird-blue);
-  box-shadow: var(--baird-shadow);
+  gap: 7px;
+}
+
+.activity-count {
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--baird-red);
+  font-size: 0.65rem;
+  line-height: 1;
 }
 
 .portal-main {

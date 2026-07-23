@@ -88,8 +88,12 @@ test("admin reviews usage, changes grants, and manages private knowledge", async
   }));
 
   await page.goto("/admin.html");
+  await expect(page.getByRole("heading", { name: "Portal operations." })).toBeVisible();
+  await expect(page.getByRole("img", { name: "BAIRD" })).toHaveAttribute("src", "assets/baird-logo.gif");
   await expect(page.getByText("12", { exact: true })).toBeVisible();
   await expect(page.getByText("What is osseointegration?")).toBeVisible();
+  await page.getByRole("button", { name: "Use dark theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 
   await page.getByRole("button", { name: "Users" }).click();
   await page.getByRole("button", { name: "Edit" }).click();
@@ -103,10 +107,16 @@ test("admin reviews usage, changes grants, and manages private knowledge", async
   await expect(page.getByText("External implant lecture")).toBeVisible();
   await expect(page.getByText("external-lecture.pdf")).toBeVisible();
   await expect(page.getByText("ready", { exact: true })).toBeVisible();
+
+  if (process.env.CAPTURE_ADMIN_VISUAL === "1") {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: "/tmp/baird-admin-desktop.png", fullPage: true });
+  }
 });
 
 test("owner can edit privileged users and assign every role", async ({ page }) => {
   let patchedUser = null;
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.route("**/api/me", (route) => route.fulfill({
     status: 200,
     contentType: "application/json",
@@ -143,6 +153,14 @@ test("owner can edit privileged users and assign every role", async ({ page }) =
   });
 
   await page.goto("/admin.html");
+  const mobileHeading = page.getByRole("heading", { name: "Portal operations." });
+  await expect(mobileHeading).toBeVisible();
+  const [headerBox, headingBox] = await Promise.all([
+    page.locator(".admin-header").boundingBox(),
+    mobileHeading.boundingBox()
+  ]);
+  expect(headingBox.y).toBeGreaterThan(headerBox.y + headerBox.height);
+  await expect(page.getByRole("button", { name: "Use dark theme" })).toBeVisible();
   await page.getByRole("button", { name: "Users" }).click();
   const adminRow = page.getByText("Admin User", { exact: true }).locator("..");
   await adminRow.getByRole("button", { name: "Edit" }).click();
@@ -151,6 +169,13 @@ test("owner can edit privileged users and assign every role", async ({ page }) =
   await roleSelect.selectOption("owner");
   await page.locator("[data-user-form='admin-1']").getByRole("button", { name: "Save" }).click();
   expect(patchedUser.role).toBe("owner");
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+
+  if (process.env.CAPTURE_ADMIN_VISUAL === "1") {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: "/tmp/baird-admin-mobile.png", fullPage: true });
+  }
 });
 
 test("admin reviews community reports, removes images, and sees moderation history", async ({ page }) => {
