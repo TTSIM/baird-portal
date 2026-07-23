@@ -82,32 +82,38 @@ test("portal exposes an isolated Ask Dr Hassan navigation link", async ({ page }
   await page.getByRole("button", { name: "My Learning" }).click();
   await expect(page.getByRole("heading", { name: "My courses" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Ask Dr Hassan" })).toHaveAttribute("href", "ask-dr-hassan.html");
-  await page.getByText("Test Delegate", { exact: true }).click();
-  await expect(page.getByRole("link", { name: "Backend dashboard" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Backend" })).toHaveCount(0);
   await page.getByRole("link", { name: "Ask Dr Hassan" }).click();
   await expect(page).toHaveURL(/ask-dr-hassan\.html$/);
   await expect(page.getByPlaceholder("Ask anything about your course materials…")).toBeFocused();
 });
 
-test("owner sees the Backend dashboard navigation", async ({ page }) => {
-  await page.unroute("**/api/me");
-  await page.route("**/api/me", (route) => route.fulfill({
-    status: 200,
-    contentType: "application/json",
-    body: JSON.stringify({
-      user: { id: "owner-1", name: "Sim Singh", email: "simsingh@gmail.com", role: "owner", grants: [] },
-      portal: {
-        academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
-        courses: [],
-        faculty: [],
-        modules: [],
-        stats: { enrolledCourses: 0, availableItems: 0, faculty: 0, materials: 0, yearsRunning: 20 }
-      }
-    })
-  }));
-  await page.goto("/baird_implant_portal.html");
-  await page.getByText("Sim Singh", { exact: true }).click();
-  await expect(page.getByRole("link", { name: "Backend dashboard" })).toBeVisible();
+test("owners and admins see Backend as a primary portal tab", async ({ page }) => {
+  for (const role of ["owner", "admin"]) {
+    await page.unroute("**/api/me");
+    await page.route("**/api/me", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        user: { id: `${role}-1`, name: role === "owner" ? "Sim Singh" : "BAIRD Admin", email: `${role}@example.com`, role, grants: [] },
+        portal: {
+          academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
+          courses: [],
+          faculty: [],
+          modules: [],
+          stats: { enrolledCourses: 0, availableItems: 0, faculty: 0, materials: 0, yearsRunning: 20 }
+        }
+      })
+    }));
+    await page.setViewportSize(role === "admin" ? { width: 390, height: 844 } : { width: 1280, height: 720 });
+    await page.goto("/baird_implant_portal.html");
+    const backendTab = page.getByRole("link", { name: "Backend" });
+    await expect(backendTab).toBeVisible();
+    await expect(backendTab).toHaveAttribute("href", "admin.html");
+    await expect(page.locator(".portal-nav").getByRole("link", { name: "Backend" })).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+  }
 });
 
 test("renders the minimal home state and a cited streamed answer", async ({ page }) => {

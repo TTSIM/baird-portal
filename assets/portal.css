@@ -75,6 +75,9 @@ body {
 
 .portal-nav__item {
   min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 13px;
   border: 0;
   border-radius: var(--baird-radius-sm);
@@ -83,10 +86,27 @@ body {
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 650;
+  text-decoration: none;
   transition:
     color 180ms ease,
     background 180ms ease,
     transform 180ms ease;
+}
+
+.portal-nav__link {
+  position: relative;
+  padding-left: 27px;
+}
+
+.portal-nav__link::before {
+  position: absolute;
+  left: 13px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--baird-red);
+  content: "";
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--baird-red) 11%, transparent);
 }
 
 .portal-nav__item:hover {
