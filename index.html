@@ -7,6 +7,8 @@
   <meta name="description" content="Secure sign-in for the BAIRD implant dentistry learning portal.">
   <title>Sign in | BAIRD Learning Portal</title>
   <link rel="preload" href="assets/login-clinical.webp" as="image" type="image/webp">
+  <script src="assets/theme.js"></script>
+  <link rel="stylesheet" href="assets/theme.css">
   <link rel="stylesheet" href="assets/auth.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -67,6 +69,9 @@
 
       <footer class="sign-in__footer">
         <span>BAIRD Academy</span>
+        <button class="login-theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+          <span data-theme-label>Dark mode</span>
+        </button>
         <span>Private education portal</span>
       </footer>
     </section>

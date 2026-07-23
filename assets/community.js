@@ -383,7 +383,8 @@ async function openThread(id, pushUrl = true) {
     renderThread();
     if (pushUrl) {
       const url = new URL(location.href);
-      url.searchParams.set("tab", "community");
+      url.searchParams.set("view", "community");
+      url.searchParams.delete("tab");
       url.searchParams.set("thread", id);
       history.pushState({}, "", url);
     }
@@ -609,8 +610,9 @@ document.addEventListener("baird:portal-ready", async ({ detail }) => {
   if (!detail.features.community) return;
   state.user = detail.user;
   state.portal = detail.portal;
-  state.courses = new Map(detail.portal.courses.map((course) => [course.id, course]));
-  const courseOptions = detail.portal.courses.map((course) => {
+    const enrolledCourses = detail.portal.courses.filter((course) => course.enrolled);
+    state.courses = new Map(detail.portal.courses.map((course) => [course.id, course]));
+  const courseOptions = enrolledCourses.map((course) => {
     const option = document.createElement("option");
     option.value = course.id;
     option.textContent = course.title;

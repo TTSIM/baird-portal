@@ -1,14 +1,13 @@
 :root {
-  color-scheme: dark;
-  --bg: #07090f;
-  --surface: #131922;
-  --surface-2: #1a2332;
-  --line: #2a3748;
-  --text: #e8edf5;
-  --muted: #9ba8be;
-  --accent: #4f9cf7;
-  --mint: #36d6b5;
-  font-family: "Source Sans 3", "Avenir Next", sans-serif;
+  --bg: var(--baird-bg);
+  --surface: var(--baird-surface);
+  --surface-2: var(--baird-surface-soft);
+  --line: var(--baird-line);
+  --text: var(--baird-ink);
+  --muted: var(--baird-muted);
+  --accent: var(--baird-blue);
+  --mint: var(--baird-success);
+  font-family: "BAIRD Sans", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -18,11 +17,25 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    radial-gradient(circle at 12% 0%, rgb(79 156 247 / .16), transparent 28%),
-    linear-gradient(145deg, var(--bg), #0d1117);
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28%),
+    var(--bg);
 }
 button, input { font: inherit; }
 button { cursor: pointer; }
+.profile-topbar {
+  width: min(1080px, calc(100% - 32px));
+  min-height: 68px;
+  margin: 14px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.profile-topbar a { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
+.profile-topbar img { width: 128px; height: auto; mix-blend-mode: multiply; }
+:root[data-theme="dark"] .profile-topbar img { padding: 4px; border-radius: 8px; background: #f8f9fc; mix-blend-mode: normal; }
+.profile-topbar a span { padding-left: 12px; border-left: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+.profile-topbar button { border: 0; color: var(--muted); background: transparent; cursor: pointer; }
+.profile-topbar button:hover { color: var(--text); }
 .profile-shell {
   width: min(1080px, calc(100% - 32px));
   min-height: 100dvh;
@@ -43,7 +56,7 @@ button { cursor: pointer; }
   letter-spacing: .14em;
   text-transform: uppercase;
 }
-h1 { max-width: 10ch; margin: 0; font: 700 clamp(2.5rem, 6vw, 4.8rem)/.96 "Playfair Display", Georgia, serif; }
+h1 { max-width: 10ch; margin: 0; font: 590 clamp(2.5rem, 6vw, 4.8rem)/.96 "BAIRD Sans", sans-serif; letter-spacing: -.06em; }
 .profile-intro > p { max-width: 43ch; color: var(--muted); font-size: 1.05rem; line-height: 1.65; }
 .privacy-note {
   max-width: 420px;
@@ -60,8 +73,8 @@ h1 { max-width: 10ch; margin: 0; font: 700 clamp(2.5rem, 6vw, 4.8rem)/.96 "Playf
   padding: 34px;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: rgb(19 25 34 / .94);
-  box-shadow: 0 28px 70px rgb(0 0 0 / .35);
+  background: var(--surface);
+  box-shadow: var(--baird-shadow);
 }
 .profile-card > label { display: grid; gap: 8px; color: var(--text); font-weight: 700; }
 label span, legend span { color: var(--muted); font-size: .78rem; font-weight: 400; }
@@ -72,7 +85,7 @@ input[type="text"], input:not([type]) {
   border: 1px solid var(--line);
   border-radius: 10px;
   color: var(--text);
-  background: #0d121a;
+  background: var(--baird-surface-strong);
 }
 input:focus-visible, button:focus-visible { outline: 3px solid rgb(79 156 247 / .42); outline-offset: 2px; }
 fieldset { margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: 14px; }
@@ -93,7 +106,7 @@ legend { padding: 0 7px; font-weight: 700; }
 }
 .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
 button { min-height: 42px; padding: 9px 15px; border-radius: 10px; }
-.primary { border: 1px solid var(--accent); color: #06101d; background: var(--accent); font-weight: 800; }
+.primary { border: 1px solid var(--accent); color: var(--baird-surface-strong); background: var(--accent); font-weight: 800; }
 .secondary { border: 1px solid var(--line); color: var(--text); background: var(--surface-2); }
 button:active { transform: translateY(1px); }
 .field-note, .course-history p { margin: 7px 0 0; color: var(--muted); font-size: .82rem; }

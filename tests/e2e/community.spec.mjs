@@ -36,22 +36,40 @@ function portalPayload() {
     },
     features: { community: true },
     portal: {
-      program: {
+      academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
+      courses: [{
+        id: "implant-dentistry-2026",
         title: "BAIRD Evidence Based & Clinical Implant Dentistry",
-        subtitle: "2026 Programme",
-        details: [["2026 Intake"]],
-        faculty: ["Dr Hassan"],
-        yearsRunning: 20
-      },
-      courses: [{ id: "implant-dentistry-2026", title: "Implant Dentistry", intake: "2026" }],
+        shortTitle: "Implant Dentistry",
+        intake: "2026 Intake",
+        summary: "A year-long clinical implant dentistry programme.",
+        status: "registration-open",
+        statusLabel: "Registration open",
+        sourceUrl: "https://bairdacademyuk.com/",
+        contentLabels: { singular: "Module", plural: "Modules" },
+        facultyIds: ["dr-hassan"],
+        moduleIds: ["implant-module-1"],
+        enrolled: true,
+        availableItems: 1,
+        totalItems: 1
+      }],
+      faculty: [{
+        id: "dr-hassan",
+        name: "Dr Hassan Maghaireh",
+        role: "Course director",
+        bio: "BAIRD course director.",
+        courseIds: ["implant-dentistry-2026"]
+      }],
       modules: [{
         id: "implant-module-1",
         courseId: "implant-dentistry-2026",
         title: "Module 1",
+        date: "January 2026",
+        topics: "Foundations",
         days: [],
         locked: false
       }],
-      stats: { modules: 1, faculty: 1, materials: 1, yearsRunning: 20 }
+      stats: { enrolledCourses: 1, availableItems: 1, faculty: 1, materials: 1, yearsRunning: 20 }
     }
   };
 }
@@ -174,11 +192,11 @@ test("creates, discusses, reacts to, reports, and resolves community threads", a
   });
 
   await page.goto("/baird_implant_portal.html?tab=community");
-  await expect(page.getByRole("tab", { name: "Community" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("button", { name: "Community", exact: true })).toHaveAttribute("aria-current", "page");
   await expect(page.getByText("Need support with immediate loading")).toBeVisible();
   await expect(page.getByRole("button", { name: "Load more" })).toBeHidden();
   await page.getByText("Need support with immediate loading").click();
-  await expect(page).toHaveURL(/tab=community&thread=post-1/);
+  await expect(page).toHaveURL(/view=community&thread=post-1/);
 
   await page.locator(".community-reply").getByRole("button", { name: "Reply" }).click();
   await page.getByPlaceholder("Add a clear, constructive reply").fill("That is helpful; I would also review the provisional contacts.");

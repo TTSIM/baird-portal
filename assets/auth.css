@@ -5,20 +5,19 @@
 }
 
 :root {
-  color-scheme: light;
-  --accent: #173f94;
-  --accent-strong: #102f75;
-  --accent-soft: #e9eef9;
-  --brand-red: #e41f31;
-  --canvas: #f7f8fb;
-  --surface: #fbfcfe;
-  --text: #10223f;
-  --muted: #59667a;
-  --quiet: #667085;
-  --line: #dfe4ed;
-  --error: #b42318;
-  --error-soft: #fef3f2;
-  --focus: #4d73c3;
+  --accent: var(--baird-blue);
+  --accent-strong: var(--baird-blue-strong);
+  --accent-soft: var(--baird-blue-soft);
+  --brand-red: var(--baird-red);
+  --canvas: var(--baird-bg);
+  --surface: var(--baird-surface);
+  --text: var(--baird-ink);
+  --muted: var(--baird-muted);
+  --quiet: var(--baird-quiet);
+  --line: var(--baird-line);
+  --error: var(--baird-danger);
+  --error-soft: var(--baird-red-soft);
+  --focus: var(--baird-focus);
   --radius-control: 12px;
   --radius-panel: 16px;
   font-family: "BAIRD Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -311,6 +310,19 @@ input {
   letter-spacing: 0.025em;
 }
 
+.login-theme-toggle {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.login-theme-toggle:hover {
+  color: var(--text);
+}
+
 .google-button-shell:focus-within {
   outline: 3px solid color-mix(in srgb, var(--focus) 35%, transparent);
   outline-offset: 4px;
@@ -327,36 +339,18 @@ input {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --accent: #89aaf0;
-    --accent-strong: #acc3f4;
-    --accent-soft: #243968;
-    --canvas: #091328;
-    --surface: #0d1930;
-    --text: #eff3fb;
-    --muted: #b3bdd0;
-    --quiet: #8c98ae;
-    --line: #293650;
-    --error: #ffb4ab;
-    --error-soft: #3b1b20;
-    --focus: #9db8ef;
-  }
+:root[data-theme="dark"] .brand-lockup {
+  padding: 12px;
+  border-radius: var(--radius-panel);
+  background: #f8f9fc;
+}
 
-  .brand-lockup {
-    padding: 12px;
-    border-radius: var(--radius-panel);
-    background: #f8f9fc;
-  }
+:root[data-theme="dark"] .brand-lockup img {
+  mix-blend-mode: normal;
+}
 
-  .brand-lockup img {
-    mix-blend-mode: normal;
-  }
-
-  .button-skeleton {
-    background: #111e37;
-  }
+:root[data-theme="dark"] .button-skeleton {
+  background: #111e37;
 }
 
 @media (max-width: 980px) {

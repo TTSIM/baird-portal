@@ -1,3 +1,17 @@
+:root {
+  --line: var(--baird-line);
+  --line-strong: var(--baird-line-strong);
+  --text: var(--baird-ink);
+  --muted: var(--baird-muted);
+  --accent: var(--baird-blue);
+  --accent2: var(--baird-success);
+  --surface: var(--baird-surface);
+  --surface2: var(--baird-surface-soft);
+  --panel: var(--baird-surface-strong);
+  --shadow: var(--baird-shadow);
+  --radius-xl: var(--baird-radius-xl);
+}
+
 .community-notification-button {
   min-height: 38px;
   padding: 8px 11px;
@@ -22,7 +36,7 @@
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  color: #07111f;
+  color: var(--baird-surface-strong);
   background: var(--accent);
   font-size: .72rem;
   font-weight: 800;
@@ -50,7 +64,7 @@
 .community-sidebar {
   padding: 24px 18px;
   border-right: 1px solid var(--line);
-  background: rgb(13 17 23 / .78);
+  background: var(--baird-surface-soft);
 }
 
 .community-profile { margin-bottom: 20px; }
@@ -90,7 +104,7 @@
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--muted);
-  background: rgb(26 35 50 / .56);
+  background: var(--baird-surface);
   font-size: .69rem;
 }
 
@@ -99,12 +113,12 @@
   min-height: 40px;
   padding: 9px 13px;
   border-radius: 10px;
-  font: 700 .86rem "Source Sans 3", sans-serif;
+  font: 700 .86rem "BAIRD Sans", sans-serif;
   cursor: pointer;
 }
 .community-primary {
   border: 1px solid var(--accent);
-  color: #07111f;
+  color: var(--baird-surface-strong);
   background: var(--accent);
 }
 .community-secondary {
@@ -113,7 +127,10 @@
   background: var(--surface2);
 }
 .community-primary:hover,
-.community-primary:focus-visible { background: #78b3f8; }
+.community-primary:focus-visible {
+  color: var(--baird-surface-strong);
+  background: var(--baird-blue-strong);
+}
 .community-secondary:hover,
 .community-secondary:focus-visible { border-color: var(--line-strong); }
 .community-primary:active,
@@ -153,8 +170,8 @@
   border: 1px solid var(--line);
   border-radius: 9px;
   color: var(--text);
-  background: #0b1017;
-  font: 400 .9rem "Source Sans 3", sans-serif;
+  background: var(--baird-surface-strong);
+  font: 400 .9rem "BAIRD Sans", sans-serif;
 }
 .community-field textarea { resize: vertical; line-height: 1.5; }
 .community-field input:focus-visible,
@@ -190,12 +207,12 @@
   padding-bottom: 20px;
   border-bottom: 1px solid var(--line);
 }
-.community-heading h2 { margin: 2px 0 5px; font: 700 2.1rem/1 "Playfair Display", serif; }
+.community-heading h2 { margin: 2px 0 5px; font: 650 2.1rem/1 "BAIRD Sans", sans-serif; letter-spacing: -.04em; }
 .community-heading p:not(.community-kicker) { margin: 0; color: var(--muted); }
 .community-kicker {
   margin: 0;
   color: var(--accent);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "BAIRD Sans", sans-serif;
   font-size: .69rem;
   font-weight: 700;
   letter-spacing: .12em;
@@ -213,7 +230,7 @@
   border-bottom: 1px solid var(--line);
   cursor: pointer;
 }
-.community-feed-card:hover .community-feed-title { color: #7cb7fa; }
+.community-feed-card:hover .community-feed-title { color: var(--baird-blue); }
 .community-feed-card:focus-visible { outline: 3px solid rgb(79 156 247 / .3); outline-offset: -3px; }
 .community-feed-title { margin: 9px 0 7px; font-size: 1.18rem; line-height: 1.25; }
 .community-feed-excerpt {
@@ -253,7 +270,7 @@
 .community-empty strong { display: block; margin-bottom: 7px; color: var(--text); font-size: 1.1rem; }
 
 .community-thread-header { padding: 24px 0; border-bottom: 1px solid var(--line); }
-.community-thread-header h2 { margin: 13px 0 10px; font: 700 clamp(1.7rem, 4vw, 2.7rem)/1.05 "Playfair Display", serif; }
+.community-thread-header h2 { margin: 13px 0 10px; font: 650 clamp(1.7rem, 4vw, 2.7rem)/1.05 "BAIRD Sans", sans-serif; letter-spacing: -.04em; }
 .community-thread-body { max-width: 76ch; margin: 18px 0; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 .community-thread-actions,
 .community-reply-actions,
@@ -270,7 +287,7 @@
   cursor: pointer;
 }
 .community-reaction { border-color: var(--line); }
-.community-reaction.active { color: #07111f; border-color: var(--accent); background: var(--accent); }
+.community-reaction.active { color: var(--baird-surface-strong); border-color: var(--accent); background: var(--accent); }
 .community-text-action:hover { color: var(--text); background: var(--surface2); }
 
 .community-gallery {
@@ -284,7 +301,7 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #0b1017;
+  background: var(--baird-surface-soft);
 }
 .community-gallery img { width: 100%; height: 230px; display: block; object-fit: contain; }
 
@@ -295,7 +312,7 @@
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgb(19 25 34 / .68);
+  background: var(--baird-surface);
 }
 .community-reply[data-depth="2"] { margin-left: 34px; }
 .community-reply[data-depth="3"] { margin-left: 68px; }
@@ -318,7 +335,7 @@
   border: 1px solid var(--line);
   border-radius: 9px;
   color: var(--text);
-  background: #0b1017;
+  background: var(--baird-surface-strong);
   resize: vertical;
 }
 .community-reply-target { min-height: 1.2em; margin: 0 0 8px; color: var(--muted); font-size: .78rem; }
@@ -331,8 +348,8 @@
   border: 1px solid var(--line);
   border-radius: 18px;
   color: var(--text);
-  background: #111721;
-  box-shadow: 0 35px 90px rgb(0 0 0 / .6);
+  background: var(--baird-surface-strong);
+  box-shadow: var(--baird-shadow);
 }
 .community-dialog::backdrop { background: rgb(3 6 10 / .76); backdrop-filter: blur(5px); }
 .community-dialog form,
@@ -344,7 +361,7 @@
   gap: 20px;
   margin-bottom: 20px;
 }
-.community-dialog-heading h2 { margin: 4px 0 0; font: 700 1.8rem "Playfair Display", serif; }
+.community-dialog-heading h2 { margin: 4px 0 0; font: 650 1.8rem "BAIRD Sans", sans-serif; letter-spacing: -.035em; }
 .community-close {
   width: 38px;
   height: 38px;
@@ -374,7 +391,7 @@
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #0b1017;
+  background: var(--baird-surface-soft);
 }
 .community-image-review img { width: 100%; max-height: 380px; object-fit: contain; display: block; border-radius: 7px; }
 .community-image-review label { display: grid; gap: 6px; margin-top: 10px; color: var(--muted); font-size: .75rem; }

@@ -10,6 +10,11 @@ test("admin reviews usage, changes grants, and manages private knowledge", async
       { id: "implant-module-1", title: "Module 1" },
       { id: "implant-module-2", title: "Module 2" }
     ]
+  }, {
+    id: "implant-overdentures-masterclass",
+    title: "Implant Overdentures Masterclass",
+    intake: "",
+    modules: []
   }];
 
   await page.route("**/api/me", (route) => route.fulfill({
@@ -17,7 +22,7 @@ test("admin reviews usage, changes grants, and manages private knowledge", async
     contentType: "application/json",
     body: JSON.stringify({
       user: { id: "admin-1", name: "BAIRD Admin", email: "admin@example.com", role: "admin", grants: [] },
-      portal: { program: {}, modules: [], stats: {} }
+      portal: { academy: {}, courses: [], faculty: [], modules: [], stats: {} }
     })
   }));
   await page.route("**/api/admin/usage**", (route) => route.fulfill({
@@ -89,6 +94,7 @@ test("admin reviews usage, changes grants, and manages private knowledge", async
   await page.getByRole("button", { name: "Users" }).click();
   await page.getByRole("button", { name: "Edit" }).click();
   await expect(page.locator("[data-user-form='delegate-1'] select[name='role'] option")).toHaveCount(1);
+  await expect(page.getByText("No learning items have been added yet.")).toBeVisible();
   await page.getByLabel("Module 2").check();
   await page.getByRole("button", { name: "Save" }).click();
   expect(patchedUser.grants).toEqual(["implant-module-1", "implant-module-2"]);
@@ -106,7 +112,7 @@ test("owner can edit privileged users and assign every role", async ({ page }) =
     contentType: "application/json",
     body: JSON.stringify({
       user: { id: "owner-1", name: "Sim Singh", email: "simsingh@gmail.com", role: "owner", grants: [] },
-      portal: { program: {}, courses: [], modules: [], stats: {} }
+      portal: { academy: {}, courses: [], faculty: [], modules: [], stats: {} }
     })
   }));
   await page.route("**/api/admin/usage**", (route) => route.fulfill({
@@ -154,7 +160,7 @@ test("admin reviews community reports, removes images, and sees moderation histo
     contentType: "application/json",
     body: JSON.stringify({
       user: { id: "admin-1", name: "BAIRD Admin", email: "admin@example.com", role: "admin", grants: [] },
-      portal: { program: {}, courses: [], modules: [], stats: {} }
+      portal: { academy: {}, courses: [], faculty: [], modules: [], stats: {} }
     })
   }));
   await page.route("**/api/admin/usage**", (route) => route.fulfill({

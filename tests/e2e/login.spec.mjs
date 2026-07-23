@@ -25,10 +25,11 @@ test("root sends an authenticated user to the portal", async ({ page }) => {
     body: JSON.stringify({
       user: { id: "owner-1", name: "Sim Singh", email: "simsingh@gmail.com", role: "owner", grants: [] },
       portal: {
-        program: { title: "BAIRD", subtitle: "", details: [], faculty: [], yearsRunning: 20 },
+        academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
         courses: [],
+        faculty: [],
         modules: [],
-        stats: { modules: 0, faculty: 0, materials: 0, yearsRunning: 20 }
+        stats: { enrolledCourses: 0, availableItems: 0, faculty: 0, materials: 0, yearsRunning: 20 }
       }
     })
   }));

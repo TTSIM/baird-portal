@@ -1,729 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BAIRD Learning Portal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/community.css">
-<style>
-  :root {
-    --bg: #07090f;
-    --bg2: #0d1117;
-    --surface: rgba(19, 25, 34, 0.9);
-    --surface2: rgba(26, 35, 50, 0.92);
-    --surface3: rgba(34, 46, 61, 0.95);
-    --panel: rgba(19, 25, 34, 0.82);
-    --panel-strong: #131922;
-    --line: rgba(30, 42, 58, 0.95);
-    --line-strong: rgba(79, 156, 247, 0.38);
-    --text: #e8edf5;
-    --muted: #9ba8be;
-    --accent: #4f9cf7;
-    --accent2: #36d6b5;
-    --accent3: #a78bfa;
-    --gold: #f7a94f;
-    --shadow: 0 24px 54px rgba(0, 0, 0, 0.28);
-    --radius-xl: 28px;
-    --radius-lg: 20px;
-    --radius-md: 14px;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    font-family: "Source Sans 3", sans-serif;
-    min-height: 100vh;
-    color: var(--text);
-    background:
-      radial-gradient(circle at top left, rgba(79, 156, 247, 0.12), transparent 24%),
-      radial-gradient(circle at right 18%, rgba(54, 214, 181, 0.09), transparent 20%),
-      radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.1), transparent 22%),
-      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-  }
-
-  button,
-  a,
-  iframe {
-    font: inherit;
-  }
-
-  .app {
-    max-width: 1220px;
-    margin: 0 auto;
-    padding: 22px 18px 42px;
-  }
-
-  .topbar {
-    position: sticky;
-    top: 14px;
-    z-index: 20;
-    margin-bottom: 18px;
-    padding: 14px 18px;
-    border: 1px solid var(--line);
-    border-radius: 24px;
-    background: rgba(7, 9, 15, 0.84);
-    backdrop-filter: blur(16px);
-    box-shadow: var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 18px;
-  }
-
-  .brand {
-    min-width: 0;
-  }
-
-  .brand-kicker {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.74rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 800;
-  }
-
-  .brand-title {
-    font-family: "Playfair Display", serif;
-    font-size: 2rem;
-    line-height: 0.95;
-    margin-top: 6px;
-  }
-
-  .brand-subtitle {
-    color: var(--muted);
-    margin-top: 6px;
-    font-size: 0.93rem;
-  }
-
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  .topbar-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .tab-btn {
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--muted);
-    padding: 10px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.18s ease;
-  }
-
-  .ask-dr-hassan-link {
-    border: 1px solid rgba(54, 214, 181, 0.38);
-    background: rgba(54, 214, 181, 0.08);
-    color: var(--accent2);
-    padding: 10px 14px;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: all 0.18s ease;
-  }
-
-  .tab-btn:hover,
-  .tab-btn.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    color: #fff;
-    border-color: rgba(167, 139, 250, 0.7);
-    transform: translateY(-1px);
-  }
-
-  .ask-dr-hassan-link:hover,
-  .ask-dr-hassan-link:focus-visible {
-    color: #07110f;
-    background: var(--accent2);
-    border-color: var(--accent2);
-    transform: translateY(-1px);
-  }
-
-  .account-link,
-  .account-button {
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 0.82rem;
-  }
-
-  .account-link:hover,
-  .account-button:hover {
-    color: var(--text);
-  }
-
-  .account-name {
-    color: var(--muted);
-    font-size: 0.82rem;
-  }
-
-  .ask-dr-hassan-link[aria-disabled="true"] {
-    pointer-events: none;
-    opacity: 0.45;
-  }
-
-  .hero {
-    display: block;
-    margin-bottom: 18px;
-  }
-
-  .card,
-  .hero-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(14px);
-  }
-
-  .hero-card,
-  .card {
-    border-radius: var(--radius-xl);
-  }
-
-  .hero-card {
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-card::after {
-    content: "";
-    position: absolute;
-    right: -70px;
-    top: -90px;
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(79, 156, 247, 0.22), transparent 70%);
-    pointer-events: none;
-  }
-
-  .eyebrow,
-  .section-kicker {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.76rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 800;
-  }
-
-  .hero-title,
-  h2,
-  h3,
-  .side-title {
-    font-family: "Playfair Display", serif;
-    font-weight: 600;
-  }
-
-  .hero-title {
-    font-size: clamp(1.8rem, 3.2vw, 3rem);
-    line-height: 1;
-    margin-top: 6px;
-    max-width: 560px;
-  }
-
-  .hero-subtitle {
-    margin-top: 8px;
-    color: var(--muted);
-    max-width: 560px;
-    font-size: 0.95rem;
-  }
-
-  .hero-meta {
-    margin-top: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(54, 214, 181, 0.28);
-    background: rgba(54, 214, 181, 0.08);
-    color: var(--accent2);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .hero-stats {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .stat-card {
-    padding: 10px 12px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--line);
-    background: var(--surface2);
-  }
-
-  .stat-value {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff 15%, var(--accent) 60%, var(--accent3));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .stat-label {
-    display: block;
-    margin-top: 3px;
-    color: var(--muted);
-    font-size: 0.75rem;
-  }
-
-  .resource-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .day-list {
-    display: grid;
-    gap: 12px;
-    margin-top: 14px;
-  }
-
-  .day-card {
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    background: rgba(79, 156, 247, 0.05);
-    overflow: hidden;
-  }
-
-  .day-toggle {
-    width: 100%;
-    padding: 14px;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 12px;
-    text-align: left;
-  }
-
-  .day-toggle:hover {
-    background: rgba(79, 156, 247, 0.05);
-  }
-
-  .day-title {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.76rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 6px;
-  }
-
-  .day-copy {
-    color: var(--muted);
-  }
-
-  .day-icon {
-    color: var(--accent);
-    font-size: 1rem;
-    transition: transform 0.18s ease;
-  }
-
-  .day-card.open .day-icon {
-    transform: rotate(45deg);
-  }
-
-  .day-content {
-    display: none;
-    padding: 0 14px 14px;
-  }
-
-  .day-card.open .day-content {
-    display: block;
-  }
-
-  .lecture-list {
-    display: grid;
-    gap: 10px;
-    margin-top: 4px;
-  }
-
-  .lecture-card {
-    padding: 12px;
-    border: 1px solid rgba(79, 156, 247, 0.16);
-    border-radius: 12px;
-    background: rgba(19, 25, 34, 0.34);
-  }
-
-  .lecture-title {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.74rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-
-  .lecture-copy {
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  .resource-link {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    text-decoration: none;
-    padding: 11px 13px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--surface2);
-    color: var(--accent);
-    cursor: pointer;
-    transition: all 0.18s ease;
-  }
-
-  .resource-link:hover {
-    transform: translateY(-1px);
-    background: rgba(79, 156, 247, 0.08);
-    border-color: var(--line-strong);
-  }
-
-  .resource-type {
-    color: var(--accent2);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    min-width: 54px;
-    padding-top: 1px;
-  }
-
-  .resource-text {
-    display: grid;
-    gap: 3px;
-  }
-
-  .resource-label {
-    color: var(--accent);
-    font-weight: 700;
-  }
-
-  .resource-summary {
-    color: var(--muted);
-    font-size: 0.82rem;
-    line-height: 1.45;
-  }
-
-  .tab-panel {
-    display: none;
-  }
-
-  .tab-panel.active {
-    display: block;
-    animation: fadeIn 0.22s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card {
-    padding: 24px;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .section-note {
-    color: var(--muted);
-    font-size: 0.92rem;
-    max-width: 520px;
-  }
-
-  h2 {
-    font-size: 2rem;
-    margin-top: 8px;
-  }
-
-  h3 {
-    font-size: 1.18rem;
-  }
-
-  .faculty-list li,
-  .module-card {
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    background: var(--surface2);
-  }
-
-  .faculty-list,
-  .module-list {
-    display: grid;
-    gap: 12px;
-  }
-
-  .faculty-list {
-    list-style: none;
-  }
-
-  .faculty-list li {
-    padding: 15px 16px;
-  }
-
-  .module-card {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .module-card::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, var(--accent3), var(--accent), var(--accent2));
-  }
-
-  .module-header {
-    width: 100%;
-    padding: 18px 18px 18px 20px;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 16px;
-    text-align: left;
-  }
-
-  .module-header:hover {
-    background: rgba(79, 156, 247, 0.04);
-  }
-
-  .module-index {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.76rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 800;
-    margin-bottom: 4px;
-  }
-
-  .module-date {
-    color: var(--gold);
-    font-weight: 700;
-    white-space: normal;
-    text-align: right;
-  }
-
-  .module-topics {
-    margin-top: 10px;
-    color: var(--muted);
-  }
-
-  .module-icon {
-    color: var(--accent);
-    font-size: 1rem;
-    transition: transform 0.18s ease;
-    margin-left: 12px;
-  }
-
-  .module-card.open .module-icon {
-    transform: rotate(45deg);
-  }
-
-  .module-content {
-    display: none;
-    padding: 0 18px 18px 20px;
-  }
-
-  .module-card.open .module-content {
-    display: block;
-  }
-
-  .module-card.locked {
-    opacity: 0.7;
-  }
-
-  .module-card.locked::before {
-    background: var(--muted);
-  }
-
-  .module-card.locked .module-header {
-    cursor: default;
-  }
-
-  .lock-label {
-    color: var(--muted);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  @media (max-width: 980px) {
-    .topbar,
-    .hero {
-      grid-template-columns: 1fr;
-      flex-direction: column;
-      align-items: start;
-    }
-
-    .tabs {
-      justify-content: flex-start;
-    }
-
-    .topbar-actions {
-      justify-content: flex-start;
-    }
-
-    .hero-stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 700px) {
-    .app {
-      padding: 14px 10px 30px;
-    }
-
-    .topbar,
-    .hero-card,
-    .side-card,
-    .card {
-      padding: 16px;
-    }
-
-    .hero-stats {
-      grid-template-columns: 1fr;
-    }
-
-    .module-header,
-    .section-header {
-      flex-direction: column;
-      align-items: start;
-    }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f94">
+  <meta name="description" content="Your BAIRD Academy courses, faculty, learning materials and community.">
+  <title>My Learning | BAIRD Academy</title>
+  <script src="assets/theme.js"></script>
+  <link rel="stylesheet" href="assets/theme.css">
+  <link rel="stylesheet" href="assets/portal.css">
+  <link rel="stylesheet" href="assets/community.css">
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-kicker">BAIRD Learning Portal</div>
-        <div class="brand-title" id="course-title">Loading...</div>
-        <div class="brand-subtitle" id="course-subtitle"></div>
-      </div>
-      <div class="topbar-actions">
-        <nav class="tabs" role="tablist" aria-label="Portal sections">
-          <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
-          <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
-          <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-community" id="tab-button-community" data-tab="community" hidden>Community</button>
-        </nav>
-        <a class="ask-dr-hassan-link" id="ask-dr-hassan-link" href="ask-dr-hassan.html">Ask Dr Hassan</a>
-        <a class="account-link" id="admin-link" href="admin.html" hidden>Backend dashboard</a>
-        <button class="community-notification-button" id="community-notification-button" type="button" aria-label="Community notifications" hidden>
+  <div class="portal-shell">
+    <header class="portal-header">
+      <a class="portal-brand" href="baird_implant_portal.html" aria-label="BAIRD Learning Portal home">
+        <img src="assets/baird-logo.gif" alt="BAIRD" width="1280" height="326">
+        <span>Learning Portal</span>
+      </a>
+
+      <nav class="portal-nav" aria-label="Portal sections">
+        <button class="portal-nav__item active" type="button" data-portal-view-target="courses" aria-current="page">My Learning</button>
+        <button class="portal-nav__item" type="button" data-portal-view-target="faculty">Faculty</button>
+        <button class="portal-nav__item" id="tab-button-community" type="button" data-portal-view-target="community" hidden>Community</button>
+      </nav>
+
+      <div class="portal-actions">
+        <a class="ask-link" id="ask-dr-hassan-link" href="ask-dr-hassan.html">Ask Dr Hassan</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+          <span data-theme-label>Dark mode</span>
+        </button>
+        <details class="account-menu">
+          <summary id="account-name">Account</summary>
+          <div class="account-menu__panel">
+            <a href="profile-setup.html?next=/baird_implant_portal.html">Profile</a>
+            <a id="admin-link" href="admin.html" hidden>Backend dashboard</a>
+            <button class="account-theme-toggle" type="button" data-theme-toggle>
+              <span data-theme-label>Dark mode</span>
+            </button>
+            <button id="logout-button" type="button">Sign out</button>
+          </div>
+        </details>
+        <button class="activity-button" id="community-notification-button" type="button" aria-label="Community notifications" hidden>
           Activity <span id="community-unread-count" hidden></span>
         </button>
-        <a class="account-link" href="profile-setup.html?next=/baird_implant_portal.html">Profile</a>
-        <span class="account-name" id="account-name"></span>
-        <button class="account-button" id="logout-button" type="button">Sign out</button>
       </div>
     </header>
 
-    <section class="hero">
-      <section class="hero-card">
-        <p class="eyebrow">Year Long Programme</p>
-        <div class="hero-title">BAIRD Academy study dashboard</div>
-        <p class="hero-subtitle">Your unlocked course modules, key dates, faculty, lectures and quizzes.</p>
-        <div class="hero-meta" id="hero-meta"></div>
-        <div class="hero-stats">
-          <div class="stat-card">
-            <span class="stat-value" id="stat-modules">0</span>
-            <span class="stat-label">Modules</span>
+    <main class="portal-main" id="portal-main">
+      <section class="portal-view active" id="view-courses" data-portal-view="courses">
+        <header class="learning-intro">
+          <div>
+            <p class="portal-kicker">BAIRD Academy</p>
+            <h1>Welcome back, <span id="welcome-name">delegate</span>.</h1>
+            <p>Your courses, teaching team and learning materials in one focused space.</p>
           </div>
-          <div class="stat-card">
-            <span class="stat-value" id="stat-faculty">0</span>
-            <span class="stat-label">Faculty</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="stat-materials">0</span>
-            <span class="stat-label">Live Materials</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="stat-running">0</span>
-            <span class="stat-label">Years Running</span>
-          </div>
-        </div>
-      </section>
+          <dl class="learning-stats" id="learning-stats" aria-label="Your learning overview">
+            <div><dt>Courses</dt><dd class="skeleton-line"></dd></div>
+            <div><dt>Materials</dt><dd class="skeleton-line"></dd></div>
+            <div><dt>Academy</dt><dd class="skeleton-line"></dd></div>
+          </dl>
+        </header>
 
-    </section>
-
-    <main>
-      <section class="tab-panel active" id="tab-modules" role="tabpanel" aria-labelledby="tab-button-modules">
-        <section class="card">
-          <div class="section-header">
+        <section class="learning-section" aria-labelledby="my-courses-title">
+          <div class="section-heading">
             <div>
-              <p class="section-kicker">Learning Roadmap</p>
-              <h2>Modules</h2>
+              <h2 id="my-courses-title">My courses</h2>
+              <p>Continue into the courses available to your account.</p>
             </div>
-            <p class="section-note">Each module carries the key dates, topic focus, and any linked lecture or quiz material.</p>
           </div>
-          <div class="module-list" id="module-list"></div>
+          <div class="course-library loading-grid" id="course-library" aria-live="polite">
+            <div class="course-skeleton"></div>
+            <div class="course-skeleton"></div>
+          </div>
+        </section>
+
+        <section class="catalogue-section" aria-labelledby="catalogue-title">
+          <div class="section-heading">
+            <div>
+              <h2 id="catalogue-title">More from BAIRD</h2>
+              <p>Advanced courses offered by BAIRD Academy. Portal content will be added as it becomes available.</p>
+            </div>
+          </div>
+          <div class="catalogue-grid" id="course-catalogue"></div>
         </section>
       </section>
 
-      <section class="tab-panel" id="tab-faculty" role="tabpanel" aria-labelledby="tab-button-faculty">
-        <section class="card">
-          <div class="section-header">
-            <div>
-              <p class="section-kicker">Teaching Team</p>
-              <h2>Faculty</h2>
-            </div>
-            <p class="section-note">Reference list of the main faculty involved in the programme.</p>
-          </div>
-          <ul class="faculty-list" id="faculty-list"></ul>
-        </section>
+      <section class="portal-view" id="view-course" data-portal-view="course" hidden>
+        <button class="back-button" id="course-back" type="button">Back to My Learning</button>
+        <div id="course-detail"></div>
       </section>
 
-      <section class="tab-panel" id="tab-community" role="tabpanel" aria-labelledby="tab-button-community">
+      <section class="portal-view" id="view-faculty" data-portal-view="faculty" hidden>
+        <header class="faculty-intro">
+          <div>
+            <p class="portal-kicker">Teaching team</p>
+            <h1>Meet the faculty.</h1>
+            <p>Explore the clinicians, educators and specialists teaching across BAIRD Academy.</p>
+          </div>
+          <div class="faculty-controls" aria-label="Filter faculty">
+            <label>
+              <span>Search faculty</span>
+              <input id="faculty-search" type="search" placeholder="Search by name or speciality">
+            </label>
+            <label>
+              <span>Course</span>
+              <select id="faculty-course-filter">
+                <option value="">All courses</option>
+              </select>
+            </label>
+          </div>
+        </header>
+        <p class="faculty-result-count" id="faculty-result-count" role="status"></p>
+        <div class="faculty-grid" id="faculty-directory"></div>
+      </section>
+
+      <section class="portal-view" id="view-community" data-portal-view="community" hidden>
         <div class="community-workspace">
           <aside class="community-sidebar">
             <div class="community-profile" id="community-profile"></div>
@@ -766,7 +158,6 @@
           </section>
         </div>
       </section>
-
     </main>
   </div>
 
@@ -781,7 +172,7 @@
       </label>
       <label class="community-field">Details
         <textarea name="body" maxlength="5000" rows="8" required></textarea>
-        <span>Use @ followed by a delegate’s full name to notify them.</span>
+        <span>Use @ followed by a delegate's full name to notify them.</span>
       </label>
       <div class="community-form-row">
         <label class="community-field">Category
@@ -847,7 +238,7 @@
     </form>
   </dialog>
 
-<script type="module" src="assets/portal.js"></script>
-<script type="module" src="assets/community.js"></script>
+  <script type="module" src="assets/portal.js"></script>
+  <script type="module" src="assets/community.js"></script>
 </body>
 </html>

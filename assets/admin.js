@@ -79,10 +79,12 @@ function grantFields(user) {
   return state.courses.map((course) => `
     <fieldset data-course="${escapeHtml(course.id)}">
       <legend>${escapeHtml(course.title)}</legend>
-      <label><input type="checkbox" class="select-course"> Select all modules</label>
-      ${course.modules.map((module) => `
-        <label><input type="checkbox" name="grant" value="${escapeHtml(module.id)}" ${user.grants.includes(module.id) ? "checked" : ""}> ${escapeHtml(module.title)}</label>
-      `).join("")}
+      ${course.modules.length ? `
+        <label><input type="checkbox" class="select-course"> Select all learning items</label>
+        ${course.modules.map((module) => `
+          <label><input type="checkbox" name="grant" value="${escapeHtml(module.id)}" ${user.grants.includes(module.id) ? "checked" : ""}> ${escapeHtml(module.title)}</label>
+        `).join("")}
+      ` : `<span class="muted">No learning items have been added yet.</span>`}
     </fieldset>
   `).join("");
 }

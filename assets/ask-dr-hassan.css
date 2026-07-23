@@ -1,17 +1,17 @@
 :root {
-  --paper: #fbfbf9;
-  --surface: #ffffff;
-  --ink: #172033;
-  --muted: #667085;
-  --faint: #939cad;
-  --line: #dfe3e8;
-  --line-soft: #edf0f2;
-  --blue: #1769e0;
-  --blue-dark: #1054b8;
-  --blue-wash: #edf5ff;
+  --paper: var(--baird-bg);
+  --surface: var(--baird-surface-strong);
+  --ink: var(--baird-ink);
+  --muted: var(--baird-muted);
+  --faint: var(--baird-quiet);
+  --line: var(--baird-line);
+  --line-soft: var(--baird-surface-soft);
+  --blue: var(--baird-blue);
+  --blue-dark: var(--baird-blue-strong);
+  --blue-wash: var(--baird-blue-soft);
   --warm: #f4a340;
-  --danger: #b42318;
-  --shadow: 0 10px 34px rgba(31, 42, 55, 0.08), 0 2px 8px rgba(31, 42, 55, 0.04);
+  --danger: var(--baird-danger);
+  --shadow: var(--baird-shadow-soft);
   --radius: 26px;
 }
 
@@ -31,7 +31,7 @@ body {
   background:
     radial-gradient(circle at 50% 38%, rgba(23, 105, 224, 0.045), transparent 31rem),
     var(--paper);
-  font-family: "Manrope", sans-serif;
+  font-family: "BAIRD Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -65,6 +65,19 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.page-theme-toggle {
+  padding: 6px;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.page-theme-toggle:hover {
+  color: var(--ink);
 }
 
 .admin-link,
@@ -109,7 +122,7 @@ a {
 
 .back-link:hover {
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--surface);
 }
 
 .back-link svg {
@@ -126,7 +139,7 @@ a {
   padding: 9px 12px;
   border: 1px solid var(--line-soft);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
 }
 
 .status-dot {
@@ -245,10 +258,10 @@ a {
   width: min(210px, 44vw);
   margin: 0;
   padding: 10px 12px;
-  border: 1px solid #e1e6eb;
+  border: 1px solid var(--line);
   border-radius: 14px 14px 14px 4px;
-  color: #334155;
-  background: rgba(255, 255, 255, 0.97);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
   box-shadow: 0 10px 25px rgba(31, 42, 55, 0.1);
   font-size: 0.72rem;
   font-weight: 600;
@@ -270,7 +283,7 @@ a {
   border: 1px solid rgba(223, 227, 232, 0.9);
   border-radius: 999px;
   color: var(--muted);
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
   box-shadow: 0 4px 14px rgba(31, 42, 55, 0.08);
   font-size: 0.62rem;
   font-weight: 700;
@@ -307,7 +320,7 @@ a {
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   color: var(--muted);
-  background: rgba(255, 255, 255, 0.82);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
   font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
@@ -331,7 +344,7 @@ a {
   align-items: baseline;
   margin-bottom: 8px;
   color: var(--ink);
-  font-family: "Newsreader", serif;
+  font-family: "BAIRD Sans", sans-serif;
   font-size: clamp(3.8rem, 11vw, 6.4rem);
   font-weight: 600;
   letter-spacing: -0.075em;
@@ -462,7 +475,7 @@ textarea::placeholder {
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   color: var(--muted);
-  background: rgba(255, 255, 255, 0.64);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
   font-size: 0.76rem;
   cursor: pointer;
   transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
@@ -512,7 +525,7 @@ textarea::placeholder {
 
 .conversation-heading h2 {
   margin-top: 4px;
-  font-family: "Newsreader", serif;
+  font-family: "BAIRD Sans", sans-serif;
   font-size: 2rem;
   font-weight: 600;
   letter-spacing: -0.035em;
@@ -614,7 +627,7 @@ textarea::placeholder {
   border: 1px solid var(--line-soft);
   border-radius: 12px;
   color: inherit;
-  background: rgba(255, 255, 255, 0.76);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
   text-decoration: none;
   transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
 }

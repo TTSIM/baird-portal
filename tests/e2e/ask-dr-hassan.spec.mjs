@@ -15,6 +15,43 @@ const successStream = [
   }
 ].map((event) => `data: ${JSON.stringify(event)}\n\n`).join("");
 
+const portalFixture = {
+  academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
+  courses: [{
+    id: "implant-dentistry-2026",
+    title: "BAIRD Evidence Based & Clinical Implant Dentistry",
+    shortTitle: "Implant Dentistry",
+    intake: "2026 Intake",
+    summary: "A year-long clinical implant dentistry programme.",
+    status: "registration-open",
+    statusLabel: "Registration open",
+    sourceUrl: "https://bairdacademyuk.com/",
+    contentLabels: { singular: "Module", plural: "Modules" },
+    facultyIds: ["dr-hassan"],
+    moduleIds: ["implant-module-1"],
+    enrolled: true,
+    availableItems: 1,
+    totalItems: 1
+  }],
+  faculty: [{
+    id: "dr-hassan",
+    name: "Dr Hassan Maghaireh",
+    role: "Course director",
+    bio: "BAIRD course director.",
+    courseIds: ["implant-dentistry-2026"]
+  }],
+  modules: [{
+    id: "implant-module-1",
+    courseId: "implant-dentistry-2026",
+    title: "Module 1",
+    date: "January 2026",
+    topics: "Foundations",
+    days: [],
+    locked: false
+  }],
+  stats: { enrolledCourses: 1, availableItems: 1, faculty: 1, materials: 1, yearsRunning: 20 }
+};
+
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/me", async (route) => {
     await route.fulfill({
@@ -28,26 +65,7 @@ test.beforeEach(async ({ page }) => {
           role: "delegate",
           grants: ["implant-module-1"]
         },
-        portal: {
-          program: {
-            title: "BAIRD Evidence Based & Clinical Implant Dentistry",
-            subtitle: "2026 Programme",
-            details: [["2026 Intake"], ["BAIRD Academy"]],
-            faculty: ["Dr Hassan"],
-            yearsRunning: 20
-          },
-          courses: [{ id: "implant-dentistry-2026", title: "Implant Dentistry", intake: "2026" }],
-          modules: [{
-            id: "implant-module-1",
-            courseId: "implant-dentistry-2026",
-            title: "Module 1",
-            date: "January 2026",
-            topics: "Foundations",
-            days: [],
-            locked: false
-          }],
-          stats: { modules: 9, faculty: 1, materials: 1, yearsRunning: 20 }
-        }
+        portal: portalFixture
       })
     });
   });
@@ -58,12 +76,14 @@ test.beforeEach(async ({ page }) => {
 
 test("portal exposes an isolated Ask Dr Hassan navigation link", async ({ page }) => {
   await page.goto("/baird_implant_portal.html");
-  await page.getByRole("tab", { name: "Faculty" }).click();
-  await expect(page.getByRole("heading", { name: "Faculty" })).toBeVisible();
-  await page.getByRole("tab", { name: "Modules" }).click();
-  await expect(page.getByRole("heading", { name: "Modules" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Welcome back/ })).toBeVisible();
+  await page.getByRole("button", { name: "Faculty" }).click();
+  await expect(page.getByRole("heading", { name: "Meet the faculty." })).toBeVisible();
+  await page.getByRole("button", { name: "My Learning" }).click();
+  await expect(page.getByRole("heading", { name: "My courses" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Ask Dr Hassan" })).toHaveAttribute("href", "ask-dr-hassan.html");
-  await expect(page.getByRole("link", { name: "Backend dashboard" })).toBeHidden();
+  await page.getByText("Test Delegate", { exact: true }).click();
+  await expect(page.getByRole("link", { name: "Backend dashboard" })).toHaveCount(0);
   await page.getByRole("link", { name: "Ask Dr Hassan" }).click();
   await expect(page).toHaveURL(/ask-dr-hassan\.html$/);
   await expect(page.getByPlaceholder("Ask anything about your course materials…")).toBeFocused();
@@ -77,20 +97,16 @@ test("owner sees the Backend dashboard navigation", async ({ page }) => {
     body: JSON.stringify({
       user: { id: "owner-1", name: "Sim Singh", email: "simsingh@gmail.com", role: "owner", grants: [] },
       portal: {
-        program: {
-          title: "BAIRD Learning Portal",
-          subtitle: "2026 Programme",
-          details: [],
-          faculty: [],
-          yearsRunning: 20
-        },
+        academy: { name: "BAIRD Academy", title: "BAIRD Learning Portal", yearsRunning: 20 },
         courses: [],
+        faculty: [],
         modules: [],
-        stats: { modules: 0, faculty: 0, materials: 0, yearsRunning: 20 }
+        stats: { enrolledCourses: 0, availableItems: 0, faculty: 0, materials: 0, yearsRunning: 20 }
       }
     })
   }));
   await page.goto("/baird_implant_portal.html");
+  await page.getByText("Sim Singh", { exact: true }).click();
   await expect(page.getByRole("link", { name: "Backend dashboard" })).toBeVisible();
 });
 
@@ -245,6 +261,20 @@ test("keeps the composer usable on a mobile viewport", async ({ page }) => {
   const avatarBox = await page.getByRole("button", { name: "Greet the Dr Hassan companion" }).boundingBox();
   expect(avatarBox.x).toBeGreaterThanOrEqual(0);
   expect(avatarBox.x + avatarBox.width).toBeLessThanOrEqual(390);
+});
+
+test("persists the learner theme between portal, profile, and Ask Dr Hassan", async ({ page }) => {
+  await page.goto("/baird_implant_portal.html");
+  await page.getByRole("button", { name: "Dark mode" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+
+  await page.goto("/profile-setup.html");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+
+  await page.goto("/ask-dr-hassan.html");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "Light mode" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
 
 test("honours reduced-motion preferences", async ({ page }) => {

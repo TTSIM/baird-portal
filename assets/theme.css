@@ -1,0 +1,115 @@
+@font-face {
+  font-family: "BAIRD Sans";
+  src: local("Avenir Next"), local("Avenir"), local("Helvetica Neue");
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --baird-bg: #f4f6fa;
+  --baird-surface: #fbfcfe;
+  --baird-surface-strong: #ffffff;
+  --baird-surface-soft: #edf1f8;
+  --baird-ink: #10223f;
+  --baird-muted: #59667a;
+  --baird-quiet: #667085;
+  --baird-line: #dbe1ea;
+  --baird-line-strong: #c6cfdd;
+  --baird-blue: #173f94;
+  --baird-blue-strong: #102f75;
+  --baird-blue-soft: #e8eef9;
+  --baird-red: #e41f31;
+  --baird-red-soft: #fff0f1;
+  --baird-success: #187454;
+  --baird-warning: #8a5415;
+  --baird-danger: #b42318;
+  --baird-focus: #4d73c3;
+  --baird-shadow: 0 20px 55px rgb(28 48 84 / 0.1);
+  --baird-shadow-soft: 0 8px 26px rgb(28 48 84 / 0.07);
+  --baird-radius-sm: 10px;
+  --baird-radius-md: 14px;
+  --baird-radius-lg: 20px;
+  --baird-radius-xl: 28px;
+  font-family: "BAIRD Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --baird-bg: #091328;
+  --baird-surface: #0d1930;
+  --baird-surface-strong: #12203a;
+  --baird-surface-soft: #172844;
+  --baird-ink: #eff3fb;
+  --baird-muted: #b3bdd0;
+  --baird-quiet: #98a5ba;
+  --baird-line: #293650;
+  --baird-line-strong: #3b4c69;
+  --baird-blue: #8babed;
+  --baird-blue-strong: #b6caf3;
+  --baird-blue-soft: #1b315c;
+  --baird-red: #ff6b77;
+  --baird-red-soft: #3c1c28;
+  --baird-success: #7fd5b5;
+  --baird-warning: #f4bd72;
+  --baird-danger: #ffb4ab;
+  --baird-focus: #9db8ef;
+  --baird-shadow: 0 24px 64px rgb(0 0 0 / 0.3);
+  --baird-shadow-soft: 0 10px 30px rgb(0 0 0 / 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--baird-bg);
+}
+
+body {
+  margin: 0;
+  color: var(--baird-ink);
+  background: var(--baird-bg);
+  font-family: inherit;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--baird-focus) 40%, transparent);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: var(--baird-surface-strong);
+  background: var(--baird-blue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

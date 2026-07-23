@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildPortalView,
+  courseCatalog,
   courseIdsForGrants,
   resolveMaterialAccess,
   userCanAccessModule
@@ -43,8 +44,48 @@ test("keeps locked module details out of the delegate portal view", () => {
   const locked = view.modules.find(({ id }) => id === "implant-module-2");
   assert.equal(unlocked.locked, false);
   assert.equal(locked.locked, true);
-  assert.equal("topics" in locked, false);
+  assert.equal(typeof locked.topics, "string");
+  assert.equal(typeof locked.date, "string");
   assert.equal("days" in locked, false);
+  assert.equal("knowledgeFiles" in locked, false);
+});
+
+test("publishes a unique multi-course catalogue with adaptive labels", () => {
+  assert.equal(courseCatalog.courses.length, 8);
+  assert.equal(new Set(courseCatalog.courses.map(({ id }) => id)).size, 8);
+  assert.equal(new Set(courseCatalog.courses.map(({ title }) => title)).size, 8);
+
+  const implant = courseCatalog.courses.find(({ id }) => id === "implant-dentistry-2026");
+  const oral = courseCatalog.courses.find(({ id }) => id === "oral-surgery-mastery-2026");
+  assert.deepEqual(implant.contentLabels, { singular: "Module", plural: "Modules" });
+  assert.deepEqual(oral.contentLabels, { singular: "Study Day", plural: "Study Days" });
+  assert.equal(implant.moduleIds.length, 9);
+  assert.equal(oral.moduleIds.length, 1);
+
+  const emptyCourses = courseCatalog.courses.filter(({ moduleIds }) => moduleIds.length === 0);
+  assert.equal(emptyCourses.length, 6);
+  for (const course of emptyCourses) {
+    assert.deepEqual(course.contentLabels, { singular: "Course content", plural: "Course content" });
+  }
+});
+
+test("keeps Oral Surgery separate and assigns Dr Shankar only to it", () => {
+  const oral = courseCatalog.courses.find(({ id }) => id === "oral-surgery-mastery-2026");
+  const implant = courseCatalog.courses.find(({ id }) => id === "implant-dentistry-2026");
+  const shankar = courseCatalog.faculty.find(({ id }) => id === "shankar-narayan");
+
+  assert.deepEqual(oral.facultyIds, ["shankar-narayan"]);
+  assert.equal(implant.facultyIds.includes("shankar-narayan"), false);
+  assert.deepEqual(shankar.courseIds, ["oral-surgery-mastery-2026"]);
+  assert.equal(courseCatalog.faculty.filter(({ courseIds }) => courseIds.includes(implant.id)).length, 13);
+});
+
+test("returns enrolled courses first-class while retaining the public catalogue", () => {
+  const view = buildPortalView(delegate);
+  assert.equal(view.courses.find(({ id }) => id === "implant-dentistry-2026").enrolled, true);
+  assert.equal(view.courses.find(({ id }) => id === "oral-surgery-mastery-2026").enrolled, false);
+  assert.equal(view.modules.filter(({ courseId }) => courseId === "implant-dentistry-2026").length, 9);
+  assert.equal(view.modules.some(({ courseId }) => courseId === "oral-surgery-mastery-2026"), false);
 });
 
 test("maps protected materials to modules and honours staff access", () => {

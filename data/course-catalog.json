@@ -1,54 +1,146 @@
 {
-  "version": 1,
-  "program": {
-    "intake": "March 2026",
-    "title": "Year Long Evidence Based & Clinical Course in Implant Dentistry",
-    "subtitle": "Evidence Based & Clinical Implant Dentistry",
-    "yearsRunning": 18,
-    "details": [
-      [
-        "Length",
-        "9 modules from March 2026 to January 2027"
-      ],
-      [
-        "Running",
-        "18th year"
-      ],
-      [
-        "Focus",
-        "Evidence-based teaching plus practical clinical training"
-      ],
-      [
-        "Clinical Training",
-        "Training on patients provided by the course under direct mentoring at no extra cost"
-      ]
-    ],
-    "description": [
-      "The BAIRD Evidence Based & Clinical Course in Implant Dentistry is one of the most successful private courses in implant dentistry in the United Kingdom.",
-      "It is designed to give participants sound grounding knowledge in implant dentistry as well as practical training on patients provided by the course.",
-      "Past graduates are already placing and restoring implants with confidence in their own dental practices."
-    ],
-    "faculty": [
-      "Dr Hassan Maghaireh — Chairman of BAIRD Academy; ITI Fellow and Speaker.",
-      "Prof Marco Esposito — Professor of Evidence-Based Medicine and Dentistry at Vita-Salute San Raffaele University, Milan; editor and author with Cochrane Collaboration.",
-      "Prof StJohn Crean — Consultant in Oral and Maxillofacial Surgery and Vice-Chancellor of The University of Central Lancashire.",
-      "Prof Crawford Bain — Specialist Certificates in Periodontics and Fixed Prosthodontics; former Senior Lecturer and MSc Coordinator in Dental Primary Care at The University of Glasgow.",
-      "Prof Ziad Al-Ani — Senior Lecturer at the School of Medicine, Dentistry and Nursing, University of Glasgow.",
-      "Dr Kasim Butt — Consultant and Specialist in Restorative Dentistry at University Hospitals Coventry and Warwickshire NHS Trust; Head of the Scientific Committee at BAIRD Academy.",
-      "Prof Domniki Chatzopoulou — Professor of Periodontology, Specialist Periodontist, Reader, and Postgraduate Course Director for the DClinDent in Periodontology at Queen Mary University of London.",
-      "Dr Victoria Ivancheva — Young ITI Ambassador; member of the Scientific Committee and Head of the Mentoring Committee at BAIRD Academy.",
-      "Dr Sarra Jawad — Restorative Consultant at Guy's and St Thomas' NHS Foundation Trust.",
-      "Dr Lee Feinberg — Specialist in Dental and Maxillofacial Radiology; Consultant Dental and Maxillofacial Radiologist at King's College Hospital and Eastman Dental Hospital, part of University College London Hospitals NHS Foundation Trust.",
-      "Dr Aziz Ghanem Aziz — Clinical Lecturer in Implant Dentistry at Eastman; examiner at The RCS Edinburgh Implant Membership exam; implant dentist in Cardiff.",
-      "Dr Koray Keran — Clinical Director and Principal Dental Surgeon at The London Centre for Implant & Aesthetic Dentistry.",
-      "Dr Chia Yeoh — Implant and Cosmetic Dentist at Perfect 32."
-    ]
+  "version": 2,
+  "academy": {
+    "name": "BAIRD Academy",
+    "title": "The British Academy of Implant & Restorative Dentistry",
+    "yearsRunning": 18
   },
+  "faculty": [
+    {
+      "id": "hassan-maghaireh",
+      "name": "Dr Hassan Maghaireh",
+      "role": "Chairman of BAIRD Academy",
+      "bio": "ITI Fellow and Speaker.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "marco-esposito",
+      "name": "Prof Marco Esposito",
+      "role": "Professor of Evidence-Based Medicine and Dentistry",
+      "bio": "Professor at Vita-Salute San Raffaele University, Milan; editor and author with Cochrane Collaboration.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "stjohn-crean",
+      "name": "Prof StJohn Crean",
+      "role": "Consultant in Oral and Maxillofacial Surgery",
+      "bio": "Vice-Chancellor of The University of Central Lancashire.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "crawford-bain",
+      "name": "Prof Crawford Bain",
+      "role": "Specialist in Periodontics and Fixed Prosthodontics",
+      "bio": "Former Senior Lecturer and MSc Coordinator in Dental Primary Care at The University of Glasgow.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "ziad-al-ani",
+      "name": "Prof Ziad Al-Ani",
+      "role": "Senior Lecturer",
+      "bio": "School of Medicine, Dentistry and Nursing, University of Glasgow.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "kasim-butt",
+      "name": "Dr Kasim Butt",
+      "role": "Consultant and Specialist in Restorative Dentistry",
+      "bio": "University Hospitals Coventry and Warwickshire NHS Trust; Head of the Scientific Committee at BAIRD Academy.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "domniki-chatzopoulou",
+      "name": "Prof Domniki Chatzopoulou",
+      "role": "Professor of Periodontology and Specialist Periodontist",
+      "bio": "Reader and Postgraduate Course Director for the DClinDent in Periodontology at Queen Mary University of London.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "victoria-ivancheva",
+      "name": "Dr Victoria Ivancheva",
+      "role": "Young ITI Ambassador",
+      "bio": "Member of the Scientific Committee and Head of the Mentoring Committee at BAIRD Academy.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "sarra-jawad",
+      "name": "Dr Sarra Jawad",
+      "role": "Restorative Consultant",
+      "bio": "Guy's and St Thomas' NHS Foundation Trust.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "lee-feinberg",
+      "name": "Dr Lee Feinberg",
+      "role": "Specialist in Dental and Maxillofacial Radiology",
+      "bio": "Consultant at King's College Hospital and Eastman Dental Hospital, part of University College London Hospitals NHS Foundation Trust.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "aziz-ghanem-aziz",
+      "name": "Dr Aziz Ghanem Aziz",
+      "role": "Clinical Lecturer in Implant Dentistry",
+      "bio": "Eastman clinical lecturer, examiner at The RCS Edinburgh Implant Membership exam and implant dentist in Cardiff.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "koray-keran",
+      "name": "Dr Koray Keran",
+      "role": "Clinical Director and Principal Dental Surgeon",
+      "bio": "The London Centre for Implant & Aesthetic Dentistry.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "chia-yeoh",
+      "name": "Dr Chia Yeoh",
+      "role": "Implant and Cosmetic Dentist",
+      "bio": "Perfect 32.",
+      "courseIds": ["implant-dentistry-2026"]
+    },
+    {
+      "id": "shankar-narayan",
+      "name": "Dr Shankar Narayan",
+      "role": "Oral Surgery Faculty",
+      "bio": "",
+      "courseIds": ["oral-surgery-mastery-2026"]
+    }
+  ],
   "courses": [
     {
       "id": "implant-dentistry-2026",
       "title": "Evidence Based & Clinical Implant Dentistry",
+      "shortTitle": "Implant Dentistry",
       "intake": "March 2026",
+      "summary": "A year-long evidence-based programme combining structured teaching with practical clinical training on patients.",
+      "status": "current-programme",
+      "statusLabel": "Current programme",
+      "sourceUrl": "https://bairdacademyuk.com/",
+      "contentLabels": {
+        "singular": "Module",
+        "plural": "Modules"
+      },
+      "facultyIds": [
+        "hassan-maghaireh",
+        "marco-esposito",
+        "stjohn-crean",
+        "crawford-bain",
+        "ziad-al-ani",
+        "kasim-butt",
+        "domniki-chatzopoulou",
+        "victoria-ivancheva",
+        "sarra-jawad",
+        "lee-feinberg",
+        "aziz-ghanem-aziz",
+        "koray-keran",
+        "chia-yeoh"
+      ],
+      "details": [
+        ["Length", "9 modules from March 2026 to January 2027"],
+        ["Running", "18th year"],
+        ["Focus", "Evidence-based teaching plus practical clinical training"],
+        ["Clinical training", "Training on patients under direct mentoring at no extra cost"]
+      ],
+      "coverImage": "assets/login-clinical.webp",
       "moduleIds": [
         "implant-module-1",
         "implant-module-2",
@@ -63,11 +155,117 @@
     },
     {
       "id": "oral-surgery-mastery-2026",
-      "title": "Oral Surgery Mastery",
+      "title": "Advanced Oral Surgery for General Dental Practitioners",
+      "shortTitle": "Advanced Oral Surgery",
       "intake": "March 2026",
+      "summary": "A focused study day developing safe, efficient and predictable oral surgery skills for general dental practice.",
+      "status": "registration-open",
+      "statusLabel": "Registration open",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Study Day",
+        "plural": "Study Days"
+      },
+      "facultyIds": ["shankar-narayan"],
       "moduleIds": [
         "oral-surgery-day"
       ]
+    },
+    {
+      "id": "implant-overdentures-masterclass",
+      "title": "Implant Overdentures Masterclass",
+      "shortTitle": "Implant Overdentures",
+      "intake": "",
+      "summary": "",
+      "status": "registration-open",
+      "statusLabel": "Registration open",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
+    },
+    {
+      "id": "predictable-soft-tissue-grafting",
+      "title": "Predictable Soft Tissue Grafting",
+      "shortTitle": "Soft Tissue Grafting",
+      "intake": "",
+      "summary": "",
+      "status": "registration-open",
+      "statusLabel": "Registration open",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
+    },
+    {
+      "id": "digital-workflow-implant-dentistry",
+      "title": "Digital Workflow in Implant Dentistry",
+      "shortTitle": "Digital Workflow",
+      "intake": "",
+      "summary": "",
+      "status": "fully-booked",
+      "statusLabel": "Fully booked",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
+    },
+    {
+      "id": "advanced-hard-soft-tissue-grafting",
+      "title": "Advanced Hard and Soft Tissue Grafting Course",
+      "shortTitle": "Hard & Soft Tissue Grafting",
+      "intake": "",
+      "summary": "",
+      "status": "applications-open",
+      "statusLabel": "Applications open",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
+    },
+    {
+      "id": "internal-sinus-lift-ridge-expansion",
+      "title": "Internal Sinus Lift, Ridge Expansion & Maximising Bone Quality",
+      "shortTitle": "Sinus Lift & Ridge Expansion",
+      "intake": "",
+      "summary": "",
+      "status": "fully-booked",
+      "statusLabel": "Fully booked",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
+    },
+    {
+      "id": "bone-grafting-masterclass",
+      "title": "Bone Grafting Masterclass: Contemporary Approaches",
+      "shortTitle": "Bone Grafting Masterclass",
+      "intake": "",
+      "summary": "",
+      "status": "applications-open",
+      "statusLabel": "Applications open",
+      "sourceUrl": "https://bairdacademyuk.com/advanced-courses/",
+      "contentLabels": {
+        "singular": "Course content",
+        "plural": "Course content"
+      },
+      "facultyIds": [],
+      "moduleIds": []
     }
   ],
   "modules": [
