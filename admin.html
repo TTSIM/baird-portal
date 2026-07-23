@@ -23,6 +23,7 @@
     <button class="active" type="button" data-section="usage">Ask Dr Hassan</button>
     <button type="button" data-section="delegates">Users</button>
     <button type="button" data-section="knowledge">Knowledge</button>
+    <button type="button" data-section="community">Community</button>
   </nav>
 
   <main>
@@ -106,6 +107,34 @@
         <table>
           <thead><tr><th>Title / filename</th><th>Course</th><th>Size</th><th>Uploader</th><th>Uploaded</th><th>Status</th><th></th></tr></thead>
           <tbody id="knowledge-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="admin-section" id="section-community">
+      <div class="section-heading">
+        <div><h2>Community moderation</h2><p>Review reports, hide unsafe material and manage locked discussions.</p></div>
+        <button id="refresh-community" type="button">Refresh</button>
+      </div>
+      <h3>Open reports</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Reported</th><th>Reporter</th><th>Reason</th><th>Content</th><th>Actions</th></tr></thead>
+          <tbody id="community-report-rows"></tbody>
+        </table>
+      </div>
+      <h3 class="admin-subheading">Hidden, deleted or locked discussions</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Discussion</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead>
+          <tbody id="community-content-rows"></tbody>
+        </table>
+      </div>
+      <h3 class="admin-subheading">Moderation history</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>When</th><th>Administrator</th><th>Action</th><th>Target</th><th>Reason</th></tr></thead>
+          <tbody id="community-history-rows"></tbody>
         </table>
       </div>
     </section>

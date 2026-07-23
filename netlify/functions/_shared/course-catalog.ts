@@ -79,6 +79,11 @@ export function normalizeGrants(value: unknown): string[] {
   return [...new Set(value.filter((id): id is string => typeof id === "string" && allModuleIds.has(id)))].sort();
 }
 
+export function normalizeCompletedCourses(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.filter((id): id is string => typeof id === "string" && allCourseIds.has(id)))].sort();
+}
+
 export function courseIdsForGrants(grants: string[]): string[] {
   return [...new Set(grants.map((id) => moduleById.get(id)?.courseId).filter((id): id is string => Boolean(id)))];
 }

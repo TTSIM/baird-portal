@@ -7,6 +7,7 @@ type UserRole = "owner" | "admin" | "delegate";
 type UserRecord = {
   id: string;
   googleSub?: string;
+  profileCompletedAt?: string;
   role: UserRole;
   active: boolean;
   grants: string[];
@@ -128,6 +129,13 @@ function loginRedirect(request: Request) {
   return Response.redirect(url, 302);
 }
 
+function profileRedirect(request: Request) {
+  const url = new URL("/profile-setup.html", request.url);
+  const current = new URL(request.url);
+  url.searchParams.set("next", `${current.pathname}${current.search}`);
+  return Response.redirect(url, 302);
+}
+
 function denied(message: string, status: number) {
   return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>BAIRD Portal</title><body style="font:16px system-ui;padding:40px"><h1>Access unavailable</h1><p>${message}</p><p><a href="/">Return to the portal</a></p></body></html>`, {
     status,
@@ -149,12 +157,14 @@ export default async function portalAuth(request: Request, _context: Context) {
 
   const protectedPage = path === "/baird_implant_portal.html"
     || path === "/ask-dr-hassan.html"
-    || path === "/admin.html";
+    || path === "/admin.html"
+    || path === "/profile-setup.html";
   const material = path.startsWith("/materials/");
   if (!protectedPage && !material) return;
 
   const user = await authenticatedUser(request);
   if (!user) return loginRedirect(request);
+  if (!user.profileCompletedAt && path !== "/profile-setup.html") return profileRedirect(request);
 
   if (path === "/admin.html" && !isStaffRole(user.role)) {
     return denied("Administrator access is required.", 403);

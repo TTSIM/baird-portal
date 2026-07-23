@@ -17,7 +17,10 @@ async function waitForGoogle() {
 try {
   const currentUser = await fetch("/api/me", { headers: { Accept: "application/json" } });
   if (currentUser.ok) {
-    location.replace(safeNext());
+    const body = await currentUser.json();
+    location.replace(body.user?.profileComplete !== false
+      ? safeNext()
+      : `profile-setup.html?next=${encodeURIComponent(safeNext())}`);
     await new Promise(() => {});
   }
 
@@ -39,7 +42,9 @@ try {
         status.textContent = body.error || "Sign-in was not accepted.";
         return;
       }
-      location.assign(safeNext());
+      location.assign(body.user?.profileComplete !== false
+        ? safeNext()
+        : `profile-setup.html?next=${encodeURIComponent(safeNext())}`);
     }
   });
   window.google.accounts.id.renderButton(button, {

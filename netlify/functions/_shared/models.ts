@@ -1,9 +1,27 @@
 export type UserRole = "owner" | "admin" | "delegate";
 
+export type NotificationPreferences = {
+  emailReplies: boolean;
+  emailMentions: boolean;
+  emailAcceptedAnswers: boolean;
+};
+
+export type CommunityAvatar = {
+  kind: "google" | "upload";
+  url?: string;
+  assetId?: string;
+};
+
 export type UserRecord = {
   id: string;
   email: string;
   name: string;
+  location?: string;
+  avatar?: CommunityAvatar;
+  googlePictureUrl?: string;
+  profileCompletedAt?: string;
+  completedCourseIds: string[];
+  notificationPreferences: NotificationPreferences;
   googleSub?: string;
   role: UserRole;
   active: boolean;

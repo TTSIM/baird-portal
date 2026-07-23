@@ -1,7 +1,12 @@
 import type { Config } from "@netlify/functions";
 import { activeOwnerCount, createUser, getUserById, listUsers, saveUser } from "./_shared/data.js";
 import { HttpError, jsonError, requireStaff } from "./_shared/auth.js";
-import { normalizeGrants, publicCourseOptions, courseCatalog } from "./_shared/course-catalog.js";
+import {
+  normalizeCompletedCourses,
+  normalizeGrants,
+  publicCourseOptions,
+  courseCatalog
+} from "./_shared/course-catalog.js";
 import type { UserRole } from "./_shared/models.js";
 import { canAssignRole, canManageUser, removesActiveOwner } from "./_shared/roles.js";
 
@@ -47,13 +52,16 @@ export default async function handler(request: Request) {
       if (!canAssignRole(admin.role, role)) {
         throw new HttpError(403, "Only an owner can create administrators or owners.", "OWNER_REQUIRED");
       }
-      const user = await createUser({
+      let user = await createUser({
         email: cleanEmail(body.email),
         name: typeof body.name === "string" ? body.name.trim() : "",
         role,
         grants: normalizeGrants(body.grants),
         active: body.active !== false
       });
+      if (body.completedCourseIds !== undefined) {
+        user = await saveUser({ ...user, completedCourseIds: normalizeCompletedCourses(body.completedCourseIds) });
+      }
       return Response.json({ user: adminUserView(user) }, { status: 201 });
     }
 
@@ -76,7 +84,10 @@ export default async function handler(request: Request) {
         name: typeof body.name === "string" ? body.name.trim() || current.name : current.name,
         role: nextRole,
         active: nextActive,
-        grants: body.grants === undefined ? current.grants : normalizeGrants(body.grants)
+        grants: body.grants === undefined ? current.grants : normalizeGrants(body.grants),
+        completedCourseIds: body.completedCourseIds === undefined
+          ? current.completedCourseIds || []
+          : normalizeCompletedCourses(body.completedCourseIds)
       });
       return Response.json({ user: adminUserView(user), updatedBy: admin.id });
     }

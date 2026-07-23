@@ -63,8 +63,9 @@ export default async function handler(request: Request) {
     const now = new Date();
     user = await saveUser({
       ...user,
-      name: user.name || payload.name || email,
+      name: !user.name || user.name === user.email ? payload.name || email : user.name,
       googleSub,
+      googlePictureUrl: payload.picture || user.googlePictureUrl,
       role: bootstrapOwner ? "owner" : user.role,
       active: bootstrapOwner ? true : user.active,
       lastLoginAt: now.toISOString()
@@ -76,7 +77,15 @@ export default async function handler(request: Request) {
       expiresAt: Math.floor(now.getTime() / 1000) + SESSION_DURATION_SECONDS
     }, requiredEnv("SESSION_SECRET"));
 
-    return Response.json({ redirectTo: "/", user: { name: user.name, email: user.email, role: user.role } }, {
+    return Response.json({
+      redirectTo: user.profileCompletedAt ? "/" : "/profile-setup.html",
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileComplete: Boolean(user.profileCompletedAt)
+      }
+    }, {
       headers: {
         "Cache-Control": "no-store",
         "Set-Cookie": sessionCookie(token, new URL(request.url).protocol === "https:")

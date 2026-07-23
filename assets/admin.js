@@ -87,6 +87,18 @@ function grantFields(user) {
   `).join("");
 }
 
+function completedCourseFields(user) {
+  const completed = user.completedCourseIds || [];
+  return `
+    <fieldset class="completed-courses">
+      <legend>Completed courses shown on profile</legend>
+      ${state.courses.map((course) => `
+        <label><input type="checkbox" name="completedCourse" value="${escapeHtml(course.id)}" ${completed.includes(course.id) ? "checked" : ""}> ${escapeHtml(course.title)}</label>
+      `).join("") || `<span class="muted">No courses available.</span>`}
+    </fieldset>
+  `;
+}
+
 function roleLabel(role) {
   if (role === "owner") return "Owner";
   if (role === "admin") return "Administrator";
@@ -123,7 +135,7 @@ function renderUsers() {
                 <label>Role <select name="role">${roleOptions(user.role)}</select></label>
                 <label><span>Account</span><span><input name="active" type="checkbox" ${user.active ? "checked" : ""}> Active</span></label>
               </div>
-              <div class="course-grants">${grantFields(user)}</div>
+              <div class="course-grants">${completedCourseFields(user)}${grantFields(user)}</div>
               <div class="editor-actions"><button class="primary" type="submit">Save</button><button type="button" data-close-editor>Cancel</button></div>
             </form>
           </td>
@@ -165,11 +177,58 @@ async function loadKnowledge(schedule = true) {
   }
 }
 
+function moderationButtons(report) {
+  const type = escapeHtml(report.targetType);
+  const id = escapeHtml(report.targetId);
+  const buttons = [
+    `<button type="button" data-community-action="hide" data-target-type="${type}" data-target-id="${id}">Hide</button>`,
+    `<button class="danger" type="button" data-community-action="delete" data-target-type="${type}" data-target-id="${id}">Delete</button>`
+  ];
+  if (report.targetType === "post") {
+    buttons.unshift(`<button type="button" data-community-action="lock" data-target-type="${type}" data-target-id="${id}">Lock</button>`);
+  }
+  for (const attachment of report.target.attachments || []) {
+    buttons.push(`<button class="danger" type="button" data-community-action="remove-image" data-target-type="attachment" data-target-id="${escapeHtml(attachment.id)}">Remove ${escapeHtml(attachment.filename)}</button>`);
+  }
+  return buttons.join(" ");
+}
+
+async function loadCommunity() {
+  const data = await api("/api/admin/community");
+  $("#community-report-rows").innerHTML = data.reports.length ? data.reports.map((report) => `
+    <tr>
+      <td>${escapeHtml(formatDate(report.createdAt))}</td>
+      <td>${escapeHtml(report.reporter?.name || "Unknown")}<span class="filename">${escapeHtml(report.reporter?.email || "")}</span></td>
+      <td>${escapeHtml(report.reason.replaceAll("-", " "))}${report.details ? `<span class="error-detail">${escapeHtml(report.details)}</span>` : ""}</td>
+      <td class="question"><strong>${escapeHtml(report.target.title)}</strong><span class="filename">${escapeHtml(String(report.target.body || "").slice(0, 280))}</span></td>
+      <td>${moderationButtons(report)}</td>
+    </tr>`).join("") : `<tr><td colspan="5" class="muted">No open community reports.</td></tr>`;
+  $("#community-content-rows").innerHTML = data.content.length ? data.content.map((post) => `
+    <tr>
+      <td>${escapeHtml(post.title)}</td>
+      <td>${escapeHtml(post.status)}${post.lockedAt ? " / locked" : ""}</td>
+      <td>${escapeHtml(formatDate(post.updatedAt))}</td>
+      <td>
+        ${post.status !== "active" ? `<button type="button" data-community-action="restore" data-target-type="${escapeHtml(post.targetType)}" data-target-id="${escapeHtml(post.id)}">Restore</button>` : ""}
+        ${post.lockedAt ? `<button type="button" data-community-action="unlock" data-target-type="post" data-target-id="${escapeHtml(post.id)}">Unlock</button>` : ""}
+      </td>
+    </tr>`).join("") : `<tr><td colspan="4" class="muted">No hidden, deleted or locked discussions.</td></tr>`;
+  $("#community-history-rows").innerHTML = data.moderation.length ? data.moderation.map((record) => `
+    <tr>
+      <td>${escapeHtml(formatDate(record.createdAt))}</td>
+      <td>${escapeHtml(record.actor?.name || "Former administrator")}</td>
+      <td>${escapeHtml(record.action.replaceAll("-", " "))}</td>
+      <td>${escapeHtml(record.targetType)} / ${escapeHtml(record.targetId)}</td>
+      <td>${escapeHtml(record.reason || "")}</td>
+    </tr>`).join("") : `<tr><td colspan="5" class="muted">No moderation actions recorded.</td></tr>`;
+}
+
 $$("[data-section]").forEach((button) => {
   button.addEventListener("click", () => {
     $$("[data-section]").forEach((item) => item.classList.toggle("active", item === button));
     $$(".admin-section").forEach((section) => section.classList.toggle("active", section.id === `section-${button.dataset.section}`));
     if (button.dataset.section === "knowledge") loadKnowledge().catch((error) => setStatus(error.message));
+    if (button.dataset.section === "community") loadCommunity().catch((error) => setStatus(error.message));
   });
 });
 
@@ -236,7 +295,8 @@ $("#user-rows").addEventListener("submit", async (event) => {
         name: data.get("name"),
         role: data.get("role"),
         active: data.has("active"),
-        grants: data.getAll("grant")
+        grants: data.getAll("grant"),
+        completedCourseIds: data.getAll("completedCourse")
       })
     });
     await loadUsers();
@@ -286,6 +346,28 @@ $("#knowledge-rows").addEventListener("click", async (event) => {
   }
 });
 $("#refresh-knowledge").addEventListener("click", () => loadKnowledge().catch((error) => setStatus(error.message)));
+$("#refresh-community").addEventListener("click", () => loadCommunity().catch((error) => setStatus(error.message)));
+$("#section-community").addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-community-action]");
+  if (!button) return;
+  if (["delete", "hide", "remove-image"].includes(button.dataset.communityAction)
+    && !confirm(`${button.textContent} this community content?`)) return;
+  try {
+    await api("/api/admin/community", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: button.dataset.communityAction,
+        targetType: button.dataset.targetType,
+        targetId: button.dataset.targetId
+      })
+    });
+    await loadCommunity();
+    setStatus("Community moderation updated.");
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
 $("#logout-button").addEventListener("click", async () => {
   await fetch("/api/auth/logout", { method: "POST" });
   location.assign("/");

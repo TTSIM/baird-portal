@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/community.css">
 <style>
   :root {
     --bg: #07090f;
@@ -654,9 +655,14 @@
         <nav class="tabs" role="tablist" aria-label="Portal sections">
           <button class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-modules" id="tab-button-modules" data-tab="modules">Modules</button>
           <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-faculty" id="tab-button-faculty" data-tab="faculty">Faculty</button>
+          <button class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-community" id="tab-button-community" data-tab="community" hidden>Community</button>
         </nav>
         <a class="ask-dr-hassan-link" id="ask-dr-hassan-link" href="ask-dr-hassan.html">Ask Dr Hassan</a>
         <a class="account-link" id="admin-link" href="admin.html" hidden>Backend dashboard</a>
+        <button class="community-notification-button" id="community-notification-button" type="button" aria-label="Community notifications" hidden>
+          Activity <span id="community-unread-count" hidden></span>
+        </button>
+        <a class="account-link" href="profile-setup.html?next=/baird_implant_portal.html">Profile</a>
         <span class="account-name" id="account-name"></span>
         <button class="account-button" id="logout-button" type="button">Sign out</button>
       </div>
@@ -717,9 +723,131 @@
         </section>
       </section>
 
+      <section class="tab-panel" id="tab-community" role="tabpanel" aria-labelledby="tab-button-community">
+        <div class="community-workspace">
+          <aside class="community-sidebar">
+            <div class="community-profile" id="community-profile"></div>
+            <button class="community-primary" id="community-new-post" type="button">Ask the community</button>
+            <nav class="community-filters" aria-label="Community filters">
+              <button class="active" type="button" data-community-status="latest">Latest</button>
+              <button type="button" data-community-status="unanswered">Unanswered</button>
+              <button type="button" data-community-status="resolved">Resolved</button>
+            </nav>
+            <label class="community-field">Category
+              <select id="community-category-filter">
+                <option value="all">All categories</option>
+                <option value="general">General</option>
+                <option value="case-support">Case support</option>
+                <option value="course-question">Course question</option>
+              </select>
+            </label>
+            <label class="community-field">Course
+              <select id="community-course-filter"><option value="">All courses</option></select>
+            </label>
+            <div class="community-safety-note">
+              <strong>Protect patient confidentiality</strong>
+              <span>Remove names, dates of birth, identifiers and recognisable details before posting.</span>
+            </div>
+          </aside>
+
+          <section class="community-main" aria-label="Community discussions">
+            <div class="community-heading">
+              <div>
+                <p class="community-kicker">Delegate discussion</p>
+                <h2>Community</h2>
+                <p>Ask questions, compare approaches and learn from the experience in the room.</p>
+              </div>
+              <button class="community-secondary community-back" id="community-back" type="button" hidden>Back to discussions</button>
+            </div>
+            <p class="community-global-status" id="community-status" role="status"></p>
+            <div class="community-feed" id="community-feed"></div>
+            <button class="community-secondary community-load-more" id="community-load-more" type="button" hidden>Load more</button>
+            <article class="community-thread" id="community-thread" hidden></article>
+          </section>
+        </div>
+      </section>
+
     </main>
   </div>
 
+  <dialog class="community-dialog" id="community-compose-dialog">
+    <form method="dialog" id="community-compose-form">
+      <div class="community-dialog-heading">
+        <div><p class="community-kicker">New discussion</p><h2>Ask the community</h2></div>
+        <button class="community-close" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <label class="community-field">Title
+        <input name="title" maxlength="160" required>
+      </label>
+      <label class="community-field">Details
+        <textarea name="body" maxlength="5000" rows="8" required></textarea>
+        <span>Use @ followed by a delegate’s full name to notify them.</span>
+      </label>
+      <div class="community-form-row">
+        <label class="community-field">Category
+          <select name="category" required>
+            <option value="general">General</option>
+            <option value="case-support">Case support</option>
+            <option value="course-question">Course question</option>
+          </select>
+        </label>
+        <label class="community-field">Course <span>Optional</span>
+          <select name="courseId"><option value="">No course tag</option></select>
+        </label>
+      </div>
+      <label class="community-upload">
+        <span>Add images <small>Optional, up to four</small></span>
+        <input name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+      </label>
+      <div class="community-image-review" id="community-image-review"></div>
+      <label class="community-check" id="community-case-check" hidden>
+        <input name="caseAttestation" type="checkbox">
+        <span>I confirm that patient-identifiable information has been removed and I have authority to share this material for professional education.</span>
+      </label>
+      <p class="community-form-note">Peer discussion supports learning but does not replace clinical supervision or patient-specific professional advice.</p>
+      <p class="community-form-status" id="community-compose-status" role="status"></p>
+      <div class="community-dialog-actions">
+        <button class="community-secondary" value="cancel" type="submit">Cancel</button>
+        <button class="community-primary" type="submit" data-submit-post>Publish discussion</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="community-dialog community-activity-dialog" id="community-activity-dialog">
+    <div class="community-dialog-heading">
+      <div><p class="community-kicker">Your activity</p><h2>Notifications</h2></div>
+      <button class="community-close" id="community-activity-close" type="button" aria-label="Close">×</button>
+    </div>
+    <div id="community-notifications"></div>
+  </dialog>
+
+  <dialog class="community-dialog" id="community-report-dialog">
+    <form method="dialog" id="community-report-form">
+      <div class="community-dialog-heading">
+        <div><p class="community-kicker">Community safety</p><h2>Report content</h2></div>
+        <button class="community-close" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <label class="community-field">Reason
+        <select name="reason" required>
+          <option value="patient-confidentiality">Patient confidentiality</option>
+          <option value="unsafe-advice">Incorrect or unsafe clinical advice</option>
+          <option value="inappropriate">Inappropriate content</option>
+          <option value="spam">Spam</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label class="community-field">Additional detail <span>Optional</span>
+        <textarea name="details" maxlength="500" rows="4"></textarea>
+      </label>
+      <p class="community-form-status" id="community-report-status" role="status"></p>
+      <div class="community-dialog-actions">
+        <button class="community-secondary" value="cancel" type="submit">Cancel</button>
+        <button class="community-primary" type="submit" data-submit-report>Send report</button>
+      </div>
+    </form>
+  </dialog>
+
 <script type="module" src="assets/portal.js"></script>
+<script type="module" src="assets/community.js"></script>
 </body>
 </html>

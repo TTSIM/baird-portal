@@ -64,6 +64,12 @@ export async function createUser(input: {
     role: input.role,
     active: input.active ?? true,
     grants: input.grants || [],
+    completedCourseIds: [],
+    notificationPreferences: {
+      emailReplies: true,
+      emailMentions: true,
+      emailAcceptedAnswers: true
+    },
     googleSub: input.googleSub,
     createdAt: now,
     updatedAt: now
@@ -81,7 +87,17 @@ export async function createUser(input: {
 }
 
 export async function saveUser(record: UserRecord): Promise<UserRecord> {
-  const next = { ...record, email: normalizeEmail(record.email), updatedAt: new Date().toISOString() };
+  const next = {
+    ...record,
+    completedCourseIds: record.completedCourseIds || [],
+    notificationPreferences: record.notificationPreferences || {
+      emailReplies: true,
+      emailMentions: true,
+      emailAcceptedAnswers: true
+    },
+    email: normalizeEmail(record.email),
+    updatedAt: new Date().toISOString()
+  };
   await usersStore().setJSON(`records/${next.id}`, next);
   return next;
 }

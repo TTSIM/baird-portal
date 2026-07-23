@@ -20,9 +20,11 @@
     "acorn": "^8.15.0",
     "cheerio": "1.0.0",
     "google-auth-library": "^10.9.0",
-    "openai": "^6.15.0"
+    "openai": "^6.15.0",
+    "sharp": "^0.34.4"
   },
   "devDependencies": {
+    "@netlify/plugin-emails": "^1.1.1",
     "@playwright/test": "^1.57.0",
     "@types/node": "^20.17.0",
     "tsx": "^4.21.0",

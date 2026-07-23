@@ -89,7 +89,7 @@ function renderModule(module, index) {
   return card;
 }
 
-function renderPortal({ user, portal }) {
+function renderPortal({ user, portal, features = {} }) {
   coursesById = new Map(portal.courses.map((course) => [course.id, course]));
   byId("course-title").textContent = portal.program.title;
   byId("course-subtitle").textContent = portal.program.subtitle;
@@ -103,9 +103,17 @@ function renderPortal({ user, portal }) {
   byId("account-name").textContent = user.name;
   const staff = user.role === "admin" || user.role === "owner";
   byId("admin-link").hidden = !staff;
+  byId("tab-button-community").hidden = !features.community;
+  byId("community-notification-button").hidden = !features.community;
   const canAsk = staff || user.grants.length > 0;
   byId("ask-dr-hassan-link").setAttribute("aria-disabled", String(!canAsk));
   if (!canAsk) byId("ask-dr-hassan-link").title = "A module must be unlocked first";
+  document.dispatchEvent(new CustomEvent("baird:portal-ready", {
+    detail: { user, portal, features }
+  }));
+  const requestedTab = new URLSearchParams(location.search).get("tab");
+  const requestedButton = requestedTab ? document.querySelector(`[data-tab="${CSS.escape(requestedTab)}"]`) : null;
+  if (requestedButton && !requestedButton.hidden) requestedButton.click();
 }
 
 document.querySelectorAll("[data-tab]").forEach((button) => {
@@ -118,6 +126,11 @@ document.querySelectorAll("[data-tab]").forEach((button) => {
     document.querySelectorAll(".tab-panel").forEach((panel) => {
       panel.classList.toggle("active", panel.id === `tab-${button.dataset.tab}`);
     });
+    const url = new URL(location.href);
+    if (button.dataset.tab === "modules") url.searchParams.delete("tab");
+    else url.searchParams.set("tab", button.dataset.tab);
+    if (button.dataset.tab !== "community") url.searchParams.delete("thread");
+    history.replaceState({}, "", url);
   });
 });
 

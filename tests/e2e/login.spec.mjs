@@ -36,3 +36,23 @@ test("root sends an authenticated user to the portal", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL(/baird_implant_portal\.html$/);
 });
+
+test("root sends an authenticated user with an incomplete profile to setup", async ({ page }) => {
+  await page.route("**/api/me", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({
+      user: {
+        id: "delegate-1",
+        name: "Test Delegate",
+        email: "delegate@example.com",
+        role: "delegate",
+        grants: [],
+        profileComplete: false
+      }
+    })
+  }));
+
+  await page.goto("/?next=/baird_implant_portal.html?tab=community");
+  await expect(page).toHaveURL(/profile-setup\.html\?next=%2Fbaird_implant_portal\.html%3Ftab%3Dcommunity$/);
+});

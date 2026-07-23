@@ -8,6 +8,7 @@ const output = path.join(root, "dist");
 const sources = [
   "index.html",
   "login.html",
+  "profile-setup.html",
   "baird_implant_portal.html",
   "ask-dr-hassan.html",
   "admin.html",
